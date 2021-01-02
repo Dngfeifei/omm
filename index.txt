@@ -1,0 +1,14 @@
+git init 初始化本地仓库
+
+git add 添加工作区文件（修改或者新增的文件）到暂存区
+
+git commit 提交暂存区文件到本地仓库
+
+git log 查看当前本地仓库版本信息
+git reset --hard 版本号 设置滚动到哪个版本
+
+git reflog 查看版本切换信息
+git reset --hard 版本号 设置滚动到哪个版本
+
+
+
