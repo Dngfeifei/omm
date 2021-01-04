@@ -1,0 +1,197 @@
+@import '~antd/dist/antd.less';
+@import '/assets/less/var.less';
+html, body {}
+img{
+  border: 0;
+  display: block;
+}
+textarea{
+  resize: none !important;
+}
+
+#root{
+  height: 100%;
+  .ant-layout-content{ flex: 1; }
+  .ant-tabs, .ant-tabs-content, .ant-tabs-tabpane{ height: 100%; }
+  .ant-tabs-bar{ margin: 2px 0 }
+  .ant-layout-sider-children{ 
+    overflow-y: scroll; 
+    height: 100%;
+    background: #001529;
+  }
+  .wrapper{ height: 100%; }
+
+  .ant-table-wrapper{ min-width: 1000px; }
+  .ant-table-small > .ant-table-content > .ant-table-body {
+    margin: 0;
+  }
+  .goodTabs, .goodTabs .ant-tabs-content, .goodTabs .ant-tabs-tabpane{
+      height: auto;
+  }
+
+  @import url('./components/loading');
+  @import url('./components/sider');
+  @import url('./components/header');
+}
+
+.trigger {
+  font-size: 18px;
+  line-height: 28px;
+  margin-top: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: color .3s;
+}
+
+.trHide{
+  display: none;
+}
+
+.trigger:hover {
+  color: #1890ff;
+}
+
+.cpwrapper{
+  padding-top: 100px;
+}
+
+.avatar{
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.printWrap{
+  .title{
+    th{
+      font-weight: bold;
+      text-align: center;
+    }
+  }
+  th{
+    padding-right: 5px;
+  }
+}
+
+
+.depothistorymodal{
+  .ant-form-item{margin-bottom: 10px !important;}
+}
+
+.ant-advanced-search-form {
+  padding: 24px;
+  background: #fbfbfb;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+
+.ant-advanced-search-form .ant-form-item {
+  display: flex;
+}
+
+.ant-advanced-search-form .ant-form-item-control-wrapper {
+  flex: 1;
+}
+
+.flex-view {
+  padding: 10px;
+  background: #fbfbfb;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+.flex-view .ant-form-item {
+  margin-bottom: 0;
+}
+
+.flex-form {
+  padding: 8px;
+  background: #fbfbfb;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+
+.flex-form .ant-form-item {
+  display: flex;
+}
+
+.flex-form .ant-form-item-control-wrapper {
+  flex: 1;
+}
+
+.attr-upload {
+  .ant-upload-list {
+    margin-top: 30px;
+  }
+}
+.container-div{
+  width: auto;
+  padding-bottom: 22px;
+  background: '#fff';
+  position: absolute;
+  top: 31px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  overflow: hidden;
+  overflow-y: auto;
+  .water_mark_div {
+    min-height: 600px;
+  }
+}
+.tab-page{
+  min-height: 600px;
+}
+
+.ant-list-item-action{
+  width: 40px;
+  float: right;
+}
+.ant-menu{
+  .ant-menu-item{
+    padding-left: 6px !important;
+  }
+  .ant-menu-submenu-title{
+    padding-left: 6px !important;
+    i{
+      margin-right: 6px;
+    }
+  }
+  .ant-menu-sub{
+    .ant-menu-item{
+      padding-left: 28px !important;
+    }
+  }
+}
+.ant-table-selection-column{
+  width: 40px;
+}
+.ant-table-footer{
+  padding: 8px 16px 4px 16px;
+} 
+.ant-modal-header{
+  padding: 8px 24px;
+}
+.ant-modal-close-x{
+  width: 39px;
+  height: 39px;
+  line-height: 39px;
+}
+
+.ant-list-item-action{
+  width: 40px;
+  float: right;
+}
+.ant-carousel .slick-slide {
+  text-align: center;
+  height: 600px;
+  line-height: 600px;
+  background: #364d79;
+  overflow: hidden;
+}
+
+
+@import url('./pages/mgr');
+@import url('./pages/role');
+@import url('./pages/login');
+
