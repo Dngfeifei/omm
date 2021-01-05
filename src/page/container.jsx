@@ -17,7 +17,6 @@ class Container extends Component{
 	componentWillMount = _ => {
 		window.add = pane => this.props.add(pane)
 		window.remove = key => this.props.remove(key)
-		window.message = mes => message.success(mes)
 	}
 
 	onChange = key => {

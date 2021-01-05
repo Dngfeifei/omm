@@ -1,2 +1,0 @@
-webpackJsonp([31],{26:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var u=n(1),r=function(e){return e&&e.__esModule?e:{default:e}}(u),l=function(e){return r.default.createElement("div",{style:{height:"100%"}},e.children)};t.default=l}});
-//# sourceMappingURL=31.9da6e5a65a07fedb9fde.js.map

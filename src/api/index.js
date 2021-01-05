@@ -47,6 +47,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 	if (res.code == 700) {
 		//message.warning('请先登录')
 		//window.LOGIN_LAST_PATH = hashHistory.getCurrentLocation().pathname
+		debugger
 		hashHistory.push('/login')
 	} else if (res.code != 200) {
 		message.error(res.message)

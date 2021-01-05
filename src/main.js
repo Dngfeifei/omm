@@ -28,7 +28,7 @@ const Page = Load(() => import('./app.jsx'))
 const Home = Load(() => import('/page/home.jsx'))
 const Container = Load(() => import('/page/container.jsx'))
 const Login = Load(() => import('/page/login.jsx'))
-const ChangePassForm = Load(() => import('/page/changePassword.jsx'))
+// const ChangePassForm = Load(() => import('/page/changePassword.jsx'))
 
 const routeConfig = (
 	<Route path = {'/'} component = {Page}>
@@ -37,7 +37,6 @@ const routeConfig = (
 			<Route path = {'container'} component = {Container} />
 		</Route>
 		<Route path = {'login'} component = {Login}/>
-		<Route path = {'changePassword'} component = {ChangePassForm}/>
 	</Route>
 )
 

@@ -23,6 +23,7 @@ class Notice extends Common{
 		let data = this.state.data
 		await getnotices({limit: this.state.limit, offset}).then(res => {
 			this.setState({loading: false})
+			return
 			res.data.records.forEach(v => {
 				let str = v.title + '：' + v.content + '       - '  + v.createtime
 				let flag = moment(new Date()).diff(v.createtime, 'days') < 3
