@@ -4,7 +4,6 @@ const { Content } = Layout
 
 import Header from '/components/header.jsx'
 import Sider from '/components/sider.jsx'
-import Loading from '/components/loading.jsx'
 
 class Home extends Component{
 
@@ -12,11 +11,6 @@ class Home extends Component{
 		visible: false,
 		verData: {}
 	})
-
-	componentWillMount = _ => {
-		
-  	}
-
 	closeInitPassword = () => {
 		this.setState({visible: false})
 	}

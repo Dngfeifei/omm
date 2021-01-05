@@ -32,7 +32,7 @@ class Container extends Component{
 	render = _ => 
 		<div style={{width: '100%', height: '100%'}}>
 			<Tabs
-						className="nav-tabs"
+			  className="nav-tabs"
 	          hideAdd
 	          onChange={this.onChange}
 	          activeKey={this.props.activeKey}

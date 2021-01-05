@@ -1,5 +1,6 @@
 import { Assign } from '/api/tools'
 import { 
+	TOGGLE,
 	START_LOADING, 
 	CLOSE_LOADING, 
 	RESET,
@@ -18,7 +19,9 @@ const globalDataStructure = {
 //redux状态管理action执行操作函数
 export const GlobalReducer = (state = globalDataStructure, action) => {
 	switch(action.type){
-		
+
+		case TOGGLE: return Assign(state, { collapsed: !state.collapsed})//设置菜单面板隐藏收缩
+
 		case START_LOADING: return Assign(state, { loading: true }) //设置loading效果显示
 
 		case CLOSE_LOADING: return Assign(state, { loading: false })//接口交互成功后取消loading显示

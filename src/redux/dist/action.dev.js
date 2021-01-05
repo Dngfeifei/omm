@@ -1,0 +1,26 @@
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.GET_MENU_SUCCESS = exports.GET_MENU = exports.SET_PANE_ACTIVEKEY = exports.SET_PANE_STATE = exports.REMOVE_PANE = exports.ADD_PANE = exports.TOGGLE = exports.CLOSE_LOADING = exports.START_LOADING = exports.RESET = void 0;
+var RESET = 'RESET';
+exports.RESET = RESET;
+var START_LOADING = 'START_LOADING';
+exports.START_LOADING = START_LOADING;
+var CLOSE_LOADING = 'CLOSE_LOADING';
+exports.CLOSE_LOADING = CLOSE_LOADING;
+var TOGGLE = 'TOGGLE';
+exports.TOGGLE = TOGGLE;
+var ADD_PANE = 'ADD_PANE';
+exports.ADD_PANE = ADD_PANE;
+var REMOVE_PANE = 'REMOVE_PANE';
+exports.REMOVE_PANE = REMOVE_PANE;
+var SET_PANE_STATE = 'SET_PANE_STATE';
+exports.SET_PANE_STATE = SET_PANE_STATE;
+var SET_PANE_ACTIVEKEY = 'SET_PANE_ACTIVEKEY';
+exports.SET_PANE_ACTIVEKEY = SET_PANE_ACTIVEKEY;
+var GET_MENU = 'GET_MENU';
+exports.GET_MENU = GET_MENU;
+var GET_MENU_SUCCESS = 'GET_MENU_SUCCESS';
+exports.GET_MENU_SUCCESS = GET_MENU_SUCCESS;
