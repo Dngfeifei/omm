@@ -30,3 +30,9 @@
 .avatar-wrapper.collaps .username {
   display: none;
 }
+.ant-menu-vertical > .ant-menu-item,
+.ant-menu-inline > .ant-menu-item,
+.ant-menu-inline > .ant-menu-submenu > .ant-menu-submenu-title {
+  height: 40px;
+  line-height: 40px;
+}
