@@ -21,9 +21,6 @@ import { ADD_PANE, GET_MENU, GET_THISROLE, GET_TODOCOUNT } from '/redux/action'
 class DSider extends Component{
 	 async componentWillMount () {
 		await this.props.getMenu()
-		this.props.getThisrole()
-	    this.props.getTodoCount()
-	    setInterval(this.props.getTodoCount, 300000)
 	}
 
 	componentWillReceiveProps (nextprops) {
@@ -65,19 +62,19 @@ class DSider extends Component{
 	}
 	renderMenuTitle = val => <span>
 		{val.icon ? <Icon type={val.icon} /> : null}
-		<span>{val.name}</span>{val.name === '工作台' ? <Badge count={this.props.todoCount} style={{height: '16px', width: '16px', padding: 0, marginLeft: 6,
-		minWidth: '16px', lineHeight: '16px'}}></Badge> : null}
+		<span>{val.name}</span>
 	</span>
 
 	render = _ => <Sider 
 	trigger={null}
 	collapsible
     collapsed={this.props.collapsed}
-	width={170} 
+	width={220} 
 	style={{ background: '#fff' }}>
-		<div className="avatar-wrapper">
-			{this.props.collapsed ? null : <div>
-				<span className="username">业务支持平台</span>
+		<div className={this.props.collapsed?'avatar-wrapper collaps':'avatar-wrapper'}>
+			{<div className="logo">
+				<Icon type="question-circle" className="icon"/>
+				<span className="username">银信业务支持平台</span>
 			</div>}
 		</div>
         <Menu

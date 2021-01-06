@@ -13,23 +13,27 @@ moment.locale('zh-cn')
 if (!window.Promise) {
   window.Promise = Promise
 }
+//引入全局状态管理数仓
+import store from '/redux/store'
+
 // 登录前的path
 window.LOGIN_LAST_PATH = null
 import '/assets/less/main.less'
-import store from '/redux/store'
 import '/assets/less/main.less'
+//引入loading效果组件
 import Loading from '/components/loading.jsx'
 const Load = loader => Loadable({
    loader,
    loading: Loading
 })
 
+//引入路由相关组件
 const Page = Load(() => import('./app.jsx'))
 const Home = Load(() => import('/page/home.jsx'))
 const Container = Load(() => import('/page/container.jsx'))
 const Login = Load(() => import('/page/login.jsx'))
-// const ChangePassForm = Load(() => import('/page/changePassword.jsx'))
 
+//配置路由信息
 const routeConfig = (
 	<Route path = {'/'} component = {Page}>
 		<IndexRedirect to="/home/container"/>
@@ -40,6 +44,7 @@ const routeConfig = (
 	</Route>
 )
 
+//挂载组件
 ReactDom.render(
 	<Provider store = { store }>
 		<Router history = { hashHistory }>

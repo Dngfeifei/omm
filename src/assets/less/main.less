@@ -15,7 +15,7 @@ textarea{
   .ant-tabs, .ant-tabs-content, .ant-tabs-tabpane{ height: 100%; }
   .ant-tabs-bar{ margin: 2px 0 }
   .ant-layout-sider-children{ 
-    overflow-y: scroll; 
+    overflow-y: auto; 
     height: 100%;
     background: #001529;
   }
@@ -56,8 +56,8 @@ textarea{
 }
 
 .avatar{
-  width: 20px;
-  height: 20px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   margin-right: 15px;
 }
@@ -147,20 +147,15 @@ textarea{
   width: 40px;
   float: right;
 }
+
 .ant-menu{
-  .ant-menu-item{
-    padding-left: 6px !important;
-  }
-  .ant-menu-submenu-title{
-    padding-left: 6px !important;
     i{
-      margin-right: 6px;
+      font-size: 16px !important;
     }
-  }
-  .ant-menu-sub{
-    .ant-menu-item{
-      padding-left: 28px !important;
-    }
+}
+.ant-menu-inline-collapsed{
+  i{
+    font-size: 18px !important;
   }
 }
 .ant-table-selection-column{
@@ -191,7 +186,7 @@ textarea{
 }
 
 
-@import url('./pages/mgr');
-@import url('./pages/role');
+// @import url('./pages/mgr');
+// @import url('./pages/role');
 @import url('./pages/login');
 

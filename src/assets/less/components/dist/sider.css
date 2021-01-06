@@ -1,0 +1,32 @@
+.avatar-wrapper {
+  height: 60px;
+  background: #001529;
+  padding: 20px 0 15px;
+  color: hsla(0, 0%, 100%, 0.8);
+  white-space: nowrap;
+}
+.avatar-wrapper .logo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.avatar-wrapper .icon {
+  display: none;
+  font-size: 26px;
+  margin-right: 20px;
+}
+.avatar-wrapper .username {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+}
+.avatar-wrapper.collaps .logo {
+  padding-left: 0px;
+}
+.avatar-wrapper.collaps .icon {
+  display: block;
+  margin-right: 0px;
+}
+.avatar-wrapper.collaps .username {
+  display: none;
+}

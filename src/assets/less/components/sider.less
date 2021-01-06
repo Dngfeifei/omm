@@ -1,13 +1,34 @@
 .avatar-wrapper{
+	height: 60px;
 	background: rgb(0, 21, 41);
-	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
 	padding: 20px 0 15px;
-	color: rgba(255, 255, 255, 0.8);
+	color: hsla(0, 0%, 100%, 0.8);
+	white-space: nowrap;
+	.logo{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.icon{
+		display: none;
+		font-size: 26px;
+		margin-right: 20px;
+	}
 	.username{
 		display: block;
-		font-size: 16px;
+		font-size: 18px;
+		font-weight: 600;
+	}
+}
+.avatar-wrapper.collaps{
+	.logo{
+		padding-left: 0px;
+	}
+	.icon{
+		display: block;
+		margin-right: 0px;
+	}
+	.username{
+		display: none;
 	}
 }
