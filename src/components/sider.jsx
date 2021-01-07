@@ -22,7 +22,7 @@ class DSider extends Component{
 	componentWillReceiveProps (nextprops) {
 		if(this.props.menu.length == 0 && nextprops.menu.length > 0){
 			nextprops.menu.forEach(item => {
-				if(item.code == 'notice'){
+				if(item.resourcePath == 'notice'){
 					this.add(item)
 				}
 			})
@@ -38,23 +38,23 @@ class DSider extends Component{
 
 	add = (item) => {
 		let pane = {
-			title: item.name, 
+			title: item.resourceName, 
 			key: item.id,
-			url: item.code,
-			breadcrumb: (item.pcodes + item.name).split(",")
+			url: item.resourcePath,
+			breadcrumb: (item.pcodes + ',' + item.resourceName).split(",")
 		}
 		this.props.add(pane)
 	}
 	select = (item) => {
-		if (this.state.openKeys[0] == item.key) {
+		if (this.state.openKeys[0] == item.id) {
 			this.setState({openKeys: []})
 		} else {
-			this.setState({openKeys: [item.key]})
+			this.setState({openKeys: [item.id]})
 		}
 	}
 	renderMenuTitle = val => <span>
-		{val.icon ? <Icon type={val.icon} /> : null}
-		<span>{val.name}</span>
+		{val.icon ? <Icon type={val.icon} /> : <Icon  type="pie-chart"/>}
+		<span>{val.resourceName}</span>
 	</span>
 
 	render = _ => <Sider 
@@ -76,18 +76,18 @@ class DSider extends Component{
           style={{ borderRight: 0 }}>
 			{
 			this.props.menu.map(val => {
-        		if (val.childList && val.childList.length) {
+        		if (val.children && val.children.length) {
         			return <SubMenu 
         			key={val.id}
         			onTitleClick={this.select}
         			title={this.renderMenuTitle(val)}>
-			            {val.childList.map(item => {
-			            	if (item.childList && item.childList.length) {
+			            {val.children.map(item => {
+			            	if (item.children && item.children.length) {
 			        			return <SubMenu 
 			        			key={item.id} 
 			        			onTitleClick={this.select}
 			        			title={this.renderMenuTitle(val)}>
-						            {item.childList.map(item => 
+						            {item.children.map(item => 
 						            	<Menu.Item key={item.id} onClick={_ => this.add(item)}>
 						            		{this.renderMenuTitle(item)}
 						            	</Menu.Item>
