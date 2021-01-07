@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.GET_MENU_SUCCESS = exports.GET_MENU = exports.SET_PANE_ACTIVEKEY = exports.SET_PANE_STATE = exports.REMOVE_PANE = exports.ADD_PANE = exports.TOGGLE = exports.CLOSE_LOADING = exports.START_LOADING = exports.RESET = void 0;
+exports.SET_PANE = exports.SET_BREADCRUMB = exports.GET_MENU_SUCCESS = exports.GET_MENU = exports.SET_PANE_ACTIVEKEY = exports.SET_PANE_STATE = exports.REMOVE_PANE = exports.ADD_PANE = exports.TOGGLE = exports.CLOSE_LOADING = exports.START_LOADING = exports.RESET = void 0;
 var RESET = 'RESET';
 exports.RESET = RESET;
 var START_LOADING = 'START_LOADING';
@@ -24,3 +24,7 @@ var GET_MENU = 'GET_MENU';
 exports.GET_MENU = GET_MENU;
 var GET_MENU_SUCCESS = 'GET_MENU_SUCCESS';
 exports.GET_MENU_SUCCESS = GET_MENU_SUCCESS;
+var SET_BREADCRUMB = 'SET_BREADCRUMB';
+exports.SET_BREADCRUMB = SET_BREADCRUMB;
+var SET_PANE = 'SET_PANE';
+exports.SET_PANE = SET_PANE;

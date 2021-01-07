@@ -10,3 +10,6 @@ export const SET_PANE_ACTIVEKEY = 'SET_PANE_ACTIVEKEY'
 
 export const GET_MENU = 'GET_MENU'
 export const GET_MENU_SUCCESS = 'GET_MENU_SUCCESS'
+
+export const SET_BREADCRUMB = 'SET_BREADCRUMB'
+export const SET_PANE = 'SET_PANE'

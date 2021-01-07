@@ -5,7 +5,7 @@ function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterat
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports["default"] = _callee4;
+exports["default"] = _callee5;
 
 var _effects = require("redux-saga/effects");
 
@@ -25,10 +25,13 @@ regeneratorRuntime.mark(addpane),
 regeneratorRuntime.mark(removepane),
     _marked3 =
 /*#__PURE__*/
-regeneratorRuntime.mark(getMenu),
+regeneratorRuntime.mark(tabChange),
     _marked4 =
 /*#__PURE__*/
-regeneratorRuntime.mark(_callee4);
+regeneratorRuntime.mark(getMenu),
+    _marked5 =
+/*#__PURE__*/
+regeneratorRuntime.mark(_callee5);
 
 //添加到tab已经点击选择标签，并设置当前显示
 function addpane() {
@@ -53,6 +56,8 @@ function addpane() {
 
                   case 2:
                     panes = _context.sent;
+                    //select函数得到store中state的数据
+                    //判断选择的这条数据是不是已经在选择过的数据保存当中
                     has = false;
                     pane = {};
                     panes.forEach(function (i, k) {
@@ -61,7 +66,7 @@ function addpane() {
                         pane = i;
                         key = k;
                       }
-                    });
+                    }); //判断选择的这条数据是不是已经在选择过的数据保存当中,如果使新增的话就添加这个数据到已有数据中，并执行操作state的action put方法
 
                     if (has) {
                       _context.next = 12;
@@ -101,6 +106,13 @@ function addpane() {
                     });
 
                   case 19:
+                    _context.next = 21;
+                    return (0, _effects.put)({
+                      type: ACTION.SET_BREADCRUMB,
+                      data: action.data.breadcrumb
+                    });
+
+                  case 21:
                   case "end":
                     return _context.stop();
                 }
@@ -126,7 +138,7 @@ function removepane() {
           return (0, _effects.takeLatest)(ACTION.REMOVE_PANE,
           /*#__PURE__*/
           regeneratorRuntime.mark(function _callee2(action) {
-            var panes, activeKey, nextpane, index;
+            var panes, activeKey, nextpane, index, data;
             return regeneratorRuntime.wrap(function _callee2$(_context3) {
               while (1) {
                 switch (_context3.prev = _context3.next) {
@@ -153,7 +165,7 @@ function removepane() {
                     }); //console.log(index)
 
                     if (!(index != undefined)) {
-                      _context3.next = 15;
+                      _context3.next = 18;
                       break;
                     }
 
@@ -166,17 +178,25 @@ function removepane() {
 
                   case 12:
                     if (!(action.key == activeKey)) {
-                      _context3.next = 15;
+                      _context3.next = 18;
                       break;
                     }
 
-                    _context3.next = 15;
+                    data = nextpane[index - 1] ? nextpane[index - 1] : nextpane[0] ? nextpane[0] : '';
+                    _context3.next = 16;
                     return (0, _effects.put)({
                       type: ACTION.SET_PANE_ACTIVEKEY,
-                      data: nextpane[index - 1] ? nextpane[index - 1].key : nextpane[0] ? nextpane[0].key : ''
+                      data: data.key
                     });
 
-                  case 15:
+                  case 16:
+                    _context3.next = 18;
+                    return (0, _effects.put)({
+                      type: ACTION.SET_BREADCRUMB,
+                      data: data.breadcrumb
+                    });
+
+                  case 18:
                   case "end":
                     return _context3.stop();
                 }
@@ -190,41 +210,49 @@ function removepane() {
       }
     }
   }, _marked2);
-} //获取导航树
+}
 
-
-function getMenu() {
-  return regeneratorRuntime.wrap(function getMenu$(_context6) {
+function tabChange() {
+  return regeneratorRuntime.wrap(function tabChange$(_context6) {
     while (1) {
       switch (_context6.prev = _context6.next) {
         case 0:
           _context6.next = 2;
-          return (0, _effects.takeLatest)(ACTION.GET_MENU,
+          return (0, _effects.takeLatest)(ACTION.SET_PANE,
           /*#__PURE__*/
           regeneratorRuntime.mark(function _callee3(action) {
-            var data;
+            var panes, breadcrumb, key;
             return regeneratorRuntime.wrap(function _callee3$(_context5) {
               while (1) {
                 switch (_context5.prev = _context5.next) {
                   case 0:
                     _context5.next = 2;
-                    return (0, _effects.call)(fetch.getMenu);
+                    return (0, _effects.select)(function (state) {
+                      return state.global.panes;
+                    });
 
                   case 2:
-                    data = _context5.sent;
-
-                    if (!data.data) {
-                      _context5.next = 6;
-                      break;
-                    }
-
+                    panes = _context5.sent;
+                    panes.forEach(function (i, k) {
+                      if (i.key == action.data) {
+                        breadcrumb = i.breadcrumb;
+                        key = action.data;
+                      }
+                    });
                     _context5.next = 6;
                     return (0, _effects.put)({
-                      type: ACTION.GET_MENU_SUCCESS,
-                      data: data.data
+                      type: ACTION.SET_PANE_ACTIVEKEY,
+                      data: key
                     });
 
                   case 6:
+                    _context5.next = 8;
+                    return (0, _effects.put)({
+                      type: ACTION.SET_BREADCRUMB,
+                      data: breadcrumb
+                    });
+
+                  case 8:
                   case "end":
                     return _context5.stop();
                 }
@@ -238,28 +266,80 @@ function getMenu() {
       }
     }
   }, _marked3);
-}
+} //获取导航树
 
-function _callee4() {
-  return regeneratorRuntime.wrap(function _callee4$(_context7) {
+
+function getMenu() {
+  return regeneratorRuntime.wrap(function getMenu$(_context8) {
     while (1) {
-      switch (_context7.prev = _context7.next) {
+      switch (_context8.prev = _context8.next) {
         case 0:
-          _context7.next = 2;
-          return (0, _effects.fork)(addpane);
+          _context8.next = 2;
+          return (0, _effects.takeLatest)(ACTION.GET_MENU,
+          /*#__PURE__*/
+          regeneratorRuntime.mark(function _callee4(action) {
+            var data;
+            return regeneratorRuntime.wrap(function _callee4$(_context7) {
+              while (1) {
+                switch (_context7.prev = _context7.next) {
+                  case 0:
+                    _context7.next = 2;
+                    return (0, _effects.call)(fetch.getMenu);
+
+                  case 2:
+                    data = _context7.sent;
+
+                    if (!data.data) {
+                      _context7.next = 6;
+                      break;
+                    }
+
+                    _context7.next = 6;
+                    return (0, _effects.put)({
+                      type: ACTION.GET_MENU_SUCCESS,
+                      data: data.data
+                    });
+
+                  case 6:
+                  case "end":
+                    return _context7.stop();
+                }
+              }
+            }, _callee4);
+          }));
 
         case 2:
-          _context7.next = 4;
-          return (0, _effects.fork)(removepane);
-
-        case 4:
-          _context7.next = 6;
-          return (0, _effects.fork)(getMenu);
-
-        case 6:
         case "end":
-          return _context7.stop();
+          return _context8.stop();
       }
     }
   }, _marked4);
+}
+
+function _callee5() {
+  return regeneratorRuntime.wrap(function _callee5$(_context9) {
+    while (1) {
+      switch (_context9.prev = _context9.next) {
+        case 0:
+          _context9.next = 2;
+          return (0, _effects.fork)(addpane);
+
+        case 2:
+          _context9.next = 4;
+          return (0, _effects.fork)(removepane);
+
+        case 4:
+          _context9.next = 6;
+          return (0, _effects.fork)(getMenu);
+
+        case 6:
+          _context9.next = 8;
+          return (0, _effects.fork)(tabChange);
+
+        case 8:
+        case "end":
+          return _context9.stop();
+      }
+    }
+  }, _marked5);
 }

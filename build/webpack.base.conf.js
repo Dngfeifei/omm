@@ -8,13 +8,13 @@ function resolve (dir) {
 
 module.exports = {
   externals: {
-    'react': 'React',
-    'react-dom': 'ReactDOM',
-    'antd': 'antd',
-    'react-router': 'ReactRouter',
-    'moment': 'moment',
-    'redux-saga': 'ReduxSaga',
-    'react-redux': 'ReactRedux'
+    // 'react': 'React',
+    // 'react-dom': 'ReactDOM',
+    // 'antd': 'antd',
+    // 'react-router': 'ReactRouter',
+    // 'moment': 'moment',
+    // 'redux-saga': 'ReduxSaga',
+    // 'react-redux': 'ReactRedux'
   },
   entry: {
     app: ['./src/main.js']

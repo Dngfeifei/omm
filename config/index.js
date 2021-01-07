@@ -25,7 +25,7 @@ var buildconfig = {
 //var target = {target: 'http://www.xiaochuioa.com/xpro'}
 
 //var target = {target: 'http://192.168.1.123:8090'}
-var target = {target: 'http://127.0.0.1:8090'}
+var target = {target: 'http://10.0.16.120:8090'}
 
 // var file_target = {target: 'http://39.105.123.72:8340'}
 var file_target = {target: 'http://140.143.131.186:80'}
@@ -41,7 +41,10 @@ module.exports = {
     proxyTable: {
       '/menu': target,
       '/notice': target,
-      '/dict': target
+      '/dict': target,
+      '/sysResources': target,
+      '/sysDicts':target
+      
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

@@ -38,13 +38,12 @@ const handleRequest = (url, method, body = {}, json = false) => {
 }
 
 const handleResponse = res => new Promise((rsl, rej) => {
-	// if (res.status == 200) {
 		rsl(res.json())
-	// }
-	// rej(res)
 })
 .then(res => {
 	if (res.code == 700) {
+		//message.warning('请先登录')
+		//window.LOGIN_LAST_PATH = hashHistory.getCurrentLocation().pathname
 		//hashHistory.push('/login') //开发模式下不经过改跳转
 	} else if (res.code != 200) {
 		message.error(res.message)

@@ -3,20 +3,16 @@ import { connect } from 'react-redux'
 import { Layout, Menu, Icon, Badge } from 'antd'
 const { Sider } = Layout
 const { SubMenu } = Menu
-import { ADD_PANE, GET_MENU, GET_THISROLE, GET_TODOCOUNT } from '/redux/action'
+import { ADD_PANE, GET_MENU } from '/redux/action'
 
 
 @connect(state => ({
 	menu: state.global.menu,
 	collapsed: state.global.collapsed,
 	activeKey: state.global.activeKey,
-	thisrole: state.global.thisrole,
-	todoCount: state.global.todoCount,
 }), dispath => ({
 	getMenu(){dispath({type: GET_MENU})},
-	add(pane){dispath({ type: ADD_PANE, data: pane })},
-	getThisrole(){dispath({type: GET_THISROLE})},
-	getTodoCount(){dispath({type: GET_TODOCOUNT})},
+	add(pane){dispath({ type: ADD_PANE, data: pane })}
 }))
 class DSider extends Component{
 	 async componentWillMount () {
@@ -31,29 +27,25 @@ class DSider extends Component{
 				}
 			})
 		}
-		if (this.props.activeKey != nextprops.activeKey && nextprops.activeKey) {
-			this.setState({selectedKeys: [nextprops.activeKey]})
-		}
-		if(this.props.collapsed != nextprops.collapsed && nextprops.collapsed==true){
-			this.setState({openKeys: []})// 在菜单收缩之前，先把打开的子菜单收缩
-		}
+		// if(this.props.collapsed != nextprops.collapsed && nextprops.collapsed==true){
+		// 	this.setState({openKeys: []})// 在菜单收缩之前，先把打开的子菜单收缩
+		// }
 	}
 
 	state = {
-		selectedKeys: [],
 		openKeys: []
 	}
 
-	add = item => {
-		this.setState({selectedKeys: [item.id]})
+	add = (item) => {
 		let pane = {
 			title: item.name, 
 			key: item.id,
-			url: item.code
+			url: item.code,
+			breadcrumb: (item.pcodes + item.name).split(",")
 		}
 		this.props.add(pane)
 	}
-	select = item => {
+	select = (item) => {
 		if (this.state.openKeys[0] == item.key) {
 			this.setState({openKeys: []})
 		} else {
@@ -67,7 +59,6 @@ class DSider extends Component{
 
 	render = _ => <Sider 
 	trigger={null}
-	collapsible
     collapsed={this.props.collapsed}
 	width={220} 
 	style={{ background: '#fff' }}>
@@ -79,14 +70,15 @@ class DSider extends Component{
 		</div>
         <Menu
           mode="inline"
-          selectedKeys={this.state.selectedKeys}
-          openKeys={this.state.openKeys}
+          selectedKeys={[this.props.activeKey]}
+		//    openKeys={this.state.openKeys}
           theme="dark"
           style={{ borderRight: 0 }}>
-        	{this.props.menu.map(val => {
+			{
+			this.props.menu.map(val => {
         		if (val.childList && val.childList.length) {
         			return <SubMenu 
-        			key={val.id} 
+        			key={val.id}
         			onTitleClick={this.select}
         			title={this.renderMenuTitle(val)}>
 			            {val.childList.map(item => {
@@ -113,7 +105,9 @@ class DSider extends Component{
         				{this.renderMenuTitle(val)}
         			</Menu.Item>
         		}
-        	})}
+        	})
+			}
+			
         </Menu>
      </Sider>
 }

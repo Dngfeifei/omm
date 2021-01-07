@@ -2,15 +2,15 @@ import React, { Component } from 'react'
 import { Tabs, message } from 'antd'
 const TabPane = Tabs.TabPane
 import { connect } from 'react-redux'
-import { REMOVE_PANE, SET_PANE_ACTIVEKEY, ADD_PANE } from '/redux/action'
+import { REMOVE_PANE, SET_PANE, ADD_PANE } from '/redux/action'
 import Inbox from '/page/inbox.jsx'
 
 @connect(state => ({
 	panes: state.global.panes,
-	activeKey: state.global.activeKey
+	activeKey: state.global.activeKey,
 }), dispath => ({
 	remove(key){dispath({type: REMOVE_PANE, key})},
-	setKey(key){dispath({type: SET_PANE_ACTIVEKEY, data: key})},
+	setKey(key){dispath({type: SET_PANE, data: key})},
 	add(pane){dispath({ type: ADD_PANE, data: pane })}
 }))
 class Container extends Component{
@@ -36,7 +36,7 @@ class Container extends Component{
 	          hideAdd
 	          onChange={this.onChange}
 	          activeKey={this.props.activeKey}
-	          type="editable-card"
+			  type="editable-card"
 	          onEdit={this.onEdit}
 	        >
 	          {this.props.panes.map(pane => 

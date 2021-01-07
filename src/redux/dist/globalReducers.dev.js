@@ -13,7 +13,8 @@ var globalDataStructure = {
   loading: false,
   panes: [],
   activeKey: '',
-  menu: []
+  menu: [],
+  breadcrumb: []
 }; //redux状态管理action执行操作函数
 
 var GlobalReducer = function GlobalReducer() {
@@ -49,7 +50,13 @@ var GlobalReducer = function GlobalReducer() {
       return (0, _tools.Assign)(state, {
         activeKey: action.data
       });
-    //设置当前选择的tab标签
+    //设置当前显示标签
+
+    case _action.SET_BREADCRUMB:
+      return (0, _tools.Assign)(state, {
+        breadcrumb: action.data
+      });
+    //设置面包屑数据
 
     case _action.GET_MENU_SUCCESS:
       return (0, _tools.Assign)(state, {

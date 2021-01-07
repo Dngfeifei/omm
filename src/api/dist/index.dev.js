@@ -54,11 +54,11 @@ var handleRequest = function handleRequest(url, method) {
 
 var handleResponse = function handleResponse(res) {
   return new Promise(function (rsl, rej) {
-    // if (res.status == 200) {
-    rsl(res.json()); // }
-    // rej(res)
+    rsl(res.json());
   }).then(function (res) {
-    if (res.code == 700) {//hashHistory.push('/login') //开发模式下不经过改跳转
+    if (res.code == 700) {//message.warning('请先登录')
+      //window.LOGIN_LAST_PATH = hashHistory.getCurrentLocation().pathname
+      //hashHistory.push('/login') //开发模式下不经过改跳转
     } else if (res.code != 200) {
       _antd.message.error(res.message);
     } //

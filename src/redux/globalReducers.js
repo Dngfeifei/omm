@@ -4,6 +4,7 @@ import {
 	START_LOADING, 
 	CLOSE_LOADING, 
 	RESET,
+	SET_BREADCRUMB,
 	SET_PANE_STATE,
 	SET_PANE_ACTIVEKEY,
 	GET_MENU_SUCCESS,
@@ -14,7 +15,8 @@ const globalDataStructure = {
 	loading: false,
 	panes: [],
 	activeKey: '',
-	menu: []
+	menu: [],
+	breadcrumb:[]
 }
 //redux状态管理action执行操作函数
 export const GlobalReducer = (state = globalDataStructure, action) => {
@@ -28,8 +30,10 @@ export const GlobalReducer = (state = globalDataStructure, action) => {
 
 		case SET_PANE_STATE: return Assign(state, { panes: action.data })//设置选择过的tab标签集合
 
-		case SET_PANE_ACTIVEKEY: return Assign(state, { activeKey: action.data })//设置当前选择的tab标签
-
+		case SET_PANE_ACTIVEKEY: return Assign(state, { activeKey: action.data })//设置当前显示标签
+		
+		case SET_BREADCRUMB: return Assign(state, { breadcrumb: action.data })//设置面包屑数据
+		
 		case GET_MENU_SUCCESS: return Assign(state, { menu: action.data })//获取导航树节点
 
 		case RESET: return globalDataStructure//重置所有状态
