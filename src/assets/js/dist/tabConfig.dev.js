@@ -5,6 +5,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.InboxMap = void 0;
 var InboxMap = {
-  notice: 'notice/notice.jsx'
+  notice: 'notice/notice.jsx',
+  applymine: 'SystemManage/oragizePeo.jsx'
 };
 exports.InboxMap = InboxMap;

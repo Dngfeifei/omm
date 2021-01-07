@@ -1,5 +1,7 @@
 "use strict";
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 // see http://vuejs-templates.github.io/webpack for documentation.
 var path = require('path');
 
@@ -41,13 +43,13 @@ module.exports = {
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
-    proxyTable: {
+    proxyTable: _defineProperty({
       '/menu': target,
       '/notice': target,
       '/dict': target,
       '/sysResources': target,
       '/sysDicts': target
-    },
+    }, "/sysResources", target),
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
     // (https://github.com/webpack/css-loader#sourcemaps)

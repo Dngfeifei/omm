@@ -1,77 +1,137 @@
-import React from 'react'
-import { List, Button, Icon } from 'antd'
-import Common from '/page/common.jsx'
-import { getnotices } from '/api/notice'
-import moment from 'moment'
+import React from 'react';
+import { Tree } from 'antd';
 
-class Notice extends Common{
+const { TreeNode } = Tree;
 
-	async componentWillMount () {
-		this.search()
+const x = 3;
+const y = 2;
+const z = 1;
+const gData = [];
+
+const generateData = (_level, _preKey, _tns) => {
+	const preKey = _preKey || '0';
+	const tns = _tns || gData;
+
+	const children = [];
+	for (let i = 0; i < x; i++) {
+		const key = `${preKey}-${i}`;
+		tns.push({ title: key, key });
+		if (i < y) {
+			children.push(key);
+		}
 	}
+	if (_level < 0) {
+		return tns;
+	}
+	const level = _level - 1;
+	children.forEach((key, index) => {
+		tns[index].children = [];
+		return generateData(level, key, tns[index].children);
+	});
+};
+generateData(z);
 
+class Demo extends React.Component {
 	state = {
-		limit: 10,
-		offset: 0,
-		finish: false,
-    loading: false,
-		data: [],
-	}
+		gData,
+		expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
+	};
 
-	search = async (offset = this.state.offset) => {
-		this.setState({loading: true})
-		let data = this.state.data
-		await getnotices({limit: this.state.limit, offset}).then(res => {
-			this.setState({loading: false})
-			return
-			res.data.records.forEach(v => {
-				let str = v.title + '：' + v.content + '       - '  + v.createtime
-				let flag = moment(new Date()).diff(v.createtime, 'days') < 3
-				data.push({str, flag})
-			})
-			if(data.length >= res.data.total){
-				this.setState({finish: true})
+	onDragEnter = info => {
+		// expandedKeys 需要受控时设置
+		// this.setState({
+		//   expandedKeys: info.expandedKeys,
+		// });
+	};
+	onDragEnd = info =>{
+		console.log('onDrageEnd')
+	};
+	onDrop = info => {
+		console.log('onDrageDrop')
+		const dropKey = info.node.props.eventKey;
+		const dragKey = info.dragNode.props.eventKey;
+		const dropPos = info.node.props.pos.split('-');
+		const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
+
+		const loop = (data, key, callback) => {
+			data.forEach((item, index, arr) => {
+				if (item.key === key) {
+					return callback(item, index, arr);
+				}
+				if (item.children) {
+					return loop(item.children, key, callback);
+				}
+			});
+		};
+		const data = [...this.state.gData];
+
+		// Find dragObject
+		let dragObj;
+		loop(data, dragKey, (item, index, arr) => {
+			arr.splice(index, 1);
+			dragObj = item;
+		});
+
+		if (!info.dropToGap) {
+			// Drop on the content
+			loop(data, dropKey, item => {
+				item.children = item.children || [];
+				// where to insert 示例添加到尾部，可以是随意位置
+				item.children.push(dragObj);
+			});
+		} else if (
+			(info.node.props.children || []).length > 0 && // Has children
+			info.node.props.expanded && // Is expanded
+			dropPosition === 1 // On the bottom gap
+		) {
+			loop(data, dropKey, item => {
+				item.children = item.children || [];
+				// where to insert 示例添加到头部，可以是随意位置
+				item.children.unshift(dragObj);
+			});
+		} else {
+			let ar;
+			let i;
+			loop(data, dropKey, (item, index, arr) => {
+				ar = arr;
+				i = index;
+			});
+			if (dropPosition === -1) {
+				ar.splice(i, 0, dragObj);
+			} else {
+				ar.splice(i + 1, 0, dragObj);
 			}
-		})
+		}
+
 		this.setState({
-				data: data
-			})
+			gData: data,
+		});
+	};
+
+	render() {
+		const loop = data =>
+			data.map(item => {
+				if (item.children && item.children.length) {
+					return (
+						<TreeNode key={item.key} title={item.title}>
+							{loop(item.children)}
+						</TreeNode>
+					);
+				}
+				return <TreeNode key={item.key} title={item.title} />;
+			});
+		return (
+			<Tree
+				className="draggable-tree"
+				defaultExpandedKeys={this.state.expandedKeys}
+				draggable
+				blockNode
+				onDrop={this.onDrop}
+				onDragEnd={this.onDragEnd}
+				treeData={this.state.gData}
+			>
+			</Tree>
+		);
 	}
-
-	onLoadMore = _ => {
-		let offset = this.state.offset + this.state.limit
-		this.setState({offset})
-		this.search(offset)
-	}
-
-
-	render = _ => {
-		const { finish, loading, list } = this.state;
-    const loadMore = !finish && !loading ? (
-      <div style={{
-        textAlign: 'center', marginTop: 12, height: 32, lineHeight: '32px',
-      }}
-      >
-        <Button onClick={this.onLoadMore}>加载更多</Button>
-      </div>
-    ) : null
-		return <div className='tab-page'>
-		<div style={{height: 500, overflow: 'scroll'}}>
-	    <List
-	      header={<div>系统公告</div>}
-	      bordered
-	      loadMore={loadMore}
-	      loading={this.state.loading}
-	      dataSource={this.state.data}
-	      renderItem={item => item.flag ? <List.Item> <Icon type="notification" style={{marginRight: 20, color: '#ff6500'}}/> {item.str}</List.Item> : <List.Item>{item.str}</List.Item>}
-	    /></div>
-	    <div style={{paddingLeft: '12px', marginTop: '20px'}}>
-	    <div style={{fontSize: '16px', fontWeight: 'bold'}}>系统使用手册</div>
-	    <div>1、营销中心操作手册 &nbsp;&nbsp;&nbsp;&nbsp; <a target="_blank" href="../file/投标系统销售使用手册.pdf">投标系统销售使用手册.pdf</a></div>
-	    <div>2、系统管理员操作手册 &nbsp;&nbsp;&nbsp;&nbsp;<a href="#"></a></div>
-	    </div>
-	  </div>
 }
-}
-
-export default Notice
+export default Demo

@@ -43,7 +43,8 @@ module.exports = {
       '/notice': target,
       '/dict': target,
       '/sysResources': target,
-      '/sysDicts':target
+      '/sysDicts':target,
+      '/sysResources':target
       
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"

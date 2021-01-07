@@ -46,7 +46,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		//window.LOGIN_LAST_PATH = hashHistory.getCurrentLocation().pathname
 		//hashHistory.push('/login') //开发模式下不经过改跳转
 	} else if (res.code != 200) {
-		message.error(res.message)
+		// message.error(res.message)
 	}
 	//
 	return res

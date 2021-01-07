@@ -7,3 +7,13 @@ export const getMenu = (params = {}) => {
 	return http.fetchGet('/static/mock/getMenu_copy.json', params)
 	//return http.fetchGet('/sysResources/tree', params)
 }
+
+
+//测试
+export const getPost = (params = {}) => {
+	// params = Object.assign({sysid: 1}, params)
+	let paramss = {resourceName:'xxxxxx'}
+	//模拟接口，后续开发谨记替换
+	return http.fetchPost(`${params.url}`, paramss)
+	//return http.fetchGet('/sysResources/tree', paramss)
+}

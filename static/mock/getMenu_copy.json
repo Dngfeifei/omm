@@ -2,7 +2,7 @@
 	"resourcePath":200,
 	"data":[
 		{
-			"childList":"",
+			"children":"",
 			"resourcePath":"notice",
 			"icon":"notification",
 			"id":"224",
@@ -19,9 +19,9 @@
 			"url":"gonggao"
 		},
 		{
-			"childList":[
+			"children":[
 				{
-					"childList":"",
+					"children":"",
 					"resourcePath":"applymine",
 					"icon":"",
 					"id":"242",
@@ -38,7 +38,7 @@
 					"url":""
 				},
 				{
-					"childList":"",
+					"children":"",
 					"resourcePath":"applytodo",
 					"icon":"",
 					"id":"243",
@@ -55,7 +55,7 @@
 					"url":""
 				},
 				{
-					"childList":"",
+					"children":"",
 					"resourcePath":"applydone",
 					"icon":"",
 					"id":"244",

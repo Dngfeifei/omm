@@ -4,6 +4,7 @@ import { Layout, Menu, Icon, Badge } from 'antd'
 const { Sider } = Layout
 const { SubMenu } = Menu
 import { ADD_PANE, GET_MENU } from '/redux/action'
+import {getPost} from '@/api/global.js'
 
 
 @connect(state => ({
