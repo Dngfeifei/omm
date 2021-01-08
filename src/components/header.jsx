@@ -57,13 +57,13 @@ class DHeader extends Component {
             className="trigger"
             type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
             onClick={this.props.toggle} />
-        <Breadcrumb separator=">" style={{marginLeft: 25}}>
+        {/* <Breadcrumb separator=">" style={{marginLeft: 25}}>
             {
                 this.props.breadcrumb && this.props.breadcrumb.length && this.props.breadcrumb.map((item,index) => {
                     return <Breadcrumb.Item style={{fontWeight: 600}} key={index}>{item}</Breadcrumb.Item>
                 })
             }
-        </Breadcrumb>
+        </Breadcrumb> */}
         <div className="settingwrap">
             <img
                 src="/static/images/avatar.png"

@@ -43,14 +43,16 @@ module.exports = {
     rules: [{
       test: /\.(js|jsx)$/,
       use: [{
-        loader: "babel-loader",
-        options: {
-          plugins: [["import", {
-            "libraryName": "antd",
-            "libraryDirectory": "es",
-            "style": "css"
-          }]]
-        }
+        loader: "babel-loader" // options:{  //antd样式按需加载功能
+        //   plugins: [
+        //     ["import", {
+        //       "libraryName": "antd",
+        //       "libraryDirectory": "es",
+        //       "style": "css"
+        //     }]
+        //   ]
+        // }
+
       }],
       include: [resolve('src')]
     }, {

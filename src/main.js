@@ -6,6 +6,8 @@ import Promise from 'promise-polyfill'
 import Loadable from "react-loadable"
 import moment from 'moment'
 
+import '/assets/less/main.less' //加载全局样式
+
 // 推荐在入口文件全局设置 locale
 // import 'moment/locale/zh-cn'
 moment.locale('zh-cn')
@@ -18,8 +20,8 @@ import store from '/redux/store'
 
 // 登录前的path
 window.LOGIN_LAST_PATH = null
-import 'antd/dist/antd.css'
-import '/assets/less/main.less'
+
+
 //引入loading效果组件
 import Loading from '/components/loading.jsx'
 const Load = loader => Loadable({
