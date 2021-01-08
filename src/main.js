@@ -18,7 +18,7 @@ import store from '/redux/store'
 
 // 登录前的path
 window.LOGIN_LAST_PATH = null
-import '/assets/less/main.less'
+import 'antd/dist/antd.css'
 import '/assets/less/main.less'
 //引入loading效果组件
 import Loading from '/components/loading.jsx'

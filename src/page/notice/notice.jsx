@@ -46,6 +46,9 @@ class Demo extends React.Component {
 	onDragEnd = info =>{
 		console.log('onDrageEnd')
 	};
+	onDragOver = info =>{
+		console.log('onDrageOver')
+	}
 	onDrop = info => {
 		console.log('onDrageDrop')
 		const dropKey = info.node.props.eventKey;
@@ -127,6 +130,7 @@ class Demo extends React.Component {
 				draggable
 				blockNode
 				onDrop={this.onDrop}
+				onDragOver={this.onDragOver}
 				onDragEnd={this.onDragEnd}
 				treeData={this.state.gData}
 			>
