@@ -1,4 +1,4 @@
 export const InboxMap = {
-	notice: 'notice/notice.jsx',
+	notice: 'Dashbord/dashbord.jsx',
 	applymine: 'SystemManage/oragizePeo.jsx'
 }
