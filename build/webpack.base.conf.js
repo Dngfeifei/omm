@@ -43,7 +43,18 @@ module.exports = {
       {
         test: /\.(js|jsx)$/,
         use: [
-          {loader: "babel-loader"}
+          {
+            loader: "babel-loader",
+            options:{
+              plugins: [
+                ["import", {
+                  "libraryName": "antd",
+                  "libraryDirectory": "es",
+                  "style": "css"
+                }]
+              ]
+            }
+          }
         ],
         include: [resolve('src')]
       },
