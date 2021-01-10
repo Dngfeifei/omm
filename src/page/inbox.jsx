@@ -38,7 +38,7 @@ class Inbox extends Component{
 
 	render = _ => {
 		let TheComponent = this.state.TheComponent;
-		return TheComponent == null ? <div></div> : <div className='container-div' style={{background: '#fff',paddingBottom: '22px', minHeight: '600px'}}><TheComponent  params={this.state.params} /></div>
+		return TheComponent == null ? <div></div> : <div className='container-div'><TheComponent  params={this.state.params} /></div>
 	}
 }
 

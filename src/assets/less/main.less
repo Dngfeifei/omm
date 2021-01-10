@@ -1,7 +1,9 @@
 // @import '~antd/dist/antd.less';
 @import '~antd/dist/antd.css';
 @import '/assets/less/var.less';
-html, body {}
+html, body {
+
+}
 img{
   border: 0;
   display: block;
@@ -13,7 +15,17 @@ textarea{
 #root{
   height: 100%;
   .ant-layout-content{ flex: 1; }
-  .ant-tabs, .ant-tabs-content, .ant-tabs-tabpane{ height: 100%; }
+  .ant-tabs, .ant-tabs-tabpane{ height: 100%; }
+  .ant-tabs{
+    display: flex;
+    flex-direction: column;
+    .ant-tabs-content{
+      flex: auto;
+    }
+  }
+  .ant-tabs-no-animation > .ant-tabs-content > .ant-tabs-tabpane-inactive{
+    height: 0;
+  }
   .ant-tabs-bar{ margin: 2px 0 }
   .ant-layout-sider-children{ 
     overflow-y: auto; 
@@ -23,12 +35,8 @@ textarea{
   .wrapper{ height: 100%; }
 
   // .ant-table-wrapper{ min-width: 1000px; }//设置表格最小宽度
-  
   .ant-table-small > .ant-table-content > .ant-table-body {
     margin: 0;
-  }
-  .goodTabs, .goodTabs .ant-tabs-content, .goodTabs .ant-tabs-tabpane{
-      height: auto;
   }
 
   @import url('./components/loading');
@@ -77,9 +85,6 @@ textarea{
 }
 
 
-.depothistorymodal{
-  .ant-form-item{margin-bottom: 10px !important;}
-}
 
 .ant-advanced-search-form {
   padding: 24px;
@@ -126,20 +131,13 @@ textarea{
     margin-top: 30px;
   }
 }
+//TabContent 样式设置
 .container-div{
-  width: auto;
-  padding: 20px;
-  background: '#fff';
-  position: absolute;
-  top: 31px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
+  height: 100%;
+  padding: 0 15px 10px 5px;
+  // background-color: #d9d9d9;
   overflow: hidden;
   overflow-y: auto;
-}
-.tab-page{
-  min-height: 600px;
 }
 
 .ant-list-item-action{
@@ -147,6 +145,7 @@ textarea{
   float: right;
 }
 
+//导航节点样式
 .ant-menu{
     i{
       font-size: 16px !important;
@@ -154,9 +153,10 @@ textarea{
 }
 .ant-menu-inline-collapsed{
   i{
-    font-size: 18px !important;
+    font-size: 17px !important;
   }
 }
+//导航节点样式
 .ant-table-selection-column{
   width: 40px;
 }
@@ -183,7 +183,7 @@ textarea{
   background: #364d79;
   overflow: hidden;
 }
-
+//设置样式为100%的类名
 .main_height{
   height: 100%;
 }

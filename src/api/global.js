@@ -8,7 +8,7 @@ export const getMenu = (params = {}) => {
 	//return http.fetchGet('/sysResources/tree', params)
 }
 
-
+export const comObj = {};
 //测试
 export const getPost = (params = {}) => {
 	// params = Object.assign({sysid: 1}, params)

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Tree } from 'antd';
-
+import {comObj} from '@/api/global'
 const { TreeNode } = Tree;
 
 const x = 3;
@@ -36,7 +36,10 @@ class Demo extends React.Component {
 		gData,
 		expandedKeys: ['0-0', '0-0-0', '0-0-0-0'],
 	};
-
+	constructor (props) {
+		super(props)
+		console.log(comObj);
+	}
 	onDragEnter = info => {
 		// expandedKeys 需要受控时设置
 		// this.setState({

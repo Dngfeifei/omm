@@ -261,10 +261,11 @@ class systempeo extends Component {
     };
     //拖拽结束时执行
     onDragEnd = info => {
-         alert(1)
+         console.log('onDragEnd')
     }
     //拖拽tree，判断为哪个位置
     onDrop = info => {
+        console.log('onDrop')
         const dropKey = info.node.props.eventKey;
         const dragKey = info.dragNode.props.eventKey;
         const dropPos = info.node.props.pos.split('-');
@@ -427,36 +428,37 @@ class systempeo extends Component {
             selectedRowKeys,
             onChange: this.onSelectChange
         };
-        return <div style={{ border: '1px solid red' }} className="main_height">
-            <Row className="main_height">
-                <Col span={6} className="main_height" style={{ backgroundColor: '#eee' }}>
-                    <Col style={{ textAlign: 'center' }}>
+        return <div style={{ border: '0px solid red' }} className="main_height">
+            <Row className="main_height" gutter={24}>
+                <Col span={6} className="gutter-row main_height" style={{ backgroundColor: 'white' }}>
+                    <div style={{ height:'60px',display: 'flex',justifyContent: 'space-around',alignItems: 'center'}}>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.add}>新增</Button>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.edit}>修改</Button>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deleteT}>删除</Button>
-                    </Col>
+                    </div>
                     <Tree
                         className="draggable-tree"
                         draggable
                         blockNode
+                        defaultExpandAll={true}
                         onDragEnter={this.onDragEnter}
-                        onMouseDown={this.onDragEnd}
+                        onDragEnd={this.onDragEnd}
                         onDrop={this.onDrop}
                         treeData={this.state.treeData}
                     />
                 </Col>
-                <Col span={18} className="main_height">
-                    <Form style={{ width: '100%' }}>
+                <Col span={18} className="gutter-row main_height" style={{padding: '0 10px 0', backgroundColor:'white'}}>
+                    <Form style={{ width: '100%',paddingTop:'10px' }}>
                         <Row gutter={24}>
                             {this.state.rules.map((val, index) =>
                                 <Col key={index} span={8} style={{ display: 'block' }}>
                                     <FormItem
-                                        label={val.label} labelCol={{ span: 4 }}>
+                                        label={val.label} labelCol={{ span: 4 }} style={{marginBottom:'8px'}}>
                                         {getFieldDecorator(val.key, val.option)(val.render())}
                                     </FormItem>
                                 </Col>)}
                         </Row>
-                        <Row style={{ marginTop: '10px' }}>
+                        <Row>
                             <Button type="primary" style={{ marginLeft: '10px' }}>查询</Button>
                             <Button type="info" style={{ marginLeft: '10px' }}>清空</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>
