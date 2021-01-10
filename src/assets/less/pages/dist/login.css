@@ -1,0 +1,43 @@
+.loginWrapper {
+  width: 100%;
+  height: 100%;
+  /* background: #dfdfdf; */
+  background-image: url('/static/images/backimg.jpg');
+  background-position: center center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  width: 100vw;
+  height: 100vh;
+}
+.loginWrapper .login-mask {
+  height: 100%;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loginWrapper .loginContent {
+  width: 300px;
+  height: 380px;
+  background: #fff;
+  opacity: 0.9;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+}
+.loginWrapper .loginContent img {
+  margin: 0 60px;
+  /* height:59px; */
+  width: 114px;
+}
+.loginWrapper .loginContent .logintitle {
+  margin-top: 20px;
+  padding: 0 0 25px 60px;
+  font-weight: bold;
+  font-size: 20px;
+}
+.loginWrapper .loginContent button {
+  background-color: #0182b7;
+}

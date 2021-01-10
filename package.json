@@ -1,7 +1,7 @@
 {
   "name": "erp",
   "version": "1.0.0",
-  "description": "bidmis",
+  "description": "trustfar-omm-web",
   "private": true,
   "main": "index.js",
   "scripts": {
