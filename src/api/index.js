@@ -20,13 +20,12 @@ const handleRequest = (url, method, body = {}, json = false) => {
 		method,
 		headers: new Headers(header)
 	}
-	if (method == 'POST') {
+	if (method == 'POST' || method == 'PUT') {
 		req = Object.assign({
 			body: json ? JSON.stringify(body) : body,
 			bodyUsed: true
 		}, req)
 	}
-
 	// let wholeUrl = `${process.env.API_URL}${url}`
 	let wholeUrl = url
 
@@ -64,7 +63,7 @@ const handleTimeout = (url, type, body = {}, json = false, times = 100000) => Pr
 	}),
 	fetch(handleRequest(url, type, body, json))
 ])
-
+//get获取数据格式化参数方法
 const handleParams = (params, s = '') => {
 	let str = ''
 	let timestamp = 'timestamp='+Date.parse( new Date() ).toString()
@@ -78,7 +77,12 @@ const handleParams = (params, s = '') => {
 	}
 	return encodeURI(str)
 }
-
+//删除方法单个或批量操作格式化参数方法
+const handleDeleteParams = (params =[],s ='') => {
+	let str = '';
+	str = params && params.length && s + params.join(",");
+	return encodeURI(str)
+}
 const handleURL = url => {
 	if (process.env.NODE_ENV == 'production') {
 		url = `/xpro${url}`
@@ -91,12 +95,20 @@ export default {
 	tools: {
 		handleParams, handleURL
 	},
-	fetchGet (url, params = {}, times = 100000) {
+	fetchGet (url, params = {}, times = 100000) { //get接口调用
 		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, times)
 		.then(handleResponse)
 	},
-	fetchPost (url, params = {}, json = false, times = 100000) {
+	fetchPost (url, params = {}, json = false, times = 100000) {//post接口调用
 		return handleTimeout(url, 'POST', json ? params : handleParams(params), json, times)
+		.then(handleResponse)
+	},
+	fetchDelete (url, params = {}, json = false, times = 100000) {//put接口调用
+		return handleTimeout(`${url}${handleDeleteParams(params, '/')}`, 'DELETE', null, null, times)
+		.then(handleResponse)
+	},
+	fetchPut (url, params = {}, json = false, times = 100000) {
+		return handleTimeout(url, 'PUT', json ? params : handleParams(params), json, times)
 		.then(handleResponse)
 	},
 	fetchBlob (url, params = {}) {
