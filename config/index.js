@@ -3,10 +3,10 @@ var path = require('path')
 var merge = require('webpack-merge')
 var buildconfig = {
   env: require('./prod.env'),
-  index: path.resolve(__dirname, '../dist/index.html'),
-  assetsRoot: path.resolve(__dirname, '../dist'),
+  index: path.resolve(__dirname, '../omsweb/index.html'),
+  assetsRoot: path.resolve(__dirname, '../omsweb'),//path.resolve(__dirname, '../dist'),
   assetsSubDirectory: 'static',
-  assetsPublicPath: '/',
+  assetsPublicPath: './',
   productionSourceMap: false,
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
