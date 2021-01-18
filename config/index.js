@@ -21,20 +21,14 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-
-//var target = {target: 'http://www.xiaochuioa.com/xpro'}
-
-//var target = {target: 'http://192.168.1.123:8090'}
-var target = {target: 'http://10.0.16.120:8090'}
-
-// var file_target = {target: 'http://39.105.123.72:8340'}
+var target = {target: 'http://10.0.16.120:8111'}
 var file_target = {target: 'http://140.143.131.186:80'}
 
 module.exports = {
   build: buildconfig,
   dev: {
     env: require('./dev.env'),
-    port: 8881,
+    port: 8111,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
@@ -42,9 +36,14 @@ module.exports = {
       '/menu': target,
       '/notice': target,
       '/dict': target,
-      '/sysResources': target,
       '/sysDicts':target,
-      '/sysResources':target
+      '/sysResources':target,//资源
+      '/sysUser' : target,//用户
+      '/organization' : target,//机构
+      '/securityRoleCategories' : target,//角色组
+      '/securityRoles' : target,//角色
+      '/auth' : target,//登录
+      '/sysPositions' : target,//岗位
       
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
