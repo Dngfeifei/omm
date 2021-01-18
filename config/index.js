@@ -33,10 +33,6 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
-      '/menu': target,
-      '/notice': target,
-      '/dict': target,
-      '/sysDicts':target,
       '/sysResources':target,//资源
       '/sysUser' : target,//用户
       '/organization' : target,//机构
