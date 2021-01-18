@@ -30,7 +30,7 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	let wholeUrl = url
 
 	if (process.env.NODE_ENV == 'production') {
-		wholeUrl = `/xpro${url}`
+		wholeUrl = `${url}`
 	}
 
 	return new Request(wholeUrl, req)

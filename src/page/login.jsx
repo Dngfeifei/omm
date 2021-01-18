@@ -3,7 +3,6 @@ import { Input, Button, Form, message, Modal } from 'antd'
 const FormItem = Form.Item
 import { login, getaccountemail, sendemail } from '/api/login'
 import { hashHistory } from 'react-router'
-
 class Login extends Component {
 
 	state = {
@@ -66,10 +65,10 @@ class Login extends Component {
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
 
-		return <div className='loginWrapper'>
+		return <div className='loginWrapper' style={{backgroundImage: "url('./static/images/backimg.jpg')" }}>
 		<div className="login-mask">
 			<div className='loginContent'>
-			  <img src='/static/images/logo.png' />
+			  <img src='./static/images/logo.png' />
 				<span className='logintitle'>业务支持平台</span>
 				<FormItem>
 					{getFieldDecorator('userName', {

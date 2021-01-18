@@ -66,7 +66,7 @@ class DHeader extends Component {
         </Breadcrumb> */}
         <div className="settingwrap">
             <img
-                src="/static/images/avatar.png"
+                src="static/images/avatar.png"
                 className="avatar" />
             <span style={{ marginRight: 15 }}>欢迎，{this.state.username || '管理员'}</span>
             <Dropdown

@@ -1,6 +1,7 @@
 var path = require('path')
 var config = require('../config')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
+const { publicDecrypt } = require('crypto')
 
 exports.assetsPath = function (_path) {
   var assetsSubDirectory = process.env.NODE_ENV === 'production'
@@ -37,7 +38,8 @@ exports.cssLoaders = function (options) {
     if (options.extract) {
       return ExtractTextPlugin.extract({
         use: loaders,
-        fallback: 'style-loader'
+        fallback: 'style-loader',
+        // publicPath:'../../'
       })
     } else {
       return ['style-loader'].concat(loaders)

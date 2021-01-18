@@ -5,9 +5,9 @@ var buildconfig = {
   env: require('./prod.env'),
   index: path.resolve(__dirname, '../omsweb/index.html'),
   assetsRoot: path.resolve(__dirname, '../omsweb'),//path.resolve(__dirname, '../dist'),
-  assetsSubDirectory: 'static',
-  assetsPublicPath: './',
-  productionSourceMap: false,
+  assetsSubDirectory: 'static',//静态资源目录名
+  assetsPublicPath: './', //入口文件引用静态资源的路径配置
+  productionSourceMap: true,  //设置成false 可以加密源码，但是无法准确定位输出错误找到错误位置
     // Gzip off by default as many popular static hosts such as
     // Surge or Netlify already gzip all static assets for you.
     // Before setting to `true`, make sure to:
