@@ -20,8 +20,7 @@ class Login extends Component {
 			this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
 				if (!err || !Object.getOwnPropertyNames(err).length) {
 					let params = Object.assign({}, val)
-					login(params)
-					.then(async res => {
+					login(params).then(async res => {
 						await this.setState({lock: false})
 						if (res.code == 200) {
 							message.success('登录成功')
