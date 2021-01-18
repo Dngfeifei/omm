@@ -30,7 +30,7 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	let wholeUrl = url
 
 	if (process.env.NODE_ENV == 'production') {
-		wholeUrl = `${url}`
+		wholeUrl = `${process.env.API_URL}${url}`
 	}
 
 	return new Request(wholeUrl, req)
@@ -43,7 +43,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 	if (res.code == 700) {
 		//message.warning('请先登录')
 		//window.LOGIN_LAST_PATH = hashHistory.getCurrentLocation().pathname
-		//hashHistory.push('/login') //开发模式下不经过改跳转
+		hashHistory.push('/login') //开发模式下不经过改跳转
 	} else if (res.code != 200) {
 		// message.error(res.message)
 	}
