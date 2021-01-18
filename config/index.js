@@ -24,6 +24,17 @@ var buildconfig = {
 var target = {target: 'http://10.0.16.120:8111'}
 var file_target = {target: 'http://140.143.131.186:80'}
 
+
+// 后端shh本地地址
+var apiTarget = {target:'http://10.0.16.167:8090'}
+
+// 后端ces本地地址
+var apiTargetC =  {target: 'http://10.0.16.120:8111'}
+
+
+
+
+
 module.exports = {
   build: buildconfig,
   dev: {
@@ -33,6 +44,16 @@ module.exports = {
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
     proxyTable: {
+      '/menu': target,
+      '/notice': target,
+      '/dict': target,
+      '/sysDicts':target,
+
+      '/auth': apiTarget,// shh本地登录接口
+      '/paramCategories':apiTarget,  // 系统参数--左侧节点树所有接口
+      '/sysParam':apiTarget,  // 系统参数--右侧表格所有接口
+
+      '/securityRoleCategories':apiTarget,
       '/sysResources':target,//资源
       '/sysUser' : target,//用户
       '/organization' : target,//机构
@@ -40,7 +61,6 @@ module.exports = {
       '/securityRoles' : target,//角色
       '/auth' : target,//登录
       '/sysPositions' : target,//岗位
-      
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

@@ -445,6 +445,7 @@ class systempeo extends Component {
                         onDragEnd={this.onDragEnd}
                         onDrop={this.onDrop}
                         treeData={this.state.treeData}
+                        onSelect={this.onSelect}
                     />
                 </Col>
                 <Col span={18} className="gutter-row main_height" style={{padding: '0 10px 0', backgroundColor:'white'}}>

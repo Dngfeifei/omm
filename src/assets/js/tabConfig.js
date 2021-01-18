@@ -1,5 +1,8 @@
 export const InboxMap = {
-	notice: 'notice/notice.jsx',
+	notice: 'Dashbord/dashbord.jsx',
+	applymine: 'SystemManage/oragizePeo.jsx',
+	LogBook:'LogBook/logBook.jsx',  // 系统管理---操作日志
+	parameter:'Parameter/parameter.jsx',   // 系统管理--系统参数
 	applymine: 'SystemManage/oragizePeo.jsx',
 
 	//人员管理
