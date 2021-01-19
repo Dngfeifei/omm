@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Input, Button, Form, message, Modal } from 'antd'
+import {Row, Input, Button, Form, message, Modal, Icon, Checkbox } from 'antd'
 const FormItem = Form.Item
 import { login, getaccountemail, sendemail } from '/api/login'
 import { hashHistory } from 'react-router'
@@ -67,26 +67,50 @@ class Login extends Component {
 		return <div className='loginWrapper' style={{backgroundImage: "url('./static/images/backimg.jpg')" }}>
 		<div className="login-mask">
 			<div className='loginContent'>
-			  <img src='./static/images/logo.png' />
-				<span className='logintitle'>业务支持平台</span>
+				  {/* <img src='/static/images/logo.png' /> */}
+				<div style={{marginBottom: '25px'}}>
+					<img src="/static/images/userLog.png" alt=""/>
+					<span className='logintitle'>欢迎登陆</span>
+				</div>
+				
 				<FormItem>
 					{getFieldDecorator('userName', {
 						rules: [{
 					        required: true, message: '用户名不能为空!',
 					    }]
-				    })(<Input type='text'/>)}
+				    })(
+						<Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="请输入用户名"
+					  />,
+					)}
 				</FormItem>
-				<FormItem style={{marginBottom: '6px'}}>
+				<FormItem>
 					{getFieldDecorator('password', {
 						rules: [{
 					        required: true, message: '密码不能为空!',
 					    }]
-				    })(<Input type='password'/>)}
+				    })(
+						<Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="请输入密码"
+						/>,
+					)}
 				</FormItem>
-				<a onClick={this.forgetPwd} style={{display: 'block', width: '50px', margin: '4px 0px 6px 200px',fontSize: '12px'}}>忘记密码</a>
-				<Button 
-				onClick={this.submit}
-				type='primary'>登录</Button>
+				{/* <FormItem style={{marginBottom: '6px'}}>
+					<Row style={{ display: 'flex' }}>
+						{getFieldDecorator('remember', {
+							valuePropName: 'checked',
+							initialValue: true,
+						})(
+							<Input prefix={<Icon type="safety-certificate" style={{ color: 'rgba(0,0,0,.25)' }} />} type="text" placeholder="验证码" className="code-input" />,
+							
+						)}
+						<div className="identify_box">
+							<span>2237</span>
+						</div>
+					</Row>
+					
+				</FormItem> */}
+
+				<a onClick={this.forgetPwd} style={{display: 'block', margin: '4px 0px 16px 190px',fontSize: '12px'}}>忘记密码?</a>
+				<Button  onClick={this.submit} type='primary' className="login-form-button">登录</Button>
 			</div>
 		</div>
 		<Modal title="找回密码"

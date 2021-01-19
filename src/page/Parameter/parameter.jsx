@@ -289,35 +289,27 @@ class Parameter extends Component {
 
 
 
-
-
-
-    
-
-    //拖拽tree，判断为哪个位置
+    //拖拽左侧--系统类别节点树
     onDrop = info => {
-        console.log('onDrop')
         const dropKey = info.node.props.eventKey;
         const dragKey = info.dragNode.props.eventKey;
         const dropPos = info.node.props.pos.split('-');
         const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
         const loop = (data, key, callback) => {
-            data.forEach((item, index, arr) => {
-
-                if (item.key === key) {
-
-                    return callback(item, index, arr);
+            for (let i = 0; i < data.length; i++) {
+                if (data[i].key === key) {
+                    return callback(data[i], i, data);
                 }
-                if (item.children) {
-                    return loop(item.children, key, callback);
+                if (data[i].children) {
+                    loop(data[i].children, key, callback);
                 }
-            });
+            }
         };
         const data = [...this.state.treeData];
 
         // Find dragObject
-        let dragObj;
+        let dragObj, pid;
         loop(data, dragKey, (item, index, arr) => {
             arr.splice(index, 1);
             dragObj = item;
@@ -327,8 +319,9 @@ class Parameter extends Component {
             // Drop on the content
             loop(data, dropKey, item => {
                 item.children = item.children || [];
-                // where to insert 示例添加到尾部，可以是随意位置
-                item.children.push(dragObj);
+                // where to insert 示例添加到头部，可以是随意位置
+                item.children.unshift(dragObj);
+                pid = item.id;
             });
         } else if (
             (info.node.props.children || []).length > 0 && // Has children
@@ -339,6 +332,9 @@ class Parameter extends Component {
                 item.children = item.children || [];
                 // where to insert 示例添加到头部，可以是随意位置
                 item.children.unshift(dragObj);
+                pid = item.id;
+                // in previous version, we use item.children.push(dragObj) to insert the
+                // item to the tail of the children
             });
         } else {
             let ar;
@@ -349,16 +345,45 @@ class Parameter extends Component {
             });
             if (dropPosition === -1) {
                 ar.splice(i, 0, dragObj);
+                pid = ar[ar.length - 1].parentId;
             } else {
                 ar.splice(i + 1, 0, dragObj);
+                pid = ar[0].parentId;
             }
         }
+        // this.setState({
+        // 	treeData: data,
+        // });
 
-        this.setState({
-            treeData: data,
+
+        //发起拖拽变更请求
+        let _this = this
+        confirm({
+            content: '您是否要进行拖拽？',
+            onOk() {
+                _this.treeNodeChange({
+                    id: dragObj.id,
+                    parentId: pid
+                })
+            },
         });
-    };
 
+    };
+    // 拖拽节点变更
+	treeNodeChange = async (dropParams) => {
+		if (dropParams.hasOwnProperty("id") && dropParams.hasOwnProperty("parentId")) {
+            updateTree(dropParams).then(res => {
+                if (res.success == 1) {
+                    this.init()
+                } else {
+                    message.error(res.message)
+                }
+            })
+		}
+	}
+
+
+    // 展开/收起节点时触发
     onExpand = (expandedKeys) => {
         this.setState({
             expandedKeys,
@@ -472,7 +497,6 @@ class Parameter extends Component {
     }
 
     handleChange=()=>{
-        console.log('handleChange')
          // 获取系统参数列表
          this.getTableList(this.state.form)
     }

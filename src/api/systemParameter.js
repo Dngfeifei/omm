@@ -58,3 +58,16 @@ export const deleteSysList = (params = {}) => {
 export const deleteBatchSysList = (params = {}) => {
 	return http.fetchGet('/sysParam/deleteBatch', params)
 }
+
+
+// 操作日志--模块
+
+// 获取日志列表（分页）
+export const getSysLog = (limit,offset,params = {}) => {
+	return http.fetchPost(`/sysLog/getList?limit=${limit}&offset=${offset}`, params,true)
+}
+
+// 查询数据字典项
+export const getByCode = (params = {}) => {
+	return http.fetchGet('/sysDictItems/getByCode', params)
+}

@@ -35,6 +35,17 @@ var apiTargetC =  {target: 'http://10.0.16.120:8111'}
 
 
 
+
+// 后端shh本地地址
+var apiTarget = {target:'http://10.0.16.205:8090'}
+
+// 后端ces本地地址
+var apiTargetC =  {target: 'http://10.0.16.120:8111'}
+
+
+
+
+
 module.exports = {
   build: buildconfig,
   dev: {

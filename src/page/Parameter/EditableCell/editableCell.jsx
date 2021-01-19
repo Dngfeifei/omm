@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Form, Input, Modal, message, Select, Button, Row} from 'antd';
+import { Table, Form, Input, Modal, message, Select, Button, Row, Popconfirm } from 'antd';
 
 const { confirm } = Modal;
 
@@ -12,13 +12,13 @@ const { Provider, Consumer } = React.createContext()//组件之间传值
 import './index.css'
 
 // 引入 API接口
-import { addSysList, deleteSysList ,} from '/api/systemParameter'
+import { addSysList, deleteSysList ,updateSysList } from '/api/systemParameter'
 
 
 class EditableCell extends React.Component {
     renderCell = ({ getFieldDecorator }) => {
         const {
-            editing, dataIndex, title, Inputs, record, index, children,
+            editing, dataIndex,initValue, title, Inputs, record, index, children,
             ...restProps
         } = this.props;
 
@@ -33,7 +33,7 @@ class EditableCell extends React.Component {
                                     required: true,
                                     message: `请输入 ${title}!`
                                 }],
-                                initialValue: record[dataIndex],
+                                initialValue:(record[dataIndex]).toString()
                             })(
                                 <Select style={{ width: 120 }}>
                                     <Option value="0">禁用</Option>
@@ -71,6 +71,7 @@ class TableRow extends React.Component {
             data: [],
             count:0,
             parameterCategoryId:null,   //参数类型ID
+            editLock:false,  //用于判断还是新增
         }
     }
 
@@ -102,25 +103,26 @@ class TableRow extends React.Component {
         const { count, data } = this.state;
         const newData = {
             key: count,
+            id:count,
             paramterName: ``,
             status: '1',
             parameterValue:"",
             description: ``,
-            operation: ""
+            operation: "",
         };
         
         this.setState({
             data: [...data, newData],
             count: count + 1,
-
-            editingKey: newData.key //将当前新增的数据进行新增填写
+            editingKey: newData.id //将当前新增的数据进行新增填写
         });
 
     };
 
 
     //判断是否可编辑
-    isEditing = record => record.key == this.state.editingKey
+    isEditing = record => record.id == this.state.editingKey
+    
 
     //是否展示编辑
     editable = (editable, editingKey, record) => {
@@ -129,85 +131,102 @@ class TableRow extends React.Component {
                 <Consumer>
                     {
                         form => (
-                            <a onClick={() => this.save(form, record.key)} style={{ marginRight: 8 }}>
+                            <a onClick={() => this.save(form,record.id)} style={{ marginRight: 8 }}>
                                 保存
                             </a>
                         )
                     }
                 </Consumer>
-                <a onClick={() => this.cancel()}>取消</a>
+                <Popconfirm title="是否取消修改?" onConfirm={() => this.cancel(record.id)}>
+                    <a>取消</a>
+                </Popconfirm>
             </span>
         ) : (
             <div>
-                <a disabled={editingKey !== ''} onClick={() => this.edit(record.key)} style={{marginRight: '15px'}}>
-                    修改
-                </a>
-                <a disabled={editingKey !== ''} onClick={() => this.delete(record.key)}>
-                    删除
-                </a>
+                <a disabled={editingKey !== ''} onClick={() => this.edit(record.id)} style={{ marginRight: '15px' }}>修改</a>
+                <a disabled={editingKey !== ''} onClick={() => this.delete(record.id)}>删除</a>
             </div>
         );
         return ele
     }
 
     //编辑
-    edit = (key) => {
+    edit = (id) => {
         this.setState({
-            editingKey: key
+            editingKey: id,
+            editLock:true
+        })
+
+    }
+     
+    // 删除
+    delete = (key) => {
+        deleteSysList({ id: key }).then(res => {
+            if (res.success == 1) {
+                //  获取系统参数列表
+                this.props.handleChange();
+            } else if (res.success == 0) {
+                message.error(res.message);
+            }
         })
     }
 
-    // 删除
-    delete = (key) => {
-        console.log(key)
-       console.log('***************       删除一条数据数据      *****************')
-    //    deleteSysList().then(res=>{
-
-    //    })
-    }
-
     //保存
-    save = (form, key) => {
-        
+    save = (form,id) => {
         form.validateFields((error, row) => {
             if (error) {
                 return
             }
 
-            let object2 =JSON.parse( JSON.stringify(row));
+            var params =JSON.parse( JSON.stringify(row));
             
-            object2.parameterCategoryId = this.state.parameterCategoryId;
+            params.parameterCategoryId = this.state.parameterCategoryId;
             
-            addSysList(object2).then(res=>{
-                if (res.success == 1) {
-                    message.success(res.message);
-                    this.setState({ editingKey: '' });
-                    //  获取系统参数类型树
-                    this.props.handleChange();
-                }else if (res.success == 0){
-                    message.error(res.message);
-                }
-            })
-           
+            if (this.state.editLock) {
+                params.id = id;
+                
+                updateSysList(params).then(res=>{
+                    if (res.success == 1) {
+                        
+                        this.setState({ editingKey: '' });
+                        //  获取系统参数列表
+                        this.props.handleChange();
+                    }else if (res.success == 0){
+                        message.error(res.message);
+                    }
+                })
+            }else {
+                addSysList(params).then(res=>{
+                    if (res.success == 1) {
+                        
+                        this.setState({ editingKey: '' });
+                        //  获取系统参数列表
+                        this.props.handleChange();
+                    }else if (res.success == 0){
+                        message.error(res.message);
+                    }
+                })
+            }
         })
     }
 
     //取消
-    cancel = () => {
-        confirm({
-            title: '是否确定取消?',
-            onOk() {
-                console.log('*************      确定取消    ****************')
-                this.setState({
-                    editingKey: ''
-                })
-            },
-            onCancel() {
-                this.setState({
-                    editingKey: ''
-                })
-            },
-        });
+    cancel = (key) => {
+        // 判断  若是【新增】的取消功能，则刚刚新增数据删除；若是【修改】的取消功能 则是取消修改
+        if (this.state.editLock) {   // 修改
+            this.setState({
+                editingKey: '',
+                editLock:false
+            })
+        }else {  // 新增
+            const dataSource = [...this.state.data];
+            this.setState({ 
+                data: dataSource.filter(item => item.key !== key) ,
+                editingKey: '',
+                editLock:false
+            });
+        }
+       
     }
 
     // 初始化
@@ -251,6 +270,7 @@ class TableRow extends React.Component {
                 title: '操作',
                 dataIndex: 'operation',
                 render: (text, record, index) => {
+                    console.log(record)
                     const { editingKey } = this.state;
                     const editable = this.isEditing(record);
                     return <div>
@@ -326,7 +346,7 @@ class TableRow extends React.Component {
                         columns={columns}
                         rowClassName="editable-row"
                         pagination={false}
-                        style={{ marginTop: '16px', minHeight: '738px', overflowY: 'auto' }}
+                        style={{ marginTop: '16px', minHeight: '738px', overflowY: 'auto',height:'calc(100vh - 230px)' }}
                     />
                 </Provider >
             </div>

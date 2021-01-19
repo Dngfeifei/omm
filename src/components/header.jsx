@@ -26,9 +26,11 @@ class DHeader extends Component {
     }
 
     quit = _ => {
-        localStorage.setItem('token', '')
-        localStorage.setItem('userid', '')
-        localStorage.setItem('username', '')
+        // localStorage.setItem('token', '')
+        // localStorage.setItem('userid', '')
+        // localStorage.setItem('username', '')
+        // 清除缓存
+        localStorage.clear();
         this.props.reset()
         hashHistory.replace('/login')
     }

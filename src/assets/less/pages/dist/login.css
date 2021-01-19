@@ -2,7 +2,6 @@
   width: 100%;
   height: 100%;
   /* background: #dfdfdf; */
-  background-image: url('/static/images/backimg.jpg');
   background-position: center center;
   background-size: cover;
   background-repeat: no-repeat;
@@ -15,7 +14,7 @@
   background: rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
 }
 .loginWrapper .loginContent {
   width: 300px;
@@ -26,18 +25,35 @@
   display: flex;
   flex-direction: column;
   padding: 25px;
+  margin-right: 15vw;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12), 0 0 6px rgba(0, 0, 0, 0.04);
 }
 .loginWrapper .loginContent img {
-  margin: 0 60px;
-  /* height:59px; */
-  width: 114px;
+  display: inline-block;
+  width: 55px;
+  height: 55px;
+  margin-left: 40px;
 }
 .loginWrapper .loginContent .logintitle {
-  margin-top: 20px;
-  padding: 0 0 25px 60px;
+  margin-top: 5px;
+  padding: 0 0 25px 10px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 26px;
+  color: #353535;
+  position: absolute;
 }
 .loginWrapper .loginContent button {
-  background-color: #0182b7;
+  background-color: #5489e7;
+  font-size: 16px;
+}
+.loginWrapper .loginContent .code-input {
+  margin-right: 10px;
+}
+.loginWrapper .loginContent .identify_box {
+  font-size: 22px;
+  color: #555555;
+  height: 30px;
+  width: 80px;
+  line-height: 30px;
+  cursor: pointer;
 }
