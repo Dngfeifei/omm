@@ -116,7 +116,17 @@ export default {
 				message.error('没有找到对应的资料')
 				return null;
 			}else{
-		  	return response.blob();
+				 let filename = decodeURI(response.headers.get('Content-Disposition').split('filename=')[1]);
+				 response.arrayBuffer().then(response => {
+					let blobObj = new Blob([response], {type: "application/vnd.ms-excel"});
+	                let url = window.URL.createObjectURL(blobObj);
+	                var a = document.createElement("a");
+	                document.body.appendChild(a);
+	                a.href = url;
+	                a.download = decodeURI(filename);
+	                a.click();
+	                document.body.removeChild(a);
+				 });
 			}
 		})
 	},
@@ -126,7 +136,17 @@ export default {
 				message.error('没有找到对应的资料')
 				return null;
 			}else{
-		  	return response.blob();
+				let filename = decodeURI(response.headers.get('Content-Disposition').split('filename=')[1]);
+				response.arrayBuffer().then(response => {
+				   let blobObj = new Blob([response], {type: "application/vnd.ms-excel"});
+                   let url = window.URL.createObjectURL(blobObj);
+                   var a = document.createElement("a");
+                   document.body.appendChild(a);
+                   a.href = url;
+                   a.download = decodeURI(filename);
+                   a.click();
+                   document.body.removeChild(a);
+				});
 			}
 		})
 	}
