@@ -52,7 +52,7 @@ class Login extends Component {
 					
 					login(params).then(async res => {
 						await this.setState({lock: false})
-						if (res.code == 200) {
+						if (res.status == 200) {
 							message.success('登录成功')
 							let user = res.data
 							await localStorage.setItem('token', user.token)
@@ -60,6 +60,7 @@ class Login extends Component {
 							await localStorage.setItem('username', user.userName)
 
 							// 判断此用户是否是首次登陆  true-是，false-否
+							
 							if (user.firstLogin) {
 								// 跳转到【首次修改密码】页面  
 								hashHistory.push('/ChangePassForm')
