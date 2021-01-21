@@ -42,7 +42,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 .then(res => {
 	if (res.code == 700) {
 		message.warning('请先登录')
-		// hashHistory.push('/login') //开发模式下不经过改跳转
+		hashHistory.push('/login') //开发模式下不经过改跳转
 	} else if (res.code != 200) {
 		// message.error(res.message)
 	}
@@ -102,15 +102,15 @@ export default {
 		return handleTimeout(url, 'POST', json ? params : handleParams(params), json, times)
 		.then(handleResponse)
 	},
-	fetchDelete (url, params = {}, json = false, times = 100000) {//put接口调用
+	fetchDelete (url, params = {}, json = false, times = 100000) {//Delet接口
 		return handleTimeout(`${url}${handleDeleteParams(params, '/')}`, 'DELETE', null, null, times)
 		.then(handleResponse)
 	},
-	fetchPut (url, params = {}, json = false, times = 100000) {
+	fetchPut (url, params = {}, json = false, times = 100000) {//put接口
 		return handleTimeout(url, 'PUT', json ? params : handleParams(params), json, times)
 		.then(handleResponse)
 	},
-	fetchBlob (url, params = {}) {
+	fetchBlob (url, params = {}) {//get下载接口
 		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, 900000).then(function(response) {
 			if(response.status == 901){
 				message.error('没有找到对应的资料')
@@ -130,7 +130,7 @@ export default {
 			}
 		})
 	},
-	fetchBlobPost (url, params = {}) {
+	fetchBlobPost (url, params = {}) {//post下载接口
 		return handleTimeout(url, 'POST', params, true, 900000).then(function(response) {
 			if(response.status == 901){
 				message.error('没有找到对应的资料')
