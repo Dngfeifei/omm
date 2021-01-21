@@ -1,13 +1,10 @@
 import React, { Component } from 'react'
-import qs from 'qs';
 import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Card } from 'antd'
 const { Option } = Select;
 import { GetRoleTree, AddRoleGroup, EditRoleGroup, DelRoleGroup, GetRole, AddRole, EditRole, DelRole, GetResourceTree } from '/api/role.js'
 import Pagination from '/components/pagination'
-const TreeNode = Tree.TreeNode
-const FormItem = Form.Item
-const ButtonGroup = Button.Group
 const { confirm } = Modal;
+const FormItem = Form.Item
 const assignment = (data) => {
     data.forEach((list, i) => {
         list.key = list.id;
@@ -46,6 +43,18 @@ class role extends Component {
             })
     }
     state = {
+        // 分页参数
+        pageConf: {
+            limit: 10,
+            offset: 0
+        },
+        // 分页配置
+        pagination: {
+            pageSize: 10,
+            current: 1,
+            total: 0,
+        },
+        // 分页配置
         // 请求加锁 防止多次请求
         lock: false,
         //左侧角色树相关数据
@@ -133,9 +142,6 @@ class role extends Component {
         //右侧查询表单参数
         searchRoleName: null,
         searchListID: null,
-        pageSize: 10,
-        pageIndex: 1,
-        total: 0,
         //当前选中角色数据
         currentRole: {
             id: null,
@@ -161,6 +167,7 @@ class role extends Component {
                     this.setState({
                         tree: { treeData: res.data }
                     })
+                    this.searchRoleFun(res.data[0].id)
                 }
             })
     }
@@ -208,7 +215,7 @@ class role extends Component {
         //2 获取选中项  发起删除请求  
         let params = this.state.newRoleGroup.treeSelect;//参数 id和角色组名称
         let _this = this
-        DelRoleGroup([params]).then(res => {
+        DelRoleGroup({ id: params }).then(res => {
             if (res.success != 1) {
                 message.error("请求错误")
                 return
@@ -331,18 +338,20 @@ class role extends Component {
         }
         // 2 发起查询请求 查询后结构给table赋值
         // 选中后请求角色数据
-        let params = {
+        let params = Object.assign({}, {
             roleCategoryId: id,
             roleName: name,
-            pageSize: this.state.pageSize,
-            pageIndex: this.state.pageIndex,
-        }
+        }, this.state.pageConf)
+
         GetRole(params).then(res => {
             if (res.success == 1) {
                 let data = Object.assign({}, this.state.table, {
-                    rolesData: res.data.list
+                    rolesData: res.data.records
                 })
-                this.setState({ table: data, total: res.data.rowCount })
+                let pagination = Object.assign({}, this.state.pagination, {
+                    total: res.data.total
+                })
+                this.setState({ table: data, pagination: pagination })
             } else {
                 message.error("请求失败,请重试！")
             }
@@ -350,7 +359,7 @@ class role extends Component {
         })
     }
     // 角色名称查询
-    searchRoleNameFun2 = (obj) => {
+    searchRoleNameFun2 = (pageConf) => {
         let id = this.state.searchListID
         let name = this.state.searchRoleName
         //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
@@ -360,19 +369,26 @@ class role extends Component {
         }
         // 2 发起查询请求 查询后结构给table赋值
         // 选中后请求角色数据
-        let params = Object.assign({},
-            {
-                roleCategoryId: id,
-                roleName: name,
-                pageSize: this.state.pageSize,
-                pageIndex: this.state.pageIndex,
-            }, obj)
+        let params = Object.assign({}, {
+            roleCategoryId: id,
+            roleName: name,
+        }, pageConf)
+
         GetRole(params).then(res => {
             if (res.success == 1) {
                 let data = Object.assign({}, this.state.table, {
-                    rolesData: res.data.list
+                    rolesData: res.data.records
                 })
-                this.setState({ table: data, total: res.data.rowCount })
+                let pagination = Object.assign({}, this.state.pagination, {
+                    total: res.data.total,
+                    pageSize: res.data.size,
+                    current: res.data.current,
+                })
+                let pageConf = Object.assign({}, this.state.pagination, {
+                    limit: res.data.size,
+                    offset: (res.data.current - 1) * 10,
+                })
+                this.setState({ table: data, pagination: pagination, pageConf: pageConf })
             } else {
                 message.error("请求失败,请重试！")
             }
@@ -388,17 +404,24 @@ class role extends Component {
         }
         // 2 发起查询请求 查询后结构给table赋值
         // 选中后请求角色数据
-        let params = {
+        let params = Object.assign({}, {
             roleCategoryId: id,
-            pageSize: this.state.pageSize,
-            pageIndex: this.state.pageIndex,
-        }
+        }, this.state.pageConf, { offset: 0 })
         GetRole(params).then(res => {
             if (res.success == 1) {
                 let data = Object.assign({}, this.state.table, {
-                    rolesData: res.data.list
+                    rolesData: res.data.records
                 })
-                this.setState({ table: data, total: res.data.rowCount })
+                let pagination = Object.assign({}, this.state.pagination, {
+                    total: res.data.total,
+                    pageSize: res.data.size,
+                    current: res.data.current,
+                })
+                let pageConf = Object.assign({}, this.state.pagination, {
+                    limit: res.data.size,
+                    offset: (res.data.current - 1) * 10,
+                })
+                this.setState({ table: data, pagination: pagination, pageConf: pageConf })
             } else {
                 message.error("请求失败,请重试！")
             }
@@ -439,16 +462,16 @@ class role extends Component {
             }
         })
     }
+
     //角色表格单项删除
     delRoleItem = async (arr) => {
-        let pid = this.state.searchListID
         let _this = this
         confirm({
             title: '删除后不可恢复,确定删除吗？',
             onOk() {
-                DelRole(arr).then(res => {
+                DelRole({ ids: arr }).then(res => {
                     if (res.success == 1) {
-                        _this.searchRoleFun(pid)
+                        _this.searchRoleFun(_this.state.searchListID)
                     }
                 })
             }
@@ -456,18 +479,32 @@ class role extends Component {
     }
     // 角色数据保存
     editRoleSave = async () => {
-        let id = this.state.searchListID
+        // 1 校验必填数据是否填写
+        // 表单数据
+         let formData=this.state.currentRole;
+         if(!formData.roleName||formData.roleName.length==""||formData.roleName.length==0){
+             message.error("请输入角色名称");
+             return
+         }
+         if(!formData.status||formData.roleName.status==""){
+            message.error("请选择角色状态");
+            return
+        }
+        // 当前表单编辑类型（保存或修改）
         let type = this.state.roleWindow.roleModalType
-        if (!type) {
-            // 新增保存
-            let data = this.state.currentRole;
-            let arr = []
-            data.resources.forEach(item => {
+        // 当前选择的角色组ID
+        let id = this.state.searchListID
+        let arr = []
+        if (formData.resources && formData.resources.length > 0) {
+            formData.resources.forEach(item => {
                 arr.push({ id: item })
             })
+        }
+        if (!type) {
+            // 新增保存
             let params = {
-                roleName: data.roleName,
-                status: data.status,
+                roleName: formData.roleName,
+                status: formData.status,
                 resources: arr,
                 roleCategoryId: id
             }
@@ -492,23 +529,19 @@ class role extends Component {
                         }
                     })
                     this.searchRoleFun(id)
+                    message.success("操作成功")
                 } else {
-                    message.error("新增失败")
+                    message.error("操作失败")
                 }
                 this.setState({ lock: false })
             })
         } else {
             {
                 // 修改保存
-                let data = this.state.currentRole;
-                let arr = []
-                data.resources.forEach(item => {
-                    arr.push({ id: item })
-                })
                 let params = {
-                    roleName: data.roleName,
-                    status: data.status,
-                    id: data.id,
+                    roleName: formData.roleName,
+                    status: formData.status,
+                    id: formData.id,
                     resources: arr
                 }
                 if (this.state.lock) {
@@ -533,8 +566,9 @@ class role extends Component {
                             }
                         })
                         this.searchRoleFun(id)
+                        message.success("操作成功")
                     } else {
-                        message.error("新增失败")
+                        message.error("操作失败")
                     }
                     this.setState({ lock: false })
                 })
@@ -557,20 +591,21 @@ class role extends Component {
             searchRoleName: e.target.value
         })
     }
-    // 分页页面变化
-    pageIndexChange = (index, pageSize) => {
-        console.log(index, pageSize)
+    // 分页页码变化
+    pageIndexChange = (current, pageSize) => {
+        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
         this.setState({
-            pageIndex: index
+            pageConf: pageConf,
         })
-        this.searchRoleNameFun2({ pageIndex: index })
+        this.searchRoleNameFun2(pageConf)
     }
-    pageSizeChange = (index, size) => {
-        console.log(index, size)
+    // 分页条数变化
+    pageSizeChange = (current, pageSize) => {
+        let pagination = Object.assign({}, this.state.pageConf, { pageSize: pageSize });
         this.setState({
-            pageSize: size
+            pageConf: pageConf,
         })
-        this.searchRoleNameFun2({ pageSize: size })
+        this.searchRoleNameFun2(pageConf)
     }
     //获取新增或修改后的角色名称
     getroleName = (e) => {
@@ -605,7 +640,7 @@ class role extends Component {
         const { getFieldDecorator } = this.props.form
         return <div style={{ display: 'flex', height: "100%" }}>
             {/* 左侧角色组 tree */}
-            <Card style={{ flex: "6" }}>
+            <Card style={{ flex: "3" }}>
                 <Col style={{ marginBottom: "10px" }}>
                     <Button type="primary" onClick={this.addRoleGroup}>新增</Button>
                     <Button type="primary" style={{ margin: '0 10px' }} onClick={this.editRoleGroup}>修改</Button>
@@ -618,7 +653,7 @@ class role extends Component {
                 />
             </Card>
             {/* 右侧角色table表格 */}
-            <Card style={{ flex: "18" }}>
+            <Card style={{ flex: "8" }}>
                 <Form style={{ width: '100%' }}>
                     <Row>
                         <Input addonBefore="角色名称" placeholder="请输入" value={this.state.searchRoleName} onChange={this.getSearchRoleName} style={{ width: '200px' }} />
@@ -630,7 +665,7 @@ class role extends Component {
                     </Row>
                 </Form>
                 <Table bordered rowSelection={{ onChange: this.onTableSelect }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} />
-                <Pagination current={this.state.pageIndex} pageSize={this.state.pageSize} total={this.state.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
+                <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
             </Card>
             {/* 角色组新增修改弹窗 */}
             <Modal
@@ -662,7 +697,7 @@ class role extends Component {
                 cancelText="取消"
             >
                 <FormItem
-                    label={"角色名称"} labelCol={{ span: 4 }}>
+                    label={"角色名称"} labelCol={{ span: 4 }} >
                     <Input placeholder="请输入" value={this.state.currentRole.roleName} onChange={this.getroleName} style={{ width: '300px' }} />
                 </FormItem>
                 <FormItem
@@ -672,6 +707,7 @@ class role extends Component {
                         <Option value={0}>停用</Option>
                     </Select>
                 </FormItem>
+
                 <Card style={{ width: "500px", overflowY: "auto", marginLeft: "30px" }}>
                     <Tree
                         checkable
@@ -684,7 +720,6 @@ class role extends Component {
                 </Card>
 
             </Modal>
-
         </div>
     }
 

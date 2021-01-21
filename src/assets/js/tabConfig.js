@@ -5,12 +5,12 @@ export const InboxMap = {
 	parameter:'Parameter/parameter.jsx',   // 系统管理--系统参数
 	applymine: 'SystemManage/oragizePeo.jsx',
 
-	//人员管理
-	user_personnel: 'user/user_personnel.jsx',
-	//资源管理
-	resources: 'resources/resources.jsx',
-	//角色管理
-	power_role: 'power/role.jsx',
-	//岗位
-	post: 'post/postList.jsx',
+
+	dictionary:'dictionary/dictionary.jsx'         // 数据字典
+	resources: 'resources/resources.jsx',          //资源管理
+	power_role: 'power/role.jsx',                  //角色管理
+	post: 'post/postList.jsx',	                   //岗位
+	user_personnel: 'user/user_personnel.jsx',     //人员管理
+	
+	
 }

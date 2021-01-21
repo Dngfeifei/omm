@@ -10,7 +10,7 @@ export const EditRoleGroup = (params = {}) => {
 	return http.fetchPut(`/securityRoleCategories`, params)
 }
 export const DelRoleGroup = (params = {}) => {
-	return http.fetchDelete(`/securityRoleCategories`, params)
+	return http.fetchGet(`/securityRoleCategories/delete`, params)
 }
 export const GetRole = (params = {}) => {
 	return http.fetchGet(`/securityRoles`, params)
@@ -22,7 +22,7 @@ export const EditRole = (params = {}) => {
 	return http.fetchPut(`/securityRoles`, params,true)
 }
 export const DelRole = (params = {}) => {
-	return http.fetchDelete(`/securityRoles`, params)
+	return http.fetchGet(`/securityRoles/deleteBacth`, params)
 }
 
 

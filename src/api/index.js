@@ -2,7 +2,7 @@ import fetch from 'isomorphic-fetch'
 import whitelist from '/api/whitelist'
 import { message } from 'antd'
 import { hashHistory } from 'react-router'
-
+import qs from 'qs'
 const handleRequest = (url, method, body = {}, json = false) => {
 	let has = false
 	whitelist.forEach(val => {
@@ -21,6 +21,7 @@ const handleRequest = (url, method, body = {}, json = false) => {
 		headers: new Headers(header)
 	}
 	if (method == 'POST' || method == 'PUT') {
+		console.log(body,2)
 		req = Object.assign({
 			body: json ? JSON.stringify(body) : body,
 			bodyUsed: true
@@ -65,13 +66,23 @@ const handleTimeout = (url, type, body = {}, json = false, times = 100000) => Pr
 //get获取数据格式化参数方法
 const handleParams = (params, s = '') => {
 	let str = ''
-	let timestamp = 'timestamp='+Date.parse( new Date() ).toString()
-	for(let i in params){
-		if(params[i] != undefined && params[i] != null) str += `${i}=${params[i]}&`
+	let timestamp = 'timestamp=' + Date.parse(new Date()).toString()
+	for (let i in params) {
+		if (params[i] != undefined && params[i] != null) {
+			if (Array.isArray(params[i])) {
+				str += qs.stringify({
+					[i]: params[i]
+				}, {
+					arrayFormat: 'repeat'
+				}) + '&'
+			} else {
+				str += `${i}=${params[i]}&`
+			}
+		}
 	}
 	if (str.length) {
 		str = `${s}${str}${timestamp}`
-	}else{
+	} else {
 		str = `${s}${timestamp}`
 	}
 	return encodeURI(str)
@@ -130,8 +141,9 @@ export default {
 			}
 		})
 	},
-	fetchBlobPost (url, params = {}) {
-		return handleTimeout(url, 'POST', params, true, 900000).then(function(response) {
+	fetchBlobPost (url, params = {},json = false,) {
+		console.log(params,1)
+		return handleTimeout(url, 'POST', json ? params : handleParams(params), null, 900000).then(function(response) {
 			if(response.status == 901){
 				message.error('没有找到对应的资料')
 				return null;

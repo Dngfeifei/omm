@@ -17,14 +17,10 @@ export const EditResource = (params = {}) => {
 }
 // 删除资源
 export const DelResource = (params = {}) => {
-	return http.fetchDelete(`/sysResources`, params)
+	return http.fetchGet(`/sysResources/delete`, params)
 }
 // 查询资源详情
 export const GetResourceInfo = (params) => {
 	return http.fetchGet(`/sysResources/${params}`)
 }
-// 查询下拉框字典
-export const GetSysDictsInfo = (params) => {
-	return http.fetchGet(`sysDicts/${params}/sysDictItems`)
-	
-}
+
