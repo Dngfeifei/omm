@@ -105,12 +105,12 @@ class Login extends Component {
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
 
-		return <div className='loginWrapper'>
+		return <div className='loginWrapper' style={{backgroundImage:'url(static/images/bg.png)'}}>
 		<div className="login-mask">
 			<div className='loginContent'>
 				  {/* <img src='/static/images/logo.png' /> */}
 				<div style={{marginBottom: '25px'}}>
-					<img src="/static/images/userLog.png" alt=""/>
+					<img src="static/images/userLog.png" alt=""/>
 					<span className='logintitle'>欢迎登陆</span>
 				</div>
 				
