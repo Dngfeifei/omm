@@ -55,6 +55,12 @@ class DHeader extends Component {
 
     render = _ => <Header
         className="header">
+        <div className={this.props.collapsed ? 'avatar-wrapper collaps' : 'avatar-wrapper'}>
+            {<div className="logo">
+                <Icon type="question-circle" className="icon" />
+                <span className="username">LOGO</span>
+            </div>}
+        </div>
         <Icon
             className="trigger"
             type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}

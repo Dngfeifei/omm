@@ -60,21 +60,19 @@ class DSider extends Component{
 
 	render = _ => <Sider 
 	trigger={null}
-    collapsed={this.props.collapsed}
+	collapsed={this.props.collapsed}
+	collapsedWidth={60}
 	width={220} 
 	style={{ background: '#fff' }}>
-		<div className={this.props.collapsed?'avatar-wrapper collaps':'avatar-wrapper'}>
-			{<div className="logo">
-				<Icon type="question-circle" className="icon"/>
-				<span className="username">银信业务支持平台</span>
-			</div>}
-		</div>
+		
         <Menu
           mode="inline"
           selectedKeys={[this.props.activeKey]}
 		//    openKeys={this.state.openKeys}
-          theme="dark"
-          style={{ borderRight: 0 }}>
+		inlineCollapsed={true}
+		// inlineIndent={12}
+          theme="drak"
+          style={{ borderRight: '1px solid transparent' ,backgroundColor:'transparent'}}>
 			{
 			this.props.menu.map(val => {
         		if (val.children && val.children.length) {

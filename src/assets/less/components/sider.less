@@ -1,10 +1,12 @@
+// logo在sider中的样式
 .avatar-wrapper{
-	height: 60px;
-	background: rgb(0, 21, 41);
-	padding: 20px 0 15px;
+	width: 220px;
+	// background: #63acfa;
 	color: hsla(0, 0%, 100%, 0.8);
 	white-space: nowrap;
+	transition: all .2s;
 	.logo{
+		height: 60px;	
 		display: flex;
 		justify-content: center;
 		align-items: center;
@@ -16,11 +18,12 @@
 	}
 	.username{
 		display: block;
-		font-size: 18px;
+		font-size: 30px;
 		font-weight: 600;
 	}
 }
 .avatar-wrapper.collaps{
+	width: 60px;
 	.logo{
 		padding-left: 0px;
 	}

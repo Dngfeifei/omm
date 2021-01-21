@@ -17,9 +17,9 @@ class Home extends Component{
 
 	render = _ => 
 		<Layout className='wrapper'>
-			<Sider />
+			<Header />
 			<Layout>
-				<Header />
+				<Sider />
 				<Content style = {{paddingLeft: 4}}>{this.props.children}</Content>
 			</Layout>
 		</Layout>

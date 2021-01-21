@@ -16,7 +16,8 @@ const globalDataStructure = {
 	panes: [],
 	activeKey: '',
 	menu: [],
-	breadcrumb:[]
+	breadcrumb:[],
+	collapsed:true
 }
 //redux状态管理action执行操作函数
 export const GlobalReducer = (state = globalDataStructure, action) => {

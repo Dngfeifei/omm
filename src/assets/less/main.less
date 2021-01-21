@@ -1,9 +1,7 @@
 // @import '~antd/dist/antd.less';
 @import '~antd/dist/antd.css';
 @import '/assets/less/var.less';
-html, body {
 
-}
 img{
   border: 0;
   display: block;
@@ -14,7 +12,12 @@ textarea{
 
 #root{
   height: 100%;
-  .ant-layout-content{ flex: 1; }
+  //切换显示内容区根元素样式
+  .ant-layout-content{
+     flex: 1; 
+     padding: 0 11px 11px!important;
+  }
+    
   .ant-tabs, .ant-tabs-tabpane{ height: 100%; }
   .ant-tabs{
     display: flex;
@@ -23,14 +26,52 @@ textarea{
       flex: auto;
     }
   }
+  //tablist根元素样式 
+  .ant-tabs-bar{
+    margin: 2px 0 3px;
+    padding: 2px 0;
+    // background-color: red;
+    border-bottom: 0px solid #575555d9 !important;
+ }
+  .ant-tabs-nav-container{
+    display: flex;
+    align-items: center;
+  }
+  //tab标签样式
+  .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab{
+    height: 32px;
+    line-height: 30px;
+    border-radius: 3px;
+    font-size: 12px;
+    background-color: #fff;
+    border-color: #d8d7d7;
+  }
+  .ant-tabs-nav .ant-tabs-tab::before{
+    border-top: 0px !important;
+  }
+  .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active{
+    background-color: #c0e9fd;
+    // background-color: #8fd9fd;
+    color: #1890ff;
+    font-weight: 600;
+  }
+
+
+
   .ant-tabs-no-animation > .ant-tabs-content > .ant-tabs-tabpane-inactive{
     height: 0;
+    
   }
-  .ant-tabs-bar{ margin: 2px 0 }
+  
+  
+//菜单导航滚动条action设置
   .ant-layout-sider-children{ 
-    overflow-y: auto; 
+    overflow-y: hidden; 
     height: 100%;
-    background: #001529;
+    background: #fafafa;
+  }
+  .ant-layout-sider-children:hover{
+    overflow-y: auto;
   }
   .wrapper{ height: 100%; }
 
@@ -45,7 +86,7 @@ textarea{
 }
 
 .trigger {
-  font-size: 18px;
+  font-size: 20px;
   line-height: 28px;
   margin-top: 5px;
   margin-left: 5px;
@@ -58,7 +99,7 @@ textarea{
 }
 
 .trigger:hover {
-  color: #1890ff;
+  color: #0a0b0c;
 }
 
 .cpwrapper{
@@ -134,8 +175,8 @@ textarea{
 //TabContent 样式设置
 .container-div{
   height: 100%;
-  padding: 0 15px 10px 5px;
-  // background-color: #d9d9d9;
+  // padding: 0 15px 10px 5px;
+  background-color: #d9d9d9;
   overflow: hidden;
   overflow-y: auto;
 }
@@ -152,6 +193,10 @@ textarea{
     }
 }
 .ant-menu-inline-collapsed{
+  width: 100%!important;
+  .ant-menu-submenu > .ant-menu-submenu-title,.ant-menu-item{
+    padding: 0 21px !important;
+  }
   i{
     font-size: 17px !important;
   }
@@ -189,3 +234,20 @@ textarea{
 }
 @import url('./pages/login');
 
+
+//进度条样式改写
+
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  -webkit-box-shadow: inset 0 0 5px rgba(144, 144, 144, 0.2);
+  background: rgba(0, 0, 0, 0.2);
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.1);
+}

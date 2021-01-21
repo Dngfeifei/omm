@@ -1,9 +1,11 @@
 .header{
 	padding: 0;
-	background: #fff;
-	height: 50px;
+	// background: #63acfa;
+	background: #4876e7;
+	height: 60px;
 	display: flex;
-    flex-direction: row;
+	flex-direction: row;
+	color: white;
     align-items: center;
 	.settingwrap{
 		flex: 1;
@@ -16,6 +18,41 @@
 			display: block;
 			padding-left: 15px;
 			cursor: pointer;
+		}
+	}
+	.avatar-wrapper{
+		width: 220px;
+		// background: #63acfa;
+		color: hsla(0, 0%, 100%, 0.8);
+		white-space: nowrap;
+		.logo{
+			height: 60px;	
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.icon{
+			display: none;
+			font-size: 26px;
+			margin-right: 20px;
+		}
+		.username{
+			display: block;
+			font-size: 30px;
+			font-weight: 600;
+		}
+	}
+	.avatar-wrapper.collaps{
+		width: 60px;
+		.logo{
+			padding-left: 0px;
+		}
+		.icon{
+			display: block;
+			margin-right: 0px;
+		}
+		.username{
+			display: none;
 		}
 	}
 }
