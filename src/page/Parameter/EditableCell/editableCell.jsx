@@ -9,7 +9,6 @@ const { confirm } = Modal;
 const { Item } = Form
 const { Provider, Consumer } = React.createContext()//组件之间传值
 
-import './index.css'
 
 // 引入 API接口
 import { addSysList, deleteSysList ,updateSysList } from '/api/systemParameter'
