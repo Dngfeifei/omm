@@ -21,12 +21,12 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-var target = {target: 'http://10.0.16.120:8111'}
+var target = {target: 'http://172.16.100.81/api/dat'}
 var file_target = {target: 'http://140.143.131.186:80'}
 
 
 // 后端shh本地地址
-var apiTarget = {target:'http://10.0.16.167:8090'}
+var apiTarget = {target:'http://172.16.100.81/api/dat'}
 
 // 后端ces本地地址
 var apiTargetC =  {target: 'http://10.0.16.120:8111'}

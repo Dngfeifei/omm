@@ -71,8 +71,9 @@ class DSider extends Component{
 		//    openKeys={this.state.openKeys}
 		inlineCollapsed={true}
 		// inlineIndent={12}
-          theme="drak"
-          style={{ borderRight: '1px solid transparent' ,backgroundColor:'transparent'}}>
+          theme="light"
+          style={{ borderRight: '1px solid transparent' ,backgroundColor:'transparent'}}
+		  >
 			{
 			this.props.menu.map(val => {
         		if (val.children && val.children.length) {

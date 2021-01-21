@@ -50,12 +50,15 @@ textarea{
     border-top: 0px !important;
   }
   .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active{
-    background-color: #c0e9fd;
-    // background-color: #8fd9fd;
+    // background-color: #c0e9fd;
+    background-color: #e6f7ff;
     color: #1890ff;
-    font-weight: 600;
+    // font-weight: 600;
   }
 
+  .ant-tabs.ant-tabs-card .ant-tabs-card-bar .ant-tabs-tab-active .ant-tabs-close-x {
+    color: #1890ff;
+  }
 
 
   .ant-tabs-no-animation > .ant-tabs-content > .ant-tabs-tabpane-inactive{
@@ -73,7 +76,11 @@ textarea{
   .ant-layout-sider-children:hover{
     overflow-y: auto;
   }
-  .wrapper{ height: 100%; }
+  //设置展开子节点列表颜色为透明（跟随底色）
+  .ant-menu-submenu > .ant-menu{
+    background-color: transparent;
+  }
+
 
   // .ant-table-wrapper{ min-width: 1000px; }//设置表格最小宽度
   .ant-table-small > .ant-table-content > .ant-table-body {
@@ -99,7 +106,7 @@ textarea{
 }
 
 .trigger:hover {
-  color: #0a0b0c;
+  color: #fff;
 }
 
 .cpwrapper{

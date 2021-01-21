@@ -42,7 +42,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 .then(res => {
 	if (res.code == 700) {
 		message.warning('请先登录')
-		hashHistory.push('/login') //开发模式下不经过改跳转
+		// hashHistory.push('/login') //开发模式下不经过改跳转
 	} else if (res.code != 200) {
 		// message.error(res.message)
 	}
