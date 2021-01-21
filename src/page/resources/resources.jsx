@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Tree, Input, Button, message, Select, Form, Row, Col, Modal, Card } from 'antd'
-import { GetResourceTree, AddResource, EditResource, DelResource, GetResourceInfo, GetSysDictsInfo } from '/api/resources'
+import { GetResourceTree, AddResource, EditResource, DelResource, GetResourceInfo } from '/api/resources'
+import { GetDictInfo } from '/api/dictionary'
 const FormItem = Form.Item
 const { Option } = Select
 const { TextArea } = Input
@@ -22,10 +23,13 @@ const assignment = (data) => {
 
 class resources extends Component {
 	async componentWillMount() {
-		GetSysDictsInfo(2)
+		// 获取数据字典树数据
 		this.searchTree()
+		// 获取资源类型下拉框数据
+		this.getSourceType()
 	}
 	state = Object.assign({}, {
+		resourceType: [],
 		//资源数数据
 		treeData: [
 			{
@@ -87,7 +91,7 @@ class resources extends Component {
 		//当前表单类型  1新增 2编辑
 		type: null,
 		//当前表单信息是否可编辑
-		editable: false,
+		editable: true,
 		//表单配置和校验配置
 		rules: [
 			{
@@ -138,12 +142,15 @@ class resources extends Component {
 					style={{ width: 240 }}
 					placeholder="请选择"
 				>
-					<Option value={'0'}>顶级菜单</Option>
+					{
+					  this.state.resourceType.map(t => <Option value={t.id}>{t.itemValue}</Option>)
+					}
+					{/* <Option value={'0'}>顶级菜单</Option>
 					<Option value={'1'}>固定子菜单</Option>
 					<Option value={'2'}>工作台左部protalet</Option>
 					<Option value={'3'}>工作台右部protalet</Option>
 					<Option value={'4'}>外部链接</Option>
-					<Option value={'5'}>普通按钮</Option>
+					<Option value={'5'}>普通按钮</Option> */}
 				</Select>
 			},
 			{
@@ -197,6 +204,19 @@ class resources extends Component {
 			}
 		],
 	})
+	// 获取资源类型下拉框数据
+	getSourceType =  () => {
+		console.log("123")
+		GetDictInfo({ dictCode: "resourceType" }).then(res => {
+			if (res.success != 1) {
+				message.error("资源类型未获取，服务器错误！")
+			} else {
+				this.setState({
+					resourceType: res.data
+				})
+			}
+		})
+	}
 	//资源树查询
 	searchTree = async () => {
 		GetResourceTree()
@@ -207,6 +227,7 @@ class resources extends Component {
 				} else {
 					//给tree数据赋值key title
 					assignment(res.data)
+					console.log(res.data)
 					this.setState({
 						treeData: res.data,
 					})
@@ -292,7 +313,7 @@ class resources extends Component {
 			title: '删除后不可恢复,确定删除吗？',
 			onOk() {
 				let params = _this.state.selected.id
-				DelResource([params])
+				DelResource({ id: params })
 					.then(res => {
 						if (res.success != 1) {
 							alert("删除请求错误")
@@ -301,9 +322,6 @@ class resources extends Component {
 							_this.reset()
 						}
 					})
-			},
-			onCancel() {
-
 			},
 		});
 
@@ -334,8 +352,9 @@ class resources extends Component {
 				if (res.success == 1) {
 					this.setState({ editable: false })
 					this.searchTree()
+					message.success('操作成功')
 				} else {
-					message.error('保存失败')
+					message.error('操作失败')
 				}
 			})
 	}
@@ -347,8 +366,9 @@ class resources extends Component {
 				if (res.success == 1) {
 					this.setState({ editable: false })
 					this.searchTree()
+					message.success('操作成功')
 				} else {
-					message.error('保存失败')
+					message.error('操作失败')
 				}
 			})
 	}
@@ -443,7 +463,7 @@ class resources extends Component {
 					if (res.success == 1) {
 						this.searchTree()
 					} else {
-						message.error('保存失败')
+						message.error('操作失败')
 					}
 				})
 		}
@@ -451,7 +471,7 @@ class resources extends Component {
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
 		return (<div className="mgrWrapper" style={{ display: "flex", height: "100%" }}>
-			<Card title="资源管理" style={{ flex: 1 }}>
+			<Card title="资源管理" style={{ flex: 3 }}>
 				<div style={{ marginBottom: "10px" }}>
 					<Button type="primary" onClick={this.addBtn}>新建</Button>
 					<Button onClick={this.editBtn} style={{ margin: '0 10px' }} >修改</Button>
@@ -468,7 +488,7 @@ class resources extends Component {
 					treeData={this.state.treeData}
 				/>
 			</Card>
-			<Card style={{ flex: 4 }}>
+			<Card style={{ flex: 8 }}>
 				<Form
 					labelCol={{ span: 4 }}
 					wrapperCol={{ span: 14 }}
