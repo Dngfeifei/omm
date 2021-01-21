@@ -65,6 +65,7 @@ class DHeader extends Component {
             className="trigger"
             type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
             onClick={this.props.toggle} />
+            <div style={{fontSize: "24px",color:"white",paddingLeft:"25px"}}>银信运维管理系统</div>
         {/* <Breadcrumb separator=">" style={{marginLeft: 25}}>
             {
                 this.props.breadcrumb && this.props.breadcrumb.length && this.props.breadcrumb.map((item,index) => {
