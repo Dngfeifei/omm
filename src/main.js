@@ -34,6 +34,12 @@ const Page = Load(() => import('./app.jsx'))
 const Home = Load(() => import('/page/home.jsx'))
 const Container = Load(() => import('/page/container.jsx'))
 const Login = Load(() => import('/page/login.jsx'))
+// 重置密码与 修改密码
+const initPassForm = Load(() => import('/page/ChangePassword/initializingPassword.jsx'))
+// 首次登陆重置密码
+const ChangePassForm = Load(() => import('/page/ChangePassword/changePassword.jsx'))
+
+
 
 //配置路由信息
 const routeConfig = (
@@ -43,6 +49,8 @@ const routeConfig = (
 			<Route path = {'container'} component = {Container} />
 		</Route>
 		<Route path = {'login'} component = {Login}/>
+		<Route path = {'initPassForm'} component = {initPassForm}/>
+		<Route path = {'ChangePassForm'} component = {ChangePassForm}/>
 	</Route>
 )
 

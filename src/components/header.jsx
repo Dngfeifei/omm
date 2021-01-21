@@ -1,9 +1,12 @@
 import React, { Component } from 'react'
-import { Layout, Menu, Icon, Dropdown, Breadcrumb } from 'antd'
+import { Layout, Menu, Icon, Dropdown, Breadcrumb,message } from 'antd'
 import { connect } from 'react-redux'
 import { TOGGLE, ADD_PANE, RESET, SET_BREADCRUMB } from '/redux/action'
 const { Header } = Layout
 import { hashHistory } from 'react-router'
+
+
+import {logout} from '@/api/login.js'
 
 @connect(state => ({
     collapsed: state.global.collapsed,
@@ -26,13 +29,17 @@ class DHeader extends Component {
     }
 
     quit = _ => {
-        // localStorage.setItem('token', '')
-        // localStorage.setItem('userid', '')
-        // localStorage.setItem('username', '')
-        // 清除缓存
-        localStorage.clear();
-        this.props.reset()
-        hashHistory.replace('/login')
+        
+        logout().then(res=>{
+            if (res.code == 700) {
+                // 清除缓存
+                localStorage.clear();
+                this.props.reset()
+                hashHistory.replace('/login')
+            }else {
+                message.error(res.message)
+            }
+        })
     }
 
     changePass = _ => {

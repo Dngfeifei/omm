@@ -65,6 +65,11 @@ module.exports = {
       '/sysParam':apiTarget,  // 系统参数--右侧表格所有接口
 
       '/securityRoleCategories':apiTarget,
+      '/sysLog':apiTarget,
+      '/getCode':apiTarget,  //获取验证码
+      '/updatePass':apiTarget,  // 首次登录修改密码
+      '/logout':apiTarget,  //退出登录
+      '/sysDictItems':apiTargetC,  // 操作日志--操作类型
       '/sysResources':target,//资源
       '/sysUser' : target,//用户
       '/organization' : target,//机构
