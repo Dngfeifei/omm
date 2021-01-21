@@ -1,7 +1,9 @@
 // @import '~antd/dist/antd.less';
 @import '~antd/dist/antd.css';
 @import '/assets/less/var.less';
-
+html,body{
+  height: 100%;
+}
 img{
   border: 0;
   display: block;
@@ -12,6 +14,10 @@ textarea{
 
 #root{
   height: 100%;
+  //设置根元素高度百分百
+  .wrapper{
+    height: 100%;
+  }
   //切换显示内容区根元素样式
   .ant-layout-content{
      flex: 1; 
@@ -63,7 +69,6 @@ textarea{
 
   .ant-tabs-no-animation > .ant-tabs-content > .ant-tabs-tabpane-inactive{
     height: 0;
-    
   }
   
   

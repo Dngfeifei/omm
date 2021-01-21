@@ -3,7 +3,7 @@ import { connect } from 'react-redux'
 import { Layout, Menu, Icon, Badge } from 'antd'
 const { Sider } = Layout
 const { SubMenu } = Menu
-import { ADD_PANE, GET_MENU } from '/redux/action'
+import { ADD_PANE, GET_MENU ,TOGGLE} from '/redux/action'
 import {getPost} from '@/api/global.js'
 
 
@@ -13,7 +13,8 @@ import {getPost} from '@/api/global.js'
 	activeKey: state.global.activeKey,
 }), dispath => ({
 	getMenu(){dispath({type: GET_MENU})},
-	add(pane){dispath({ type: ADD_PANE, data: pane })}
+	add(pane){dispath({ type: ADD_PANE, data: pane })},
+	setCollapsed(){dispath({ type: TOGGLE})}
 }))
 class DSider extends Component{
 	 async componentWillMount () {
@@ -34,7 +35,7 @@ class DSider extends Component{
 	}
 
 	state = {
-		openKeys: []
+		contNum: 0 
 	}
 
 	add = (item) => {
@@ -57,11 +58,18 @@ class DSider extends Component{
 		{val.icon ? <Icon type={val.icon} /> : <Icon  type="pie-chart"/>}
 		<span>{val.resourceName}</span>
 	</span>
-
+	//监听菜单缩放事件并重置collapsed触发收缩
+	collapsed = (collapsed, type) => {
+		let {contNum} = this.state;
+		// console.log(contNum)//,this.setState({contNum: contNum++})
+		contNum && this.props.collapsed !== collapsed && this.props.setCollapsed(),contNum++,this.setState({contNum});
+	}
 	render = _ => <Sider 
 	trigger={null}
 	collapsed={this.props.collapsed}
 	collapsedWidth={60}
+	breakpoint={'xl'}
+	onCollapse={this.collapsed}
 	width={220} 
 	style={{ background: '#fff' }}>
 		
