@@ -1,25 +1,55 @@
 import React, { Component } from 'react'
 import {Row, Input, Button, Form, message, Modal, Icon, Checkbox } from 'antd'
 const FormItem = Form.Item
-import { login, getaccountemail, sendemail } from '/api/login'
+import { login, getCode, } from '/api/login'
 import { hashHistory } from 'react-router'
+
 class Login extends Component {
 
+	
 	state = {
 		lock: false,
 		visible: false,
 		account: '',
 		tips: '',
 		email: '',
-		buttonName: '确认'
+		buttonName: '确认',
+		code:'', // 验证码
+		uuId:'',  // 获取验证码接口返回的随机字符串
 	}
 
+	componentWillMount(){
+		this.init();   // 获取验证码
+	}
+
+
+	init=()=>{
+		// 获取验证码
+		getCode().then(res => {
+            if (res.success == 1) {
+                this.setState({
+					code: res.data.code,
+					uuId:res.data.uuId
+                })
+            } else {
+                message.error(res.message);
+            }
+        })
+	}
+
+	// 刷新验证码事件
+	RefreshCode=()=>{
+		this.init();   // 获取验证码
+	}
+
+	// 登录--事件按钮
 	submit = async  _ => {
 		if (!this.state.lock) {
 			await this.setState({lock: true})
 			this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
 				if (!err || !Object.getOwnPropertyNames(err).length) {
-					let params = Object.assign({}, val)
+					let params = Object.assign({}, val,{uuId:this.state.uuId})
+					
 					login(params).then(async res => {
 						await this.setState({lock: false})
 						if (res.code == 200) {
@@ -28,7 +58,15 @@ class Login extends Component {
 							await localStorage.setItem('token', user.token)
 							await localStorage.setItem('userid', user.userId)
 							await localStorage.setItem('username', user.userName)
-							hashHistory.push('/')
+
+							// 判断此用户是否是首次登陆  true-是，false-否
+							if (user.firstLogin) {
+								// 跳转到【首次修改密码】页面  
+								hashHistory.push('/ChangePassForm')
+							}else {
+								hashHistory.push('/')
+							}
+							
 						}
 					})
 				} else {
@@ -39,7 +77,9 @@ class Login extends Component {
 	}
 
 	forgetPwd = () => {
-		this.setState({visible: true})
+		// this.setState({visible: true})
+		// 跳转到【重置密码】页面  
+		hashHistory.push('/initPassForm')
 	}
 
 	sendInfo = () => {
@@ -64,7 +104,7 @@ class Login extends Component {
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
 
-		return <div className='loginWrapper' style={{backgroundImage: "url('./static/images/backimg.jpg')" }}>
+		return <div className='loginWrapper'>
 		<div className="login-mask">
 			<div className='loginContent'>
 				  {/* <img src='/static/images/logo.png' /> */}
@@ -93,24 +133,25 @@ class Login extends Component {
 						/>,
 					)}
 				</FormItem>
-				{/* <FormItem style={{marginBottom: '6px'}}>
+				<FormItem style={{marginBottom: '6px'}}>
 					<Row style={{ display: 'flex' }}>
-						{getFieldDecorator('remember', {
-							valuePropName: 'checked',
-							initialValue: true,
+						{getFieldDecorator('code', {
+							 rules: [{
+								required: true, message: '验证码不可以为空!',
+							}]
 						})(
 							<Input prefix={<Icon type="safety-certificate" style={{ color: 'rgba(0,0,0,.25)' }} />} type="text" placeholder="验证码" className="code-input" />,
 							
 						)}
-						<div className="identify_box">
-							<span>2237</span>
+						<div className="identify_box" onClick={this.RefreshCode}>
+							<span>{this.state.code}</span>
 						</div>
 					</Row>
 					
-				</FormItem> */}
+				</FormItem>
 
-				<a onClick={this.forgetPwd} style={{display: 'block', margin: '4px 0px 16px 190px',fontSize: '12px'}}>忘记密码?</a>
-				<Button  onClick={this.submit} type='primary' className="login-form-button">登录</Button>
+				<a onClick={this.forgetPwd} style={{display: 'block', textAlign: 'right',fontSize: '12px',marginBottom:'15px'}}>忘记密码?</a>
+				<Button  onClick={this.submit} type='primary' className="loginButton">登录</Button>
 			</div>
 		</div>
 		<Modal title="找回密码"

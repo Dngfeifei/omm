@@ -22,28 +22,6 @@ var buildconfig = {
 }
 
 var target = {target: 'http://172.16.100.81/api/dat'}
-var file_target = {target: 'http://140.143.131.186:80'}
-
-
-// 后端shh本地地址
-var apiTarget = {target:'http://172.16.100.81/api/dat'}
-
-// 后端ces本地地址
-var apiTargetC =  {target: 'http://10.0.16.120:8111'}
-
-
-
-
-
-
-// 后端shh本地地址
-var apiTarget = {target:'http://10.0.16.205:8090'}
-
-// 后端ces本地地址
-var apiTargetC =  {target: 'http://10.0.16.120:8111'}
-
-// 后端测试环境地址
-var apiTargetC = {target: 'http://172.16.100.81/api/dat'}
 
 
 
@@ -59,14 +37,11 @@ module.exports = {
       '/menu': target,
       '/notice': target,
       '/dict': target,
-
       '/auth': target,// shh本地登录接口
       '/paramCategories':target,  // 系统参数--左侧节点树所有接口
       '/sysParam':target,  // 系统参数--右侧表格所有接口
-
-	  '/organization' : target,//机构
-	  
-	  '/sysResources':target,//资源
+	    '/organization' : target,//机构
+	    '/sysResources':target,//资源
       '/securityRoleCategories' : target,//角色组
       '/securityRoles' : target,//角色
       '/sysPositions' : target,//岗位
@@ -74,6 +49,10 @@ module.exports = {
       '/user' : target,//用户
       '/sysDicts' : target,//数据字典
       '/sysDictItems' : target,//数据字典项
+      '/sysLog':target,
+      '/getCode':target,  //获取验证码
+      '/updatePass':target,  // 首次登录修改密码
+      '/logout':target,  //退出登录
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

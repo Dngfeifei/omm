@@ -47,7 +47,7 @@ class Dashbord extends Component {
 
         return (
             <div className="content">
-                <Row gutter={20} style={{ height: '100%',background:'#fff' }} className="content-row">
+                <Row gutter={20} style={{ height: '100%' }} className="content-row">
                     <Col span={16} className="left" id="draggerOne" className="content-row left">
                         {
                             this.state.leftComponts.map((item, index) => {
