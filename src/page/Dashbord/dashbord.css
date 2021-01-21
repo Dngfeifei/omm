@@ -30,7 +30,7 @@
 }
 
 /* 被选中目标的样式 */
-.sortable-chosen ,.ant-card-head {
+.content .sortable-chosen ,.content .ant-card-head {
   cursor: move;
 }
 .sortable-chosen .ant-card-body {

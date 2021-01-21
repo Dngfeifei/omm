@@ -6,7 +6,7 @@
   
   
   /* 卡片的内容高度 */
-  .ant-card .ant-card-body {
+  .content .ant-card .ant-card-body {
     max-height: 450px;
     overflow-y: auto;
   }
