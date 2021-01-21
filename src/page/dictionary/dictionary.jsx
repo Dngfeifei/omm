@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Card } from 'antd'
 import { GetDictionary, AddDictionary, EditDictionary, DelDictionary, GetDictItems, AddDictItem, EditDictItem, DelDictItem } from '/api/dictionary.js'
 const { Search } = Input;
+const { Option } = Select
 const { Item } = Form
 const { confirm } = Modal;
 const { Provider, Consumer } = React.createContext()//组件之间传值

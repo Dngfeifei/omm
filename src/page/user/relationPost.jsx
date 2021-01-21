@@ -186,6 +186,7 @@ class People extends Component {
 	render = _ => {
 		return <div>
 			<Modal
+			    destroyOnClose={true}
 				visible={this.props.config.visible}
 				onCancel={this.props.done}
 				width={1000}

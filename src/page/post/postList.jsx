@@ -68,8 +68,8 @@ class Post extends Common {
 	})
 	//查询岗位数据
 	search = async _ => {
-		let params=this.state.search
-		 GetPostData(params)
+		let params = this.state.search
+		GetPostData(params)
 			.then(res => {
 				if (res.success != 1) {
 					alert("请求错误")
@@ -114,23 +114,23 @@ class Post extends Common {
 	}
 	//删除
 	deleteItem = async () => {
-		let _this=this
+		let _this = this
 		if (this.state.selected.selectedKeys && this.state.selected.selectedKeys.length) {
 			let param = this.state.selected.selectedItems[0].id
 			confirm({
 				title: '删除后不可恢复,确定删除吗？',
 				onOk() {
-					DelPost({id:param})
-					.then(res => {
-						if (res.success == 0) {
-							message.error('操作失败')
-						} else {
-							_this.search();
-						}
-					})
+					DelPost({ id: param })
+						.then(res => {
+							if (res.success == 0) {
+								message.error('操作失败')
+							} else {
+								_this.search();
+							}
+						})
 				}
 			})
-		
+
 		} else {
 			message.warning('请选中表格中的某一记录！')
 		}
@@ -217,7 +217,7 @@ class Post extends Common {
 				<Button
 					onClick={_ => this.addPost()}
 					type="primary">新增</Button>
-				<Button
+				<Button style={{ margin: "0px 10px" }}
 					onClick={_ => this.editPost()}
 					type="primary">修改</Button>
 				<Button
@@ -227,7 +227,7 @@ class Post extends Common {
 			<div style={{ flex: 2, textAlign: "right" }}>
 				<Button
 					type="primary" onClick={_ => this.relationPeople()}>关联人员</Button>
-				<Button
+				<Button  style={{ margin: "0px 10px" }}
 					type="primary" onClick={_ => this.relationRole()}>关联角色</Button>
 			</div>
 		</Row>

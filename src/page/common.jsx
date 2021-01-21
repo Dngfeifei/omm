@@ -143,7 +143,8 @@ class Common extends Component{
 	renderBtn = _ => null
 	renderBottomBtn = _ => null
 	rendermodal = _ => null
-	renderTable = (rowSelection, pagination = this.state.pagination) =>  <LocaleProvider locale={zhCN}><Table
+	renderTable = (rowSelection, pagination = this.state.pagination) =>  <Table
+	    rowKey={"id"}
 		size={'small'}
 		bordered
 		defaultExpandAllRows={true}
@@ -154,7 +155,7 @@ class Common extends Component{
 		locale={{emptyText: '暂无数据'}}
 		dataSource={this.state.tabledata}
 		scroll={this.state.scroll || {}}
-		onChange={this.handleTableChange}/></LocaleProvider>
+		onChange={this.handleTableChange}/>
 	render = _ => {
 		const rowSelection = {
 			type: this.state.selecttype || 'radio',

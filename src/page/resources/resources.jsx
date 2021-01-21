@@ -143,14 +143,8 @@ class resources extends Component {
 					placeholder="请选择"
 				>
 					{
-					  this.state.resourceType.map(t => <Option value={t.id}>{t.itemValue}</Option>)
+						this.state.resourceType.map(t => <Option key={t.id} value={t.id}>{t.itemValue}</Option>) 
 					}
-					{/* <Option value={'0'}>顶级菜单</Option>
-					<Option value={'1'}>固定子菜单</Option>
-					<Option value={'2'}>工作台左部protalet</Option>
-					<Option value={'3'}>工作台右部protalet</Option>
-					<Option value={'4'}>外部链接</Option>
-					<Option value={'5'}>普通按钮</Option> */}
 				</Select>
 			},
 			{
@@ -165,8 +159,8 @@ class resources extends Component {
 					style={{ width: 240 }}
 					placeholder="请选择"
 				>
-					<Option value={'1'}>本窗口</Option>
-					<Option value={'0'}>新窗口</Option>
+					<Option value={1}>本窗口</Option>
+					<Option value={0}>新窗口</Option>
 				</Select>
 			},
 			{
@@ -205,8 +199,7 @@ class resources extends Component {
 		],
 	})
 	// 获取资源类型下拉框数据
-	getSourceType =  () => {
-		console.log("123")
+	getSourceType = () => {
 		GetDictInfo({ dictCode: "resourceType" }).then(res => {
 			if (res.success != 1) {
 				message.error("资源类型未获取，服务器错误！")
