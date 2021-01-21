@@ -15,7 +15,8 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	}, has ? {} : {
 		'Authorization': `Bearer ${token}`
 	})
-
+	
+	
 	let req = {
 		method,
 		headers: new Headers(header)
