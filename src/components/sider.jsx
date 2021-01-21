@@ -29,12 +29,10 @@ class DSider extends Component{
 				}
 			})
 		}
-		// if(this.props.collapsed != nextprops.collapsed && nextprops.collapsed==true){
-		// 	this.setState({openKeys: []})// 在菜单收缩之前，先把打开的子菜单收缩
-		// }
 	}
 
 	state = {
+		openKeys:[],
 		contNum: 0 
 	}
 

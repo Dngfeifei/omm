@@ -448,7 +448,7 @@ class systempeo extends Component {
                         onSelect={this.onSelect}
                     />
                 </Col>
-                <Col span={18} className="gutter-row main_height" style={{padding: '0 10px 0', backgroundColor:'white'}}>
+                <Col span={18} className="gutter-row main_height" style={{backgroundColor:'#fff'}}>
                     <Form style={{ width: '100%',paddingTop:'10px' }}>
                         <Row gutter={24}>
                             {this.state.rules.map((val, index) =>
@@ -468,11 +468,12 @@ class systempeo extends Component {
                     </Form>
                     <Table 
                         bordered
+                        tableLayout={'auto'}
                         rowSelection={rowSelection}
                         dataSource={this.state.tabledata}
                         columns={this.state.columns}
                         pagination={true}
-                        style={{ marginTop: '16px' }}
+                        style={{ marginTop: '16px' ,height: 500}}
                     />
                 </Col>
             </Row>
