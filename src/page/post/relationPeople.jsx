@@ -73,34 +73,11 @@ class People extends Component {
 		// 查询项 用户名
 		searchUserName: "",
 		// 机构下人员
-		unRelationTable: [
-
-		],
+		unRelationTable: [],
 		//未关联表格选中项
 		unRelRabSelecteds: null,
 		// 已关联人员
-		relationTable: [
-			// 	{
-			// 	id: 1,
-			// 	name: "zhangsan",
-			// 	code: 7586,
-			// 	account: "zhangsan",
-			// 	mechanism: {
-			// 		id: 875,
-			// 		orgFullName: "软件研发部1"
-			// 	}
-			// },
-			// {
-			// 	id: 2,
-			// 	name: "里斯",
-			// 	code: 7586,
-			// 	account: 'lisi',
-			// 	mechanism: {
-			// 		id: 875,
-			// 		orgFullName: "软件研发部2"
-			// 	}
-			// },
-		],
+		relationTable: [],
 		//关联表格选中项
 		relRabSelecteds: []
 	}

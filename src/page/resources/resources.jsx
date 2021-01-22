@@ -31,58 +31,7 @@ class resources extends Component {
 	state = Object.assign({}, {
 		resourceType: [],
 		//资源数数据
-		treeData: [
-			{
-				title: '0',
-				key: '0',
-				children: [
-					{
-						title: '0-0',
-						key: '0-0',
-						data: "假数据",
-						children: [
-							{
-								title: 'title0-0-0',
-								key: '0-0-0',
-							},
-							{
-								title: '0-0-1',
-								key: '0-0-1',
-							},
-							{
-								title: '0-0-2',
-								key: '0-0-2',
-							},
-						],
-					},
-					{
-						title: 'title0-1',
-						key: '0-1',
-						children: [
-							{
-								title: '0-1-0',
-								key: '0-1-0',
-							},
-						],
-					},
-					{
-						title: '0-2',
-						key: '0-2',
-						children: [
-							{
-								title: '0-2-0',
-								key: '0-2-0',
-							},
-							{
-								title: '0-2-1',
-								key: '0-2-1',
-								// switcherIcon: <FormOutlined />,
-							},
-						],
-					},
-				],
-			},
-		],
+		treeData: [],
 		//资源树被选中项
 		selected: {
 			id: null,
@@ -143,7 +92,7 @@ class resources extends Component {
 					placeholder="请选择"
 				>
 					{
-						this.state.resourceType.map(t => <Option key={t.id} value={t.id}>{t.itemValue}</Option>) 
+						this.state.resourceType.map(t => <Option key={t.id} value={t.id}>{t.itemValue}</Option>)
 					}
 				</Select>
 			},
@@ -179,7 +128,7 @@ class resources extends Component {
 			},
 			{
 				label: '上级资源',
-				key: 'parentResourceId',
+				key: 'parentResourceName',
 				render: _ => <Input disabled style={{ width: 240 }} />
 			},
 			{
@@ -220,7 +169,6 @@ class resources extends Component {
 				} else {
 					//给tree数据赋值key title
 					assignment(res.data)
-					console.log(res.data)
 					this.setState({
 						treeData: res.data,
 					})
@@ -269,7 +217,7 @@ class resources extends Component {
 					this.props.form.setFields({ resourceCategoryId: { value: item.resourceCategoryId } })
 					this.props.form.setFields({ openMethod: { value: item.openMethod } })
 					this.props.form.setFields({ serialNumber: { value: item.serialNumber } })
-					this.props.form.setFields({ parentResourceId: { value: item.parentResourceId } })
+					this.props.form.setFields({ parentResourceName: { value: item.parentResourceName } })
 					this.props.form.setFields({ description: { value: item.description } })
 				}
 			})
@@ -280,7 +228,7 @@ class resources extends Component {
 		//重置右侧表单
 		this.reset()
 		if (this.state.selected.id) {
-			this.props.form.setFields({ parentResourceId: { value: this.state.selected.id } })
+			this.props.form.setFields({ parentResourceName: { value: this.state.selected.title } })
 		}
 	}
 	//修改按钮
@@ -313,6 +261,12 @@ class resources extends Component {
 						} else {
 							_this.searchTree()
 							_this.reset()
+							_this.setState({
+								selected: {
+									id: null,
+									title: null
+								}
+							})
 						}
 					})
 			},
@@ -325,7 +279,13 @@ class resources extends Component {
 		this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
 			if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 获取合并后的表单数据
 				params = Object.assign({}, val)
-				this.state.type == 1 ? this.addSave(params) : this.editSave(params);
+				if (this.state.type == 1) {
+					params = Object.assign({}, params, { parentResourceId: this.state.selected.id })
+					this.addSave(params)
+				} else {
+					console.log(params,666)
+					this.editSave(params);
+				}
 			}
 		})
 		return params;
@@ -399,7 +359,6 @@ class resources extends Component {
 				// where to insert 示例添加到头部，可以是随意位置
 				item.children.unshift(dragObj);
 				pid = item.id;
-				console.log(pid, 1)
 			});
 		} else if (
 			(info.node.props.children || []).length > 0 && // Has children
@@ -411,7 +370,6 @@ class resources extends Component {
 				// where to insert 示例添加到头部，可以是随意位置
 				item.children.unshift(dragObj);
 				pid = item.id;
-				console.log(pid, 2)
 				// in previous version, we use item.children.push(dragObj) to insert the
 				// item to the tail of the children
 			});
@@ -425,11 +383,9 @@ class resources extends Component {
 			if (dropPosition === -1) {
 				ar.splice(i, 0, dragObj);
 				pid = ar[ar.length - 1].parentResourceId;
-				console.log(pid, 3)
 			} else {
 				ar.splice(i + 1, 0, dragObj);
 				pid = ar[0].parentResourceId;
-				console.log(pid, 4)
 			}
 		}
 		// this.setState({

@@ -39,12 +39,7 @@ class Post extends Common {
 			}],
 		selecttype: 'radio', //单选还是多选
 		// 岗位表格数据
-		tabledata: [{
-			id: 1,
-			code: 999,
-			name: "java开发",
-			describe: "软件开发"
-		}],
+		tabledata: [],
 		// 岗位表格当前选中项数据
 		selected: {},
 		modalconf: { visible: false, item: {} },
@@ -126,6 +121,7 @@ class Post extends Common {
 								message.error('操作失败')
 							} else {
 								_this.search();
+								_this.setState({ selected: {} })
 							}
 						})
 				}
@@ -212,7 +208,7 @@ class Post extends Common {
 	</div>
 
 	renderBtn = _ => <div>
-		<Row style={{ display: 'flex', margin: "10px 0" }}>
+		<Row style={{ display: 'flex', margin: "10px 0",padding:"0 10px" }}>
 			<div style={{ flex: 3 }}>
 				<Button
 					onClick={_ => this.addPost()}
@@ -227,7 +223,7 @@ class Post extends Common {
 			<div style={{ flex: 2, textAlign: "right" }}>
 				<Button
 					type="primary" onClick={_ => this.relationPeople()}>关联人员</Button>
-				<Button  style={{ margin: "0px 10px" }}
+				<Button style={{ margin: "0px 10px" }}
 					type="primary" onClick={_ => this.relationRole()}>关联角色</Button>
 			</div>
 		</Row>

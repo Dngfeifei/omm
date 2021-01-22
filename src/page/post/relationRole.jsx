@@ -62,49 +62,7 @@ class People extends Component {
 		// 岗位ID
 		positionId: null,
 		// 机构树
-		windowTreeData: [
-			{
-				title: '0-0',
-				key: '0-0',
-				children: [
-					{
-						title: '0-0-0',
-						key: '0-0-0',
-						children: [
-							{ title: '0-0-0-0', key: '0-0-0-0' },
-							{ title: '0-0-0-1', key: '0-0-0-1' },
-							{ title: '0-0-0-2', key: '0-0-0-2' },
-						],
-					},
-					{
-						title: '0-0-1',
-						key: '0-0-1',
-						children: [
-							{ title: '0-0-1-0', key: '0-0-1-0' },
-							{ title: '0-0-1-1', key: '0-0-1-1' },
-							{ title: '0-0-1-2', key: '0-0-1-2' },
-						],
-					},
-					{
-						title: '0-0-2',
-						key: '0-0-2',
-					},
-				],
-			},
-			{
-				title: '0-1',
-				key: '0-1',
-				children: [
-					{ title: '0-1-0-0', key: '0-1-0-0' },
-					{ title: '0-1-0-1', key: '0-1-0-1' },
-					{ title: '0-1-0-2', key: '0-1-0-2' },
-				],
-			},
-			{
-				title: '0-2',
-				key: '0-2',
-			},
-		],
+		windowTreeData: [],
 		// 表格配置
 		allTableColumns: [
 			{
@@ -124,28 +82,7 @@ class People extends Component {
 		//未关联表格选中项
 		unRelRabSelecteds: null,
 		// 已关联人员
-		relationTable: [
-			// 	{
-			// 	id: 1,
-			// 	name: "zhangsan",
-			// 	code: 7586,
-			// 	account: "zhangsan",
-			// 	mechanism: {
-			// 		id: 875,
-			// 		orgFullName: "软件研发部1"
-			// 	}
-			// },
-			// {
-			// 	id: 2,
-			// 	name: "里斯",
-			// 	code: 7586,
-			// 	account: 'lisi',
-			// 	mechanism: {
-			// 		id: 875,
-			// 		orgFullName: "软件研发部2"
-			// 	}
-			// },
-		],
+		relationTable: [],
 		//关联表格选中项
 		relRabSelecteds: []
 	}

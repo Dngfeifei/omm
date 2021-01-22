@@ -60,29 +60,7 @@ class role extends Component {
         //左侧角色树相关数据
         tree: {
             //右侧角色树数据
-            treeData: [
-                // {
-                //     key: 1,
-                //     title: '组织机构跟节点',
-                //     children: [{
-                //         key: 3,
-                //         title: '董事会',
-                //         children: [
-                //             {
-                //                 key: 4, title: '总经理办公室', children: [
-                //                     { key: 5, title: '技术服务中心' },
-                //                     { key: 6, title: '保障中心' }
-                //                 ]
-                //             },
-                //             {
-                //                 key: 7, title: '董事会秘书', children: [
-                //                     { key: 8, title: '证券事业部' }
-                //                 ]
-                //             }
-                //         ]
-                //     }]
-                // }
-            ],
+            treeData: [],
         },
         //右侧table相关数据
         table: {
@@ -104,20 +82,7 @@ class role extends Component {
                 }
             ],
             //右侧角色表格数据
-            rolesData: [
-                // {
-                //     "id": 1,
-                //     "roleName": "总经理",
-                // },
-                // {
-                //     "id": 2,
-                //     "roleName": "区域经理",
-                // },
-                // {
-                //     "id": 3,
-                //     "roleName": "部门经理",
-                // },
-            ],
+            rolesData: [],
 
         },
         //新增修改角色组弹窗配置
@@ -165,9 +130,18 @@ class role extends Component {
                 } else {
                     assignment(res.data)
                     this.setState({
-                        tree: { treeData: res.data }
+                        tree: { treeData: res.data },
                     })
-                    this.searchRoleFun(res.data[0].id)
+                    if (res.data && res.data.length) {
+                        this.setState({
+                            searchListID: res.data[0].id,
+                            newRoleGroup: {
+                                treeSelect: res.data[0].id,
+                                newRoleGroupVal: res.data[0].roleCategoryName,
+                            },
+                        })
+                        this.searchRoleFun(res.data[0].id)
+                    }
                 }
             })
     }
@@ -220,7 +194,15 @@ class role extends Component {
                 message.error("请求错误")
                 return
             } else {
+                // 重新查询渲染数据
                 _this.searchTree()
+                // 选中项已删除,存储的选中项数据置为空
+                this.setState({
+                    newRoleGroup: {
+                        treeSelect: null,
+                        newRoleGroupVal: null
+                    }
+                })
             }
         })
     }
@@ -474,6 +456,9 @@ class role extends Component {
                 DelRole({ ids: arr }).then(res => {
                     if (res.success == 1) {
                         _this.searchRoleFun(_this.state.searchListID)
+                        _this.setState({
+                            tableSelecteds: []
+                        })
                     }
                 })
             }
@@ -649,6 +634,7 @@ class role extends Component {
                     <Button type="primary" onClick={this.delRoleGroup}>删除</Button>
                 </Col>
                 <Tree
+                    selectedKeys={[this.state.searchListID]}
                     onSelect={this.onTreeSelect}
                     defaultExpandAll={true}
                     treeData={this.state.tree.treeData}

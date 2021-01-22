@@ -189,9 +189,12 @@ class content extends Component {
                             treeData: res.data
                         }
                     })
-                    if (this.state.newEntry) {
+                    if (this.state.newEntry && res.data) {
                         this.searchList({ dictId: res.data[0].id })
-                        this.setState({newEntry:false})
+                        this.setState({
+                            currentID: res.data[0].id
+                        })
+                        this.setState({ newEntry: false })
                     }
                 }
             })
@@ -523,17 +526,18 @@ class content extends Component {
     }
     //取消
     cancel = () => {
+        let _this = this
         confirm({
             title: '是否确定取消?',
             onOk() {
-                this.setState({
-                    editingKey: ''
-                })
-            },
-            onCancel() {
-                this.setState({
-                    editingKey: ''
-                })
+                let oldData = _this.state.table.dictData
+                oldData.pop()
+                let table = Object.assign({}, _this.state.table, { dictData: oldData })
+                _this.setState({
+                    table: table,
+                    editingKey: "", //将当前新增的数据进行新增填写
+                    editType: 0
+                });
             },
         });
     }
@@ -572,6 +576,7 @@ class content extends Component {
                     <Search required addonBefore="字典名称" onSearch={this.onSearch} placeholder="请输入" value={this.state.searchName} onChange={this.getSearchName} style={{ margin: "2% 10px", width: '90%' }} />
                 </Col>
                 <Tree
+                    selectedKeys={[this.state.currentID]}
                     onSelect={this.onTreeSelect}
                     defaultExpandAll={true}
                     treeData={this.state.tree.treeData}
