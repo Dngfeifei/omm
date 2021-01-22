@@ -131,7 +131,7 @@ class User extends Common {
 			let items = this.state.selected.selectedItems;
 			if (items && items.length > 0) {
 				params = this.state.selected.selectedItems.map((value) => { return value.id })
-			}else{
+			} else {
 				message.error("请选中后再进行批量删除操作！")
 				return
 			}
@@ -310,25 +310,23 @@ class User extends Common {
 		</div>
 	</div>
 
-	renderBtn = _ => <div>
-		<ButtonGroup style={{ margin: "10px 0" }}>
-			<Button
-				onClick={_ => this.addmodal('modalconf', '新增人员信息')}
-				type="primary">新增人员信息</Button>
-			<Button
-				onClick={this.exportTemplate}
-				type="primary" loading={this.state.loading3}>模版下载</Button>
+	renderBtn = _ => <div style={{ margin: "10px",display: "flex",width: "515px",justifyContent: "space-around" }}>
+		<Button
+			onClick={_ => this.addmodal('modalconf', '新增人员信息')}
+			type="primary">新增人员信息</Button>
+		<Button
+			onClick={this.exportTemplate}
+			type="primary" loading={this.state.loading3}>模版下载</Button>
 
-			<Upload {...this.state.uploadConf}>
-				<Button type="primary" >数据导入</Button>
-			</Upload>
-			<Button
-				onClick={this.exportData}
-				type="primary" loading={this.state.loading2}>数据导出</Button>
-			<Button
-				onClick={this.disableItem}
-				type="primary">禁用</Button>
-		</ButtonGroup>
+		<Upload {...this.state.uploadConf}>
+			<Button type="primary" >数据导入</Button>
+		</Upload>
+		<Button
+			onClick={this.exportData}
+			type="primary" loading={this.state.loading2}>数据导出</Button>
+		<Button
+			onClick={this.disableItem}
+			type="primary">禁用</Button>
 	</div>
 
 	rendermodal = _ => <div>

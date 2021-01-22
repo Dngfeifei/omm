@@ -302,6 +302,7 @@ class People extends Component {
 	render = _ => {
 		return <div>
 			<Modal title="关联角色"
+                destroyOnClose={true}              
 				visible={this.props.windowData.visible}
 				onCancel={this.props.done}
 				width={1000}

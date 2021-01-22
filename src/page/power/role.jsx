@@ -447,7 +447,9 @@ class role extends Component {
     // 点击修改，按钮的弹出框
     editRoleItem = (r) => {
         let ids = [];
-        r.resources.forEach(item => { ids.push(item.id) })
+        if (r.resource && r.resources.length > 0) {
+            r.resources.forEach(item => { ids.push(item.id) })
+        }
         this.setState({
             roleWindow: {
                 roleModal: true,
@@ -481,12 +483,12 @@ class role extends Component {
     editRoleSave = async () => {
         // 1 校验必填数据是否填写
         // 表单数据
-         let formData=this.state.currentRole;
-         if(!formData.roleName||formData.roleName.length==""||formData.roleName.length==0){
-             message.error("请输入角色名称");
-             return
-         }
-         if(!formData.status||formData.roleName.status==""){
+        let formData = this.state.currentRole;
+        if (!formData.roleName || formData.roleName.length == "" || formData.roleName.length == 0) {
+            message.error("请输入角色名称");
+            return
+        }
+        if (!formData.status || formData.roleName.status == "") {
             message.error("请选择角色状态");
             return
         }
@@ -581,7 +583,7 @@ class role extends Component {
         if (arr && arr.length) {
             this.delRoleItem(arr)
         } else {
-            message.warning('请先选中要删除的树，然后再进行批量删除操作。');
+            message.warning('请先选中要删除的数据，然后再进行批量删除操作。');
         }
     }
     //获取角色名称查询选项
