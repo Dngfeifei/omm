@@ -145,7 +145,7 @@ class Login extends Component {
 							
 						)}
 						<div className="identify_box" onClick={this.RefreshCode}>
-							<span>{this.state.code}</span>
+							<img src={'data:image/jpg;base64,'+this.state.code} alt=""/>
 						</div>
 					</Row>
 					
