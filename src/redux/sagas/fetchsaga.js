@@ -1,3 +1,4 @@
+import Title from 'antd/lib/skeleton/Title'
 import { put, fork, call, takeLatest, select } from 'redux-saga/effects'
 import * as ACTION from '../action'
 import * as fetch from '/api/global'
@@ -74,12 +75,35 @@ function* tabChange(){
 //获取导航树
 function* getMenu () {
 	yield takeLatest(ACTION.GET_MENU, function* (action) {
-		let data = yield call(fetch.getMenu)
+		let data = action.data == 1 ? yield call(fetch.getMenu2) : yield call(fetch.getMenu);
+		let panes = yield select(state => state.global.panes)
 		if (data.data) {
 			yield put({type: ACTION.GET_MENU_SUCCESS, data: data.data})
 		}
+		if(panes.length){
+			let nextpane = [];
+			panes.forEach((item,index)=>{
+				sortData(item,data.data,nextpane);
+			})
+			yield put({ type: ACTION.SET_PANE_STATE, data: nextpane })//重新渲染已选择pane
+		}
 	})
 }
+//递归
+function sortData(pane,newTree,nextpane){
+	newTree.some((item,index)=>{
+		if(item.id == pane.key){
+			pane.title = item.resourceName;
+			pane.url = item.resourcePath;
+			nextpane.push(pane);
+		}else{
+			if(item.children && item.children.length){
+				sortData(pane,item.children,nextpane);
+			}
+		}
+	})
+}
+
 export default function* () {
 	yield fork(addpane)
 	yield fork(removepane)

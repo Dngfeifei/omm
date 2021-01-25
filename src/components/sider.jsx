@@ -9,8 +9,8 @@ import {getPost} from '@/api/global.js'
 //创建一个缩放控制组件
 function Trigger (props){
 	console.log(props)
-	return (<div onClick={props.toggle} style={{borderTop: '1px solid rgba(204, 197, 197, 0.5)',height:60,display:'flex',whiteSpace:'nowrap',position:'absolute',bottom:0,width:'100%',justifyContent:'center',alignItems: 'center',color: 'black',fontSize:18,cursor:'pointer',backgroundColor:'#fafafa'}}>
-		<Icon type={ props.collapsed ? "double-left" : "double-right"} />{props.collapsed ?<span style={{fontSize:13,marginLeft:10,marginBottom:3}}>点击收缩</span>:null}
+	return (<div onClick={props.toggle} className={props.collapsed ? "trigger" : "trigger triggerClose"}>
+		<Icon type={ !props.collapsed ? "double-left" : "double-right"} />{!props.collapsed ?<span style={{fontSize:13,marginLeft:10,marginBottom:3}}>点击收缩</span>:null}
 	</div>)
 }
 
@@ -33,11 +33,15 @@ class DSider extends Component{
 
 	componentWillReceiveProps (nextprops) {
 		if(this.props.menu.length == 0 && nextprops.menu.length > 0){
-			nextprops.menu.forEach(item => {
-				if(item.resourcePath == 'notice'){
-					this.add(item)
-				}
-			})
+			// nextprops.menu.forEach(item => {
+			// 	if(item.resourcePath == 'notice'){
+			// 		this.add(item)
+			// 	}
+			// })
+		   this.add(nextprops.menu[0]);
+		}
+		else{
+
 		}
 	}
 
@@ -56,6 +60,8 @@ class DSider extends Component{
 		this.props.add(pane)
 	}
 	select = (item) => {
+		let {openKeys} = this.state;
+		console.log(item,openKeys);
 		if (this.state.openKeys[0] == item.id) {
 			this.setState({openKeys: []})
 		} else {
@@ -63,7 +69,7 @@ class DSider extends Component{
 		}
 	}
 	renderMenuTitle = val => <span>
-		{val.icon ? <Icon type={val.icon} /> : <Icon  type="pie-chart"/>}
+		{val.icon ? <Icon type={val.icon} /> : null}
 		<span>{val.resourceName}</span>
 	</span>
 	//监听菜单缩放事件并重置collapsed触发收缩
@@ -73,19 +79,19 @@ class DSider extends Component{
 		contNum && this.props.collapsed !== collapsed && this.props.setCollapsed(),contNum++,this.setState({contNum});
 	}
 	render = _ => <Sider 
-	trigger={this.onTrigger}
-	collapsed={!this.props.collapsed}
+	trigger={null}
+	collapsed={this.props.collapsed}
 	collapsedWidth={60}
 	breakpoint={'xl'}
 	onCollapse={this.collapsed}
 	width={220} 
-	style={{ background: '#fff' }}>
+	style={{ background: '#fff' }} className="sider">
 		
         <Menu
           mode="inline"
           selectedKeys={[this.props.activeKey]}
-		//    openKeys={this.state.openKeys}
-		inlineCollapsed={true}
+		//   openKeys={this.state.openKeys}
+		  inlineCollapsed={false}
 		// inlineIndent={12}
           theme="light"
           style={{ borderRight: '1px solid transparent' ,backgroundColor:'transparent'}}

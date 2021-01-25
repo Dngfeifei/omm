@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Layout, Menu, Icon, Dropdown, Breadcrumb,message } from 'antd'
 import { connect } from 'react-redux'
-import { TOGGLE, ADD_PANE, RESET, SET_BREADCRUMB } from '/redux/action'
+import { TOGGLE, ADD_PANE, RESET, SET_BREADCRUMB ,GET_MENU} from '/redux/action'
 const { Header } = Layout
 import { hashHistory } from 'react-router'
 
@@ -59,7 +59,6 @@ class DHeader extends Component {
         }
         this.props.add(pane)
     }
-
     render = _ => <Header
         className="header" style={{background:'#4876e7 url(static/images/topBG.png) 0 center no-repeat',backgroundSize: 'auto 102%'}}>
         {/* <div className={this.props.collapsed ? 'avatar-wrapper collaps' : 'avatar-wrapper'}>
