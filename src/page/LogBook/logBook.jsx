@@ -15,7 +15,8 @@ const { Option } = Select;
 
 // 引入 API接口
 import {getSysLog, getByCode} from '/api/systemParameter'
-
+// 引入页面CSS
+import '/assets/less/pages/logBookTable.css'
 
 
 
@@ -86,6 +87,7 @@ class logBook extends Component {
         columns: [{
                 title: '序号',
                 dataIndex: 'index',
+                align:'center',
                 // 第一种：每一页都从1开始
                 render:(text,record,index)=> `${index+1}`
 
@@ -101,7 +103,7 @@ class logBook extends Component {
                 dataIndex: 'operateType'
             }, {
                 title: '操作时间',
-                dataIndex: 'time'
+                dataIndex: 'operateTime'
             }, {
                 title: '操作用户',
                 dataIndex: 'userName',
@@ -283,28 +285,27 @@ class logBook extends Component {
         };
         return (
             <div style={{ border: '0px solid red',background:' #fff'}} className="main_height">
-                <Form style={{ width: '100%', paddingTop: '10px' }}>
-                    <Row gutter={24}>
+                <Form layout="inline" style={{ width: '100%', paddingTop: '10px',marginLeft:'15px'}}>
+                    <Row>
                         {this.state.rules.map((val, index) =>
-                            <Col key={index} span={8} style={{ display: 'block' }}>
-                                <FormItem
-                                    label={val.label} labelCol={{ span: 4 }} style={{ marginBottom: '8px' }}>
-                                    {getFieldDecorator(val.key, val.option)(val.render())}
-                                </FormItem>
-                            </Col>)}
-                    </Row>
-                    <Row style={{ marginLeft: '15px' }}>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.onSearch}>查询</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
+                            <FormItem
+                              label={val.label} style={{ marginBottom: '8px' }}>
+                              {getFieldDecorator(val.key, val.option)(val.render())}
+                          </FormItem>)}
+                          <FormItem>
+                            <Button type="primary" style={{marginLeft:'25px'}} onClick={this.onSearch}>查询</Button>
+                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
+                          </FormItem>
+                        
                     </Row>
                 </Form>
                 <Table
+                    className="jxlTable"
                     bordered
-                    rowSelection={rowSelection}
                     dataSource={this.state.tabledata}
                     columns={this.state.columns}
                     pagination={false}
-                    style={{ marginTop: '16px',padding: '0px 15px',minHeight: '645px',overflowY: 'auto',height:'calc(100vh - 360px)' }}
+                    style={{ marginTop: '16px',padding: '0px 15px',minHeight: '645px',overflowY: 'auto',height:'calc(100vh - 260px)' }}
                     loading={this.state.loading}  //设置loading属性
                 />
                 
