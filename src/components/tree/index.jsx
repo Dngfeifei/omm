@@ -159,8 +159,8 @@ class TreeList extends Component {
             <div className="TreeContent">
                 <Spin tip="Loading..." spinning={this.state.visible}>
                     <Row gutter={16}>
-                        <Col span={20}> <Input prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />} className="searchInput" onChange={this.searchChange} placeholder='请输入关键词' /></Col>
-                        <Col span={4}>
+                        <Col span={16}> <Input prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />} className="searchInput" onChange={this.searchChange} placeholder='请输入关键词' /></Col>
+                        <Col span={8}>
                             <Tooltip placement="top" title='编辑'>
                                 <Button onClick={this.props.editTree} icon="edit" />
                             </Tooltip>
