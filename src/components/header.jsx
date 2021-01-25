@@ -56,8 +56,8 @@ class DHeader extends Component {
         this.props.add(pane)
     }
     render = _ => <Header
-        className="header">
-        <div className={this.props.collapsed ? 'avatar-wrapper collaps' : 'avatar-wrapper'}>
+        className="header" style={{background:'#4876e7 url(static/images/topBG.png) 0 center no-repeat',backgroundSize: 'auto 102%'}}>
+        {/* <div className={this.props.collapsed ? 'avatar-wrapper collaps' : 'avatar-wrapper'}>
             {<div className="logo">
                 <Icon type="question-circle" className="icon" />
                 <span className="username">LOGO</span>
@@ -67,7 +67,7 @@ class DHeader extends Component {
             className="trigger"
             type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
             onClick={this.props.toggle} />
-            <div style={{fontSize: "24px",color:"white",paddingLeft:"25px"}}>银信运维管理系统</div>
+            <div style={{fontSize: "24px",color:"white",paddingLeft:"25px"}}>银信运维管理系统</div> */}
         {/* <Breadcrumb separator=">" style={{marginLeft: 25}}>
             {
                 this.props.breadcrumb && this.props.breadcrumb.length && this.props.breadcrumb.map((item,index) => {
