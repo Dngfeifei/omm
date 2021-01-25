@@ -31,14 +31,10 @@ class DHeader extends Component {
     quit = _ => {
         
         logout().then(res=>{
-            if (res.code == 700) {
-                // 清除缓存
-                localStorage.clear();
-                this.props.reset()
-                hashHistory.replace('/login')
-            }else {
-                message.error(res.message)
-            }
+            // 清除缓存
+            localStorage.clear();
+            this.props.reset()
+            hashHistory.replace('/login')
         })
     }
 
@@ -60,24 +56,18 @@ class DHeader extends Component {
         this.props.add(pane)
     }
     render = _ => <Header
-        className="header" style={{background:'#4876e7 url(static/images/topBG.png) 0 center no-repeat',backgroundSize: 'auto 102%'}}>
-        {/* <div className={this.props.collapsed ? 'avatar-wrapper collaps' : 'avatar-wrapper'}>
+        className="header">
+        <div className={this.props.collapsed ? 'avatar-wrapper collaps' : 'avatar-wrapper'}>
             {<div className="logo">
                 <Icon type="question-circle" className="icon" />
                 <span className="username">LOGO</span>
             </div>}
-        </div> */}
-        {/* <div className={'avatar-wrapper'}>
-            {<div className="logo" style={{background:'url(static/images/logo.png) 42% center no-repeat',backgroundSize:'63%'}}>
-                <Icon type="question-circle" className="icon" />
-                <span className="username"></span>
-            </div>}
-        </div> */}
-        {/* <Icon
+        </div>
+        <Icon
             className="trigger"
             type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
-            onClick={this.props.toggle} /> */}
-            {/* <div style={{width:238,height:'100%',background:'url(static/images/title.png) center center no-repeat'}}></div> */}
+            onClick={this.props.toggle} />
+            <div style={{fontSize: "24px",color:"white",paddingLeft:"25px"}}>银信运维管理系统</div>
         {/* <Breadcrumb separator=">" style={{marginLeft: 25}}>
             {
                 this.props.breadcrumb && this.props.breadcrumb.length && this.props.breadcrumb.map((item,index) => {
