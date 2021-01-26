@@ -107,7 +107,7 @@
 				},
 				{
 					"children":"",
-					"resourcePath":"user_personnel",
+					"resourcePath":"user/user_personnel.jsx",
 					"icon":"",
 					"id":"243",
 					"ismenu":1,

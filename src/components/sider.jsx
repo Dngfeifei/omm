@@ -38,7 +38,12 @@ class DSider extends Component{
 			// 		this.add(item)
 			// 	}
 			// })
-		   this.add(nextprops.menu[0]);
+		if(nextprops.menu[0].children && nextprops.menu[0].children.length){
+			this.add(nextprops.menu[0].children[0]);
+		}else{
+			this.add(nextprops.menu[0]);
+		}
+		   
 		}
 		else{
 
@@ -68,8 +73,8 @@ class DSider extends Component{
 			this.setState({openKeys: [item.id]})
 		}
 	}
-	renderMenuTitle = val => <span>
-		{val.icon ? <Icon type={val.icon} /> : null}
+	renderMenuTitle = (val,leva) => <span>
+		{val.icon ? <Icon type={val.icon} /> : leva ? <Icon type="pie-chart" /> :null}
 		<span>{val.resourceName}</span>
 	</span>
 	//监听菜单缩放事件并重置collapsed触发收缩
@@ -102,7 +107,7 @@ class DSider extends Component{
         			return <SubMenu 
         			key={val.id}
         			onTitleClick={this.select}
-        			title={this.renderMenuTitle(val)}>
+        			title={this.renderMenuTitle(val,1)}>
 			            {val.children.map(item => {
 			            	if (item.children && item.children.length) {
 			        			return <SubMenu 
@@ -124,7 +129,7 @@ class DSider extends Component{
 		          	</SubMenu>
         		} else {
         			return <Menu.Item key={val.id} onClick={_ => this.add(val)}>
-        				{this.renderMenuTitle(val)}
+        				{this.renderMenuTitle(val,1)}
         			</Menu.Item>
         		}
         	})

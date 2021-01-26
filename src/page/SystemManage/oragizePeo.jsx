@@ -1,20 +1,26 @@
 import React, { Component } from 'react'
 import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table } from 'antd'
 // import Common from '/page/common.jsx'
-import { getTree, saveJG, editJG, saveEditJG, deleteJG, checkRY, releGL, deleteGL, addRY } from '/api/dict'
-
+import { getTree, saveJG, editJG, saveEditJG, deleteJG, checkRY, releGL, deleteGL, addRY } from '/api/ommJG'
+import Pagination from '/components/pagination'
 
 const TreeNode = Tree.TreeNode
 const FormItem = Form.Item
 const ButtonGroup = Button.Group
 class systempeo extends Component {
-    async componentWillMount() {
+    constructor(props){
+        super(props)
+        this.checkPeoId = this.checkPeoId.bind(this)
+        this.deletePeo = this.deletePeo.bind(this)
+        this.checkDialogData = this.checkDialogData.bind(this)
+        this.JGsave = this.JGsave.bind(this)
+    }
+    componentWillMount() {
         //获取树
-        //    await getTree().then(res =>{
-        //             this.setState({treedData : res.data})
-        //         }).catch( err =>{
-        //             console.log(err)
-        //         })
+        this.getTreeAll()
+    }
+    componentDidMount(){
+        // this.getTreeAll()
     }
 
     state = {
@@ -71,6 +77,40 @@ class systempeo extends Component {
                 render: _ => <Input style={{ width: 150 }} />
             },
         ],
+        pepplerules:[
+            {
+                label: '姓名',
+                key: 'realName',
+                render: _ => <Input style={{ width: 200 }} />
+            },{
+                label: '账号',
+                key: 'userName',
+                render: _ => <Input style={{ width: 200 }} />
+            },{
+                label: '性别',
+                key: 'sex',
+                render: _ => <Select style={{ width: 200 }} placeholder="选择状态">
+                    <Option value='0' key='0'>男</Option>
+                    <Option value='1' key='1'>女</Option>
+                </Select>
+            },{
+                label: '邮箱',
+                key: 'email',
+                render: _ => <Input style={{ width: 200 }} />
+            },{
+                label: '员工号',
+                key: 'userNum',
+                render: _ => <Input style={{ width: 200 }} />
+            },{
+                label: '固定电话',
+                key: 'fixedPhone',
+                render: _ => <Input style={{ width: 200 }} />
+            },{
+                label: '移动电话',
+                key: 'mobilePhone',
+                render: _ => <Input style={{ width: 200 }} />
+            },
+        ],
         columns: [
             {
                 title: '姓名',
@@ -100,82 +140,110 @@ class systempeo extends Component {
                 render: t => t == '1' ? '启用' : '禁用'
             }
         ],
-        tabledata: [
+        peocolumns:[
             {
-                "realName": "北京",
-                "userNum": "192933444884",
-                "userName": "kndnkf",
-                "sex": 0,
-                "org": "华北大区",
-                "duties": "经理1",
-                "mobilePhone": "1983746363",
-                "status": 1,
+                title: '用户名',
+                dataIndex: 'realName',
+                width:100,
+            },{
+                title: '工号',
+                dataIndex: 'userNum',
+                width:100,
+            },{
+                title: '账号',
+                dataIndex: 'userName',
+                width:80,
+            },{
+                title: '邮箱',
+                dataIndex: 'email',
+                width:100,
+            },{
+                title: '性别',
+                dataIndex: 'sex',
+                render: t => t == '1' ? '男' : '女',
+            },{
+                title: '职务',
+                dataIndex: 'duties',
+                width:100,
+            },{
+                title: '固定电话',
+                dataIndex: 'fixedPhone',
+                width:120,
+            },{
+                title: '移动电话',
+                dataIndex: 'mobilePhone',
+                width:120,
             },
-            {
-                "realName": "北京",
-                "userNum": "192933444884",
-                "userName": "kndnkf",
-                "sex": 1,
-                "org": "华北大区",
-                "duties": "经理2",
-                "mobilePhone": "1983746363",
-                "status": 0,
-            },
-            {
-                "realName": "北京",
-                "userNum": "192933444884",
-                "userName": "kndnkf",
-                "sex": 1,
-                "org": "华北大区",
-                "duties": "经理",
-                "mobilePhone": "1983746363",
-                "status": 0,
-            }
         ],
+        tabledata: [],
+        tableLogdata: [],
         name: '111',
         num: '',
         visible: false,
         edit: false,
         title: '',
-        selectedRowKeys: [],
+        selectedRowKeys: null,
+        selectedRowKeys2: null,
+        // 第一页表格选中id
         tableID: [],
         treeData: [
-            {
-                key: '11',
-                title: '组织机构跟节点',
-                children: [{
-                    key: '23',
-                    title: '董事会',
-                    children: [
-                        {
-                            key: '4', title: '总经理办公室', children: [
-                                { key: '5', title: '技术服务中心' },
-                                { key: '6', title: '保障中心' }
-                            ]
-                        },
-                        {
-                            key: '7', title: '董事会秘书', children: [
-                                { key: '8', title: '证券事业部' }
-                            ]
-                        }
-                    ]
-                }]
-            }
+            // {
+            //     key: '11',
+            //     title: '组织机构跟节点',
+            //     children: [{
+            //         key: '23',
+            //         title: '董事会',
+            //         children: [
+            //             {
+            //                 key: '4', title: '总经理办公室', children: [
+            //                     { key: '5', title: '技术服务中心' },
+            //                     { key: '6', title: '保障中心' }
+            //                 ]
+            //             },
+            //             {
+            //                 key: '7', title: '董事会秘书', children: [
+            //                     { key: '8', title: '证券事业部' }
+            //                 ]
+            //             }
+            //         ]
+            //     }]
+            // }
         ],
+        // 选中的树
         selectedTreeId: null,
-        Dialog: {  //添加人员数据
-            name: '',
-            num: null,
-            YGNum: null,
-            gender: '',
-            email: '',
-            GDphone: '',
-            YDphone: ''
+        // 弹出框选中的id
+        userIds: [],
+        // 分页参数
+		pageConf: {
+			limit: 10,
+			offset: 0
+		},
+		// 分页配置
+		pagination: {
+			pageSize: 10,
+			current: 1,
+			total: 0,
         },
-        userIds: []
+        // 分页参数
+		pageConf2: {
+			limit: 10,
+			offset: 0
+		},
+		// 分页配置
+		pagination2: {
+			pageSize: 10,
+			current: 1,
+			total: 0,
+		},
     }
 
-
+    // 树数据
+    getTreeAll = ()=>{
+         getTree().then(res =>{
+             console.log(res.data)
+            this.setState({treeData : res.data})
+        })
+    }
     // 点击添加，添加机构
     add = _ => {
         if (this.state.selectedTreeId) {
@@ -189,27 +257,40 @@ class systempeo extends Component {
     // 点击修改，修改机构
     edit = _ => {
         if (this.state.selectedTreeId) {
+            console.log(this.state.selectedTreeId);
             this.setState({ edit: true })
             this.setState({ title: '编辑机构' })
+            editJG({id:this.state.selectedTreeId}).then(res=>{
+                console.log(res);
+                 this.props.form.setFields({orgFullName: { value:res.data.orgFullName} })
+                 this.props.form.setFields({orgShortName: { value:res.data.orgShortName} })
+                 this.props.form.setFields({orgNum: { value:res.data.orgNum} })
+                 this.props.form.setFields({orgCode: { value:res.data.orgCode} })
+            })
         } else {
             message.warning('请先选择机构！')
         }
     }
     // 删除树
     deleteT = _ => {
-        deleteJG({ id: this.state.selectedTreeId }).then(res => {
-            this.getTreeAll();
-        }).catch(res => {
-            console.log(res)
-        })
+        if (this.state.selectedTreeId) {
+            deleteJG({ id: this.state.selectedTreeId }).then(res => {
+                this.getTreeAll();
+            }).catch(res => {
+                console.log(res)
+            })
+        }else{
+            message.warning('请先选择机构！')
+        }
+        
     }
     // 保存
     handleOk = _ => {
         this.props.form.validateFieldsAndScroll([`orgFullName`, `orgShortName`, `orgNum`, `orgCode`], {}, (err, val) => {
-            let params = Object.assign(val)
+            let params = Object.assign(val,{orgParentId:this.state.selectedTreeId})
             console.log(params)
             if (this.state.title == '添加机构') {
-                // if(this.ruleForm.name.length >0 && this.ruleForm.BH > 0){
+                // if(this.addrules.orgFullName.length >0 && this.addrules.orgShortName.length > 0){
                 saveJG(params).then(res => {
                     console.log(res);
                     this.setState({ edit: false })
@@ -223,10 +304,13 @@ class systempeo extends Component {
                 // }
             } else {
                 // if(this.ruleForm.name.length >0 && this.ruleForm.BH > 0){
-                saveEditJG(data2).then(res => {
+                let param2 = Object.assign(val,{id:this.state.selectedTreeId})
+                delete param2.orgParentId
+                console.log(param2);
+                saveEditJG(param2).then(res => {
                     console.log(res);
                     this.setState({ edit: false })
-                    _this.getTreeAll();
+                    this.getTreeAll();
                     this.setState({
                         orgFullName: '',
                         orgShortName: '',
@@ -251,247 +335,362 @@ class systempeo extends Component {
         }
         this.setState({ tableID: Array.from(new Set(arr)) })
         console.log(this.state.tableID)
-        // this.userIds = Array.from(new Set(arr));
+    }
+    onSelectChange2 = (selectedRowKeys2, selectedRows) => {
+        console.log('selectedRowKeys changed: ', selectedRows);
+        this.setState({ selectedRowKeys2 });
+        let arr = [];
+        for (let p of selectedRows) {
+            arr.push(p.id)
+        }
+        this.setState({ userIds: Array.from(new Set(arr)) })
+        console.log(this.state.userIds)
     }
     // 树选中后
     onSelect = (selectedKeys, info) => {
         console.log('selected', selectedKeys, info);
-        this.setState({ selectedTreeId: selectedKeys })
-        this.checkPeo(selectedKeys);
+            this.setState({ selectedTreeId: selectedKeys[0] })
+        // console.log(selectedKeys[0])
+        let pdata = Object.assign({}, {orgId:selectedKeys[0]},this.state.pageConf)
+            this.checkPeo(pdata);
+        
     };
     //拖拽结束时执行
     onDragEnd = info => {
-         console.log('onDragEnd')
+         alert(1)
     }
     //拖拽tree，判断为哪个位置
     onDrop = info => {
-        console.log('onDrop')
-        const dropKey = info.node.props.eventKey;
-        const dragKey = info.dragNode.props.eventKey;
-        const dropPos = info.node.props.pos.split('-');
-        const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
-
-        const loop = (data, key, callback) => {
-            data.forEach((item, index, arr) => {
-
-                if (item.key === key) {
-
-                    return callback(item, index, arr);
-                }
-                if (item.children) {
-                    return loop(item.children, key, callback);
-                }
-            });
-        };
-        const data = [...this.state.treeData];
-
-        // Find dragObject
-        let dragObj;
-        loop(data, dragKey, (item, index, arr) => {
-            arr.splice(index, 1);
-            dragObj = item;
-        });
-
-        if (!info.dropToGap) {
-            // Drop on the content
-            loop(data, dropKey, item => {
-                item.children = item.children || [];
-                // where to insert 示例添加到尾部，可以是随意位置
-                item.children.push(dragObj);
-            });
-        } else if (
-            (info.node.props.children || []).length > 0 && // Has children
-            info.node.props.expanded && // Is expanded
-            dropPosition === 1 // On the bottom gap
-        ) {
-            loop(data, dropKey, item => {
-                item.children = item.children || [];
-                // where to insert 示例添加到头部，可以是随意位置
-                item.children.unshift(dragObj);
-            });
-        } else {
-            let ar;
-            let i;
-            loop(data, dropKey, (item, index, arr) => {
-                ar = arr;
-                i = index;
-            });
-            if (dropPosition === -1) {
-                ar.splice(i, 0, dragObj);
-            } else {
-                ar.splice(i + 1, 0, dragObj);
-            }
+        const dropKey = info.node.props.eventKey;//目标节点
+        const dragKey = info.dragNode.props.eventKey; //移动节点
+        let data3 = {
+            id:info.dragNode.props.eventKey,
+            orgParentId:info.node.props.eventKey,
         }
-
-        this.setState({
-            treeData: data,
-        });
-    };
-    // 点击树后表格数据查询
-    checkPeo(orgId) {
-        let data = {
-            orgId: orgId,//orgId
-            // offset:this.pageList.pageNum,
-            // limit:this.pageList.pageSize,
-        };
-        checkRY(data).then(res => {
+        saveEditJG(data3).then(res =>{
             console.log(res);
-            this.state.tabledata = res.data.list;
-            this.pageList.total = res.data.total;
-            // this.pageList.pageNum = res.data.pageNum;
-            // this.pageList.pageSize = res.data.pageSize;
-        }).catch(err => {
+            this.getTreeAll();
+        }).catch( err =>{
             console.log(err)
         })
-    }
+        // const dropPos = info.node.props.pos.split('-');
+        // const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
+
+        // const loop = (data, key, callback) => {
+        //     data.forEach((item, index, arr) => {
+
+        //         if (item.key === key) {
+
+        //             return callback(item, index, arr);
+        //         }
+        //         if (item.children) {
+        //             return loop(item.children, key, callback);
+        //         }
+        //     });
+        // };
+        // const data = [...this.state.treeData];
+
+        // // Find dragObject
+        // let dragObj;
+        // loop(data, dragKey, (item, index, arr) => {
+        //     arr.splice(index, 1);
+        //     dragObj = item;
+        // });
+
+        // if (!info.dropToGap) {
+        //     // Drop on the content
+        //     loop(data, dropKey, item => {
+        //         item.children = item.children || [];
+        //         // where to insert 示例添加到尾部，可以是随意位置
+        //         item.children.push(dragObj);
+        //     });
+        // } else if (
+        //     (info.node.props.children || []).length > 0 && // Has children
+        //     info.node.props.expanded && // Is expanded
+        //     dropPosition === 1 // On the bottom gap
+        // ) {
+        //     loop(data, dropKey, item => {
+        //         item.children = item.children || [];
+        //         // where to insert 示例添加到头部，可以是随意位置
+        //         item.children.unshift(dragObj);
+        //     });
+        // } else {
+        //     let ar;
+        //     let i;
+        //     loop(data, dropKey, (item, index, arr) => {
+        //         ar = arr;
+        //         i = index;
+        //     });
+        //     if (dropPosition === -1) {
+        //         ar.splice(i, 0, dragObj);
+        //     } else {
+        //         ar.splice(i + 1, 0, dragObj);
+        //     }
+        // }
+
+        // this.setState({
+        //     treeData: data,
+        // });
+    };
+    checkPeo = (params) => {
+		// let params = Object.assign({}, this.state.pageConf, {orgId:Number(orgId)})
+		checkRY(params).then(res => {
+			if (res.success == 1) {
+				let pagination = {
+					pageSize: res.data.size,
+					current: res.data.current,
+					total: res.data.total,
+				}
+				let pageConf = {
+					limit: res.data.size,
+					offset: (res.data.current - 1) * 10
+				}
+				this.setState({ tabledata: res.data.records, pagination: pagination,  })
+			}
+		})
+	}
     // 点击查询按钮
     checkPeoId() {
-        this.props.form.validateFieldsAndScroll([`realName`, `userName`, `status`], {}, (err, val) => {
-            let params = Object.assign({ orgId: this.state.selectedTreeId }, val)
+        this.props.form.validateFields(null, {}, (err, val) => {
+            let params = Object.assign({ orgId: this.state.selectedTreeId }, val,this.state.pageConf)
+            checkRY(params).then(res => {
+                let pagination = {
+					pageSize: res.data.size,
+					current: res.data.current,
+					total: res.data.total,
+				}
+                console.log(res);
+                this.setState({ tabledata: res.data.records })
+                this.setState({ pagination: pagination })
+                this.setState({ realName: '', userName: '', realName: null })
+            }).catch(err => {
+                console.log(err)
+            })
         })
-        checkRY(params).then(res => {
-            console.log(res);
-            this.setState({ tabledata: res.data.list })
-            // this.data = res.data.list;
-            this.setState({ realName: '', userName: '', realName: null })
-        }).catch(err => {
-            console.log(err)
-        })
+        
+    }
+    clear = () =>{
+        this.props.form.resetFields();
     }
     // 关联机构人员按钮点击
     check = _ => {
-        this.setState({ visible: true })
-        // 渲染弹框里的表格 查询所有人员
-        this.checkAllPeople()
+        if(this.state.selectedTreeId){
+            this.setState({ visible: true })
+            // 渲染弹框里的表格 查询所有人员
+            this.checkAllPeople(this.state.pageConf2)
+        }else{
+            message.warning('请先勾选机构!')
+        }
+        
     }
     // 解除关联人员
     deletePeo() {
+        console.log(this.state.tableID)
         let data = {
-            orgId: this.state.selectedTreeId,
-            userIds: this.state.userIds,
+            // orgId: this.state.selectedTreeId,
+            userIds: this.state.tableID,
         }
-        if (this.state.userIds.length > 0) {
+        if (this.state.tableID.length > 0) {
             deleteGL(data).then(res => {
                 console.log(res);
                 if (res.status == '200') {
-                    this.checkPeo(this.state.selectedTreeId);
-                    message.success('请先选择机构！')
+                    let data = Object.assign({}, {orgId:this.state.selectedTreeId},this.state.pageConf)
+                    this.checkPeo(data);
+                    message.success('解除成功')
                 }
             }).catch(err => {
                 console.log(err)
             })
         } else {
-            message.error('请先勾选解除关联人员!')
+            message.warning('请先勾选解除关联人员!')
         }
 
     }
     // 查询所有人员
-    checkAllPeople() {
+    checkAllPeople(param2){
         let data = {
-            offset: this.pageLogList.pageNum,
-            limit: this.pageLogList.pageSize,
+            // offset: this.pageLogList.pageNum,
+            // limit: this.pageLogList.pageSize,
         }
-        checkRY(data).then(res => {
+        checkRY(param2).then(res => {
             console.log(res);
-            this.dialogData = res.data.list;
-            this.pageLogList.total = res.data.total;
-        }).catch(err => {
-            console.log(err)
+            let pagination2 = {
+                pageSize: res.data.size,
+                current: res.data.current,
+                total: res.data.total,
+            }
+            console.log(res);
+            this.setState({ tableLogdata: res.data.records })
+            this.setState({ pagination2: pagination2 })
         })
     }
     // 弹框里的人员查询
     checkDialogData() {
-        let data = {
-            realName: this.Dialog.name,//姓名
-            userNum: this.Dialog.YGNum,//员工号
-            userName: this.Dialog.num,//账号
-            fixedPhone: this.Dialog.GDphone,//固定电话
-            sex: this.Dialog.gender,//性别
-            mobilePhone: this.Dialog.YDphone,//电话
-            email: this.Dialog.email,//邮箱
-            // offset:this.pageList.pageNum,
-            // limit:this.pageList.pageSize,
-        };
-        checkRY(data).then(res => {
-            console.log(res);
-            this.dialogData = res.data.list;
-            this.pageLogList.total = res.data.total;
-        }).catch(err => {
-            console.log(err)
+        this.props.form.validateFields(null, {}, (err, val) => {
+            let params = Object.assign({}, val,this.state.pageConf2)
+            checkRY(params).then(res => {
+                let pagination = {
+					pageSize: res.data.size,
+					current: res.data.current,
+					total: res.data.total,
+				}
+                this.setState({ tableLogdata: res.data.records })
+                this.setState({ pagination2: pagination })
+            }).catch(err => {
+                console.log(err)
+            })
         })
+        
     }
+     // 点击弹框里的保存按钮添加人员
+     JGsave(){
+        let data ={
+            orgId:this.state.selectedTreeId,
+            userIds:this.state.userIds
+        }
+        if(this.state.userIds.length > 0){
+            releGL(data).then(res =>{
+                console.log(res);
+                this.state.visible = false;
+                if(res.status == '200'){
+                    let data = Object.assign({}, {orgId:this.state.selectedTreeId},this.state.pageConf)
+                    this.checkPeo(data);
+                    message.success('关联成功')
+                }
+                // this.dialogData = res.data;
+            }).catch( err =>{
+                console.log(err)
+            })
+        }else{
+            message.warning('请先勾选关联人员!')
+        }
+         
+    }
+    // 分页页码变化
+	pageIndexChange = (current, pageSize) => {
+        let pageConf = Object.assign({}, this.state.pageConf, {orgId:this.state.selectedTreeId},{ offset: (current - 1) * 10 });
+        this.checkPeo(pageConf)
+	}
+	// 分页条数变化
+	pageSizeChange = (current, pageSize) => {
+        let pageConf = Object.assign({}, this.state.pageConf,{orgId:this.state.selectedTreeId},{ limit: pageSize });
+		this.checkPeo(pageConf)
+    }
+    // 分页页码变化
+	pageIndexChange2 = (current, pageSize) => {
+        let pageConf = Object.assign({}, this.state.pageConf2,{ offset: (current - 1) * 10 });
+        this.checkAllPeople(pageConf)
+	}
+	// 分页条数变化
+	pageSizeChange2 = (current, pageSize) => {
+        let pageConf = Object.assign({}, this.state.pageConf2,{ limit: pageSize });
+		this.checkAllPeople(pageConf)
+	}
 
     render = _ => {
         const { getFieldDecorator } = this.props.form
-        const { selectedRowKeys } = this.state;
+        const { selectedRowKeys,selectedRowKeys2 } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange
         };
-        return <div style={{ border: '0px solid red' }} className="main_height">
-            <Row className="main_height" gutter={24}>
-                <Col span={6} className="gutter-row main_height" style={{ backgroundColor: 'white' }}>
-                    <div style={{ height:'60px',display: 'flex',justifyContent: 'space-around',alignItems: 'center'}}>
+        const rowSelection2 = {
+            selectedRowKeys2,
+            onChange: this.onSelectChange2
+        };
+        return <div  className="m_height">
+            <Row className="m_height">
+                <Col span={6} className="m_height" >
+                    <Col style={{ textAlign: 'center' }}>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.add}>新增</Button>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.edit}>修改</Button>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deleteT}>删除</Button>
-                    </div>
-                    <Tree
-                        className="draggable-tree"
-                        draggable
-                        blockNode
-                        defaultExpandAll={true}
-                        onDragEnter={this.onDragEnter}
-                        onDragEnd={this.onDragEnd}
-                        onDrop={this.onDrop}
-                        treeData={this.state.treeData}
-                        onSelect={this.onSelect}
-                    />
+                    </Col>
+                    {
+                        this.state.treeData.length > 0 && 
+                        <Tree
+                            className="draggable-tree"
+                            draggable
+                            blockNode
+                            style={{height: '100%' , overflow: 'auto'}}
+                            defaultExpandAll={true}
+                            autoExpandParent={true}
+                            onSelect={this.onSelect}
+                            onDragEnter={this.onDragEnter}
+                            onMouseDown={this.onDragEnd}
+                            onDrop={this.onDrop}
+                            treeData={this.state.treeData}
+                        />
+                    }
+                    
                 </Col>
-                <Col span={18} className="gutter-row main_height" style={{padding: '0 10px 0', backgroundColor:'white'}}>
-                    <Form style={{ width: '100%',paddingTop:'10px' }}>
+                <Col span={18} className="main_height">
+                    <Form style={{ width: '100%' }}>
                         <Row gutter={24}>
                             {this.state.rules.map((val, index) =>
                                 <Col key={index} span={8} style={{ display: 'block' }}>
                                     <FormItem
-                                        label={val.label} labelCol={{ span: 4 }} style={{marginBottom:'8px'}}>
+                                        label={val.label} labelCol={{ span: 4 }}>
                                         {getFieldDecorator(val.key, val.option)(val.render())}
                                     </FormItem>
                                 </Col>)}
                         </Row>
-                        <Row>
-                            <Button type="primary" style={{ marginLeft: '10px' }}>查询</Button>
-                            <Button type="info" style={{ marginLeft: '10px' }}>清空</Button>
+                        <Row style={{ marginTop: '10px' }}>
+                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.checkPeoId}>查询</Button>
+                            <Button type="info" style={{ marginLeft: '10px' }} onClick={this.clear}>清空</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deletePeo}>解除关联人员</Button>
                         </Row>
                     </Form>
-                    <Table 
+                    <Table
                         bordered
+                        rowKey="id"
                         rowSelection={rowSelection}
                         dataSource={this.state.tabledata}
                         columns={this.state.columns}
-                        pagination={true}
+                        pagination={false}
+                        scroll={{y:'calc(100vh - 350px)'}}
                         style={{ marginTop: '16px' }}
                     />
+                    <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
                 </Col>
             </Row>
             <Modal title='添加人员'
-                // onOk={this.handleOk}
+                onOk={this.JGsave}
                 visible={this.state.visible}
                 // confirmLoading={this.state.loading}
                 // onCancel={this.props.onCancel}
                 onCancel={_ => this.setState({ visible: false })}
-                width={600}
+                width={900}
                 style={{ top: 50, marginBottom: 100 }}
                 okText="提交"
                 cancelText="取消">
-                {/* <Form>
-                    {this.state.rules.map((val, index) => <FormItem  
-                    label={val.label} labelCol={{span: 6}}>
-                        {getFieldDecorator(val.key, val.option)(val.render())}
-                    </FormItem>)}
-                </Form> */}
+                <Form>
+                    <Row gutter={24}>
+                        {this.state.pepplerules.map((val, index) =>
+                            <Col key={index} span={10} style={{ display: 'block' }}>
+                                <FormItem
+                                    label={val.label} labelCol={{ span: 7 }}>
+                                    {getFieldDecorator(val.key, val.option)(val.render())}
+                                </FormItem>
+                            </Col>)}
+                        
+                            <Button type="primary" style={{ marginLeft: '10px',marginTop: '20px' }} onClick={this.clear}>清空</Button>
+                            <Button type="primary" style={{ marginLeft: '10px',marginTop: '50px' }} onClick={this.checkDialogData}>查询</Button>
+                        
+                    </Row>
+                </Form>
+                <Table
+                        bordered
+                        rowKey="id"
+                        rowSelection={rowSelection2}
+                        dataSource={this.state.tableLogdata}
+                        columns={this.state.peocolumns}
+                        pagination={false}
+                        scroll={{ x: 800, y: 300 }}
+                        style={{ marginTop: '16px' }}
+                    />
+                <Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} />
             </Modal>
             <Modal
                 title={this.state.title}
