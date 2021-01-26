@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table } from 'antd'
+import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table ,Tooltip } from 'antd'
 // import Common from '/page/common.jsx'
 import { getTree, saveJG, editJG, saveEditJG, deleteJG, checkRY, releGL, deleteGL, addRY } from '/api/ommJG'
 import Pagination from '/components/pagination'
+import TreeNode from '/components/tree/'
 
-const TreeNode = Tree.TreeNode
+import '@/assets/less/pages/oragizePeo.less'
 const FormItem = Form.Item
-const ButtonGroup = Button.Group
 class systempeo extends Component {
     constructor(props){
         super(props)
@@ -89,7 +89,7 @@ class systempeo extends Component {
             },{
                 label: '性别',
                 key: 'sex',
-                render: _ => <Select style={{ width: 200 }} placeholder="选择状态">
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择性别">
                     <Option value='0' key='0'>男</Option>
                     <Option value='1' key='1'>女</Option>
                 </Select>
@@ -117,7 +117,15 @@ class systempeo extends Component {
                 dataIndex: 'realName'
             }, {
                 title: '工号',
-                dataIndex: 'userNum'
+                dataIndex: 'userNum',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: userNum => (
+                    <Tooltip placement="topLeft" title={userNum}>
+                      {userNum}
+                    </Tooltip>
+                  ),
             }, {
                 title: '账号',
                 dataIndex: 'userName',
@@ -134,6 +142,14 @@ class systempeo extends Component {
             }, {
                 title: '移动电话',
                 dataIndex: 'mobilePhone',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: mobilePhone => (
+                    <Tooltip placement="topLeft" title={mobilePhone}>
+                      {mobilePhone}
+                    </Tooltip>
+                  ),
             }, {
                 title: '状态',
                 dataIndex: 'status',
@@ -182,8 +198,8 @@ class systempeo extends Component {
         visible: false,
         edit: false,
         title: '',
-        selectedRowKeys: null,
-        selectedRowKeys2: null,
+        selectedRowKeys: [],
+        selectedRowKeys2: [],
         // 第一页表格选中id
         tableID: [],
         treeData: [
@@ -586,7 +602,18 @@ class systempeo extends Component {
         let pageConf = Object.assign({}, this.state.pageConf2,{ limit: pageSize });
 		this.checkAllPeople(pageConf)
 	}
+    onRow = (record) =>{
+        return {
+            onClick: () =>{
+                const {selectedRowKeys,tableID} = this.state;
+                selectedRowKeys.indexOf(record.id) > -1 ? selectedRowKeys.splice(selectedRowKeys.indexOf(record.id),1) : selectedRowKeys.push(record.id);
+               // userIds.indexOf(record.id) > -1 ? userIds.splice(userIds.indexOf(record.id),1) : userIds.push(record.id);
+            //    tableID = [...selectedRowKeys]
+               this.setState({selectedRowKeys,tableID:selectedRowKeys});
+            }
 
+        }
+    } 
     render = _ => {
         const { getFieldDecorator } = this.props.form
         const { selectedRowKeys,selectedRowKeys2 } = this.state;
@@ -598,9 +625,9 @@ class systempeo extends Component {
             selectedRowKeys2,
             onChange: this.onSelectChange2
         };
-        return <div  className="m_height">
-            <Row className="m_height">
-                <Col span={6} className="m_height" >
+        return <div  className="main_height">
+            <Row className="main_height">
+                <Col span={6} className="main_height" >
                     <Col style={{ textAlign: 'center' }}>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.add}>新增</Button>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.edit}>修改</Button>
@@ -609,10 +636,10 @@ class systempeo extends Component {
                     {
                         this.state.treeData.length > 0 && 
                         <Tree
-                            className="draggable-tree"
+                            className="mapTree draggable-tree"
                             draggable
                             blockNode
-                            style={{height: '100%' , overflow: 'auto'}}
+                            // style={{position:'absolute',width:'100%',top:'50px',bottom:'0', overflow: 'auto'}}
                             defaultExpandAll={true}
                             autoExpandParent={true}
                             onSelect={this.onSelect}
@@ -635,7 +662,7 @@ class systempeo extends Component {
                                     </FormItem>
                                 </Col>)}
                         </Row>
-                        <Row style={{ marginTop: '10px' }}>
+                        <Row style={{ marginTop: '10px' ,textAlign:"right"}}>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.checkPeoId}>查询</Button>
                             <Button type="info" style={{ marginLeft: '10px' }} onClick={this.clear}>清空</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>
@@ -645,6 +672,8 @@ class systempeo extends Component {
                     <Table
                         bordered
                         rowKey="id"
+                        size="small"
+                        onRow={this.onRow}
                         rowSelection={rowSelection}
                         dataSource={this.state.tabledata}
                         columns={this.state.columns}
@@ -687,6 +716,7 @@ class systempeo extends Component {
                         dataSource={this.state.tableLogdata}
                         columns={this.state.peocolumns}
                         pagination={false}
+                        // size={}
                         scroll={{ x: 800, y: 300 }}
                         style={{ marginTop: '16px' }}
                     />
