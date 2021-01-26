@@ -19,15 +19,15 @@ class HomeMoudle extends Component {
         number: '10',
         icon: 'user-add'
       }, {
-        title: '已完成',
+        title: '已完成的',
         number: '11',
         icon: 'heart'
       }, {
-        title: '进行中',
+        title: '进行中的',
         number: '12',
         icon: 'share-alt'
       }, {
-        title: '我的管理',
+        title: '我管理的',
         number: '12',
         icon: 'share-alt'
       }],
@@ -91,7 +91,7 @@ class HomeMoudle extends Component {
     return (
       <Card className="card-content" title="常用模块" isShow={this.state.isShow} change={this.change} refresh={this.refresh}>
         <Spin spinning={this.state.loading}>
-          <Row gutter={20} style={{ height: '105px' }}>
+          <Row gutter={20} style={{ height: '190px' }}>
             <Col span={8} className="left">
               <div className="list-item">
                 {
@@ -110,8 +110,8 @@ class HomeMoudle extends Component {
                     return (
                       <div className="cart-item cart-itembg" key={item.title}>
                         <div className="cart-item-content">
-                          <div className="number">{item.number}</div>
-                          <div className="title">{item.title}</div>
+                          <div className="number">{item.title}</div>
+                          <div className="title">{item.number}</div>
                         </div>
                       </div>
                     );

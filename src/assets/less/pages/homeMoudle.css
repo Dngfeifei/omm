@@ -1,98 +1,105 @@
-.left{
-    overflow-y: auto;
-    height: 100%;
-  }
-  
-  
-  
-  /* 卡片的内容高度 */
-  .content .ant-card .ant-card-body {
-    max-height: 450px;
-    overflow-y: auto;
-  }
-  
-  /***********************        以下样式是规定于 常用模块  的样式        *************************/
-  .ant-card-head .ant-card-head-title {
-      font-size: 20px !important;
-      color: #696767 !important;
-      padding: 0px !important;
-  }
-  
-  
-  .cart-list {
-      display: flex;
-      padding-bottom: 15px;
-      align-items: center;
-    }
-    
-    .cart-list .cart-item {
-      flex: 1;
-      background: #fff;
-      margin-right: 15px;
-      display: flex;
-      align-items: center;
-      height: 90px;
-      border-radius: 6px;
-      color: #fff;
-    }
-    .cart-itembg:first-child{
-      background: #D9001B;
-      
-    }
-    .cart-itembg:nth-child(2){
-      background: #F59A23;
-    }
-    .cart-itembg:nth-child(3){
-      background: #02A7F0;
-    }
-    .cart-itembg:nth-child(4){
-      background: #8400FF;
-    }
-  
-    .list-item {
-      overflow-y: auto;
-      height: 100%;
-    }
-    .list-item .items {
-      height: 30px;
-      color: #838A9D;
-      padding-left: 20px;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      cursor: pointer;
-      position: relative;
-      vertical-align: middle;
-      line-height: 30px;
-    }
-    .active {
-      color: #006af1;
-    }
-    .active:before {
-      content: ' ';
-      display: block;
-      left: -1px;
-      top: 7px;
-      bottom: 10px;
-      width: 4px;
-      background: #006af1;
-      position: absolute;
-      height: 16px;
-  }
-  .cart-list .cart-item-content {
-      width: 100%;
-      height: 100%;
-      padding: 10px;
-      text-align: center;
-  }
-  .cart-list .cart-item-content .number {
-      padding-top: 5px;
-      font-size: 36px;
-      line-height: 1;
-  }
-  .cart-list .cart-item-content .title {
-      padding-top: 10px;
-      line-height: 1;
-  }
-  
-  
+.left {
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* 卡片的内容高度 */
+
+.content .ant-card .ant-card-body {
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+/***********************        以下样式是规定于 常用模块  的样式        *************************/
+
+.ant-card-head .ant-card-head-title {
+  font-size: 20px !important;
+  color: #696767 !important;
+  padding: 0px !important;
+}
+
+.cart-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: space-around;
+}
+
+.cart-list .cart-item {
+  height: 90px;
+  border-radius: 6px;
+  color: #fff;
+  width: 45%;
+}
+
+.cart-itembg:first-child {
+  background: #f96d6e;
+  margin-bottom: 10px;
+}
+
+.cart-itembg:nth-child(2) {
+  background: #fdaa5a;
+  margin-bottom: 10px;
+}
+
+.cart-itembg:nth-child(3) {
+  background: #63b4b8;
+}
+
+.cart-itembg:nth-child(4) {
+  background: #5b9dfe;
+}
+
+.list-item {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.list-item .items {
+  height: 30px;
+  color: #838A9D;
+  padding-left: 20px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+  vertical-align: middle;
+  line-height: 30px;
+}
+
+.active {
+  color: #1890ff !important;
+}
+
+.active:before {
+  content: ' ';
+  display: block;
+  left: -1px;
+  top: 7px;
+  bottom: 10px;
+  width: 4px;
+  background: #1890ff;
+  position: absolute;
+  height: 16px;
+}
+
+.cart-list .cart-item-content {
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  text-align: center;
+}
+
+.cart-list .cart-item-content .number {
+  padding-top: 5px;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.cart-list .cart-item-content .title {
+  padding-top: 10px;
+  line-height: 1;
+  font-size: 30px;
+  font-weight: 400;
+}

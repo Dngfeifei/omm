@@ -8,6 +8,8 @@ const { TreeNode } = Tree;
 const { Search } = Input;
 const { confirm } = Modal;
 
+// 引入 Tree树形组件
+import TreeParant from "@/components/tree/index.jsx"
 
 // 行内编辑表格组件
 import EditTable from "./EditableCell/editableCell.jsx";
@@ -53,10 +55,6 @@ const generateList = (data) => {
 
 class Parameter extends Component {
     state = {
-        expandedKeys: [],
-        searchValue: '',
-        autoExpandParent: true,
-
         // 对话框
         treeVisible: false,
         middleStatus:'addTree',
@@ -113,7 +111,7 @@ class Parameter extends Component {
             key: 'parentName',
             render: _ => <Input disabled style={{ width:250 }} />
         }],
-
+        h:{y:240},  //设置表格的高度
     }
 
 
@@ -125,14 +123,33 @@ class Parameter extends Component {
         // 获取系统参数列表
         this.getTableList(this.state.form)
 
+
+        this.SortTable();
+        //窗口变动的时候调用
+        window.onresize = () => {
+            this.SortTable();
+        }
+
+    }
+
+    // 获取表格高度
+    SortTable = () => {
+        setTimeout(() => {
+            console.log(this.tableDom.offsetHeight);
+            let h = this.tableDom.clientHeight - 100;
+            this.setState({
+                h: {
+                    y: (h)
+                }
+            });
+        }, 0)
     }
 
 
-
+    // 修改数据默认的 key  title
     assignment = (data) => {
         data.forEach((list, i) => {
             list.key = list.id;
-            list.value = list.id;
             if (list.hasOwnProperty("parameterCategoryName")) {
                 list.title = list.parameterCategoryName;
             }
@@ -154,7 +171,6 @@ class Parameter extends Component {
         // 获取系统参数类型树
         getSystemTree({parameterCategoryName:this.state.searchValue}).then(res => {
             if (res.success == 1) {
-
                 this.setState({treeData:this.assignment(res.data)})
             }else {
                 message.error(res.message);
@@ -233,35 +249,41 @@ class Parameter extends Component {
                 middleStatus:'editTree'
             })
         } else {
-            message.warning('请先选择机构！')
+            message.warning('请先选择系统参数类别！')
         }
     }
 
     // 删除节点--类别
     deletetTree=()=>{
+        var _this = this;
         if (this.state.selectedTreeId) {
-            var id = parseInt(this.state.selectedTreeId[0]);
-            // 走删除接口
-            deleteTree({id:id}).then(res=>{
-                if (res.success == 1) {
-                    message.success(res.message);
-                     //  获取系统参数类型树
-                     this.init();
-                }else if (res.success == 0) {
-                    confirm({
-                        title: res.message,
-                        onOk() {
-                           
-                        },
-                        onCancel() {
-            
-                        },
-                    });
-                }
-            })
+            var id = parseInt(_this.state.selectedTreeId[0]);
+            confirm({
+                title: '删除',
+                content: '您确定删除此系统类别？',
+                okText: '确定',
+                okType: 'danger',
+                cancelText: '取消',
+                onOk() {
+                    
+                    // 走删除接口
+                    deleteTree({ id: id }).then(res => {
+                        if (res.success == 1) {
+                            message.success(res.message);
+                            //  获取系统参数类型树
+                            _this.init();
+                        } else if (res.success == 0) {
+                            message.error(res.message);
+                        }
+                    })
+                },
+                onCancel() {
+                    message.info('取消删除！');
+                },
+            });
 
         } else {
-            message.warning('请先选择机构！')
+            message.warning('请先选择系统参数类别！')
         }
     }
 
@@ -351,9 +373,7 @@ class Parameter extends Component {
                 pid = ar[0].parentId;
             }
         }
-        // this.setState({
-        // 	treeData: data,
-        // });
+        
 
 
         //发起拖拽变更请求
@@ -391,43 +411,6 @@ class Parameter extends Component {
         });
     };
 
-    loop = data => data.map((item) => {
-        let {searchValue} = this.state;
-        const index = item.title.indexOf(searchValue);
-        const beforeStr = item.title.substr(0, index);
-        const afterStr = item.title.substr(index + searchValue.length);
-        const title = index > -1 ? (
-            <span>
-                {beforeStr}
-                <span style={{color: '#f50'}}>{searchValue}</span>
-                {afterStr}
-                </span>
-        ) : <span>{item.title}</span>;
-        if (item.children) {
-            return (
-                <TreeNode key={item.key} title={title} dataRef={item}>
-                    {this.loop(item.children)}
-                </TreeNode>
-            );
-        }
-        return <TreeNode dataRef={item} key={item.key} title={title}/>;
-    });
-
-    // 
-    onChange = (e) => {
-        const value = e.target.value;
-        const expandedKeys = dataList.map((item) => {
-            if (item.title.indexOf(value) > -1) {
-                return getParentKey(item.title, this.state.treeData);
-            }
-            return null;
-        }).filter((item, i, self) => item && self.indexOf(item) === i);
-        this.setState({
-            expandedKeys,
-            searchValue: value,
-            autoExpandParent: true,
-        });
-    };
 
 
     //获取表单数据
@@ -501,39 +484,38 @@ class Parameter extends Component {
          this.getTableList(this.state.form)
     }
 
+
+
+
     render=()=>{
         // 节点树对话框中的Form
         const { getFieldDecorator } = this.props.form;
         
-        const { autoExpandParent, treeData} = this.state;
+        const { autoExpandParent, treeData,h} = this.state;
         
        
         // 进行数组扁平化处理
         generateList(treeData);
 
+        
+        const data = this.assignment(this.state.treeData)
+
+
         return (
-            <div style={{ border: '0px solid red', background: ' #fff' }} className="main_height">
-                <Row className="main_height" gutter={24}>
-                    <Col span={6} className="gutter-row main_height" style={{ backgroundColor: 'white',overflowY: 'auto'}}>
-                        <div style={{ height: '60px', display: 'flex', justifyContent: 'space-around', alignItems: 'center' }}>
-                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.addTree}>新增</Button>
-                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.editTree}>修改</Button>
-                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deletetTree}>删除</Button>
-                        </div>
-                        <Search style={{ marginBottom: 8 }} placeholder="输入关键字查询" onChange={this.onChange} />
-                        <Tree
-                            className="draggable-tree"
-                            draggable
-                            blockNode
-                            defaultExpandAll={true}
-                            onDrop={this.onDrop}
-                            onExpand={this.onExpand}
-                            onSelect={this.onSelect}  //点击树节点触发事件
-                        >{this.loop(treeData)}</Tree>
+            <div style={{ border: '0px solid red', background: ' #fff',height:'100%' }} >
+                <Row  gutter={24} className="main_height">
+                    <Col span={6} className="gutter-row" style={{ backgroundColor: 'white',overflowY: 'auto',marginTop:'13px',height:'98%',borderRight:'1px solid #d9d9d9'}}>
+                        <TreeParant treeData={data} draggable={true}
+                            addTree={this.addTree} editTree={this.editTree} deletetTree={this.deletetTree} 
+                            onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
+                        ></TreeParant>
                     </Col>
-                    <Col span={18} className="gutter-row main_height" style={{ padding: '0 10px 0', backgroundColor: 'white' }}>
+                    <Col span={18} className="gutter-row main_height" style={{ padding: '0 10px 0', backgroundColor: 'white',display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
                         {/* 表格行内编辑--模板 */}
-                        <EditTable parentValueID={this.state.form.parameterCategoryId} data={this.state.tabledata} handleChange={this.handleChange}></EditTable>
+                        <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
+                            <EditTable scroll={h} style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}} parentValueID={this.state.form.parameterCategoryId} data={this.state.tabledata} handleChange={this.handleChange}></EditTable>
+                        </div>
+                        
                         {/* 分页组件 */}
                         <Pagination total={this.state.total} pageSize={this.state.form.limit} current={this.state.form.offset} onChange={this.onPageChange}></Pagination>
                     </Col>

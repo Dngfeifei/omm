@@ -12,12 +12,15 @@ const { Provider, Consumer } = React.createContext()//组件之间传值
 
 // 引入 API接口
 import { addSysList, deleteSysList ,updateSysList } from '/api/systemParameter'
+// 引入页面CSS
+import '/assets/less/pages/logBookTable.css'
 
 
+// 行内表单渲染
 class EditableCell extends React.Component {
     renderCell = ({ getFieldDecorator }) => {
         const {
-            editing, dataIndex,initValue, title, Inputs, record, index, children,
+            editing, dataIndex,initValue, title, Input, record, index, children,
             ...restProps
         } = this.props;
 
@@ -44,7 +47,7 @@ class EditableCell extends React.Component {
                                 rules: [{ required: true, message: `请输入 ${title}!` }],
                                 initialValue: record[dataIndex],
                             })(
-                                <Inputs />
+                                <Input />
                             )}
                         </Item>
                 ) : children
@@ -59,8 +62,6 @@ class EditableCell extends React.Component {
 
 
   
-  
-
 
 class TableRow extends React.Component {
     constructor(props) {
@@ -70,14 +71,11 @@ class TableRow extends React.Component {
             data: [],
             count:0,
             parameterCategoryId:null,   //参数类型ID
-            editLock:false,  //用于判断还是新增
+            editLock:false,  //用于判断编辑还是新增；默认false新增
+
+
+            selectedRowKeys:null,  //选中的table表格的id
         }
-    }
-
-    // 组件将要挂载时触发的函数
-    async componentWillMount(){
-        
-
     }
 
     // 数据更新完成时触发的函数
@@ -86,7 +84,7 @@ class TableRow extends React.Component {
         if (this.props.data != nextProps.data) {
             this.setState({
                 data:nextProps.data,
-                count: this.state.data.length + 1,  
+                count: nextProps.data.length + 1,  
                 parameterCategoryId:this.props.parentValueID  //参数类型ID
             })
         }
@@ -95,11 +93,10 @@ class TableRow extends React.Component {
 
 
 
-
-
     // 新增table表格一行
     handleAdd = () => {
         const { count, data } = this.state;
+        console.log(count, data)
         const newData = {
             key: count,
             id:count,
@@ -110,10 +107,13 @@ class TableRow extends React.Component {
             operation: "",
         };
         
+        const newSelectKey = []
+        newSelectKey.push(newData.id)
         this.setState({
             data: [...data, newData],
             count: count + 1,
-            editingKey: newData.id //将当前新增的数据进行新增填写
+            editingKey: newData.id, //将当前新增的数据进行新增填写
+            selectedRowKeys:newSelectKey,   // 将当前新增的行进行选中
         });
 
     };
@@ -148,69 +148,11 @@ class TableRow extends React.Component {
         );
         return ele
     }
-
-    //编辑
-    edit = (id) => {
-        this.setState({
-            editingKey: id,
-            editLock:true
-        })
-
-    }
-     
-    // 删除
-    delete = (key) => {
-        deleteSysList({ id: key }).then(res => {
-            if (res.success == 1) {
-                //  获取系统参数列表
-                this.props.handleChange();
-            } else if (res.success == 0) {
-                message.error(res.message);
-            }
-        })
-    }
-
-    //保存
-    save = (form,id) => {
-        form.validateFields((error, row) => {
-            if (error) {
-                return
-            }
-
-            var params =JSON.parse( JSON.stringify(row));
-            
-            params.parameterCategoryId = this.state.parameterCategoryId;
-            
-            if (this.state.editLock) {
-                params.id = id;
-                
-                updateSysList(params).then(res=>{
-                    if (res.success == 1) {
-                        
-                        this.setState({ editingKey: '' });
-                        //  获取系统参数列表
-                        this.props.handleChange();
-                    }else if (res.success == 0){
-                        message.error(res.message);
-                    }
-                })
-            }else {
-                addSysList(params).then(res=>{
-                    if (res.success == 1) {
-                        
-                        this.setState({ editingKey: '' });
-                        //  获取系统参数列表
-                        this.props.handleChange();
-                    }else if (res.success == 0){
-                        message.error(res.message);
-                    }
-                })
-            }
-        })
-    }
+    
 
     //取消
-    cancel = (key) => {
+    cancel = () => {
+        var id = this.state.selectedRowKeys[0];
         // 判断  若是【新增】的取消功能，则刚刚新增数据删除；若是【修改】的取消功能 则是取消修改
         if (this.state.editLock) {   // 修改
             this.setState({
@@ -220,7 +162,7 @@ class TableRow extends React.Component {
         }else {  // 新增
             const dataSource = [...this.state.data];
             this.setState({ 
-                data: dataSource.filter(item => item.key !== key) ,
+                data: dataSource.filter(item => item.id !== id) ,
                 editingKey: '',
                 editLock:false
             });
@@ -235,6 +177,7 @@ class TableRow extends React.Component {
                 title: '序号',
                 dataIndex: 'key',
                 editable: false,
+                align:'center',
                 // 第一种：每一页都从1开始
                 render:(text,record,index)=> `${index+1}`
 
@@ -265,37 +208,115 @@ class TableRow extends React.Component {
                 render: t => t == '1' ? '启用' : '禁用',
                 editable: true,
             },
-            {
-                title: '操作',
-                dataIndex: 'operation',
-                render: (text, record, index) => {
-                    console.log(record)
-                    const { editingKey } = this.state;
-                    const editable = this.isEditing(record);
-                    return <div>
-                        {
-                            this.editable(editable, editingKey, record)
-                        }
-                    </div>
-                }
-            },
+            // {
+            //     title: '操作',
+            //     dataIndex: 'operation',
+            //     render: (text, record, index) => {
+            //         const { editingKey } = this.state;
+            //         const editable = this.isEditing(record);
+            //         return <div>
+            //             {
+            //                 this.editable(editable, editingKey, record)
+            //             }
+            //         </div>
+            //     }
+            // },
         ]
     }
 
     // table表格复选框---选中事件
     onSelectChange = (selectedRowKeys, selectedRows) => {
         console.log('selectedRowKeys changed: ', selectedRows);
-        this.setState({ selectedRowKeys });
-        // let arr = [];
-        // for (let p of selectedRows) {
-        //     arr.push(p.id)
-        // }
-        // this.setState({ tableID: Array.from(new Set(arr)) })
-        // console.log(this.state.tableID)
-        // this.userIds = Array.from(new Set(arr));
+        this.setState({ 
+            selectedRowKeys:selectedRowKeys 
+        });
     }
 
-    
+    // 修改行内表格
+    handleEdit=()=>{
+        
+        if (this.state.selectedRowKeys) {
+            var ID = this.state.selectedRowKeys[0];
+            this.setState({
+                editingKey: ID,
+                editLock:true
+            })
+        }else {
+            message.warning('请先选择系统参数！')
+        }
+    }
+
+    // 删除--系统参数（单个删除）
+    handlerDelete=()=>{
+        if (this.state.selectedRowKeys) {
+            confirm({
+                title: '删除',
+                content: '您确定删除此系统参数？',
+                okText: '确定',
+                okType: 'danger',
+                cancelText: '取消',
+                onOk() {
+                    var ID = this.state.selectedRowKeys[0]
+                    deleteSysList({ id: ID }).then(res => {
+                        if (res.success == 1) {
+                            //  获取系统参数列表
+                            this.props.handleChange();
+                        } else if (res.success == 0) {
+                            message.error(res.message);
+                        }
+                    })
+                },
+                onCancel() {
+                    message.info('取消删除！');
+                },
+            });
+        } else {
+            message.warning('请先选择系统参数！')
+        }
+    }
+
+    // 保存
+    save=(form)=>{
+        var form = this.props.form;
+        var id = this.state.selectedRowKeys[0];
+
+        form.validateFields((error, row) => {
+            if (error) {
+                return
+            }
+
+            var params =JSON.parse( JSON.stringify(row));
+            
+            params.parameterCategoryId = this.state.parameterCategoryId;
+            
+            if (this.state.editLock) {
+                params.id = id;
+                
+                updateSysList(params).then(res=>{
+                    if (res.success == 1) {
+                        
+                        this.setState({ editingKey: '',selectedRowKeys:null});
+                        //  获取系统参数列表
+                        this.props.handleChange();
+                    }else if (res.success == 0){
+                        message.error(res.message);
+                    }
+                })
+            }else {
+                addSysList(params).then(res=>{
+                    if (res.success == 1) {
+                        
+                        this.setState({ editingKey: '',selectedRowKeys:null });
+                        //  获取系统参数列表
+                        this.props.handleChange();
+                    }else if (res.success == 0){
+                        message.error(res.message);
+                    }
+                })
+            }
+        })
+
+    }
 
     render() {
         this.init()
@@ -314,7 +335,7 @@ class TableRow extends React.Component {
                 ...col,
                 onCell: record => ({
                     record,
-                    Inputs: Input,
+                    Input: Input,
                     dataIndex: col.dataIndex,
                     title: col.title,
                     editing: this.isEditing(record),
@@ -325,27 +346,51 @@ class TableRow extends React.Component {
         const {selectedRowKeys} = this.state;
         const rowSelection = {
             selectedRowKeys,
-            onChange: this.onSelectChange
+            onChange: this.onSelectChange,
+            type:'radio'
         };
+
+
+        console.log(this.props.scroll)
+
 
         return (
             <div>
-                <Row gutter={24} style={{padding: '15px 15px 0px 15px'}}>
-                    <Button type="primary" style={{marginRight: '10px'}} onClick={this.handleAdd}>新增</Button>
-                    {/* <Button type="danger">批量删除</Button> */}
+                <Row gutter={24} style={{padding: '15px 15px 0px 15px',textAlign:'right'}}>
+                    
+                    <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button>
+                    <Button style={{marginRight: '10px'}} onClick={this.handlerDelete}>删除</Button>
+                    {
+                        this.state.editingKey ? <Button style={{marginRight: '10px'}} onClick={this.cancel}>取消</Button> : (
+                            <Button style={{marginRight: '10px'}} disabled>取消</Button>
+                        )
+                    }
+                    {
+                        this.state.editingKey ? <Button type="primary" style={{marginRight: '10px'}} onClick={this.save}>保存</Button> : (
+                            <Button type="primary" style={{marginRight: '10px'}} disabled>保存</Button>
+                        )
+                    }
+
+                    {
+                        this.state.editingKey ? <Button type="primary" style={{marginRight: '10px'}} disabled>新增</Button> : (
+                            <Button type="primary" style={{marginRight: '10px'}} onClick={this.handleAdd}>新增</Button>
+                        )
+                    }
                 </Row>
                 
                 <Provider value={this.props.form}>
                     <Table
+                        className="jxlTable"
                         components={components}   //覆盖默认的 table 元素
                         bordered
                         rowKey="id"
                         rowSelection={rowSelection}   //设置table的复选框
                         dataSource={this.state.data}
                         columns={columns}
+                        scroll={this.props.scroll}
                         rowClassName="editable-row"
                         pagination={false}
-                        style={{ marginTop: '16px', minHeight: '738px', overflowY: 'auto',height:'calc(100vh - 230px)' }}
+                        style={{ marginTop: '16px', overflowY: 'auto',height:this.props.scroll,overflowY:'auto' }}
                     />
                 </Provider >
             </div>

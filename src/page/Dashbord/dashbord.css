@@ -1,38 +1,53 @@
 .content {
-    height: 100%;
+  height: 100%;
 }
 .content-row {
-    margin: 0px !important;
-    height: 100%;
-    padding-top: 5px;
+  margin: 0px !important;
+  height: 100%;
+  padding-top: 5px;
 }
 .left .ant-card ,.right .ant-card {
-    margin-bottom: 13px;
+  margin-bottom: 13px;
 }
 
 
 
 /* 设置拖动元素的占位符类名*/
 .sortable-ghost .ant-card-body {
-  display: none !important;
+display: none !important;
 }
 .sortable-ghost .ant-card-head .ant-card-head-wrapper .ant-card-extra {
-  visibility: hidden !important;
+visibility: hidden !important;
 }
 .sortable-ghost .ant-card-head .ant-card-head-wrapper {
-  display: flex !important;
-  align-items: center !important;
+display: flex !important;
+align-items: center !important;
 }
 /* 此样式根据main定的背景颜色来修改 */
 .sortable-ghost .ant-card-head{
-  background: #dddddd !important;
-  color: #c7c7be !important;
+background: #dddddd !important;
+color: #c7c7be !important;
 }
 
 /* 被选中目标的样式 */
 .content .sortable-chosen ,.content .ant-card-head {
-  cursor: move;
+cursor: move;
 }
 .sortable-chosen .ant-card-body {
-  display: none !important;
+display: none !important;
+}
+
+
+
+.content .ant-card-head:before {
+  content: '';
+  background: #49b3fd;
+  /* float: right; */
+  position: absolute;
+  /* bottom: 40px; */
+  display: block;
+  height: 20px;
+  width: 4px;
+  top: 18px;
+  left: 10px;
 }

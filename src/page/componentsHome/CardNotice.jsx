@@ -8,7 +8,7 @@ import Card from "@/components/card/card";
 
 class CardNotice extends Component {
     async componentWillMount () {
-		this.search()
+		// this.search()
 	}
 
 	state = {

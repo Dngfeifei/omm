@@ -29,14 +29,18 @@ class logBook extends Component {
 
     // 挂载完成
     componentDidMount=()=>{
+        this.init();
 
-      
-
-        this.init()
+        this.SortTable();
+        //窗口变动的时候调用
+        window.onresize = () => {
+            this.SortTable();
+        }
     }
 
 
     state = {
+        h:{y:240},  //设置表格的高度
         visible: false,  // 对话框的状态
         pageSize:10,
         current:0,
@@ -57,7 +61,7 @@ class logBook extends Component {
             {
                 label: '操作类型',
                 key: 'operateType',
-                render: _ => <Select style={{ width: 200 }} placeholder="请选择状态">
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择状态" allowClear={true}>
                     {
                         this.state.typeArr.map((items, index) => {
                             return (<Option key={items.itemCode} value={items.itemCode}>{items.itemValue}</Option>)
@@ -133,6 +137,18 @@ class logBook extends Component {
         tabledata: [],
     }
 
+    // 获取表格高度
+    SortTable = () => {
+        setTimeout(() => {
+            console.log(this.tableDom.offsetHeight);
+            let h = this.tableDom.clientHeight - 100;
+            this.setState({
+                h: {
+                    y: (h)
+                }
+            });
+        }, 0)
+    }
 
     // 获取 类型
     getOperateType=()=>{
@@ -273,23 +289,21 @@ class logBook extends Component {
 
 
 
-
-
-
     render = _ => {
         const { getFieldDecorator } = this.props.form;
-        const { selectedRowKeys } = this.state;
+        const { selectedRowKeys,h } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange
         };
+       
         return (
-            <div style={{ border: '0px solid red',background:' #fff'}} className="main_height">
+            <div style={{ border: '0px solid red',background:' #fff'}} className="main_height" style={{display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
                 <Form layout="inline" style={{ width: '100%', paddingTop: '10px',marginLeft:'15px'}}>
                     <Row>
                         {this.state.rules.map((val, index) =>
                             <FormItem
-                              label={val.label} style={{ marginBottom: '8px' }}>
+                              label={val.label} style={{ marginBottom: '8px' }} key={index}>
                               {getFieldDecorator(val.key, val.option)(val.render())}
                           </FormItem>)}
                           <FormItem>
@@ -299,16 +313,18 @@ class logBook extends Component {
                         
                     </Row>
                 </Form>
-                <Table
-                    className="jxlTable"
-                    bordered
-                    dataSource={this.state.tabledata}
-                    columns={this.state.columns}
-                    pagination={false}
-                    style={{ marginTop: '16px',padding: '0px 15px',minHeight: '645px',overflowY: 'auto',height:'calc(100vh - 260px)' }}
-                    loading={this.state.loading}  //设置loading属性
-                />
-                
+                <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
+                    <Table
+                        className="jxlTable"
+                        bordered
+                        dataSource={this.state.tabledata}
+                        columns={this.state.columns}
+                        pagination={false}
+                        scroll={h}
+                        style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}}
+                        loading={this.state.loading}  //设置loading属性
+                    />
+                </div>
                 <Pagination total={this.state.total} pageSize={this.state.pagination.limit} current={(this.state.pagination.offset)}  onChange={this.onPageChange} onShowSizeChange={this.onShowSizeChange}></Pagination>
 
                 {/* 详情页--对话框 底部内容，当不需要默认底部按钮时，可以设为 footer={null} */}

@@ -31,10 +31,14 @@ class DHeader extends Component {
     quit = _ => {
         
         logout().then(res=>{
-            // 清除缓存
-            localStorage.clear();
-            this.props.reset()
-            hashHistory.replace('/login')
+            if (res.success == 1) {
+                // 清除缓存
+                localStorage.clear();
+                this.props.reset()
+                hashHistory.replace('/login')
+            }else {
+                message.error(res.message)
+            }
         })
     }
 

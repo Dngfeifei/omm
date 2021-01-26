@@ -48,7 +48,7 @@ class Dashbord extends Component {
         return (
             <div className="content">
                 <Row gutter={20} style={{ height: '100%' }} className="content-row">
-                    <Col span={16} className="left" id="draggerOne" className="content-row left">
+                    <Col span={13} className="left" id="draggerOne" className="content-row left">
                         {
                             this.state.leftComponts.map((item, index) => {
                                 const ComItem = comObj[item.name]
@@ -56,7 +56,7 @@ class Dashbord extends Component {
                             })
                         }
                     </Col>
-                    <Col span={8} className="right" id="draggerTwo" className="content-row right">
+                    <Col span={11} className="right" id="draggerTwo" className="content-row right">
                         {
                             this.state.rightComponts.map((item,index)=>{
                                 const ComItem=comObj[item.name]

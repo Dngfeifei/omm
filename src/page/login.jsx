@@ -52,7 +52,7 @@ class Login extends Component {
 					
 					login(params).then(async res => {
 						await this.setState({lock: false})
-						if (res.status == 200) {
+						if (res.status == '200') {
 							message.success('登录成功')
 							let user = res.data
 							await localStorage.setItem('token', user.token)
@@ -68,6 +68,8 @@ class Login extends Component {
 								hashHistory.push('/')
 							}
 							
+						}else {
+							message.error(res.message)
 						}
 					})
 				} else {
