@@ -3,7 +3,7 @@
 	"data":[
 		{
 			"children":"",
-			"resourcePath":"notice",
+			"resourcePath":"Dashbord/dashbord.jsx",
 			"icon":"notification",
 			"id":"224",
 			"ismenu":1,
@@ -22,7 +22,7 @@
 			"children":[
 				{
 					"children":"",
-					"resourcePath":"resources",
+					"resourcePath":"resources/resources.jsx",
 					"icon":"",
 					"id":"244",
 					"ismenu":1,
@@ -39,7 +39,7 @@
 				},
 				{
 					"children":"",
-					"resourcePath":"parameter",
+					"resourcePath":"Parameter/parameter.jsx",
 					"icon":"",
 					"id":"2455",
 					"ismenu":1,
@@ -56,7 +56,7 @@
 				},
 				{
 					"children":"",
-					"resourcePath":"power_role",
+					"resourcePath":"power/role.jsx",
 					"icon":"",
 					"id":"2453",
 					"ismenu":1,
@@ -73,7 +73,7 @@
 				},
 				{
 					"children":"",
-					"resourcePath":"LogBook",
+					"resourcePath":"LogBook/logBook.jsx",
 					"icon":"",
 					"id":"245",
 					"ismenu":1,
@@ -90,7 +90,7 @@
 				},
 				{
 					"children":"",
-					"resourcePath":"post",
+					"resourcePath":"post/postList.jsx",
 					"icon":"",
 					"id":"249",
 					"ismenu":1,
@@ -124,13 +124,30 @@
 				},
 				{
 					"children":"",
-					"resourcePath":"dictionary",
+					"resourcePath":"dictionary/dictionary.jsx",
 					"icon":"",
 					"id":"449",
 					"ismenu":1,
 					"isopen":"",
 					"levels":2,
 					"resourceName":"数据字典",
+					"num":3,
+					"presourcePath":"workbench",
+					"presourcePaths":"系统配置",
+					"status":1,
+					"sysid":1,
+					"tips":"",
+					"url":""
+				},
+				{
+					"children":"",
+					"resourcePath":"SystemManage/oragizePeo.jsx",
+					"icon":"",
+					"id":"44999",
+					"ismenu":1,
+					"isopen":"",
+					"levels":2,
+					"resourceName":"机构配置",
 					"num":3,
 					"presourcePath":"workbench",
 					"presourcePaths":"系统配置",
