@@ -1,12 +1,12 @@
 import React from 'react'
-import { Input, Button, Modal, message, Select, Upload } from 'antd'
+import { Input, Button, Modal, message, Select, Upload, Row, Col } from 'antd'
 import { getUserList, DisableUser, ResetPass, ExportFileModel, ExportFile } from '/api/user'
 import Common from '/page/common.jsx'
 const ButtonGroup = Button.Group
 const { confirm } = Modal;
 const { Option } = Select;
 import UserForm from '/page/user/userForm.jsx'
-import PostForma from '/page/user/relationPost.jsx'
+import PostForm from '/page/user/relationPost.jsx'
 let token = localStorage.getItem('token')
 class User extends Common {
 	async componentWillMount() {
@@ -81,21 +81,10 @@ class User extends Common {
 				width: 120,
 				align: 'center',
 				dataIndex: 'entryDate'
-			}, {
-				title: ' 操作 ',
-				dataIndex: 'name',
-				align: 'center',
-				width: '120px',
-				render: (t, r) => <div style={{ 'display': 'flex', justifyContent: 'space-between', padding: '0 5px' }}>
-					<a style={{ display: 'inline-block' }} onClick={_ => this.editForm('modalconf', '编辑人员信息', r)}>编辑</a>
-					<a style={{ display: 'inline-block' }} onClick={_ => this.disableItem({ type: "alone", ids: [r.id] })}>禁用</a>
-					<a style={{ display: 'inline-block' }} onClick={_ => this.editPost(r)}>岗位</a>
-					<a style={{ display: 'inline-block' }} onClick={_ => this.handleReset(r.id)}>重置密码</a>
-				</div>
 			}],
 		selected: {},
 		selectedtable: true,
-		selecttype: 'checkbox', //单选还是多选
+		selecttype: 'radio', //单选还是多选
 		loading: true,
 		tabledata: [],
 		modalconf: { visible: false, item: {} },
@@ -123,19 +112,13 @@ class User extends Common {
 		}
 	})
 	//禁用
-	disableItem = async (obj) => {
-		let params = []
-		if (obj.type == "alone") {
-			params = obj.ids
-		} else {
-			let items = this.state.selected.selectedItems;
-			if (items && items.length > 0) {
-				params = this.state.selected.selectedItems.map((value) => { return value.id })
-			} else {
-				message.error("请选中后再进行批量删除操作！")
-				return
-			}
+	disableItem = async () => {
+		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
+			message.destroy()
+			message.warning("请选中后再进行操作！")
+			return
 		}
+		let params = [this.state.selected.selectedKeys[0]]
 		let _this = this
 		confirm({
 			title: '您确定要进行禁用操作吗？',
@@ -152,12 +135,18 @@ class User extends Common {
 		})
 	}
 	//重置密码
-	handleReset = async (params) => {
+	handleReset = async () => {
+		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
+			message.destroy()
+			message.warning("请选中后再进行操作！")
+			return
+		}
+		let id = [this.state.selected.selectedKeys[0]]
 		let _this = this
 		confirm({
 			title: '您确定要重置此用户密码吗？',
 			onOk() {
-				ResetPass({ id: params })
+				ResetPass({ id: id })
 					.then(res => {
 						if (res.success == 0) {
 							message.error("重置密码失败");
@@ -170,8 +159,11 @@ class User extends Common {
 
 	}
 	//查询
-	search = async _ => {
-		await this.setState({ loading: true, selected: {} })
+	search = async (type = false) => {
+		if (type) {
+			this.setState({ selected: {} })
+		}
+		await this.setState({ loading: true })
 		let search = Object.assign({}, this.state.search)
 		return getUserList(search)
 			.then(res => {
@@ -180,10 +172,9 @@ class User extends Common {
 				// 	return baseItem
 				// }))(res.data.records)
 				if (res.success != 1) {
-					alert("请求错误")
+					message.error("操作失败")
 					return
 				} else {
-
 					this.setState({
 						tabledata: res.data.records,
 						loading: false,
@@ -196,21 +187,35 @@ class User extends Common {
 			})
 	}
 	// 编辑用户
-	editForm = async (key, title, row) => {
+	editForm = async () => {
+		console.log(this.state.selected)
+		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
+			message.destroy()
+			message.warning("请选中后再进行操作！")
+			return
+		}
+		let item = this.state.selected.selectedItems[0]
+		console.log(item, 456)
 		let conf = {}
-		conf[key] = {
-			title,
+		conf["modalconf"] = {
+			title: '编辑人员信息',
 			visible: true,
 			type: 'edit',
-			item: row
+			item: item
 		}
 		this.setState(conf)
 	}
 	// 编辑岗位
-	editPost = async (row) => {
+	editPost = async () => {
+		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
+			message.destroy()
+			message.warning("请选中后再进行操作！")
+			return
+		}
+		let id = [this.state.selected.selectedKeys[0]]
 		let postWindow = {
 			visible: true,
-			ID: row.id
+			ID: id
 		}
 		this.setState({ postWindow: postWindow })
 	}
@@ -255,7 +260,6 @@ class User extends Common {
 		if (type == 'add') {
 			this.search()
 		} else {
-			await this.setState({ selected: {} })
 			this.search()
 		}
 	}
@@ -264,24 +268,24 @@ class User extends Common {
 		<div className="mgrSearchBar">
 			<Input
 				value={this.state.search.realName}
-				style={{ width: 180 }}
+				style={{ width: 180, marginRight: "10px" }}
 				allowClear
 				onChange={e => this.changeSearch({ realName: e.target.value })}
 				addonBefore="姓名" placeholder="请输入" />
 			<Input
 				value={this.state.search.userName}
-				style={{ width: 180 }}
+				style={{ width: 180, marginRight: "10px" }}
 				allowClear
 				onChange={e => this.changeSearch({ userName: e.target.value })}
 				addonBefore="帐号" placeholder="请输入" />
 			<Input
 				value={this.state.search.userNum}
-				style={{ width: 180 }}
+				style={{ width: 180, marginRight: "10px" }}
 				allowClear
 				onChange={e => this.changeSearch({ userNum: e.target.value })}
 				addonBefore="员工号" placeholder="请输入" />
 			<label>状态：
-				<Select style={{ width: 180 }} allowClear={true} placeholder="请选择" value={this.state.search.status} onChange={e => this.changeSearch({ status: e })}>
+				<Select style={{ width: 180, marginRight: "10px" }} allowClear={true} placeholder="请选择" value={this.state.search.status} onChange={e => this.changeSearch({ status: e })}>
 					<Option key={""} value={""}>请选择</Option>
 					<Option key={1} value={1}>启用</Option>
 					<Option key={0} value={0}>禁用</Option>
@@ -289,12 +293,12 @@ class User extends Common {
 			</label>
 			<Input
 				value={this.state.search.duties}
-				style={{ width: 180 }}
+				style={{ width: 180, marginRight: "10px" }}
 				allowClear
 				onChange={e => this.changeSearch({ duties: e.target.value })}
 				addonBefore="职务" placeholder="请输入" />
 			<label>性别:
-				<Select style={{ width: 180 }} allowClear={true} placeholder="请选择" defaultValue={""} value={this.state.search.sex} onChange={e => this.changeSearch({ sex: e })}>
+				<Select style={{ width: 180, marginRight: "10px" }} allowClear={true} placeholder="请选择" defaultValue={""} value={this.state.search.sex} onChange={e => this.changeSearch({ sex: e })}>
 					{/* {this.state.companys.map(t => <Option key={t.code} value={t.code}>{t.name}</Option>) } */}
 					<Option key={""} value={""}>请选择</Option>
 					<Option key={1} value={1}>男</Option>
@@ -302,39 +306,43 @@ class User extends Common {
 				</Select>
 			</label>
 			<Button
-				onClick={this.search}
-				type="primary" icon="search">搜索</Button>
+				onClick={this.search} style={{ marginRight: "10px" }}
+				type="primary" icon="search" >搜索</Button>
 			<Button
 				onClick={this.reset}
 			>重置</Button>
 		</div>
 	</div>
 
-	renderBtn = _ => <div style={{ margin: "10px",display: "flex",width: "515px",justifyContent: "space-around" }}>
-		<Button
-			onClick={_ => this.addmodal('modalconf', '新增人员信息')}
-			type="primary">新增人员信息</Button>
-		<Button
-			onClick={this.exportTemplate}
-			type="primary" loading={this.state.loading3}>模版下载</Button>
-
-		<Upload {...this.state.uploadConf}>
-			<Button type="primary" >数据导入</Button>
-		</Upload>
-		<Button
-			onClick={this.exportData}
-			type="primary" loading={this.state.loading2}>数据导出</Button>
-		<Button
-			onClick={this.disableItem}
-			type="primary">禁用</Button>
-	</div>
+	renderBtn = _ => <Row style={{ margin: "10px 0" }}>
+		<Col span={12} >
+			<Button
+				onClick={this.exportTemplate} style={{ marginRight: "10px" }}
+				type="info" loading={this.state.loading3}>模版下载</Button>
+			<Upload {...this.state.uploadConf}>
+				<Button type="info" style={{ marginRight: "10px" }}>数据导入</Button>
+			</Upload>
+			<Button
+				onClick={this.exportData} style={{ marginRight: "10px" }}
+				type="info" loading={this.state.loading2}>数据导出</Button>
+		</Col>
+		<Col span={12} style={{ textAlign: "right" }}>
+			<Button style={{ marginRight: "10px" }}
+				onClick={_ => this.addmodal('modalconf', '新增人员信息')}
+				type="primary">新增</Button>
+			<Button style={{ marginRight: "10px" }} onClick={this.editForm} type="primary">修改</Button>
+			<Button style={{ marginRight: "10px" }} onClick={this.disableItem} type="primary">禁用</Button>
+			<Button style={{ marginRight: "10px" }} onClick={this.editPost} type="primary">关联岗位</Button>
+			<Button style={{ marginRight: "10px" }} onClick={this.handleReset} type="primary">重置密码</Button>
+		</Col>
+	</Row>
 
 	rendermodal = _ => <div>
 		<UserForm
 			onCancel={_ => this.cancelform('modalconf')}
 			done={_ => this.done()}
 			config={this.state.modalconf} />
-		<PostForma
+		<PostForm
 			onCancel={_ => this.cancelform('postWindow')}
 			done={_ => this.cancelform('postWindow')}
 			config={this.state.postWindow} />

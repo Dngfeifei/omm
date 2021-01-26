@@ -33,11 +33,6 @@ class postForm extends Component {
 				option: {
 					rules: [
 						{ required: true, message: "请输入岗位名称" },
-						{
-							message: "请输入中文",
-							pattern: "^[\u4e00-\u9fa5]{0,}$",
-							trigger: "blur",
-						}
 					]
 				},
 				render: _ => <Input style={{ width: 240 }} />
@@ -90,7 +85,7 @@ class postForm extends Component {
 									this.props.done()
 									message.success('操作成功')
 								} else {
-									message.error('操作失败')
+									message.error(res.message)
 								}
 								this.setState({ lock: false })
 							})
@@ -102,7 +97,7 @@ class postForm extends Component {
 									this.props.done()
 									message.success('操作成功')
 								} else {
-									message.error('操作失败')
+									message.error(res.message)
 								}
 								this.setState({ lock: false })
 							})

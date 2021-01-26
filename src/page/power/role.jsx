@@ -2,8 +2,11 @@ import React, { Component } from 'react'
 import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Card } from 'antd'
 const { Option } = Select;
 import { GetRoleTree, AddRoleGroup, EditRoleGroup, DelRoleGroup, GetRole, AddRole, EditRole, DelRole, GetResourceTree } from '/api/role.js'
+import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'
 const { confirm } = Modal;
+const { Search } = Input
+const { TreeNode } = Tree;
 const FormItem = Form.Item
 const assignment = (data) => {
     data.forEach((list, i) => {
@@ -23,10 +26,27 @@ const assignment = (data) => {
         }
     });
 }
-
+// 获取父级节点
+const getParentKey = (key, tree) => {
+    let parentKey;
+    for (let i = 0; i < tree.length; i++) {
+        const node = tree[i];
+        if (node.children) {
+            if (node.children.some(item => item.key === key)) {
+                parentKey = node.key;
+            } else if (getParentKey(key, node.children)) {
+                parentKey = getParentKey(key, node.children);
+            }
+        }
+    }
+    return parentKey;
+};
 class role extends Component {
     async componentWillMount() {
+        // 查询左侧树
         this.searchTree()
+        // 获取下拉框数据
+        this.getDictData()
         // 请求角色所要挂载的全量资源数据
         GetResourceTree()
             .then(res => {
@@ -43,6 +63,13 @@ class role extends Component {
             })
     }
     state = {
+
+        // 首次进入 
+        newEntry: true,
+        // tree节点搜索高亮配置
+        expandedKeys: [],
+        searchValue: '',
+        autoExpandParent: true,
         // 分页参数
         pageConf: {
             limit: 10,
@@ -57,11 +84,16 @@ class role extends Component {
         // 分页配置
         // 请求加锁 防止多次请求
         lock: false,
+        // 资源类型
+		comboBox: {
+			status: [],
+		},
         //左侧角色树相关数据
         tree: {
             //右侧角色树数据
             treeData: [],
         },
+        treeDataList: [],
         //右侧table相关数据
         table: {
             //右侧角色表格配置
@@ -72,13 +104,22 @@ class role extends Component {
                     align: 'center',
                 },
                 {
-                    title: ' 操作 ',
+                    title: '状态',
+                    dataIndex: 'status',
                     align: 'center',
-                    width: 200,
-                    render: (t, r) => <div style={{ 'display': 'flex', justifyContent: 'space-around', padding: '0 5px' }}>
-                        <a onClick={_ => this.editRoleItem(r)}>修改</a>
-                        <a onClick={_ => this.delRoleItem([r.id])}>删除</a>
-                    </div>
+                    render: (t, r) => {
+                        t.toString()
+                        if (t == "1") {
+                            return "启用"
+                        } else if (t == "0") {
+                            return "禁用"
+                        }
+                    }
+                },
+                {
+                    title: '最后更新时间',
+                    dataIndex: 'updateTime',
+                    align: 'center',
                 }
             ],
             //右侧角色表格数据
@@ -116,6 +157,7 @@ class role extends Component {
         },
         //表格选中项
         tableSelecteds: [],
+        tableSelectedInfo: [],
         //资源树数据
         resourceData: null
     }
@@ -132,15 +174,17 @@ class role extends Component {
                     this.setState({
                         tree: { treeData: res.data },
                     })
-                    if (res.data && res.data.length) {
+                    this.generateList(res.data)
+                    if (this.state.newEntry && res.data) {
                         this.setState({
                             searchListID: res.data[0].id,
-                            newRoleGroup: {
-                                treeSelect: res.data[0].id,
-                                newRoleGroupVal: res.data[0].roleCategoryName,
-                            },
+                            // newRoleGroup: {
+                            //     treeSelect: res.data[0].id,
+                            //     newRoleGroupVal: res.data[0].roleCategoryName,
+                            // },
                         })
                         this.searchRoleFun(res.data[0].id)
+                        this.setState({ newEntry: false })
                     }
                 }
             })
@@ -166,6 +210,7 @@ class role extends Component {
         let selected = this.state.newRoleGroup.treeSelect;
         //1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
         if (selected == "" || selected == null) {
+            message.destroy()
             message.warning('没有选中数据,无法进行修改!');
             return
         }
@@ -183,28 +228,35 @@ class role extends Component {
         //1 判断角色组tree是否有选中 如无选中提示无选中数据无法删除
         let selected = this.state.newRoleGroup.treeSelect;
         if (selected == "" || selected == null) {
+            message.destroy()
             message.warning('没有选中数据,无法进行删除!');
             return
         }
         //2 获取选中项  发起删除请求  
         let params = this.state.newRoleGroup.treeSelect;//参数 id和角色组名称
         let _this = this
-        DelRoleGroup({ id: params }).then(res => {
-            if (res.success != 1) {
-                message.error("请求错误")
-                return
-            } else {
-                // 重新查询渲染数据
-                _this.searchTree()
-                // 选中项已删除,存储的选中项数据置为空
-                this.setState({
-                    newRoleGroup: {
-                        treeSelect: null,
-                        newRoleGroupVal: null
+        confirm({
+            title: '删除后不可恢复,确定删除吗？',
+            onOk() {
+                DelRoleGroup({ id: params }).then(res => {
+                    if (res.success != 1) {
+                        message.error(res.message)
+                        return
+                    } else {
+                        // 重新查询渲染数据
+                        _this.searchTree()
+                        // 选中项已删除,存储的选中项数据置为空
+                        _this.setState({
+                            newRoleGroup: {
+                                treeSelect: null,
+                                newRoleGroupVal: null
+                            }
+                        })
                     }
                 })
             }
         })
+
     }
     // 树选中后
     onTreeSelect = async (selectedKeys, info) => {
@@ -213,7 +265,8 @@ class role extends Component {
                 newRoleGroup: {
                     treeSelect: null,
                     newRoleGroupVal: null
-                }
+                },
+                searchListID: []
             })
             return
         }
@@ -228,6 +281,41 @@ class role extends Component {
         // 选中后请求角色数据
         this.searchRoleFun(data.id)
     };
+    // 打开节点
+    onExpand = expandedKeys => {
+        this.setState({
+            expandedKeys,
+            autoExpandParent: false,
+        });
+    };
+    // tree搜索
+    onSearchTree = value => {
+        const expandedKeys = this.state.treeDataList
+            .map(item => {
+                if (item.title.indexOf(value) > -1) {
+                    return getParentKey(item.key, this.state.tree.treeData);
+                }
+                return null;
+            })
+            .filter((item, i, self) => item && self.indexOf(item) === i);
+        console.log(expandedKeys, 999)
+        this.setState({
+            expandedKeys,
+            searchValue: value,
+            autoExpandParent: true,
+        });
+    };
+    // tree数据扁平化处理方法
+    generateList = data => {
+        for (let i = 0; i < data.length; i++) {
+            const node = data[i];
+            const { key, title } = node;
+            this.state.treeDataList.push({ key, title: title });
+            if (node.children) {
+                this.generateList(node.children);
+            }
+        }
+    }
     //获取新增或修改后的角色组名称
     getNewRoleGroupVal = (e) => {
         let newRoleGroup = Object.assign({}, this.state.newRoleGroup, { newRoleGroupVal: e.target.value })
@@ -241,6 +329,7 @@ class role extends Component {
         let val = this.state.newRoleGroup.newRoleGroupVal
         //2 校验数据 不能为空 空：提示名称为空不能保存
         if (val == "" || val == null) {
+            message.destroy()
             message.warning('名称为空，不能保存数据!');
             return
         }
@@ -258,7 +347,7 @@ class role extends Component {
             };
             AddRoleGroup(params).then(res => {
                 if (res.success != 1) {
-                    message.error("请求错误")
+                    message.error(res.message)
                     return
                 } else {
                     // 4 请求完成后关闭弹窗并将输入框赋值为空
@@ -284,7 +373,7 @@ class role extends Component {
             };
             EditRoleGroup(params).then(res => {
                 if (res.success != 1) {
-                    message.error("请求错误")
+                    message.error(res.message)
                     return
                 } else {
                     // 4 请求完成后关闭弹窗并将输入框赋值为空
@@ -292,10 +381,16 @@ class role extends Component {
                         roleGroupWindow: {
                             roleGroupModal: false
                         },
-                        newRoleGroup: {
-                            newRoleGroupVal: ''
-                        }
+                        // newRoleGroup: {
+                        //     newRoleGroupVal: ''
+                        // }
                     })
+                    // newRoleGroup: {
+                    //     //tree当前选中项ID
+                    //     treeSelect: null,
+                    //     //新增或修改后的角色组数据
+                    //     newRoleGroupVal: null,
+                    // },
                     //5 左侧角色组tree刷新 
                     this.searchTree()
                 }
@@ -311,13 +406,15 @@ class role extends Component {
         let name = this.state.searchRoleName
         //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
         if (id == "" || id == null) {
+            message.destroy()
             message.warning('请先选中左侧角色组，然后再进行查询。');
             return
         }
-        if (name == "" || name == null) {
-            message.warning('请先输入查询内容，然后再进行查询。');
-            return
-        }
+        // if (name == "" || name == null) {
+        //     message.destroy()
+        //     message.warning('请先输入查询内容，然后再进行查询。');
+        //     return
+        // }
         // 2 发起查询请求 查询后结构给table赋值
         // 选中后请求角色数据
         let params = Object.assign({}, {
@@ -335,7 +432,7 @@ class role extends Component {
                 })
                 this.setState({ table: data, pagination: pagination })
             } else {
-                message.error("请求失败,请重试！")
+                message.error(res.message)
             }
 
         })
@@ -346,6 +443,7 @@ class role extends Component {
         let name = this.state.searchRoleName
         //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
         if (id == "" || id == null) {
+            message.destroy()
             message.warning('请先选中左侧角色组，然后再进行查询。');
             return
         }
@@ -405,7 +503,7 @@ class role extends Component {
                 })
                 this.setState({ table: data, pagination: pagination, pageConf: pageConf })
             } else {
-                message.error("请求失败,请重试！")
+                message.error(res.message)
             }
 
         })
@@ -427,10 +525,19 @@ class role extends Component {
         })
     }
     // 点击修改，按钮的弹出框
-    editRoleItem = (r) => {
+    editRoleItem = () => {
+        if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
+            message.destroy()
+            message.warning("没有选中数据,无法进行修改!")
+            return 
+        }
+        let row = this.state.tableSelectedInfo[0];
         let ids = [];
-        if (r.resource && r.resources.length > 0) {
-            r.resources.forEach(item => { ids.push(item.id) })
+        console.log(row, 254)
+        if (row.resources && row.resources.length > 0) {
+            if (row.resources[0]) {
+                row.resources.forEach(item => { ids.push(item.id) })
+            }
         }
         this.setState({
             roleWindow: {
@@ -439,9 +546,9 @@ class role extends Component {
                 roleModalTitle: "修改角色"
             },
             currentRole: {
-                id: r.id,
-                roleName: r.roleName,
-                status: r.status,
+                id: row.id,
+                roleName: row.roleName,
+                status: row.status.toString(),
                 resources: ids
             }
         })
@@ -449,15 +556,21 @@ class role extends Component {
 
     //角色表格单项删除
     delRoleItem = async (arr) => {
+        if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
+            message.destroy()
+            message.warning("没有选中数据,无法进行删除!")
+        }
+        let id = this.state.tableSelectedInfo[0].id;
         let _this = this
         confirm({
             title: '删除后不可恢复,确定删除吗？',
             onOk() {
-                DelRole({ ids: arr }).then(res => {
+                DelRole({ ids: [id] }).then(res => {
                     if (res.success == 1) {
                         _this.searchRoleFun(_this.state.searchListID)
                         _this.setState({
-                            tableSelecteds: []
+                            tableSelecteds: [],
+                            // tableSelectedInfo: []
                         })
                     }
                 })
@@ -469,11 +582,15 @@ class role extends Component {
         // 1 校验必填数据是否填写
         // 表单数据
         let formData = this.state.currentRole;
+        console.log(formData, "5555")
         if (!formData.roleName || formData.roleName.length == "" || formData.roleName.length == 0) {
+            message.destroy()
             message.error("请输入角色名称");
             return
         }
-        if (!formData.status || formData.roleName.status == "") {
+
+        if (!formData.status && formData.status === null && typeof (formData.status) != "number") {
+            message.destroy()
             message.error("请选择角色状态");
             return
         }
@@ -513,12 +630,14 @@ class role extends Component {
                             roleName: null,
                             status: null,
                             resources: [],
-                        }
+                        },
+                        tableSelecteds: [],
+                        // tableSelectedInfo: []
                     })
                     this.searchRoleFun(id)
                     message.success("操作成功")
                 } else {
-                    message.error("操作失败")
+                    message.error(res.message)
                 }
                 this.setState({ lock: false })
             })
@@ -550,12 +669,14 @@ class role extends Component {
                                 roleName: null,
                                 status: null,
                                 resources: []
-                            }
+                            },
+                            tableSelecteds: [formData.id],
+                            tableSelectedInfo: [params]
                         })
                         this.searchRoleFun(id)
                         message.success("操作成功")
                     } else {
-                        message.error("操作失败")
+                        message.error(res.message)
                     }
                     this.setState({ lock: false })
                 })
@@ -568,6 +689,7 @@ class role extends Component {
         if (arr && arr.length) {
             this.delRoleItem(arr)
         } else {
+            message.destroy()
             message.warning('请先选中要删除的数据，然后再进行批量删除操作。');
         }
     }
@@ -610,10 +732,12 @@ class role extends Component {
     }
 
     // 表格选中后
-    onTableSelect = selectedRowKeys => {
+    onTableSelect = (selectedRowKeys, info) => {
         //获取table选中项
+        console.log(info,78555)
         this.setState({
-            tableSelecteds: selectedRowKeys
+            tableSelecteds: selectedRowKeys,
+            tableSelectedInfo: info
         })
     };
     onCheck = (checkedKeys, info) => {
@@ -622,23 +746,77 @@ class role extends Component {
             currentRole: obj
         })
     };
-
+    //空白位置点击取消tree选中
+    // cancelSelected=_=>{
+    //     this.setState({
+    //         searchListID:[]
+    //     })
+    // }
+    getDictData = () => {
+        GetDictInfo({ dictCode: "status" }).then(res => {
+            if (res.success != 1) {
+                message.error(res.message)
+            } else {
+                console.log(res.data,"888")
+                let comboBox = Object.assign({}, this.state.comboBox, {
+                    status: res.data
+                })
+                this.setState({ comboBox: comboBox })
+            }
+        })
+    }
     render = _ => {
         const { getFieldDecorator } = this.props.form
-        return <div style={{ display: 'flex', height: "100%" }}>
+        const { searchValue, expandedKeys, } = this.state;
+        const loop = data =>
+            data.map(item => {
+                const index = item.title.indexOf(searchValue);
+                const beforeStr = item.title.substr(0, index);
+                const afterStr = item.title.substr(index + searchValue.length);
+                const title =
+                    index > -1 ? (
+                        <span>
+                            {beforeStr}
+                            <span style={{ color: '#f50' }}>{searchValue}</span>
+                            {afterStr}
+                        </span>
+                    ) : (
+                            <span>{item.title}</span>
+                        );
+                if (item.children) {
+                    return (
+                        <TreeNode key={item.key} title={title} roleCategoryName={item.roleCategoryName} id={item.id} >
+                            {loop(item.children)}
+                        </TreeNode>
+                    );
+                }
+                return <TreeNode roleCategoryName={item.roleCategoryName} id={item.id} key={item.key} title={title} />;
+            });
+        return <div style={{ display: 'flex', height: "100%" }} onClick={this.cancelSelected}>
             {/* 左侧角色组 tree */}
             <Card style={{ flex: "3" }}>
-                <Col style={{ marginBottom: "10px" }}>
-                    <Button type="primary" onClick={this.addRoleGroup}>新增</Button>
-                    <Button type="primary" style={{ margin: '0 10px' }} onClick={this.editRoleGroup}>修改</Button>
-                    <Button type="primary" onClick={this.delRoleGroup}>删除</Button>
-                </Col>
+                <Row>
+                    <Col span={12}>
+                        <Search
+                            allowClear
+                            placeholder="请输入资源名称"
+                            onSearch={this.onSearchTree} />
+                    </Col>
+                    <Col span={12} style={{ textAlign: "right" }}>
+                        <Button title="删除" type="info" icon="delete" onClick={this.delRoleGroup}></Button>
+                        <Button title="修改" type="info" icon="edit" onClick={this.editRoleGroup} style={{ margin: '0 10px' }}></Button>
+                        <Button title="新增" type="primary" icon="plus" onClick={this.addRoleGroup}></Button>
+                    </Col>
+                </Row>
                 <Tree
-                    selectedKeys={[this.state.searchListID]}
+                    // selectedKeys={[this.state.searchListID]}
                     onSelect={this.onTreeSelect}
                     defaultExpandAll={true}
-                    treeData={this.state.tree.treeData}
-                />
+                    expandedKeys={expandedKeys}
+                    onExpand={this.onExpand}
+                >
+                    {loop(this.state.tree.treeData)}
+                </Tree>
             </Card>
             {/* 右侧角色table表格 */}
             <Card style={{ flex: "8" }}>
@@ -648,11 +826,12 @@ class role extends Component {
                         <Button type="primary" onClick={this.searchRoleNameFun}>查询</Button>
                     </Row>
                     <Row style={{ textAlign: 'right' }}>
-                        <Button type="info" style={{ marginLeft: '10px' }} onClick={this.addRoleItem}>新增</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.delRoleItems}>批量删除角色</Button>
+                        <Button type="primary" style={{ marginRight: '10px' }} onClick={this.addRoleItem}>新增</Button>
+                        <Button type="info" style={{ marginRight: '10px' }} onClick={this.editRoleItem}>修改</Button>
+                        <Button type="info" onClick={this.delRoleItem}>删除</Button>
                     </Row>
                 </Form>
-                <Table bordered rowSelection={{ onChange: this.onTableSelect }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} />
+                <Table bordered rowSelection={{ onChange: this.onTableSelect, type: "radio" }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} />
                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
             </Card>
             {/* 角色组新增修改弹窗 */}
@@ -691,11 +870,12 @@ class role extends Component {
                 <FormItem
                     label={"角色状态"} labelCol={{ span: 4 }}>
                     <Select style={{ width: "300px" }} value={this.state.currentRole.status} onChange={this.getstatus} >
-                        <Option value={1}>启用</Option>
-                        <Option value={0}>停用</Option>
+                        {this.state.comboBox.status.map(t => <Option key={t.itemCode.toString()} value={t.itemCode.toString()}>{t.itemValue}</Option>)}
                     </Select>
                 </FormItem>
-
+                <FormItem style={{ margin: 0 }}
+                    label={"关联资源"} labelCol={{ span: 4 }}>
+                </FormItem>
                 <Card style={{ width: "500px", overflowY: "auto", marginLeft: "30px" }}>
                     <Tree
                         checkable

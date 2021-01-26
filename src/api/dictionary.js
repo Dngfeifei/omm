@@ -31,3 +31,5 @@ export const DelDictItem = (params = {}) => {
 export const GetDictInfo = (params = {}) => {
 	return http.fetchGet(`/sysDictItems/getByCode`, params)
 }
+
+

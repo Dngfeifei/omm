@@ -4,6 +4,7 @@ import { GetDictionary, AddDictionary, EditDictionary, DelDictionary, GetDictIte
 const { Search } = Input;
 const { Option } = Select
 const { Item } = Form
+const FormItem = Form.Item
 const { confirm } = Modal;
 const { Provider, Consumer } = React.createContext()//组件之间传值
 import Pagination from '/components/pagination'
@@ -90,7 +91,7 @@ class content extends Component {
         // 请求加锁 防止多次请求
         lock: false,
         //左侧角色树相关数据
-        searchName: "",
+        // searchName: "",
         tree: {
             //右侧角色树数据
             treeData: [
@@ -219,6 +220,7 @@ class content extends Component {
         let selected = this.state.currentID;
         //1 判断字典tree是否有选中 如无选中提示无选中数据无法修改
         if (selected == "" || selected == null) {
+            message.destroy()
             message.warning('没有选中数据,无法进行修改!');
             return
         }
@@ -237,6 +239,7 @@ class content extends Component {
         //1 判断字典tree是否有选中 如无选中提示无选中数据无法删除
         let selected = this.state.currentID;
         if (selected == "" || selected == null) {
+            message.destroy()
             message.warning('没有选中数据,无法进行删除!');
             return
         }
@@ -284,14 +287,13 @@ class content extends Component {
     };
 
     //获取要查询的字典名称
-    getSearchName = (e) => {
-        this.setState({
-            searchName: e.target.value
-        })
-    }
+    // getSearchName = (e) => {
+    //     this.setState({
+    //         searchName: e.target.value
+    //     })
+    // }
     // 通过字典名称查询字典数据
-    onSearch = (e) => {
-        let value = this.state.searchName;
+    onSearch = (value) => {
         this.searchTree({ dictName: value })
     }
     //获取新增或修改后的字典名称
@@ -314,10 +316,12 @@ class content extends Component {
         let params = this.state.newGroup
         //2 校验数据 不能为空 空：提示名称为空不能保存
         if (params.dictName == "" || params.dictName == null) {
+            message.destroy()
             message.warning('名称不能为空!');
             return
         }
         if (params.dictCode == "" || params.dictCode == null) {
+            message.destroy()
             message.warning('编码不能为空!');
             return
         }
@@ -440,10 +444,10 @@ class content extends Component {
             </div>
         ) : (
                 <div style={{ display: "flex", justifyContent: "space-around" }}>
-                    <a disabled={editingKey !== ''} onClick={() => this.editItem(record.id)}>
+                    <a onClick={() => this.editItem(record.id)}>
                         修改
                  </a>
-                    <a disabled={editingKey !== ''} onClick={() => this.delItem(record.id)}>
+                    <a onClick={() => this.delItem(record.id)}>
                         删除
                  </a>
                 </div>
@@ -452,6 +456,11 @@ class content extends Component {
     }
     // 新增字典项
     addItem = () => {
+        if (this.state.editingKey) {
+            message.destroy()
+            message.warning("已存在编辑项,请完成编辑项后再进行新增操作")
+            return
+        }
         let oldData = this.state.table.dictData
         let count = oldData.length + 1
 
@@ -472,6 +481,11 @@ class content extends Component {
     }
     //编辑字典项
     editItem = (key) => {
+        if (this.state.editingKey) {
+            message.destroy()
+            message.warning("已存在编辑项,请完成编辑项后再进行修改操作")
+            return
+        }
         this.setState({
             editingKey: key,
             editType: 1
@@ -479,6 +493,11 @@ class content extends Component {
     }
     // 删除字典项
     delItem = (key) => {
+        if (this.state.editingKey) {
+            message.destroy()
+            message.warning("已存在编辑项,请完成编辑项后再进行删除操作")
+            return
+        }
         let ID = this.state.currentID;//当前字典ID
         DelDictItem({ id: [key] }).then(res => {
             if (res.success != 1) {
@@ -530,14 +549,21 @@ class content extends Component {
         confirm({
             title: '是否确定取消?',
             onOk() {
-                let oldData = _this.state.table.dictData
-                oldData.pop()
-                let table = Object.assign({}, _this.state.table, { dictData: oldData })
-                _this.setState({
-                    table: table,
-                    editingKey: "", //将当前新增的数据进行新增填写
-                    editType: 0
-                });
+                if (!_this.state.editType) {
+                    let oldData = _this.state.table.dictData
+                    oldData.pop()
+                    let table = Object.assign({}, _this.state.table, { dictData: oldData })
+                    _this.setState({
+                        table: table,
+                        editingKey: "", //将当前新增的数据进行新增填写
+                        editType: 0
+                    });
+                }else{
+                    _this.setState({
+                        editingKey: "", //将编辑项改为不可编辑
+                    });
+                }
+
             },
         });
     }
@@ -567,14 +593,23 @@ class content extends Component {
         return <div style={{ display: 'flex', height: "100%" }}>
             {/* 左侧字典 tree */}
             <Card style={{ flex: "3" }}>
-                <Col style={{ marginBottom: "10px" }}>
-                    <Button type="primary" onClick={this.addGroup}>新增</Button>
-                    <Button type="primary" style={{ margin: '0 10px' }} onClick={this.editGroup}>修改</Button>
-                    <Button type="primary" onClick={this.delGroup}>删除</Button>
-                </Col>
-                <Col style={{ marginBottom: "10px" }}>
+                <Row>
+                    <Col span={12}>
+                        <Search
+                            allowClear
+                            placeholder="请输入资源名称"
+                            onSearch={this.onSearch} />
+                    </Col>
+                    <Col span={12} style={{ textAlign: "right" }}>
+                        <Button title="删除" type="info" icon="delete" onClick={this.delGroup}></Button>
+                        <Button title="修改" type="info" icon="edit" onClick={this.editGroup} style={{ margin: '0 10px' }}></Button>
+                        <Button title="新增" type="primary" icon="plus" onClick={this.addGroup}></Button>
+                    </Col>
+                </Row>
+
+                {/* <Col style={{ marginBottom: "10px" }}>
                     <Search required addonBefore="字典名称" onSearch={this.onSearch} placeholder="请输入" value={this.state.searchName} onChange={this.getSearchName} style={{ margin: "2% 10px", width: '90%' }} />
-                </Col>
+                </Col> */}
                 <Tree
                     selectedKeys={[this.state.currentID]}
                     onSelect={this.onTreeSelect}
@@ -583,10 +618,12 @@ class content extends Component {
                 />
             </Card>
             {/* 右侧角色table表格 */}
-            <Card title="字典管理" style={{ flex: "8" }}>
+            <Card style={{ flex: "8" }}>
                 <Form style={{ width: '100%' }}>
-                    <Row>
+                    <Row style={{ textAlign: 'right' }}>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.addItem}>新增</Button>
+                        {/* <Button type="primary" style={{ marginLeft: '10px' }} onClick={this. editItem}>修改</Button>
+                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.delItem}>删除</Button> */}
                     </Row>
                 </Form>
                 <Provider value={this.props.form}>
@@ -603,8 +640,16 @@ class content extends Component {
                 cancelText="取消"
                 okText="保存"
             >
-                <Input required addonBefore="字典名称" placeholder="请输入" value={this.state.newGroup.dictName} onChange={this.getdictName} style={{ margin: "2% 10px", width: '90%' }} />
-                <Input required addonBefore="编码值" placeholder="请输入" value={this.state.newGroup.dictCode} onChange={this.getdictCode} style={{ margin: "2% 10px", width: '90%' }} />
+                <Row>
+                    <label htmlFor="字典名称" className="ant-form-item-required">
+                        <span style={{ width: "18%", display: "inline-block" }}>字典名称：</span>
+                        <Input placeholder="请输入" value={this.state.newGroup.dictName} onChange={this.getdictName} style={{ margin: "2% 10px", width: '70%' }} /></label>
+                </Row>
+                <Row>
+                    <label htmlFor="字典名称" className="ant-form-item-required">
+                        <span style={{ width: "16%", display: "inline-block" }}>编码值：</span>
+                        <Input placeholder="请输入" value={this.state.newGroup.dictCode} onChange={this.getdictCode} style={{ margin: "2% 10px", width: '70%' }} /></label>
+                </Row>
             </Modal>
 
 

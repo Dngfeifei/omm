@@ -62,7 +62,10 @@ class Post extends Common {
 		}
 	})
 	//查询岗位数据
-	search = async _ => {
+	search = async (type = false) => {
+		if (type) {
+			this.setState({ selected: [] })
+		}
 		let params = this.state.search
 		GetPostData(params)
 			.then(res => {
@@ -73,6 +76,7 @@ class Post extends Common {
 					this.setState({
 						tabledata: res.data.records,
 						loading: false,
+						// selected:[],
 						pagination: Object.assign({}, this.state.pagination, {
 							total: Number(res.data.total),
 							current: Number(res.data.current)
@@ -104,6 +108,7 @@ class Post extends Common {
 				}
 			})
 		} else {
+			message.destroy()
 			message.warning('请选中表格中的某一记录！')
 		}
 	}
@@ -128,6 +133,7 @@ class Post extends Common {
 			})
 
 		} else {
+			message.destroy()
 			message.warning('请选中表格中的某一记录！')
 		}
 	}
@@ -142,6 +148,7 @@ class Post extends Common {
 				}
 			})
 		} else {
+			message.destroy()
 			message.warning('请选中表格中的某一记录！')
 		}
 	}
@@ -156,6 +163,7 @@ class Post extends Common {
 				}
 			})
 		} else {
+			message.destroy()
 			message.warning('请选中表格中的某一记录！')
 		}
 	}
@@ -202,13 +210,13 @@ class Post extends Common {
 				onChange={e => this.changeSearch({ positionName: e.target.value })}
 				addonBefore="岗位名称" placeholder="请输入" />
 			<Button
-				onClick={this.search}
+				onClick={_ => this.search(true)}
 				type="primary" icon="search">搜索</Button>
 		</div>
 	</div>
 
 	renderBtn = _ => <div>
-		<Row style={{ display: 'flex', margin: "10px 0",padding:"0 10px" }}>
+		<Row style={{ display: 'flex', margin: "10px 0", padding: "0 10px" }}>
 			<div style={{ flex: 3 }}>
 				<Button
 					onClick={_ => this.addPost()}

@@ -82,7 +82,6 @@ textarea{
     overflow-y: hidden; 
     height: 100%;
     background: #fafafa;
-    padding-bottom: 46px;
   }
   .ant-layout-sider-children:hover{
     overflow-y: auto;
@@ -103,22 +102,22 @@ textarea{
   @import url('./components/header');
 }
 .ant-empty-normal{margin:0}
-// .trigger {
-//   font-size: 20px;
-//   line-height: 28px;
-//   margin-top: 5px;
-//   margin-left: 5px;
-//   cursor: pointer;
-//   transition: color .3s;
-// }
+.trigger {
+  font-size: 20px;
+  line-height: 28px;
+  margin-top: 5px;
+  margin-left: 5px;
+  cursor: pointer;
+  transition: color .3s;
+}
 
 .trHide{
   display: none;
 }
 
-// .trigger:hover {
-//   color: #fff;
-// }
+.trigger:hover {
+  color: #fff;
+}
 
 .cpwrapper{
   padding-top: 100px;
@@ -250,9 +249,6 @@ textarea{
 .main_height{
   height: 100%;
 }
-.m_height{
-  height: 47%;
-}
 @import url('./pages/login');
 
 
@@ -271,4 +267,17 @@ textarea{
   -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
   border-radius: 0;
   background: rgba(0, 0, 0, 0.1);
+}
+// 表单报错样式
+.has-error .ant-form-explain, .has-error .ant-form-split {
+  color: #f5222d;
+  position: absolute;
+  left: 120px;
+  display: block;
+}
+.ant-form-explain{
+  display: none;
+}
+.ant-form-item-with-help{
+  margin-bottom: 24px;
 }

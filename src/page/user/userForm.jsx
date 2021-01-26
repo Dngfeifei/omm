@@ -75,8 +75,8 @@ class CertItem extends Component {
 				option: {
 					rules: [
 						{
-							message: "请输入至少4位数字的员工号",
-							pattern: "^[0-9]{4,30}$",
+							message: "请输入数字",
+							pattern: /^[0-9]{0,}$/,
 							trigger: "blur",
 						}]
 				},
@@ -88,11 +88,6 @@ class CertItem extends Component {
 				option: {
 					rules: [
 						{ required: true, message: "请输入账号" },
-						{
-							message: "请输入中文",
-							pattern: "^[\u4e00-\u9fa5]{0,}$",
-							trigger: "blur",
-						}
 					]
 				},
 				render: _ => <Input style={{ width: 200 }} />
@@ -101,9 +96,9 @@ class CertItem extends Component {
 				key: 'idNumber',
 				option: {
 					rules: [
-						{ required: true, message: "请输入账号" },
+						{ required: true, message: "请输入身份证号" },
 						{
-							message: "请输入正确的身份证号",
+							message: "请输入正确身份证信息",
 							pattern: /^[1-9][0-9]{5}(19|20)[0-9]{2}((01|03|05|07|08|10|12)(0[1-9]|[1-2][0-9]|30|31)|(04|06|09|11)(0[1-9]|[1-2][0-9]|30)|02(0[1-9]|[1-2][0-9]))[0-9]{3}([0-9]|x|X)$/,
 							trigger: "blur",
 						}
@@ -140,9 +135,9 @@ class CertItem extends Component {
 				key: 'email',
 				option: {
 					rules: [
-						{ required: true, message: "请输入账号" },
+						{ required: true, message: "请输入" },
 						{
-							message: "请按照字母或字母+数字的格式输入",
+							message: "请按照正确的邮箱格式输入",
 							pattern: "^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$",
 							trigger: "blur",
 						}]
@@ -173,13 +168,13 @@ class CertItem extends Component {
 							width: '200px',
 						},
 					};
-					return <TreeSelect  {...tProps} />;
+					return <TreeSelect allowClear  {...tProps} />;
 				}
 			}, {
 				label: '入职时间',
 				key: 'entryDate',
 				option: { rules: [] },
-				render: _ => <DatePicker placeholder="发证日期" style={{ width: 200 }} />
+				render: _ => <DatePicker  style={{ width: 200 }} />
 			},
 			{
 				label: '职务',
@@ -288,17 +283,13 @@ class CertItem extends Component {
 
 	handleOk = async _ => {
 		if (!this.state.lock) {
-			console.log(1)
 			await this.setState({ lock: true })
 			this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
+				console.log(err,125)
 				if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 发起后台请求
 					let params = Object.assign({}, val)
-					console.log(params, 2)
-					// if (this.props.config.type == 'edit') {
-					// 	params.id = this.props.config.item.id
-					// }
 					if (params.entryDate) { params.entryDate = params.entryDate.format('YYYY-MM-DD') };
-					if (params.org) { params.org = params.org.map((item) => { return { id: item.value } }) };
+					if (!params.org) { params.org = "" };
 					this.dealDate(params)
 					if (this.props.config.type == 'add') {
 						AddUser(params)
@@ -311,7 +302,6 @@ class CertItem extends Component {
 							})
 					} else {
 						let editparams = Object.assign({}, params, { id: this.props.config.item.id })
-						console.log(editparams, 789)
 						EditUser(editparams)
 							.then(res => {
 								if (res.success == 1) {
@@ -337,7 +327,6 @@ class CertItem extends Component {
 			onCancel={this.props.onCancel}
 			width={1000}
 			style={{ top: 50, marginBottom: 100 }}
-
 			footer={null}
 		>
 			<Form>
@@ -359,7 +348,7 @@ class CertItem extends Component {
 					</FormItem></Col>)}
 				</Row>
 				<Row style={{ textAlign: 'right', paddingRight: '50px', paddingBottom: '20px' }}>
-					<Button type="primary" onClick={this.handleOk}>立即保存</Button>
+					<Button type="primary" onClick={this.handleOk}>保存</Button>
 					<Button type="primary" onClick={this.props.onCancel} style={{ margin: '0 10px' }}>取消</Button>
 				</Row>
 			</Form>

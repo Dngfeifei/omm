@@ -136,6 +136,7 @@ class People extends Component {
 	relationPost = _ => {
 		let positionId = this.state.allPostSeletct;
 		if (positionId == "" || positionId == null) {
+			message.destroy()
 			message.warning('请选中表格中的某一记录！')
 			return
 		}
@@ -143,6 +144,7 @@ class People extends Component {
 		console.log(positionId)
 		RelationPeople({ userId: userId, positionId: positionId }).then(res => {
 			if (res.success == 1) {
+				message.success('操作成功')
 				this.GetRelation()
 			}
 		})
@@ -151,6 +153,7 @@ class People extends Component {
 	unRelationPost = _ => {
 		let positionId = this.state.userPostSeletct;
 		if (positionId == "" || positionId.length == 0) {
+			message.destroy()
 			message.warning('请选中表格中的某一记录！')
 			return
 		}

@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
-import { Tree, Input, Button, message, Select, Form, Row, Col, Modal, Card } from 'antd'
+import { Tree, Input, Button, message, Select, Form, Row, Col, Modal, Card, Tooltip } from 'antd'
 import { GetResourceTree, AddResource, EditResource, DelResource, GetResourceInfo } from '/api/resources'
 import { GetDictInfo } from '/api/dictionary'
 const FormItem = Form.Item
 const { Option } = Select
-const { TextArea } = Input
+const { TextArea, Search } = Input
 const { confirm } = Modal;
+const { TreeNode } = Tree;
 const assignment = (data) => {
 	data.forEach((list, i) => {
 		list.key = list.id;
@@ -20,18 +21,42 @@ const assignment = (data) => {
 		}
 	});
 }
-
+// 获取父级节点
+const getParentKey = (key, tree) => {
+	let parentKey;
+	for (let i = 0; i < tree.length; i++) {
+		const node = tree[i];
+		if (node.children) {
+			if (node.children.some(item => item.key === key)) {
+				parentKey = node.key;
+			} else if (getParentKey(key, node.children)) {
+				parentKey = getParentKey(key, node.children);
+			}
+		}
+	}
+	return parentKey;
+};
 class resources extends Component {
 	async componentWillMount() {
 		// 获取数据字典树数据
 		this.searchTree()
-		// 获取资源类型下拉框数据
-		this.getSourceType()
+		// 获取下拉框数据
+		this.getDictData()
 	}
 	state = Object.assign({}, {
-		resourceType: [],
+		// tree节点搜索高亮配置
+		expandedKeys: [],
+		searchValue: '',
+		autoExpandParent: true,
+		// 资源类型
+		comboBox: {
+			resourceType: [],
+			visible: [],
+			openMethod: []
+		},
 		//资源数数据
 		treeData: [],
+		treeDataList: [],
 		//资源树被选中项
 		selected: {
 			id: null,
@@ -51,7 +76,7 @@ class resources extends Component {
 						{ required: true, message: "请输入" },
 					]
 				},
-				render: _ => <Input disabled={!this.state.editable} style={{ width: 240 }} />
+				render: _ => <Input disabled={!this.state.editable} />
 			},
 			{
 				label: '资源路径',
@@ -61,7 +86,7 @@ class resources extends Component {
 						{ required: true, message: "请输入" },
 					]
 				},
-				render: _ => <Input disabled={!this.state.editable} style={{ width: 240 }} />
+				render: _ => <Input disabled={!this.state.editable} />
 			},
 			{
 				label: '是否可见',
@@ -69,14 +94,14 @@ class resources extends Component {
 				option: {
 					rules: [
 						{ required: true, message: "请选择" },
-					]
+					],
 				},
 				render: _ => <Select disabled={!this.state.editable}
-					style={{ width: 240 }}
 					placeholder="请选择"
 				>
-					<Option value={1}>是</Option>
-					<Option value={0}>否</Option>
+					{
+						this.state.comboBox.visible.map(t => <Option key={Number(t.itemCode)} value={Number(t.itemCode)}>{t.itemValue}</Option>)
+					}
 				</Select>
 			},
 			{
@@ -88,12 +113,13 @@ class resources extends Component {
 					]
 				},
 				render: _ => <Select disabled={!this.state.editable}
-					style={{ width: 240 }}
 					placeholder="请选择"
 				>
-					{
-						this.state.resourceType.map(t => <Option key={t.id} value={t.id}>{t.itemValue}</Option>)
-					}
+					<Option value={"1"}>固定子菜单</Option>
+					<Option value={"2"}>工作台左侧portalet</Option>
+					<Option value={"3"}>工作台右侧portalet</Option>
+					<Option value={"4"}>外部链接</Option>
+					<Option value={"5"}>普通按钮</Option>
 				</Select>
 			},
 			{
@@ -105,11 +131,11 @@ class resources extends Component {
 					]
 				},
 				render: _ => <Select disabled={!this.state.editable}
-					style={{ width: 240 }}
 					placeholder="请选择"
 				>
-					<Option value={1}>本窗口</Option>
-					<Option value={0}>新窗口</Option>
+					{
+						this.state.comboBox.openMethod.map(t => <Option key={t.itemCode.toString()} value={t.itemCode.toString()}>{t.itemValue}</Option>)
+					}
 				</Select>
 			},
 			{
@@ -124,12 +150,12 @@ class resources extends Component {
 				// 		}
 				// 	]
 				// },
-				render: _ => <Input disabled={!this.state.editable} style={{ width: 240 }} />
+				render: _ => <Input disabled={!this.state.editable} />
 			},
 			{
 				label: '上级资源',
 				key: 'parentResourceName',
-				render: _ => <Input disabled style={{ width: 240 }} />
+				render: _ => <Input disabled />
 			},
 			{
 				label: '备注',
@@ -143,19 +169,30 @@ class resources extends Component {
 						}
 					]
 				},
-				render: _ => <TextArea disabled={!this.state.editable} rows={2} style={{ width: 360 }} />
+				render: _ => <TextArea disabled={!this.state.editable} />
 			}
 		],
 	})
 	// 获取资源类型下拉框数据
-	getSourceType = () => {
-		GetDictInfo({ dictCode: "resourceType" }).then(res => {
+	getDictData = () => {
+		GetDictInfo({ dictCode: "visible" }).then(res => {
 			if (res.success != 1) {
-				message.error("资源类型未获取，服务器错误！")
+				message.error("是否可见下拉框资源未获取，服务器错误！")
 			} else {
-				this.setState({
-					resourceType: res.data
+				let comboBox = Object.assign({}, this.state.comboBox, {
+					visible: res.data
 				})
+				this.setState({ comboBox: comboBox })
+			}
+		})
+		GetDictInfo({ dictCode: "openMethod" }).then(res => {
+			if (res.success != 1) {
+				message.error("打开方式下拉框资源未获取，服务器错误！")
+			} else {
+				let comboBox = Object.assign({}, this.state.comboBox, {
+					openMethod: res.data
+				})
+				this.setState({ comboBox: comboBox })
 			}
 		})
 	}
@@ -172,6 +209,7 @@ class resources extends Component {
 					this.setState({
 						treeData: res.data,
 					})
+					this.generateList(res.data)
 				}
 			})
 	}
@@ -190,15 +228,17 @@ class resources extends Component {
 			});
 			return
 		}
+		console.log(info,254)
 		this.setState({
 			selected: {
 				id: selectedKeys[0],//资源树当前选中项
-				title: info.selectedNodes[0].props.title//当前选中项name
+				title: info.selectedNodes[0].props.name//当前选中项name
 			},
 			type: null, editable: false
 		});
 		//通过获取key值从资源树查询对应资源详情
 		// let item = this.getDataByTree(this.state.treeData, selectedKeys[0]);
+		console.log(info.selectedNodes,125)
 		this.getTreeNodeInfo(selectedKeys[0])
 	}
 	//查询tree节点详情
@@ -215,13 +255,47 @@ class resources extends Component {
 					this.props.form.setFields({ resourcePath: { value: item.resourcePath } })
 					this.props.form.setFields({ visible: { value: item.visible } })
 					this.props.form.setFields({ resourceCategoryId: { value: item.resourceCategoryId } })
-					// console.log(typeof item.openMethod)
-					this.props.form.setFields({ openMethod: { value: Number(item.openMethod) } })
+					this.props.form.setFields({ openMethod: { value: item.openMethod } })
 					this.props.form.setFields({ serialNumber: { value: item.serialNumber } })
 					this.props.form.setFields({ parentResourceName: { value: item.parentResourceName } })
 					this.props.form.setFields({ description: { value: item.description } })
 				}
 			})
+	}
+	// 打开节点
+	onExpand = expandedKeys => {
+		this.setState({
+			expandedKeys,
+			autoExpandParent: false,
+		});
+	};
+	// tree搜索
+	onSearchTree = value => {
+		const expandedKeys = this.state.treeDataList
+			.map(item => {
+				if (item.title.indexOf(value) > -1) {
+					return getParentKey(item.key, this.state.treeData);
+				}
+				return null;
+			})
+			.filter((item, i, self) => item && self.indexOf(item) === i);
+		console.log(expandedKeys, 999)
+		this.setState({
+			expandedKeys,
+			searchValue: value,
+			autoExpandParent: true,
+		});
+	};
+	// tree数据扁平化处理方法
+	generateList = data => {
+		for (let i = 0; i < data.length; i++) {
+			const node = data[i];
+			const { key, title } = node;
+			this.state.treeDataList.push({ key, title: title });
+			if (node.children) {
+				this.generateList(node.children);
+			}
+		}
 	}
 	//新增按钮
 	addBtn = () => {
@@ -229,7 +303,7 @@ class resources extends Component {
 		//重置右侧表单
 		this.reset()
 		if (this.state.selected.id) {
-			this.props.form.setFields({ parentResourceName: { value: this.state.selected.title } })
+			this.props.form.setFields({ parentResourceName: { value: this.state.selected.title }, visible: { value: 1 } })
 		}
 	}
 	//修改按钮
@@ -237,6 +311,7 @@ class resources extends Component {
 		let selected = this.state.selected.id;
 		//1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
 		if (selected == "" || selected == null) {
+			message.destroy()
 			message.warning('没有选中数据,无法进行修改!');
 			return
 		}
@@ -247,6 +322,7 @@ class resources extends Component {
 		let selected = this.state.selected.id;
 		//1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
 		if (selected == "" || selected == null) {
+			message.destroy()
 			message.warning('没有选中数据,无法进行删除!');
 			return
 		}
@@ -258,7 +334,7 @@ class resources extends Component {
 				DelResource({ id: params })
 					.then(res => {
 						if (res.success != 1) {
-							alert("删除请求错误")
+							message.error(res.message)
 						} else {
 							_this.searchTree()
 							_this.reset()
@@ -284,7 +360,7 @@ class resources extends Component {
 					params = Object.assign({}, params, { parentResourceId: this.state.selected.id })
 					this.addSave(params)
 				} else {
-					console.log(params,666)
+					console.log(params, 666)
 					this.editSave(params);
 				}
 			}
@@ -411,7 +487,8 @@ class resources extends Component {
 			EditResource(dropParams)
 				.then(res => {
 					if (res.success == 1) {
-						this.searchTree()
+						this.searchTree();
+						this.getTreeNodeInfo(this.state.selected.id)
 					} else {
 						message.error('操作失败')
 					}
@@ -420,23 +497,60 @@ class resources extends Component {
 	}
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
+		const { searchValue, expandedKeys, } = this.state;
+		const loopNode = data =>
+			data.map(item => {
+				const index = item.title.indexOf(searchValue);
+				const beforeStr = item.title.substr(0, index);
+				const afterStr = item.title.substr(index + searchValue.length);
+				const title =
+					index > -1 ? (
+						<span>
+							{beforeStr}
+							<span style={{ color: '#f50' }}>{searchValue}</span>
+							{afterStr}
+						</span>
+					) : (
+							<span>{item.title}</span>
+						);
+				if (item.children) {
+					return (
+						<TreeNode key={item.key} name={item.resourceName} title={title}>
+							{loopNode(item.children)}
+						</TreeNode>
+					);
+				}
+				return <TreeNode key={item.key}  name={item.resourceName}  title={title} />;
+			});
 		return (<div className="mgrWrapper" style={{ display: "flex", height: "100%" }}>
-			<Card title="资源管理" style={{ flex: 3 }}>
+			<Card style={{ flex: 3 }}>
 				<div style={{ marginBottom: "10px" }}>
-					<Button type="primary" onClick={this.addBtn}>新建</Button>
-					<Button onClick={this.editBtn} style={{ margin: '0 10px' }} >修改</Button>
-					<Button onClick={this.delBtn}>删除</Button>
+					<Row>
+						<Col span={12}>
+							<Search
+							    allowClear
+								placeholder="请输入资源名称"
+								onSearch={this.onSearchTree} />
+						</Col>
+						<Col span={12} style={{ textAlign: "right" }}>
+							<Button title="删除" type="info" icon="delete" onClick={this.delBtn}></Button>
+							<Button title="修改" type="info" icon="edit" onClick={this.editBtn} style={{ margin: '0 10px' }}></Button>
+							<Button title="新增" type="primary" icon="plus" onClick={this.addBtn}></Button>
+						</Col>
+					</Row>
 				</div>
 				<Tree
 					className="draggable-tree"
-					defaultExpandedKeys={this.state.expandedKeys}
 					defaultExpandAll={true}
 					draggable
 					blockNode
+					expandedKeys={expandedKeys}
+					onExpand={this.onExpand}
 					onDrop={this.onDrop}
 					onSelect={this.onSelect}
-					treeData={this.state.treeData}
-				/>
+				>
+					{loopNode(this.state.treeData)}
+				</Tree>
 			</Card>
 			<Card style={{ flex: 8 }}>
 				<Form
@@ -460,14 +574,14 @@ class resources extends Component {
 								</Col>
 						)}
 					</Row>
-					{
-						(<div style={{ textAlign: "center" }}>
+					<Row >
+						<Col span={21} style={{ display: 'block', textAlign: "right" }}>
 							<Button type="primary" disabled={!this.state.editable} onClick={this.save}>保存</Button>
-						</div>)
-					}
+						</Col>
+					</Row>
 				</Form>
 			</Card>
-		</div>)
+		</div >)
 	}
 }
 const resourcesCom = Form.create()(resources)
