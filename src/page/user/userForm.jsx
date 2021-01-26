@@ -289,7 +289,7 @@ class CertItem extends Component {
 				if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 发起后台请求
 					let params = Object.assign({}, val)
 					if (params.entryDate) { params.entryDate = params.entryDate.format('YYYY-MM-DD') };
-					if (!params.org) { params.org = "" };
+					if (!params.orgId) { params.orgId = "" };
 					this.dealDate(params)
 					if (this.props.config.type == 'add') {
 						AddUser(params)

@@ -172,7 +172,7 @@ class Common extends Component{
 				})
 			}
 		}) : this.state.pagination
-		return <div className="mgrWrapper">
+		return <div className="mgrWrapper" style={{padding:"20px"}}>
 			{this.renderSearch()}
 			{this.renderBtn()}
 			{this.renderTable(this.state.selectedtable ? rowSelection : null, pagination)}
