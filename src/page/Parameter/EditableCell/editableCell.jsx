@@ -94,27 +94,31 @@ class TableRow extends React.Component {
 
     // 新增table表格一行
     handleAdd = () => {
-        const { count, data } = this.state;
-        console.log(count, data)
-        const newData = {
-            key: count,
-            id:count,
-            paramterName: ``,
-            status: '1',
-            parameterValue:"",
-            description: ``,
-            operation: "",
-        };
+        if (this.state.parameterCategoryId) {
+            const { count, data } = this.state;
+            const newData = {
+                key: count,
+                id: count,
+                paramterName: ``,
+                status: '1',
+                parameterValue: "",
+                description: ``,
+                operation: "",
+            };
+
+            const newSelectKey = []
+            newSelectKey.push(newData.id)
+            this.setState({
+                data: [...data, newData],
+                count: count + 1,
+                editingKey: newData.id, //将当前新增的数据进行新增填写
+                selectedRowKeys: newSelectKey,   // 将当前新增的行进行选中
+                RowLock: false
+            });
+        }else {
+            message.warning('请先选择系统参数类别！')
+        }
         
-        const newSelectKey = []
-        newSelectKey.push(newData.id)
-        this.setState({
-            data: [...data, newData],
-            count: count + 1,
-            editingKey: newData.id, //将当前新增的数据进行新增填写
-            selectedRowKeys:newSelectKey,   // 将当前新增的行进行选中
-            RowLock:false
-        });
 
     };
 

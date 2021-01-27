@@ -85,7 +85,7 @@ class TreeList extends Component {
         // 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式
         showIcon: false,
         // 是否展示连接线
-        showLine:false,
+        showLine:true,
 
 
 
