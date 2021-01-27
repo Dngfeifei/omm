@@ -542,12 +542,12 @@ class resources extends Component {
 							val.key == "description" ?
 								<Col key={index} span={24} style={{ display: 'block' }}>
 									<FormItem
-										label={val.label} labelCol={{ span: 2 }} wrapperCol={{ span: 19 }}>
+										label={val.label} labelCol={{ span: 2 }} wrapperCol={{ span: 14 }}>
 										{getFieldDecorator(val.key, val.option)(val.render())}
 									</FormItem>
 								</Col> : <Col key={index} span={12} style={{ display: 'block' }}>
 									<FormItem
-										label={val.label} labelCol={{ span: 4 }} wrapperCol={{ span: 14 }}>
+										label={val.label} labelCol={{ span: 4 }} wrapperCol={{ span: 19 }}>
 										{getFieldDecorator(val.key, val.option)(val.render())}
 									</FormItem>
 								</Col>
