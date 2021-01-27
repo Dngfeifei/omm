@@ -1,12 +1,16 @@
 import React, { Component } from 'react'
 import { Tree, Input, Button, message, Select, Form, Row, Col, Modal, Card, Tooltip } from 'antd'
+
+// 引入 Tree树形组件
+import TreeParant from "@/components/tree/index.jsx"
+
 import { GetResourceTree, AddResource, EditResource, DelResource, GetResourceInfo } from '/api/resources'
 import { GetDictInfo } from '/api/dictionary'
 const FormItem = Form.Item
 const { Option } = Select
-const { TextArea, Search } = Input
+const { TextArea } = Input
 const { confirm } = Modal;
-const { TreeNode } = Tree;
+
 const assignment = (data) => {
 	data.forEach((list, i) => {
 		list.key = list.id;
@@ -21,21 +25,6 @@ const assignment = (data) => {
 		}
 	});
 }
-// 获取父级节点
-const getParentKey = (key, tree) => {
-	let parentKey;
-	for (let i = 0; i < tree.length; i++) {
-		const node = tree[i];
-		if (node.children) {
-			if (node.children.some(item => item.key === key)) {
-				parentKey = node.key;
-			} else if (getParentKey(key, node.children)) {
-				parentKey = getParentKey(key, node.children);
-			}
-		}
-	}
-	return parentKey;
-};
 class resources extends Component {
 	async componentWillMount() {
 		// 获取数据字典树数据
@@ -50,13 +39,30 @@ class resources extends Component {
 		autoExpandParent: true,
 		// 资源类型
 		comboBox: {
-			resourceType: [],
 			visible: [],
 			openMethod: []
 		},
+		resourceType:[
+			{itemCode:"1",itemValue:"固定子菜单"},
+			{itemCode:"2",itemValue:"工作台左侧portalet"},
+			{itemCode:"3",itemValue:"工作台右侧portalet"},
+			{itemCode:"4",itemValue:"外部链接"},
+			{itemCode:"5",itemValue:"普通按钮"},
+		],
+		resourceType2:[
+			{itemCode:"1",itemValue:"固定子菜单"},
+			{itemCode:"2",itemValue:"工作台左侧portalet"},
+			{itemCode:"3",itemValue:"工作台右侧portalet"},
+			{itemCode:"4",itemValue:"外部链接"},
+			{itemCode:"5",itemValue:"普通按钮"},
+		],
+		resourceType3:[
+			{itemCode:"1",itemValue:"固定子菜单"},
+			{itemCode:"2",itemValue:"工作台左侧portalet"},
+			{itemCode:"3",itemValue:"工作台右侧portalet"},
+		],
 		//资源数数据
 		treeData: [],
-		treeDataList: [],
 		//资源树被选中项
 		selected: {
 			id: null,
@@ -115,11 +121,7 @@ class resources extends Component {
 				render: _ => <Select disabled={!this.state.editable}
 					placeholder="请选择"
 				>
-					<Option value={"1"}>固定子菜单</Option>
-					<Option value={"2"}>工作台左侧portalet</Option>
-					<Option value={"3"}>工作台右侧portalet</Option>
-					<Option value={"4"}>外部链接</Option>
-					<Option value={"5"}>普通按钮</Option>
+					{this.state.resourceType.map(t => <Option key={t.itemCode} value={t.itemCode}>{t.itemValue}</Option>)}
 				</Select>
 			},
 			{
@@ -209,7 +211,6 @@ class resources extends Component {
 					this.setState({
 						treeData: res.data,
 					})
-					this.generateList(res.data)
 				}
 			})
 	}
@@ -228,21 +229,21 @@ class resources extends Component {
 			});
 			return
 		}
-		console.log(info,254)
+		// 选中数据详情
+		let source=info.selectedNodes[0].props.dataRef
 		this.setState({
-			selected: {
-				id: selectedKeys[0],//资源树当前选中项
-				title: info.selectedNodes[0].props.name//当前选中项name
-			},
+			selected:source,
 			type: null, editable: false
+		},_=>{
+			this.getTreeNodeInfo()
 		});
 		//通过获取key值从资源树查询对应资源详情
 		// let item = this.getDataByTree(this.state.treeData, selectedKeys[0]);
-		console.log(info.selectedNodes,125)
-		this.getTreeNodeInfo(selectedKeys[0])
+		
 	}
 	//查询tree节点详情
-	getTreeNodeInfo = (id) => {
+	getTreeNodeInfo = () => {
+		let id=this.state.selected.id;
 		GetResourceInfo(id)
 			.then(res => {
 				if (res.success != 1) {
@@ -269,36 +270,18 @@ class resources extends Component {
 			autoExpandParent: false,
 		});
 	};
-	// tree搜索
-	onSearchTree = value => {
-		const expandedKeys = this.state.treeDataList
-			.map(item => {
-				if (item.title.indexOf(value) > -1) {
-					return getParentKey(item.key, this.state.treeData);
-				}
-				return null;
-			})
-			.filter((item, i, self) => item && self.indexOf(item) === i);
-		console.log(expandedKeys, 999)
-		this.setState({
-			expandedKeys,
-			searchValue: value,
-			autoExpandParent: true,
-		});
-	};
-	// tree数据扁平化处理方法
-	generateList = data => {
-		for (let i = 0; i < data.length; i++) {
-			const node = data[i];
-			const { key, title } = node;
-			this.state.treeDataList.push({ key, title: title });
-			if (node.children) {
-				this.generateList(node.children);
-			}
-		}
-	}
+	
+
 	//新增按钮
 	addBtn = () => {
+		let row=this.state.selected;
+		if(row.hasOwnProperty("resourceCategoryId")){
+			if( row.resourceCategoryId==4||row.resourceCategoryId==5){
+				message.destroy()
+				message.warning("外部链接和普通按钮下不能新建资源")
+				return
+			}
+		}
 		this.setState({ type: 1, editable: true })
 		//重置右侧表单
 		this.reset()
@@ -308,6 +291,25 @@ class resources extends Component {
 	}
 	//修改按钮
 	editBtn = () => {
+		let row=this.state.selected;
+		if(row.hasOwnProperty("children")){
+			if(row.children.length){
+				this.setState({
+					resourceType:this.state.resourceType3
+				})
+			}else{
+				this.setState({
+					resourceType:this.state.resourceType2
+				})
+			}
+		}
+		// if(row.hasOwnProperty("c")){
+		// 	if( row.resourceCategoryId==4||row.resourceCategoryId==5){
+		// 		message.destroy()
+		// 		message.warning("外部链接和普通按钮下不能新建资源")
+		// 		return
+		// 	}
+		// }
 		let selected = this.state.selected.id;
 		//1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
 		if (selected == "" || selected == null) {
@@ -319,11 +321,18 @@ class resources extends Component {
 	}
 	//删除按钮
 	delBtn = async_ => {
-		let selected = this.state.selected.id;
+		let selected = this.state.selected;
+		console.log(this.state.selected,4564)
+	
 		//1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
-		if (selected == "" || selected == null) {
+		if (selected.id == "" || selected.id == null) {
 			message.destroy()
 			message.warning('没有选中数据,无法进行删除!');
+			return
+		}
+        if(selected.children&&selected.children.length){
+			message.destroy()
+			message.warning('选中资源下存在子资源项,请先删除子资源再进行此项操作!');
 			return
 		}
 		let _this = this
@@ -497,60 +506,12 @@ class resources extends Component {
 	}
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
-		const { searchValue, expandedKeys, } = this.state;
-		const loopNode = data =>
-			data.map(item => {
-				const index = item.title.indexOf(searchValue);
-				const beforeStr = item.title.substr(0, index);
-				const afterStr = item.title.substr(index + searchValue.length);
-				const title =
-					index > -1 ? (
-						<span>
-							{beforeStr}
-							<span style={{ color: '#f50' }}>{searchValue}</span>
-							{afterStr}
-						</span>
-					) : (
-							<span>{item.title}</span>
-						);
-				if (item.children) {
-					return (
-						<TreeNode key={item.key} name={item.resourceName} title={title}>
-							{loopNode(item.children)}
-						</TreeNode>
-					);
-				}
-				return <TreeNode key={item.key}  name={item.resourceName}  title={title} />;
-			});
 		return (<div className="mgrWrapper" style={{ display: "flex", height: "100%" }}>
 			<Card style={{ flex: 3 }}>
-				<div style={{ marginBottom: "10px" }}>
-					<Row>
-						<Col span={12}>
-							<Search
-							    allowClear
-								placeholder="请输入资源名称"
-								onSearch={this.onSearchTree} />
-						</Col>
-						<Col span={12} style={{ textAlign: "right" }}>
-							<Button title="删除" type="info" icon="delete" onClick={this.delBtn}></Button>
-							<Button title="修改" type="info" icon="edit" onClick={this.editBtn} style={{ margin: '0 10px' }}></Button>
-							<Button title="新增" type="primary" icon="plus" onClick={this.addBtn}></Button>
-						</Col>
-					</Row>
-				</div>
-				<Tree
-					className="draggable-tree"
-					defaultExpandAll={true}
-					draggable
-					blockNode
-					expandedKeys={expandedKeys}
-					onExpand={this.onExpand}
-					onDrop={this.onDrop}
-					onSelect={this.onSelect}
-				>
-					{loopNode(this.state.treeData)}
-				</Tree>
+				<TreeParant treeData={this.state.treeData} draggable={true}
+					addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn}
+					onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
+				></TreeParant>
 			</Card>
 			<Card style={{ flex: 8 }}>
 				<Form

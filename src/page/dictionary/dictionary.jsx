@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Card } from 'antd'
 import { GetDictionary, AddDictionary, EditDictionary, DelDictionary, GetDictItems, AddDictItem, EditDictItem, DelDictItem } from '/api/dictionary.js'
-const { Search } = Input;
+// 引入 Tree树形组件
+import TreeParant from "@/components/tree/index.jsx"
+
 const { Option } = Select
 const { Item } = Form
-const FormItem = Form.Item
 const { confirm } = Modal;
 const { Provider, Consumer } = React.createContext()//组件之间传值
 import Pagination from '/components/pagination'
@@ -91,16 +92,9 @@ class content extends Component {
         // 请求加锁 防止多次请求
         lock: false,
         //左侧角色树相关数据
-        // searchName: "",
         tree: {
             //右侧角色树数据
-            treeData: [
-                // { key: 1, title: '组织机构跟节点' },
-                // { key: 4, title: '总经理办公室' },
-                // { key: 7, title: '董事会秘书' },
-                // { key: 5, title: '技术服务中心' },
-                // { key: 6, title: '保障中心' }
-            ],
+            treeData: [],
         },
         //右侧table相关数据
         table: {
@@ -137,25 +131,13 @@ class content extends Component {
                         }
                     }
                 },
-                {
-                    title: '操作',
-                    dataIndex: 'operation',
-                    align: 'center',
-                    render: (text, record, index) => {
-                        const { editingKey } = this.state;
-                        const editable = this.isEditing(record);
-                        return <div>
-                            {
-                                this.editable(editable, editingKey, record)
-                            }
-                        </div>
-                    }
-                },
-
             ],
             //右侧角色表格数据
             dictData: [],
         },
+        // 表格选中项
+        tableSelecteds: null,
+        tableSelectedInfo: null,
         //新增修改字典弹窗配置
         newGroupWindow: {
             newGroupModal: false, //弹窗是否显示可见
@@ -188,7 +170,7 @@ class content extends Component {
                     this.setState({
                         tree: {
                             treeData: res.data
-                        }
+                        },
                     })
                     if (this.state.newEntry && res.data) {
                         this.searchList({ dictId: res.data[0].id })
@@ -250,10 +232,12 @@ class content extends Component {
             onOk() {
                 DelDictionary({ id: selected }).then(res => {
                     if (res.success != 1) {
-                        message.error("操作失败")
+                        message.error(res.message)
                         return
                     } else {
                         _this.searchTree()
+                        let table = Object.assign({}, _this.state.table, { dictData: [] })
+                        _this.setState({ table: table })
                         message.success("操作成功")
                     }
                 })
@@ -264,12 +248,31 @@ class content extends Component {
     // 树选中后
     onTreeSelect = async (selectedKeys, info) => {
         if (!info.selected) {
+            let table = Object.assign({}, this.state.table, { dictData: [] })
+            let pagination = Object.assign({}, this.state.pagination, {
+                total: 0,
+                current: 1,
+            })
+            let pageConf = Object.assign({}, this.state.pageConf, {
+                offset: 0,
+            })
             this.setState({
                 currentID: "",
+                currentGroup: {
+                    dictName: "",
+                    dictCode: ""
+                },
+                newGroup: {
+                    dictName: "",
+                    dictCode: ""
+                },
+                table: table,
+                pagination: pagination,
+                pageConf: pageConf
             })
             return
         }
-        let data = info.selectedNodes[0].props
+        let data = info.selectedNodes[0].props.dataRef
         this.setState({
             currentID: data.id,
             currentGroup: {
@@ -283,6 +286,7 @@ class content extends Component {
             pageConf: Object.assign({}, this.state.pageConf, { offset: 0 })
         })
         // 选中后请求字典项详情列表数据
+        this.cancel()
         this.searchList({ dictId: data.id, offset: 0 })
     };
 
@@ -427,39 +431,20 @@ class content extends Component {
     //判断是否可编辑
     isEditing = record => record.id == this.state.editingKey
 
-    //是否展示编辑
-    editable = (editable, editingKey, record) => {
-        const ele = editable ? (
-            <div style={{ display: "flex", justifyContent: "space-around" }}>
-                <Consumer>
-                    {
-                        form => (
-                            <a onClick={() => this.saveItem(form, record.id)}>
-                                保存
-                            </a>
-                        )
-                    }
-                </Consumer>
-                <a onClick={() => this.cancel()}>取消</a>
-            </div>
-        ) : (
-                <div style={{ display: "flex", justifyContent: "space-around" }}>
-                    <a onClick={() => this.editItem(record.id)}>
-                        修改
-                 </a>
-                    <a onClick={() => this.delItem(record.id)}>
-                        删除
-                 </a>
-                </div>
-            );
-        return ele
-    }
+    // 表格选中后
+    onTableSelect = (selectedRowKeys, info) => {
+        //获取table选中项
+        console.log(selectedRowKeys, info)
+        this.setState({
+            tableSelecteds: selectedRowKeys,
+            tableSelectedInfo: info
+        })
+    };
     // 新增字典项
     addItem = () => {
+      
         if (this.state.editingKey) {
-            message.destroy()
-            message.warning("已存在编辑项,请完成编辑项后再进行新增操作")
-            return
+            this.cancel()
         }
         let oldData = this.state.table.dictData
         let count = oldData.length + 1
@@ -480,11 +465,18 @@ class content extends Component {
 
     }
     //编辑字典项
-    editItem = (key) => {
-        if (this.state.editingKey) {
+    editItem = () => {
+        let tableSelecteds = this.state.tableSelecteds;
+        if (!tableSelecteds || !tableSelecteds.length) {
             message.destroy()
-            message.warning("已存在编辑项,请完成编辑项后再进行修改操作")
+            message.warning("请选中后，再进行修改操作")
             return
+        }
+        console.log(tableSelecteds, "456")
+        let key = tableSelecteds[0];
+      
+        if (this.state.editingKey) {
+            this.cancel()
         }
         this.setState({
             editingKey: key,
@@ -492,25 +484,40 @@ class content extends Component {
         })
     }
     // 删除字典项
-    delItem = (key) => {
-        if (this.state.editingKey) {
+    delItem = () => {
+        let tableSelecteds = this.state.tableSelecteds;
+        if (!tableSelecteds || !tableSelecteds.length) {
             message.destroy()
-            message.warning("已存在编辑项,请完成编辑项后再进行删除操作")
+            message.warning("请选中后，再进行删除操作")
             return
         }
-        let ID = this.state.currentID;//当前字典ID
-        DelDictItem({ id: [key] }).then(res => {
-            if (res.success != 1) {
-                message.error("操作失败")
-                return
-            } else {
-                this.searchList({ dictId: ID })
-            }
-        })
+        let key = this.state.tableSelecteds[0];
+        let _this=this;
+        confirm({
+            title: '删除后不可恢复,确定删除吗？',
+            onOk() {
+                let ID = _this.state.currentID;//当前字典ID
+                DelDictItem({ id: [key] }).then(res => {
+                    if (res.success != 1) {
+                        message.error("操作失败")
+                        return
+                    } else {
+                        _this.searchList({ dictId: ID })
+                        _this.setState({ editingKey: '' });
+                    }
+                })
+            },
+        });
+       
     }
     //保存字典项
-    saveItem = (form, key) => {
-        form.validateFields((error, row) => {
+    saveItem = () => {
+        let key = this.state.editingKey;
+        if (!key) {
+            message.warning("未存在编辑项，无法保存")
+            return
+        }
+        this.props.form.validateFields((error, row) => {
             if (error) { return }
             var params = JSON.parse(JSON.stringify(row));
             let type = this.state.editType;//当前编辑类型
@@ -545,27 +552,30 @@ class content extends Component {
     }
     //取消
     cancel = () => {
+        if (!this.state.editingKey) {
+           return
+        }
         let _this = this
-        confirm({
-            title: '是否确定取消?',
-            onOk() {
-                if (!_this.state.editType) {
-                    let oldData = _this.state.table.dictData
-                    oldData.pop()
-                    let table = Object.assign({}, _this.state.table, { dictData: oldData })
-                    _this.setState({
-                        table: table,
-                        editingKey: "", //将当前新增的数据进行新增填写
-                        editType: 0
-                    });
-                }else{
-                    _this.setState({
-                        editingKey: "", //将编辑项改为不可编辑
-                    });
-                }
+        // confirm({
+        //     title: '是否确定取消?',
+        //     onOk() {
+        if (!_this.state.editType) {
+            let oldData = _this.state.table.dictData
+            oldData.pop()
+            let table = Object.assign({}, _this.state.table, { dictData: oldData })
+            _this.setState({
+                table: table,
+                editingKey: "", //将当前新增的数据进行新增填写
+                editType: 0
+            });
+        } else {
+            _this.setState({
+                editingKey: "", //将编辑项改为不可编辑
+            });
+        }
 
-            },
-        });
+        //     },
+        // });
     }
     render = _ => {
         const components = {
@@ -593,41 +603,24 @@ class content extends Component {
         return <div style={{ display: 'flex', height: "100%" }}>
             {/* 左侧字典 tree */}
             <Card style={{ flex: "3" }}>
-                <Row>
-                    <Col span={12}>
-                        <Search
-                            allowClear
-                            placeholder="请输入资源名称"
-                            onSearch={this.onSearch} />
-                    </Col>
-                    <Col span={12} style={{ textAlign: "right" }}>
-                        <Button title="删除" type="info" icon="delete" onClick={this.delGroup}></Button>
-                        <Button title="修改" type="info" icon="edit" onClick={this.editGroup} style={{ margin: '0 10px' }}></Button>
-                        <Button title="新增" type="primary" icon="plus" onClick={this.addGroup}></Button>
-                    </Col>
-                </Row>
-
-                {/* <Col style={{ marginBottom: "10px" }}>
-                    <Search required addonBefore="字典名称" onSearch={this.onSearch} placeholder="请输入" value={this.state.searchName} onChange={this.getSearchName} style={{ margin: "2% 10px", width: '90%' }} />
-                </Col> */}
-                <Tree
-                    selectedKeys={[this.state.currentID]}
-                    onSelect={this.onTreeSelect}
-                    defaultExpandAll={true}
-                    treeData={this.state.tree.treeData}
-                />
+                <TreeParant treeData={this.state.tree.treeData} selectedKeys={[this.state.currentID]}
+                    addTree={this.addGroup} editTree={this.editGroup} deletetTree={this.delGroup}
+                    onSelect={this.onTreeSelect}  //点击树节点触发事件
+                ></TreeParant>
             </Card>
             {/* 右侧角色table表格 */}
             <Card style={{ flex: "8" }}>
                 <Form style={{ width: '100%' }}>
                     <Row style={{ textAlign: 'right' }}>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.addItem}>新增</Button>
-                        {/* <Button type="primary" style={{ marginLeft: '10px' }} onClick={this. editItem}>修改</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.delItem}>删除</Button> */}
+                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.editItem}>修改</Button>
+                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.delItem}>删除</Button>
+                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.saveItem}>保存</Button>
+                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.cancel}>取消</Button>
                     </Row>
                 </Form>
                 <Provider value={this.props.form}>
-                    <Table bordered dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} />
+                    <Table bordered rowSelection={{ onChange: this.onTableSelect, type: "radio" }} dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} />
                 </Provider>
                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
             </Card>

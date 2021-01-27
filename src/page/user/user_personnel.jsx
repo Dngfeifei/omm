@@ -194,8 +194,9 @@ class User extends Common {
 			message.warning("请选中后再进行操作！")
 			return
 		}
-		let item = this.state.selected.selectedItems[0]
-		console.log(item, 456)
+		let key=this.state.selected.selectedKeys[0];
+		var result=this.state.tabledata.filter(el=>{return el.id==key})
+		let item = result[0]
 		let conf = {}
 		conf["modalconf"] = {
 			title: '编辑人员信息',
@@ -268,24 +269,24 @@ class User extends Common {
 		<div className="mgrSearchBar">
 			<Input
 				value={this.state.search.realName}
-				style={{ width: 180, marginRight: "10px" }}
+				style={{ width: 180, marginRight: "18px" }}
 				allowClear
 				onChange={e => this.changeSearch({ realName: e.target.value })}
 				addonBefore="姓名" placeholder="请输入" />
 			<Input
 				value={this.state.search.userName}
-				style={{ width: 180, marginRight: "10px" }}
+				style={{ width: 180, marginRight: "18px" }}
 				allowClear
 				onChange={e => this.changeSearch({ userName: e.target.value })}
 				addonBefore="帐号" placeholder="请输入" />
 			<Input
 				value={this.state.search.userNum}
-				style={{ width: 180, marginRight: "10px" }}
+				style={{ width: 180, marginRight: "18px" }}
 				allowClear
 				onChange={e => this.changeSearch({ userNum: e.target.value })}
 				addonBefore="员工号" placeholder="请输入" />
 			<label>状态：
-				<Select style={{ width: 180, marginRight: "10px" }} allowClear={true} placeholder="请选择" value={this.state.search.status} onChange={e => this.changeSearch({ status: e })}>
+				<Select style={{ width: 120, marginRight: "18px" }} allowClear={true} placeholder="请选择" value={this.state.search.status} onChange={e => this.changeSearch({ status: e })}>
 					<Option key={""} value={""}>请选择</Option>
 					<Option key={1} value={1}>启用</Option>
 					<Option key={0} value={0}>禁用</Option>
@@ -293,13 +294,12 @@ class User extends Common {
 			</label>
 			<Input
 				value={this.state.search.duties}
-				style={{ width: 180, marginRight: "10px" }}
+				style={{ width: 180, marginRight: "18px" }}
 				allowClear
 				onChange={e => this.changeSearch({ duties: e.target.value })}
 				addonBefore="职务" placeholder="请输入" />
 			<label>性别:
-				<Select style={{ width: 180, marginRight: "10px" }} allowClear={true} placeholder="请选择" defaultValue={""} value={this.state.search.sex} onChange={e => this.changeSearch({ sex: e })}>
-					{/* {this.state.companys.map(t => <Option key={t.code} value={t.code}>{t.name}</Option>) } */}
+				<Select style={{ width: 120, marginRight: "20px" }} allowClear={true} placeholder="请选择" defaultValue={""} value={this.state.search.sex} onChange={e => this.changeSearch({ sex: e })}>
 					<Option key={""} value={""}>请选择</Option>
 					<Option key={1} value={1}>男</Option>
 					<Option key={0} value={0}>女</Option>
