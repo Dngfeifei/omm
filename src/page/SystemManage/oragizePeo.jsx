@@ -745,7 +745,7 @@ class systempeo extends Component {
         };
         return <div  className="my_height" >
             <Row className="my_height" style={{paddingTop:'0px'}}>
-                <Col span={5} className="my_height oragizTree" style={{ borderRight: '4px solid #E8E8E8',}}>
+                <Col span={5} className="my_height oragizTree" style={{ borderRight: '5px solid #E8E8E8',}}>
                     {
                         this.state.treeData.length > 0 &&
                         <TreeNode
@@ -770,34 +770,42 @@ class systempeo extends Component {
                     
                 </Col>
                 <Col span={19} className="my_height" style={{ paddingLeft: '10px', paddingTop:'8px',background: "#fff"}}>
-                    <Form style={{ width: '100%' ,}}>
-                        <Row gutter={24}>
-                            <Input addonBefore="姓名"
-                                placeholder="请输入" 
-                                value={this.state.RoleName}
-                                onChange={this.getSearchRoleName}
-                                style={{ width: '180px' ,paddingRight:'8px'}} 
-                            />
-                            <Input addonBefore="系统账号"
-                                placeholder="请输入" 
-                                value={this.state.RoleNum}
-                                onChange={this.getSearchRoleNum}
-                                style={{ width: '200px' ,paddingRight:'8px'}} 
-                            />
-                            <label>状态：
-                                <Select style={{ width: 150 }} placeholder="选择状态" value ={this.state.stat} onChange={e => this.change({ status: e })}>
-                                    <Option key={""} value={""} >请选择</Option>
-                                    <Option value='1' key='1'>启用</Option>
-                                    <Option value='0' key='0'>禁用</Option>
-                                </Select>
-                            </label>
+                    {/* <Form style={{ width: '100%' ,}}> */}
+                        {/* <Row gutter={24}> */}
+                        <div style={{display:'flex',justifyContent: "space-between",whiteSpace: "nowrap"}}>
+                            <div>
+                                <Input addonBefore="姓名"
+                                    placeholder="请输入" 
+                                    value={this.state.RoleName}
+                                    onChange={this.getSearchRoleName}
+                                    style={{ width: '180px' ,paddingRight:'8px'}} 
+                                />
+                                <Input addonBefore="系统账号"
+                                    placeholder="请输入" 
+                                    value={this.state.RoleNum}
+                                    onChange={this.getSearchRoleNum}
+                                    style={{ width: '200px' ,paddingRight:'8px'}} 
+                                />
+                                <label>状态：
+                                    <Select style={{ width: 150 }} placeholder="选择状态" value ={this.state.stat} onChange={e => this.change({ status: e })}>
+                                        <Option key={""} value={""} >请选择</Option>
+                                        <Option value='1' key='1'>启用</Option>
+                                        <Option value='0' key='0'>禁用</Option>
+                                    </Select>
+                                </label>
+                                
+                                <Button type="primary" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.checkPeoId}>查询</Button>
+                                <Button type="info" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.clear}>清空</Button>
+                            </div>
+                            <div>
+                                <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>
+                                <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deletePeo}>解除关联人员</Button>
+                            </div>
+                        </div>
                             
-                            <Button type="primary" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.checkPeoId}>查询</Button>
-                            <Button type="info" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.clear}>清空</Button>
-                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>
-                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deletePeo}>解除关联人员</Button>
-                        </Row>
-                    </Form>
+                            
+                        {/* </Row> */}
+                    {/* </Form> */}
                     <Table
                         bordered
                         rowKey="id"
