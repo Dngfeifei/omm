@@ -252,7 +252,11 @@ class role extends Component {
         let params = this.state.newRoleGroup.treeSelect;//参数 id和角色组名称
         let _this = this
         confirm({
-            title: '删除后不可恢复,确定删除吗？',
+            title: '删除',
+            content: '删除后不可恢复,确定删除吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
             onOk() {
                 DelRoleGroup({ id: params }).then(res => {
                     if (res.success != 1) {
@@ -566,7 +570,11 @@ class role extends Component {
         let id = this.state.tableSelectedInfo[0].id;
         let _this = this
         confirm({
-            title: '删除后不可恢复,确定删除吗？',
+            title: '删除',
+            content: '删除后不可恢复,确定删除吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
             onOk() {
                 DelRole({ ids: [id] }).then(res => {
                     if (res.success == 1) {

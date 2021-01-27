@@ -337,7 +337,11 @@ class resources extends Component {
 		}
 		let _this = this
 		confirm({
-			title: '删除后不可恢复,确定删除吗？',
+			title: '删除',
+            content: '删除后不可恢复,确定删除吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
 			onOk() {
 				let params = _this.state.selected.id
 				DelResource({ id: params })
@@ -490,7 +494,11 @@ class resources extends Component {
 		//发起拖拽变更请求
 		let _this = this
 		confirm({
-			content: '您是否要进行拖拽？',
+			title: '删除',
+            content: '您是否要进行拖拽？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
 			onOk() {
 				_this.treeNodeChange({
 					id: dragObj.id,

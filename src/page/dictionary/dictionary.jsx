@@ -271,7 +271,11 @@ class content extends Component {
         //2 获取选中项  发起删除请求  
         let _this = this
         confirm({
-            title: '删除后不可恢复,确定删除吗？',
+            title: '删除',
+            content: '删除后不可恢复,确定删除吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
             onOk() {
                 DelDictionary({ id: selected }).then(res => {
                     if (res.success != 1) {
@@ -565,7 +569,11 @@ class content extends Component {
         let key = this.state.tableSelecteds[0];
         let _this = this;
         confirm({
-            title: '删除后不可恢复,确定删除吗？',
+            title: '删除',
+            content: '删除后不可恢复,确定删除吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
             onOk() {
                 let ID = _this.state.currentID;//当前字典ID
                 DelDictItem({ id: [key] }).then(res => {
@@ -627,9 +635,6 @@ class content extends Component {
             return
         }
         let _this = this
-        // confirm({
-        //     title: '是否确定取消?',
-        //     onOk() {
         if (!_this.state.editType) {
             let oldData = _this.state.table.dictData
             oldData.pop()

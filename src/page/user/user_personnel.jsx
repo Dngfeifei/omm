@@ -154,7 +154,11 @@ class User extends Common {
 		let params = [this.state.selected.selectedKeys[0]]
 		let _this = this
 		confirm({
-			title: '您确定要进行禁用操作吗？',
+			title: '删除',
+            content: '您确定要进行禁用操作吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
 			onOk() {
 				DisableUser(params)
 					.then(res => {
@@ -177,7 +181,11 @@ class User extends Common {
 		let id = [this.state.selected.selectedKeys[0]]
 		let _this = this
 		confirm({
-			title: '您确定要重置此用户密码吗？',
+			title: '删除',
+            content: '您确定要重置此用户密码吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
 			onOk() {
 				ResetPass({ id: id })
 					.then(res => {

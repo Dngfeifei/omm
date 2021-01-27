@@ -123,7 +123,11 @@ class Post extends Common {
 		if (this.state.selected.selectedKeys && this.state.selected.selectedKeys.length) {
 			let param = this.state.selected.selectedItems[0].id
 			confirm({
-				title: '删除后不可恢复,确定删除吗？',
+				title: '删除',
+				content: '删除后不可恢复,确定删除吗？',
+				okText: '确定',
+				okType: 'danger',
+				cancelText: '取消',
 				onOk() {
 					DelPost({ id: param })
 						.then(res => {
