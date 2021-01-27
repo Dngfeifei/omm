@@ -154,7 +154,7 @@ class User extends Common {
 		let params = [this.state.selected.selectedKeys[0]]
 		let _this = this
 		confirm({
-			title: '删除',
+			title: '禁用',
             content: '您确定要进行禁用操作吗？',
             okText: '确定',
             okType: 'danger',

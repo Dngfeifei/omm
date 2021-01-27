@@ -174,7 +174,7 @@ class CertItem extends Component {
 				label: '入职时间',
 				key: 'entryDate',
 				option: { rules: [] },
-				render: _ => <DatePicker  style={{ width: 200 }} />
+				render: _ => <DatePicker style={{ width: 200 }} />
 			},
 			{
 				label: '职务',
@@ -285,7 +285,7 @@ class CertItem extends Component {
 		if (!this.state.lock) {
 			await this.setState({ lock: true })
 			this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
-				console.log(err,125)
+				console.log(err, 125)
 				if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 发起后台请求
 					let params = Object.assign({}, val)
 					if (params.entryDate) { params.entryDate = params.entryDate.format('YYYY-MM-DD') };
@@ -348,8 +348,8 @@ class CertItem extends Component {
 					</FormItem></Col>)}
 				</Row>
 				<Row style={{ textAlign: 'right', paddingRight: '50px', paddingBottom: '20px' }}>
+					<Button type="info" onClick={this.props.onCancel} style={{ margin: '0 10px' }}>取消</Button>
 					<Button type="primary" onClick={this.handleOk}>保存</Button>
-					<Button type="primary" onClick={this.props.onCancel} style={{ margin: '0 10px' }}>取消</Button>
 				</Row>
 			</Form>
 

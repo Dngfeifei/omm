@@ -104,6 +104,17 @@ class People extends Component {
 			allPostSeletct: selectedRowKeys[0]
 		})
 	};
+	//点击行选中选框
+	onRow = (record) => {
+		return {
+			onClick: () => {
+				let selectedKeys = [record.id], selectedItems = [record];
+				this.setState({
+					allPostSeletct: selectedKeys[0],
+				})
+			}
+		}
+	}
 	// 已关联表格选中后
 	onUserTabSelect = selectedRowKeys => {
 		//获取table选中项
@@ -142,7 +153,7 @@ class People extends Component {
 		}
 		let userId = this.state.userId;
 		console.log(positionId)
-		RelationPeople({ userId: userId, positionId: positionId,flag:"user"}).then(res => {
+		RelationPeople({ userId: userId, positionId: positionId, flag: "user" }).then(res => {
 			if (res.success == 1) {
 				message.success('操作成功')
 				this.GetRelation()
@@ -189,7 +200,7 @@ class People extends Component {
 	render = _ => {
 		return <div>
 			<Modal
-			    destroyOnClose={true}
+				destroyOnClose={true}
 				visible={this.props.config.visible}
 				onCancel={this.props.done}
 				width={1000}
@@ -213,7 +224,7 @@ class People extends Component {
 								onClick={this.relationPost}
 								type="primary">关联</Button>
 						</Row>
-						<Table style={{ height: "180px" }} size="small" scroll={{ y: 140 }} bordered rowSelection={{ onChange: this.onAllTabSelect, type: "radio" }} columns={this.state.tableColumns} dataSource={this.state.allPostTable} pagination={false} rowKey="id" />
+						<Table style={{ height: "180px" }} onRow={this.onRow} size="small" scroll={{ y: 140 }} bordered rowSelection={{ onChange: this.onAllTabSelect,selectedRowKeys:[this.state.allPostSeletct], type: "radio" }} columns={this.state.tableColumns} dataSource={this.state.allPostTable} pagination={false} rowKey="id" />
 						<Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
 					</Card>
 
@@ -221,7 +232,7 @@ class People extends Component {
 						style={{ float: "right" }}
 						onClick={this.unRelationPost}
 						type="primary">取消关联</Button>}>
-						<Table bordered  style={{ height: "200px" }} size="small"   scroll={{ y: 160 }} rowSelection={{ onChange: this.onUserTabSelect }} columns={this.state.tableColumns} dataSource={this.state.userPostTable} pagination={false} rowKey="id" />
+						<Table bordered style={{ height: "200px" }} size="small" scroll={{ y: 160 }} rowSelection={{ onChange: this.onUserTabSelect }} columns={this.state.tableColumns} dataSource={this.state.userPostTable} pagination={false} rowKey="id" />
 						<Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} />
 					</Card>
 				</div>

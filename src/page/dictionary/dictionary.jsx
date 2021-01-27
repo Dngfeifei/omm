@@ -677,32 +677,33 @@ class content extends Component {
         });
         const { getFieldDecorator } = this.props.form
         const { h } = this.state;
-        return <div className="pageAuto" style={{ display: 'flex', height: "100%" }}>
-            {/* 左侧字典 tree */}
-            <Card style={{ flex: "5" }}>
-                <TreeParant treeData={this.state.tree.treeData} selectedKeys={[this.state.currentID]}
-                    addTree={this.addGroup} editTree={this.editGroup} deletetTree={this.delGroup}
-                    onSelect={this.onTreeSelect}  //点击树节点触发事件
-                ></TreeParant>
-            </Card>
-            {/* 右侧角色table表格 */}
-            <Card style={{ flex: "19", display: "flex", flexDirection: "column" }}>
-                <Form style={{ width: '100%' }}>
-                    <Row style={{ textAlign: 'right' }}>
-                        <Button type="info" style={{ marginLeft: '10px' }} onClick={this.delItem}>删除</Button>
-                        <Button type="info" style={{ marginLeft: '10px' }} onClick={this.editItem}>修改</Button>
-                        <Button disabled={this.state.editingKey?false:true} type="info" style={{ marginLeft: '10px' }} onClick={this.cancel}>取消</Button>
-                        <Button disabled={this.state.editingKey?false:true} type="info" style={{ marginLeft: '10px' }} onClick={this.saveItem}>保存</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.addItem}>新增</Button>
-                    </Row>
-                </Form>
-                <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
-                    <Provider value={this.props.form}>
-                        <Table className='jxlTable' bordered onRow={this.onRow} rowSelection={{ type: "radio", onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds }} dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} size="small" scroll={h} />
-                    </Provider>
-                    <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
-                </div>
-            </Card>
+        return <div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
+            <Row gutter={24} className="main_height">
+                <Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
+                    <TreeParant treeData={this.state.tree.treeData} selectedKeys={[this.state.currentID]}
+                        addTree={this.addGroup} editTree={this.editGroup} deletetTree={this.delGroup}
+                        onSelect={this.onTreeSelect}  //点击树节点触发事件
+                    ></TreeParant>
+                </Col>
+                <Col span={19} className="gutter-row main_height" style={{ padding: '30px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
+
+                    <Form style={{ width: '100%' }}>
+                        <Row style={{ textAlign: 'right' }}>
+                            <Button type="info" style={{ marginLeft: '10px' }} onClick={this.delItem}>删除</Button>
+                            <Button type="info" style={{ marginLeft: '10px' }} onClick={this.editItem}>修改</Button>
+                            <Button disabled={this.state.editingKey ? false : true} type="info" style={{ marginLeft: '10px' }} onClick={this.cancel}>取消</Button>
+                            <Button disabled={this.state.editingKey ? false : true} type="info" style={{ marginLeft: '10px' }} onClick={this.saveItem}>保存</Button>
+                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.addItem}>新增</Button>
+                        </Row>
+                    </Form>
+                    <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
+                        <Provider value={this.props.form}>
+                            <Table className='jxlTable' bordered onRow={this.onRow} rowSelection={{ type: "radio", onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds }} dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} size="small" scroll={h} />
+                        </Provider>
+                        <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
+                    </div>
+                </Col>
+            </Row>
             {/* 字典新增修改弹窗 */}
             <Modal
                 title={this.state.newGroupWindow.newGroupModalTitle}

@@ -171,7 +171,7 @@ class resources extends Component {
 						}
 					]
 				},
-				render: _ => <TextArea style={{width:"800px"}} autoSize={{minRows: 4, maxRows: 6}} disabled={!this.state.editable} />
+				render: _ => <TextArea style={{ width: "800px" }} autoSize={{ minRows: 4, maxRows: 6 }} disabled={!this.state.editable} />
 			}
 		],
 	})
@@ -338,10 +338,10 @@ class resources extends Component {
 		let _this = this
 		confirm({
 			title: '删除',
-            content: '删除后不可恢复,确定删除吗？',
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
+			content: '删除后不可恢复,确定删除吗？',
+			okText: '确定',
+			okType: 'danger',
+			cancelText: '取消',
 			onOk() {
 				let params = _this.state.selected.id
 				DelResource({ id: params })
@@ -495,10 +495,10 @@ class resources extends Component {
 		let _this = this
 		confirm({
 			title: '删除',
-            content: '您是否要进行拖拽？',
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
+			content: '您是否要进行拖拽？',
+			okText: '确定',
+			okType: 'danger',
+			cancelText: '取消',
 			onOk() {
 				_this.treeNodeChange({
 					id: dragObj.id,
@@ -524,43 +524,46 @@ class resources extends Component {
 	}
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
-		return (<div className="mgrWrapper pageAuto" style={{ display: "flex", height: "100%" }}>
-			<Card style={{ flex: 5 }}>
-				<TreeParant treeData={this.state.treeData} draggable={true}
-					addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn}
-					onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
-				></TreeParant>
-			</Card>
-			<Card style={{ flex: 19 }}>
-				<Form
-					labelCol={{ span: 4 }}
-					wrapperCol={{ span: 14 }}
-					layout="horizontal"
-				>
-					<Row gutter={24}>
-						{this.state.rules.map((val, index) =>
-							val.key == "description" ?
-								<Col key={index} span={24} style={{ display: 'block' }}>
-									<FormItem
-										label={val.label} labelCol={{ span: 2 }}>
-										{getFieldDecorator(val.key, val.option)(val.render())}
-									</FormItem>
-								</Col> : <Col key={index} span={12} style={{ display: 'block' }}>
-									<FormItem
-										label={val.label} labelCol={{ span: 4 }}>
-										{getFieldDecorator(val.key, val.option)(val.render())}
-									</FormItem>
-								</Col>
-						)}
-					</Row>
-					<Row >
-						<Col span={21} style={{ display: 'block', textAlign: "right" }}>
-							<Button type="primary" disabled={!this.state.editable} onClick={this.save}  style={{ marginRight: "18px" }}>保存</Button>
-							<Button type="info" disabled={!this.state.editable} onClick={this.cancel}>取消</Button>
-						</Col>
-					</Row>
-				</Form>
-			</Card>
+		return (<div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
+			<Row gutter={24} className="main_height">
+				<Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
+					<TreeParant treeData={this.state.treeData} draggable={true}
+						addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn}
+						onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
+					></TreeParant>
+				</Col>
+				<Col span={19} className="gutter-row main_height" style={{ padding: '30px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
+
+					<Form
+						labelCol={{ span: 4 }}
+						wrapperCol={{ span: 14 }}
+						layout="horizontal"
+					>
+						<Row gutter={24}>
+							{this.state.rules.map((val, index) =>
+								val.key == "description" ?
+									<Col key={index} span={24} style={{ display: 'block' }}>
+										<FormItem
+											label={val.label} labelCol={{ span: 2 }}>
+											{getFieldDecorator(val.key, val.option)(val.render())}
+										</FormItem>
+									</Col> : <Col key={index} span={12} style={{ display: 'block' }}>
+										<FormItem
+											label={val.label} labelCol={{ span: 4 }}>
+											{getFieldDecorator(val.key, val.option)(val.render())}
+										</FormItem>
+									</Col>
+							)}
+						</Row>
+						<Row >
+							<Col span={21} style={{ display: 'block', textAlign: "right" }}>
+								<Button type="info" disabled={!this.state.editable} onClick={this.cancel} style={{ marginRight: "18px" }}>取消</Button>
+								<Button type="primary" disabled={!this.state.editable} onClick={this.save}>保存</Button>
+							</Col>
+						</Row>
+					</Form>
+				</Col>
+			</Row>
 		</div >)
 	}
 }
