@@ -22,6 +22,7 @@ class DHeader extends Component {
     componentWillMount = _ => {
         let username = localStorage.getItem('username')
         this.setState({ username })
+        window.resetStore = this.props.reset;
     }
 
     state = {

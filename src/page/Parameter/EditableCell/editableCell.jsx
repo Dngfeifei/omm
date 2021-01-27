@@ -390,8 +390,9 @@ class TableRow extends React.Component {
                         scroll={this.props.scroll}
                         rowClassName="editable-row"
                         pagination={false}
-                        style={{ marginTop: '16px', overflowY: 'auto',height:this.props.scroll,overflowY:'auto' }}
+                        style={{ marginTop: '16px', overflowY: 'auto' }}
                     />
+                    {this.props.children}
                 </Provider >
             </div>
            

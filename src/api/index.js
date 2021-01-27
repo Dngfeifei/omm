@@ -43,16 +43,20 @@ const handleResponse = res => new Promise((rsl, rej) => {
 })
 .then(res => {
 	if (res.code == 700) {
-		message.warning('请先登录')
-		hashHistory.push('/login') //开发模式下不经过改跳转
+		if(localStorage.getItem('token')){
+			message.warning('请先登录')
+			localStorage.clear();
+			window.resetStore();
+			hashHistory.push('/login') //开发模式下不经过改跳转
+		}
 	} else if (res.code != 200) {
-		// message.error(res.message)
+		// message.error(res.message);
 	}
 	//
 	return res
 })
 .catch(err => {
-	message.error('请求超时')
+	message.error('请求超时');
 	console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
 })
 

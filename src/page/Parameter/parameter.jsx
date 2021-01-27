@@ -126,9 +126,10 @@ class Parameter extends Component {
 
         this.SortTable();
         //窗口变动的时候调用
-        window.onresize = () => {
-            this.SortTable();
-        }
+        // window.onresize = () => {
+        //     this.SortTable();
+        // }
+        window.addEventListener("resize", ()=>{this.SortTable()}, false)
 
     }
 
@@ -136,7 +137,7 @@ class Parameter extends Component {
     SortTable = () => {
         setTimeout(() => {
             console.log(this.tableDom.offsetHeight);
-            let h = this.tableDom.clientHeight - 100;
+            let h = this.tableDom.clientHeight - 180;
             this.setState({
                 h: {
                     y: (h)
@@ -504,7 +505,7 @@ class Parameter extends Component {
         return (
             <div style={{ border: '0px solid red', background: ' #fff',height:'100%' }} >
                 <Row  gutter={24} className="main_height">
-                    <Col span={6} className="gutter-row" style={{ backgroundColor: 'white',overflowY: 'auto',marginTop:'13px',height:'98%',borderRight:'1px solid #d9d9d9'}}>
+                    <Col span={6} className="gutter-row" style={{ backgroundColor: 'white',overflowY: 'auto',paddingTop:'13px',height:'98%',borderRight:'1px solid #d9d9d9'}}>
                         <TreeParant treeData={data} draggable={true}
                             addTree={this.addTree} editTree={this.editTree} deletetTree={this.deletetTree} 
                             onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
@@ -513,11 +514,13 @@ class Parameter extends Component {
                     <Col span={18} className="gutter-row main_height" style={{ padding: '0 10px 0', backgroundColor: 'white',display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
                         {/* 表格行内编辑--模板 */}
                         <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
-                            <EditTable scroll={h} style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}} parentValueID={this.state.form.parameterCategoryId} data={this.state.tabledata} handleChange={this.handleChange}></EditTable>
+                            <EditTable scroll={h} style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}} parentValueID={this.state.form.parameterCategoryId} data={this.state.tabledata} handleChange={this.handleChange}>
+                            <Pagination total={this.state.total} pageSize={this.state.form.limit} current={this.state.form.offset} onChange={this.onPageChange}></Pagination>
+                            </EditTable>
                         </div>
                         
                         {/* 分页组件 */}
-                        <Pagination total={this.state.total} pageSize={this.state.form.limit} current={this.state.form.offset} onChange={this.onPageChange}></Pagination>
+                        {/* <Pagination total={this.state.total} pageSize={this.state.form.limit} current={this.state.form.offset} onChange={this.onPageChange}></Pagination> */}
                     </Col>
                 </Row>
 
