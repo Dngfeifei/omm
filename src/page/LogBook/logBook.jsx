@@ -90,45 +90,51 @@ class logBook extends Component {
                 title: '序号',
                 dataIndex: 'index',
                 align:'center',
-                width:'5%',
+                width:'80px',
                 // 第一种：每一页都从1开始
                 render:(text,record,index)=> `${index+1}`
-
-                // // 第二种：分页连续自增序号
-                // render: (text, record, index) => {   
-                //     return (
-                //         `${(this.state.current) * (this.state.pageSize) + (index + 1)}`  //当前页数减1乘以每一页页数再加当前页序号+1
-                //     )
                 // }
             },  
             {
                 title: '操作类型',
-                dataIndex: 'operateType'
+                dataIndex: 'operateType',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '操作时间',
-                dataIndex: 'operateTime'
+                dataIndex: 'operateTime',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '操作用户',
                 dataIndex: 'userName',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '操作资源',
                 dataIndex: 'resourceName',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '操作对象',
                 dataIndex: 'objectName',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '操作详情',
                 dataIndex: 'content',
-                onCell: () => {
-                    return {
-                        style: {
-                            maxWidth: 150,
-                            overflow: 'hidden',
-                            whiteSpace: 'nowrap',
-                            textOverflow: 'ellipsis',
-                            cursor: 'pointer'
-                        }
-                    }
+                ellipsis: {
+                    showTitle: false,
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }

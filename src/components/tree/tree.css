@@ -1,0 +1,18 @@
+.TreeContent {
+    height: 99.7%;
+}
+.ant-spin-nested-loading ,.ant-spin-container{
+    height: 99.7%;
+}
+
+
+.treeContantier {
+    height: 96.7%;
+}
+.treeContantier .ant-tree{
+    width: 100%;
+     position: absolute;
+     top: 35px;
+     bottom: 0px;
+     overflow-y: auto;
+}

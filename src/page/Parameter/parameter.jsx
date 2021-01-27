@@ -75,7 +75,8 @@ class Parameter extends Component {
         pageSize:10,
         current:0,
         loading:false,  //表格加载太
-        
+        selectedKeys:[],
+        selectedKeyss:[],
         columns: [
             {
                 title: '参数名称',
@@ -175,6 +176,8 @@ class Parameter extends Component {
         getSystemTree({parameterCategoryName:this.state.searchValue}).then(res => {
             if (res.success == 1) {
                 this.setState({treeData:this.assignment(res.data)})
+                // 默认选中第一个
+                // this.setState({ selectedTreeId: selectedKeys ,selectedKeyss})
             }else {
                 message.error(res.message);
             }
@@ -299,9 +302,14 @@ class Parameter extends Component {
 
     // 树选中后
     onSelect = (selectedKeys, info) => {
-        var id = parseInt(selectedKeys[0]);
+        let {selectedKeyss} = this.state;
+        
+        if(selectedKeys.length) {
+            selectedKeyss = [...selectedKeys]
+        }
+        var id = parseInt(selectedKeyss[0]);
 
-        this.setState({ selectedTreeId: selectedKeys })
+        this.setState({ selectedTreeId: selectedKeys ,selectedKeyss})
         let data = Object.assign({}, this.state.form, { parameterCategoryId: id })
         
         this.setState({
@@ -523,11 +531,11 @@ class Parameter extends Component {
 
         return (
             <div style={{ border: '0px solid red', background: ' #fff',height:'100%' }} >
-                <Row  gutter={24} className="main_height">
-                    <Col span={5} className="gutter-row" style={{ backgroundColor: 'white',overflowY: 'auto',paddingTop:'16px',height:'100%',borderRight:'1px solid #d9d9d9'}}>
-                        <TreeParant treeData={data} draggable={true}
+                <Row gutter={24} className="main_height">
+                    <Col span={5} className="gutter-row" style={{ backgroundColor: 'white',paddingTop:'16px',height:'99.7%',borderRight:'5px solid #f0f2f5'}}>
+                        <TreeParant treeData={data} draggable={true} showLine={true}
                             addTree={this.addTree} editTree={this.editTree} deletetTree={this.deletetTree} 
-                            onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
+                            onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect} selectedKeys={this.state.selectedKeyss}  //点击树节点触发事件
                         ></TreeParant>
                     </Col>
                     <Col span={19} className="gutter-row main_height" style={{ padding: '0 10px 0', backgroundColor: 'white',display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>

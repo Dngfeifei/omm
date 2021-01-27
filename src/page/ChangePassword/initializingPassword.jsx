@@ -247,7 +247,7 @@ class ResetPassword extends Component {
                             </Row>
                            
                         </FormItem>
-                        <FormItem>
+                        <FormItem style={{textAlign:'center'}}>
                             <Button  onClick={this.back} type='primary' className="login-form-button" style={{marginRight:'8%'}}>取消</Button>
                             <Button  htmlType="submit" type='primary' className="login-form-button">确认</Button>
                         </FormItem>
