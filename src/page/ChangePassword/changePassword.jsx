@@ -16,6 +16,7 @@ import { changepass } from '/api/login'
 import "/assets/less/pages/resetPassword.css"
 
 
+
 class ChangePassword extends Component {
     constructor(props) {
         super(props)
@@ -159,10 +160,10 @@ class ChangePassword extends Component {
 
 
         return (
-            <div className='editPasswordWrapper'>
+            <div className='editPasswordWrapper' style={{backgroundImage:'url(static/images/resetPsdBg.png)'}}>
                 <div className="editContent changePass">
                     <div className="title">
-                        <img src='/static/images/resetPsd.png' />
+                        <img src='static/images/resetPsd.png' />
                         <span className='logintitle'>修改密码</span>
                     </div>
                     <Form onSubmit={this.handleSubmit}>

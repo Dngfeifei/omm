@@ -8,7 +8,8 @@ import PropTypes from 'prop-types'
 
 // 定义节点树节点
 const { TreeNode } = Tree;
-
+// 定义搜索
+const { Search } = Input;
 
 
 
@@ -126,8 +127,7 @@ class TreeList extends Component {
 
 
     // 输入框搜索节点
-    searchChange=(e)=>{
-        const value = e.target.value;
+    searchChange=(value)=>{
         const expandedKeys = dataList.map((item) => {
             if (item.title.indexOf(value) > -1) {
                 return getParentKey(item.title, this.props.treeData);
@@ -158,14 +158,16 @@ class TreeList extends Component {
         return (
             <div className="TreeContent">
                 <Spin tip="Loading..." spinning={this.state.visible}>
-                    <Row gutter={16}>
-                        <Col span={15}> <Input prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />} className="searchInput" onChange={this.searchChange} placeholder='请输入关键词' /></Col>
-                        <Col span={9}>
+                    <Row>
+                        <Col span={12}>
+                            <Search allowClear placeholder='请输入关键词' onSearch={this.searchChange} />
+                        </Col>
+                        <Col span={12} style={{ textAlign: "right" }}>
                             <Tooltip placement="top" title='编辑'>
                                 <Button onClick={this.props.editTree} icon="edit" />
                             </Tooltip>
                             <Tooltip placement="top" title='删除'>
-                                <Button onClick={this.props.deletetTree} icon="delete" style={{ margin: '0 15px' }} />
+                                <Button onClick={this.props.deletetTree} icon="delete" style={{ margin: '0 10px' }} />
                             </Tooltip>
                             <Tooltip placement="top" title='新增'>
                                 <Button type="primary" onClick={this.props.addTree} icon="plus" />
@@ -173,6 +175,7 @@ class TreeList extends Component {
                         </Col>
                     </Row>
                     <Tree
+                        style={{paddingTop:'10px'}}
                         className="tree"
                         autoExpandParent={autoExpandParent}   // 是否自动展开父节点
                         checkable={checkable}  // 节点前添加 Checkbox 复选框

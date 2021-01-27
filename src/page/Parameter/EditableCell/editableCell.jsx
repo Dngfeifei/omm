@@ -75,6 +75,7 @@ class TableRow extends React.Component {
 
 
             selectedRowKeys:null,  //选中的table表格的id
+
         }
     }
 
@@ -178,6 +179,7 @@ class TableRow extends React.Component {
                 dataIndex: 'key',
                 editable: false,
                 align:'center',
+                width:'10%',
                 // 第一种：每一页都从1开始
                 render:(text,record,index)=> `${index+1}`
 
@@ -318,6 +320,18 @@ class TableRow extends React.Component {
 
     }
 
+    onRow = (record) => {
+        return {
+            onClick: () => {
+                let { selectedRowKeys } = this.state;
+                //selectedRowKeys.indexOf(record.id) > -1 ? selectedRowKeys.splice(selectedRowKeys.indexOf(record.id),1) : selectedRowKeys.push(record.id);
+                selectedRowKeys = record.id;
+                this.setState({ selectedRowKeys});
+            }
+
+        }
+    } 
+
     render() {
         this.init()
         const components = {
@@ -350,16 +364,11 @@ class TableRow extends React.Component {
             type:'radio'
         };
 
-
-        console.log(this.props.scroll)
-
-
         return (
             <div>
-                <Row gutter={24} style={{padding: '15px 15px 0px 15px',textAlign:'right'}}>
-                    
-                    <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button>
+                <Row gutter={24} style={{padding: '24px 15px 6px 15px',textAlign:'right'}}>
                     <Button style={{marginRight: '10px'}} onClick={this.handlerDelete}>删除</Button>
+                    <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button>
                     {
                         this.state.editingKey ? <Button style={{marginRight: '10px'}} onClick={this.cancel}>取消</Button> : (
                             <Button style={{marginRight: '10px'}} disabled>取消</Button>
@@ -381,9 +390,10 @@ class TableRow extends React.Component {
                 <Provider value={this.props.form}>
                     <Table
                         className="jxlTable"
+                         onRow={this.onRow}
                         components={components}   //覆盖默认的 table 元素
                         bordered
-                        rowKey="id"
+                        rowKey={"id"}
                         rowSelection={rowSelection}   //设置table的复选框
                         dataSource={this.state.data}
                         columns={columns}

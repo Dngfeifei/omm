@@ -189,10 +189,10 @@ class ResetPassword extends Component {
         let {count,counting} = this.state;
 
         return (
-            <div className='editPasswordWrapper'>
+            <div className='editPasswordWrapper' style={{backgroundImage:'url(static/images/resetPsdBg.png)'}}>
                 <div className="editContent">
                     <div className="title">
-                        <img src='/static/images/resetPsd.png' />
+                        <img src='static/images/resetPsd.png' />
                         <span className='logintitle'>重置密码</span>
                     </div>
                     <Form onSubmit={this.handleSubmit}>

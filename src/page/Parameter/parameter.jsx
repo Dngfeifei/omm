@@ -72,6 +72,8 @@ class Parameter extends Component {
             parameterCategoryId:''
         },
         total:0,  //表格分页---设置显示一共几条数据
+        pageSize:10,
+        current:0,
         loading:false,  //表格加载太
         
         columns: [
@@ -469,15 +471,32 @@ class Parameter extends Component {
 
     /****************************       右侧--表格 相关逻辑函数        *******************************/
     // 页码改变的回调，参数是改变后的页码及每页条数
-    onPageChange=(page, pageSize)=>{
-        let data = Object.assign({}, this.state.form, { current: page })
-        
+    onPageChange = (page, pageSize) => {
+        let data = Object.assign({}, this.state.form, { offset: page })
+
         this.setState({
+            current: (page - 1) * pageSize,
             form: data
-        },()=>{
+        }, () => {
             // 调用接口
-            this.init()
+            this.getTableList(this.state.form)
         })
+    }
+
+    // 当几条一页的值改变后调用函数，current：改变显示条数时当前数据所在页；pageSize:改变后的一页显示条数
+    onShowSizeChange = (current, pageSize) => {
+        let data = Object.assign({}, this.state.form, { offset: 1, limit: pageSize })
+
+        this.setState({
+            current: 0,
+            pageSize: pageSize,
+            form: data
+        }, () => {
+           // 调用接口
+           this.getTableList(this.state.form)
+        })
+
+
     }
 
     handleChange=()=>{
@@ -505,17 +524,17 @@ class Parameter extends Component {
         return (
             <div style={{ border: '0px solid red', background: ' #fff',height:'100%' }} >
                 <Row  gutter={24} className="main_height">
-                    <Col span={6} className="gutter-row" style={{ backgroundColor: 'white',overflowY: 'auto',paddingTop:'13px',height:'98%',borderRight:'1px solid #d9d9d9'}}>
+                    <Col span={5} className="gutter-row" style={{ backgroundColor: 'white',overflowY: 'auto',paddingTop:'24px',height:'100%',borderRight:'1px solid #d9d9d9'}}>
                         <TreeParant treeData={data} draggable={true}
                             addTree={this.addTree} editTree={this.editTree} deletetTree={this.deletetTree} 
                             onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
                         ></TreeParant>
                     </Col>
-                    <Col span={18} className="gutter-row main_height" style={{ padding: '0 10px 0', backgroundColor: 'white',display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
+                    <Col span={19} className="gutter-row main_height" style={{ padding: '0 10px 0', backgroundColor: 'white',display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
                         {/* 表格行内编辑--模板 */}
                         <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
                             <EditTable scroll={h} style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}} parentValueID={this.state.form.parameterCategoryId} data={this.state.tabledata} handleChange={this.handleChange}>
-                            <Pagination total={this.state.total} pageSize={this.state.form.limit} current={this.state.form.offset} onChange={this.onPageChange}></Pagination>
+                                <Pagination total={this.state.total} pageSize={this.state.form.limit} current={(this.state.form.offset)} onShowSizeChange={this.onShowSizeChange} onChange={this.onPageChange}></Pagination>
                             </EditTable>
                         </div>
                         
