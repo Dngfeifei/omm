@@ -26,6 +26,11 @@ class systempeo extends Component {
 
     state = {
         // search: Object.assign({name: '', num: ''}, this.state.pageconf),
+        RoleName:'',
+        RoleNum:'',
+        DRoleName:'',
+        DRoleNum:'',
+        stat:'',
         rules: [
             {
                 label: '姓名',
@@ -132,7 +137,10 @@ class systempeo extends Component {
             }, {
                 title: '系统账号',
                 dataIndex: 'userName',
-                width:90,
+                width:120,
+                ellipsis: {
+                    showTitle: false,
+                },
                 render: userName => (
                     <Tooltip placement="topLeft" title={userName}>
                       {userName}
@@ -147,6 +155,9 @@ class systempeo extends Component {
                 title: '所属组织',
                 dataIndex: 'orgFullName',
                 width:110,
+                ellipsis: {
+                    showTitle: false,
+                },
                 render: orgFullName => (
                     <Tooltip placement="topLeft" title={orgFullName}>
                       {orgFullName}
@@ -169,7 +180,8 @@ class systempeo extends Component {
             }, {
                 title: '状态',
                 dataIndex: 'status',
-                render: t => t == '1' ? '启用' : '禁用'
+                render: t => t == '1' ? '启用' : '禁用',
+                width:70,
             }
         ],
         peocolumns:[
@@ -179,17 +191,42 @@ class systempeo extends Component {
             },{
                 title: '员工号',
                 dataIndex: 'userNum',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: userNum => (
+                    <Tooltip placement="topLeft" title={userNum}>
+                      {userNum}
+                    </Tooltip>
+                  ),
             },{
                 title: '系统账号',
                 dataIndex: 'userName',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: userName => (
+                    <Tooltip placement="topLeft" title={userName}>
+                      {userName}
+                    </Tooltip>
+                  ),
             },{
                 title: '邮箱',
                 dataIndex: 'email',
                 width:200,
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: email => (
+                    <Tooltip placement="topLeft" title={email}>
+                      {email}
+                    </Tooltip>
+                  ),
             },{
                 title: '性别',
                 dataIndex: 'sex',
                 render: t => t == '1' ? '男' : '女',
+                width:80,
             },{
                 title: '职务',
                 dataIndex: 'duties',
@@ -380,6 +417,7 @@ class systempeo extends Component {
     }
     // 树选中后
     onSelect = (selectedKeys, info) => {
+        this.state.selectedRowKeys = [],
         console.log('selected', selectedKeys, info);
             this.setState({ selectedTreeId: selectedKeys[0] })
         // console.log(selectedKeys[0])
@@ -490,8 +528,13 @@ class systempeo extends Component {
 	}
     // 点击查询按钮
     checkPeoId() {
-        this.props.form.validateFields(null, {}, (err, val) => {
-            let params = Object.assign({ orgId: this.state.selectedTreeId }, val,this.state.pageConf)
+        // this.props.form.validateFields(null, {}, (err, val) => {
+            let params = Object.assign({
+                orgId: this.state.selectedTreeId,
+                realName:this.state.RoleName,
+                userName:this.state.RoleNum,
+                status:this.state.stat
+            }, this.state.pageConf)
             checkRY(params).then(res => {
                 let pagination = {
 					pageSize: res.data.size,
@@ -505,11 +548,19 @@ class systempeo extends Component {
             }).catch(err => {
                 console.log(err)
             })
-        })
+        // })
         
     }
     clear = () =>{
-        this.props.form.resetFields();
+        this.setState({ RoleName: '' })
+        this.setState({ RoleNum: '' })
+        this.setState({ stat: '' })
+        // this.props.form.resetFields();
+    }
+    clear2 = () =>{
+        this.setState({ DRoleName: '' })
+        this.setState({ DRoleNum: '' })
+        // this.props.form.resetFields();
     }
     // 关联机构人员按钮点击
     check = _ => {
@@ -576,8 +627,12 @@ class systempeo extends Component {
     }
     // 弹框里的人员查询
     checkDialogData() {
-        this.props.form.validateFields(null, {}, (err, val) => {
-            let params = Object.assign({}, val,this.state.pageConf2)
+        // this.props.form.validateFields(null, {}, (err, val) => {
+            // let params = Object.assign({}, val,this.state.pageConf2)
+            let params = Object.assign({
+                realName:this.state.DRoleName,
+                userName:this.state.DRoleNum,
+            }, this.state.pageConf2)
             checkRY(params).then(res => {
                 let pagination = {
 					pageSize: res.data.size,
@@ -589,7 +644,7 @@ class systempeo extends Component {
             }).catch(err => {
                 console.log(err)
             })
-        })
+        // })
         
     }
      // 点击弹框里的保存按钮添加人员
@@ -650,6 +705,32 @@ class systempeo extends Component {
 
         }
     } 
+    getSearchRoleName = (e) => {
+        this.setState({
+            RoleName: e.target.value
+        })
+    }
+    getSearchRoleNum = (e) => {
+        this.setState({
+            RoleNum: e.target.value
+        })
+    }
+    change = (e) =>{
+        console.log(e)
+        this.setState({
+            stat: e.status
+        })
+    }
+    getSearchRoleName1 = (e) => {
+        this.setState({
+            DRoleName: e.target.value
+        })
+    }
+    getSearchRoleNum1 = (e) => {
+        this.setState({
+            DRoleNum: e.target.value
+        })
+    }
     render = _ => {
         const { getFieldDecorator } = this.props.form
         const { selectedRowKeys,selectedRowKeys2 } = this.state;
@@ -673,6 +754,7 @@ class systempeo extends Component {
                             addTree={this.add}
                             editTree={this.edit}
                             deletetTree={this.deleteT}
+                            showLine={true}
                             // style={{position:'absolute',width:'100%',top:'50px',bottom:'0', overflow: 'auto'}}
                             defaultExpandAll={true}
                             autoExpandParent={true}
@@ -688,17 +770,28 @@ class systempeo extends Component {
                 <Col span={19} className="my_height" style={{ paddingLeft: '10px', paddingTop:'8px',background: "#fff"}}>
                     <Form style={{ width: '100%' ,}}>
                         <Row gutter={24}>
-                            {this.state.rules.map((val, index) =>
-                                <Col key={index} span={6} style={{ display: 'block' }}>
-                                    <FormItem
-                                        label={val.label} labelCol={{ span: 7 }}>
-                                        {getFieldDecorator(val.key, val.option)(val.render())}
-                                    </FormItem>
-                                </Col>)}
+                            <Input addonBefore="姓名"
+                                placeholder="请输入" 
+                                value={this.state.RoleName}
+                                onChange={this.getSearchRoleName}
+                                style={{ width: '180px' ,paddingRight:'8px'}} 
+                            />
+                            <Input addonBefore="系统账号"
+                                placeholder="请输入" 
+                                value={this.state.RoleNum}
+                                onChange={this.getSearchRoleNum}
+                                style={{ width: '200px' ,paddingRight:'8px'}} 
+                            />
+                            <label>状态：
+                                <Select style={{ width: 150 }} placeholder="选择状态" value ={this.state.stat} onChange={e => this.change({ status: e })}>
+                                    <Option key={""} value={""} >请选择</Option>
+                                    <Option value='1' key='1'>启用</Option>
+                                    <Option value='0' key='0'>禁用</Option>
+                                </Select>
+                            </label>
+                            
                             <Button type="primary" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.checkPeoId}>查询</Button>
                             <Button type="info" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.clear}>清空</Button>
-                        </Row>
-                        <Row style={{ marginTop: '0px' ,textAlign:"right"}}>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deletePeo}>解除关联人员</Button>
                         </Row>
@@ -706,7 +799,7 @@ class systempeo extends Component {
                     <Table
                         bordered
                         rowKey="id"
-                        // size="small"
+                        size="small"
                         onRow={this.onRow}
                         rowSelection={rowSelection}
                         dataSource={this.state.tabledata}
@@ -730,15 +823,27 @@ class systempeo extends Component {
                 cancelText="取消">
                 <Form>
                     <Row gutter={2}>
-                        {this.state.pepplerules.map((val, index) =>
+                        {/* {this.state.pepplerules.map((val, index) =>
                             <Col key={index} span={8} style={{ display: 'block' }}>
                                 <FormItem
                                     label={val.label} labelCol={{ span: 7 }}>
                                     {getFieldDecorator(val.key, val.option)(val.render())}
                                 </FormItem>
-                            </Col>)}
-                            <Button type="primary" style={{ marginLeft: '10px',marginTop: '5px' }} onClick={this.checkDialogData}>查询</Button>
-                            <Button type="info" style={{ marginLeft: '10px',marginTop: '5px' }} onClick={this.clear}>清空</Button>
+                            </Col>)} */}
+                        <Input addonBefore="姓名"
+                            placeholder="请输入" 
+                            value={this.state.DRoleName}
+                            onChange={this.getSearchRoleName1}
+                            style={{ width: '200px' ,paddingRight:'8px'}} 
+                        />
+                        <Input addonBefore="系统账号"
+                            placeholder="请输入" 
+                            value={this.state.DRoleNum}
+                            onChange={this.getSearchRoleNum1}
+                            style={{ width: '200px' ,paddingRight:'8px'}} 
+                        />
+                        <Button type="primary" style={{ marginLeft: '10px',marginTop: '5px' }} onClick={this.checkDialogData}>查询</Button>
+                        <Button type="info" style={{ marginLeft: '10px',marginTop: '5px' }} onClick={this.clear2}>清空</Button>
                           
                     </Row>
                 </Form>
@@ -749,9 +854,9 @@ class systempeo extends Component {
                         dataSource={this.state.tableLogdata}
                         columns={this.state.peocolumns}
                         pagination={false}
-                        // size={}
+                        size="small"
                         scroll={{ x: 800, y: 300 }}
-                        style={{ marginTop: '0px' }}
+                        style={{ marginTop: '25px' }}
                     />
                 <Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} />
             </Modal>
