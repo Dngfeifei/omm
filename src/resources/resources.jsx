@@ -171,7 +171,7 @@ class resources extends Component {
 						}
 					]
 				},
-				render: _ => <TextArea style={{width:"800px"}} autoSize={{minRows: 4, maxRows: 6}} disabled={!this.state.editable} />
+				render: _ => <TextArea autoSize={{ minRows: 4, maxRows: 6 }} disabled={!this.state.editable} />
 			}
 		],
 	})
@@ -338,10 +338,10 @@ class resources extends Component {
 		let _this = this
 		confirm({
 			title: '删除',
-            content: '删除后不可恢复,确定删除吗？',
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
+			content: '删除后不可恢复,确定删除吗？',
+			okText: '确定',
+			okType: 'danger',
+			cancelText: '取消',
 			onOk() {
 				let params = _this.state.selected.id
 				DelResource({ id: params })
@@ -495,10 +495,10 @@ class resources extends Component {
 		let _this = this
 		confirm({
 			title: '删除',
-            content: '您是否要进行拖拽？',
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
+			content: '您是否要进行拖拽？',
+			okText: '确定',
+			okType: 'danger',
+			cancelText: '取消',
 			onOk() {
 				_this.treeNodeChange({
 					id: dragObj.id,
@@ -532,34 +532,35 @@ class resources extends Component {
 				></TreeParant>
 			</Card>
 			<Card style={{ flex: 19 }}>
-				<Form
-					labelCol={{ span: 4 }}
-					wrapperCol={{ span: 14 }}
-					layout="horizontal"
-				>
-					<Row gutter={24}>
+
+				<Row gutter={24}>
+					<Form
+						labelCol={{ span: 4 }}
+						layout="horizontal"
+					>
 						{this.state.rules.map((val, index) =>
 							val.key == "description" ?
 								<Col key={index} span={24} style={{ display: 'block' }}>
 									<FormItem
-										label={val.label} labelCol={{ span: 2 }}>
+										label={val.label} labelCol={{ span: 2 }} wrapperCol={{ span: 19 }}>
 										{getFieldDecorator(val.key, val.option)(val.render())}
 									</FormItem>
 								</Col> : <Col key={index} span={12} style={{ display: 'block' }}>
 									<FormItem
-										label={val.label} labelCol={{ span: 4 }}>
+										label={val.label} labelCol={{ span: 4 }} wrapperCol={{ span: 14 }}>
 										{getFieldDecorator(val.key, val.option)(val.render())}
 									</FormItem>
 								</Col>
 						)}
-					</Row>
-					<Row >
-						<Col span={21} style={{ display: 'block', textAlign: "right" }}>
-							<Button type="primary" disabled={!this.state.editable} onClick={this.save}  style={{ marginRight: "18px" }}>保存</Button>
-							<Button type="info" disabled={!this.state.editable} onClick={this.cancel}>取消</Button>
-						</Col>
-					</Row>
-				</Form>
+					</Form>
+				</Row>
+				<Row >
+					<Col span={21} style={{ display: 'block', textAlign: "right" }}>
+						<Button type="primary" disabled={!this.state.editable} onClick={this.save} style={{ marginRight: "18px" }}>保存</Button>
+						<Button type="info" disabled={!this.state.editable} onClick={this.cancel}>取消</Button>
+					</Col>
+				</Row>
+
 			</Card>
 		</div >)
 	}
