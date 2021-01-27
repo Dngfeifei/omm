@@ -29,21 +29,6 @@ const assignment = (data) => {
         }
     });
 }
-// 获取父级节点
-// const getParentKey = (key, tree) => {
-//     let parentKey;
-//     for (let i = 0; i < tree.length; i++) {
-//         const node = tree[i];
-//         if (node.children) {
-//             if (node.children.some(item => item.key === key)) {
-//                 parentKey = node.key;
-//             } else if (getParentKey(key, node.children)) {
-//                 parentKey = getParentKey(key, node.children);
-//             }
-//         }
-//     }
-//     return parentKey;
-// };
 class role extends Component {
     SortTable = () => {
         setTimeout(() => {
@@ -120,6 +105,14 @@ class role extends Component {
         table: {
             //右侧角色表格配置
             columns: [
+                {
+                    title: '序号',
+                    dataIndex: 'key',
+                    editable: false,
+                    align:'center',
+                    width:'80px',
+                    render:(text,record,index)=> `${index+1}`
+                },
                 {
                     title: '角色名称',
                     dataIndex: 'roleName',
@@ -309,7 +302,9 @@ class role extends Component {
                 treeSelect: data.id,
                 newRoleGroupVal: data.roleCategoryName
             },
-            searchListID: data.id
+            searchListID: data.id,
+            tableSelecteds:[],
+            tableSelectedInfo:[]
         })
         // 选中后请求角色数据
         this.searchRoleFun(data.id)
@@ -321,33 +316,6 @@ class role extends Component {
             autoExpandParent: false,
         });
     };
-    // // tree搜索
-    // onSearchTree = value => {
-    //     const expandedKeys = this.state.treeDataList
-    //         .map(item => {
-    //             if (item.title.indexOf(value) > -1) {
-    //                 return getParentKey(item.key, this.state.tree.treeData);
-    //             }
-    //             return null;
-    //         })
-    //         .filter((item, i, self) => item && self.indexOf(item) === i);
-    //     this.setState({
-    //         expandedKeys,
-    //         searchValue: value,
-    //         autoExpandParent: true,
-    //     });
-    // };
-    // tree数据扁平化处理方法
-    // generateList = data => {
-    //     for (let i = 0; i < data.length; i++) {
-    //         const node = data[i];
-    //         const { key, title } = node;
-    //         this.state.treeDataList.push({ key, title: title });
-    //         if (node.children) {
-    //             this.generateList(node.children);
-    //         }
-    //     }
-    // }
     //获取新增或修改后的角色组名称
     getNewRoleGroupVal = (e) => {
         let newRoleGroup = Object.assign({}, this.state.newRoleGroup, { newRoleGroupVal: e.target.value })
@@ -421,9 +389,20 @@ class role extends Component {
                 }
             })
         }
-        // 。。在3步骤内填写下面逻辑。。。。。。。。。
 
     }
+    //点击行选中选框
+	onRow = (record)=>{
+		return {
+			onClick: ()=>{
+				let selectedKeys = [record.id],selectedItems = [record];
+				this.setState({
+                    tableSelecteds:selectedKeys,
+                    tableSelectedInfo:selectedItems
+				})
+			}
+		}
+	}
     // 角色名称查询
     searchRoleNameFun = () => {
         let id = this.state.searchListID
@@ -731,6 +710,8 @@ class role extends Component {
         let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
         this.setState({
             pageConf: pageConf,
+            tableSelecteds:[],
+            tableSelectedInfo:[]
         })
         this.searchRoleNameFun2(pageConf)
     }
@@ -744,6 +725,8 @@ class role extends Component {
         let pageConf = Object.assign({}, this.state.pageConf, { limit: pageSize });
         this.setState({
             pageConf: pageConf,
+            tableSelecteds:[],
+            tableSelectedInfo:[]
         })
         this.searchRoleNameFun2(pageConf)
     }
@@ -751,7 +734,9 @@ class role extends Component {
     getroleName = (e) => {
         let newData = Object.assign({}, this.state.currentRole, { roleName: e.target.value })
         this.setState({
-            currentRole: newData
+            currentRole: newData,
+            tableSelecteds:[],
+            tableSelectedInfo:[]
         })
     }
     //获取新增或修改后的角色状态
@@ -794,14 +779,14 @@ class role extends Component {
         const { h } = this.state;
         return <div className="pageAuto" style={{ display: 'flex', height: "100%" }} >
             {/* 左侧角色组 tree */}
-            <Card style={{ flex: "3",height:"100%",overflow:"scrollY" }}>
+            <Card style={{ flex: "5",height:"100%",overflow:"scrollY" }}>
                 <TreeParant treeData={this.state.tree.treeData}
                     addTree={this.addRoleGroup} editTree={this.editRoleGroup} deletetTree={this.delRoleGroup}
                     onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
                 ></TreeParant>
             </Card>
             {/* 右侧角色table表格 */}
-            <Card style={{ flex: "8", display: "flex", flexDirection: "column" }}>
+            <Card style={{ flex: "19", display: "flex", flexDirection: "column" }}>
                 <Form style={{ width: '100%' }}>
                     {/* <Row>
                         <Input addonBefore="角色名称" placeholder="请输入" value={this.state.searchRoleName} onChange={this.getSearchRoleName} style={{ width: '200px' }} />
@@ -821,12 +806,11 @@ class role extends Component {
                             <Button type="info"  style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
                             <Button type="info" style={{ marginRight: '10px' }} onClick={this.editRoleItem}>修改</Button>
                             <Button type="primary" onClick={this.addRoleItem}>新增</Button>
-
                         </Col>
                     </Row>
                 </Form>
                 <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
-                    <Table bordered rowSelection={{ onChange: this.onTableSelect, type: "radio" }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h} size="small"/>
+                    <Table bordered onRow={this.onRow}  rowSelection={{ onChange: this.onTableSelect,selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h} size="small"/>
                     <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                 </div>
             </Card>

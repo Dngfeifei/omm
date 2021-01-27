@@ -206,7 +206,7 @@ class Common extends Component {
 		const rowSelection = {
 			type: this.state.selecttype || 'radio',
 			selectedRowKeys: this.state.selected.selectedKeys,
-			columnWidth:'30px',
+			columnWidth:'60px',
 			onChange: this.onselect
 		}
 		const pagination = this.state.pagination && this.state.pagesizechange ? Object.assign({}, this.state.pagination, {

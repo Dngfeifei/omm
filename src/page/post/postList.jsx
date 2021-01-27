@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Button, Modal, message, Row } from 'antd'
+import { Input, Button, Modal, message, Row,Col } from 'antd'
 import { GetPostData, DelPost } from '/api/post'
 import Common from '/page/common.jsx'
 const { confirm } = Modal;
@@ -22,18 +22,23 @@ class Post extends Common {
 		// 岗位表格配置
 		columns: [
 			{
+				title: '序号',
+				dataIndex: 'key',
+				editable: false,
+				align:'center',
+				width:'80px',
+				render:(text,record,index)=> `${index+1}`
+			},
+			{
 				title: '编码',
-				width: 120,
 				align: 'center',
 				dataIndex: 'positionCode'
 			}, {
 				title: '名称',
-				width: 120,
 				align: 'center',
 				dataIndex: 'positionName'
 			}, {
 				title: '描述',
-				width: 120,
 				align: 'center',
 				dataIndex: 'description'
 			}],
@@ -203,39 +208,59 @@ class Post extends Common {
 
 	renderSearch = _ => <div>
 		<div className="mgrSearchBar">
-			<Input
-				value={this.state.search.positionName}
-				style={{ width: 280 }}
-				allowClear
-				onChange={e => this.changeSearch({ positionName: e.target.value })}
-				addonBefore="岗位名称" placeholder="请输入" />
-			<Button
-				onClick={_ => this.search(true)}
-				type="primary" icon="search">搜索</Button>
+			{/* <Row style={{ display: 'flex', margin: "10px 0", padding: "0 10px" }}> */}
+			<Row style={{marginBottom: "10px" }}>
+				<Col span={12}>
+					<Input
+						value={this.state.search.positionName}
+						style={{ width: 280 }}
+						allowClear
+						onChange={e => this.changeSearch({ positionName: e.target.value })}
+						addonBefore="岗位名称" placeholder="请输入" />
+					<Button
+						onClick={_ => this.search(true)}
+						type="primary" icon="search">查询</Button>
+				</Col>
+				<Col span={12} style={{ textAlign: "right" }}>
+					<Button
+						onClick={_ => this.addPost()}
+						type="primary">新增</Button>
+					<Button style={{ margin: "0px 10px" }}
+						onClick={_ => this.editPost()}
+						type="info">修改</Button>
+					<Button
+						onClick={this.deleteItem}
+						type="info">删除</Button>
+					<Button style={{ margin: "0px 10px" }}
+						type="primary" onClick={_ => this.relationPeople()}>关联人员</Button>
+					<Button style={{ margin: "0px 10px" }}
+						type="primary" onClick={_ => this.relationRole()}>关联角色</Button>
+				</Col>
+			</Row>
 		</div>
 	</div>
 
-	renderBtn = _ => <div>
-		<Row style={{ display: 'flex', margin: "10px 0", padding: "0 10px" }}>
-			<div style={{ flex: 3 }}>
-				<Button
-					onClick={_ => this.addPost()}
-					type="primary">新增</Button>
-				<Button style={{ margin: "0px 10px" }}
-					onClick={_ => this.editPost()}
-					type="primary">修改</Button>
-				<Button
-					onClick={this.deleteItem}
-					type="primary">删除</Button>
-			</div>
-			<div style={{ flex: 2, textAlign: "right" }}>
-				<Button
-					type="primary" onClick={_ => this.relationPeople()}>关联人员</Button>
-				<Button style={{ margin: "0px 10px" }}
-					type="primary" onClick={_ => this.relationRole()}>关联角色</Button>
-			</div>
-		</Row>
-	</div>
+	// renderBtn = _ => <div>
+	// 	<Row style={{ display: 'flex', margin: "10px 0", padding: "0 10px" }}>
+	// 		<div style={{ flex: 3 }}>
+	// 			<Button
+	// 				onClick={_ => this.addPost()}
+	// 				type="primary">新增</Button>
+	// 			<Button style={{ margin: "0px 10px" }}
+	// 				onClick={_ => this.editPost()}
+	// 				type="info">修改</Button>
+	// 			<Button
+	// 				onClick={this.deleteItem}
+	// 				type="info">删除</Button>
+	// 		</div>
+	// 		<div style={{ flex: 2, textAlign: "right" }}>
+	// 			<Button
+	// 				type="primary" onClick={_ => this.relationPeople()}>关联人员</Button>
+	// 			<Button style={{ margin: "0px 10px" }}
+	// 				type="primary" onClick={_ => this.relationRole()}>关联角色</Button>
+	// 		</div>
+	// 	</Row>
+	// </div>
 
 	rendermodal = _ => <div>
 		<PostForm

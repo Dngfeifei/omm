@@ -27,29 +27,33 @@ class User extends Common {
 			duties: '',
 			sex: "",
 		}, this.state.pageconf),
-		comboBox:{
-		   status:[],
-		   sex:[]
+		comboBox: {
+			status: [],
+			sex: []
 		},
 		columns: [
 			{
+				title: '序号',
+				dataIndex: 'key',
+				editable: false,
+				align:'center',
+				width:"80px",
+				render:(text,record,index)=> `${index+1}`
+			},
+			{
 				title: '姓名',
-				width: 120,
 				align: 'center',
 				dataIndex: 'realName'
 			}, {
 				title: '系统账号',
-				width: 120,
 				align: 'center',
 				dataIndex: 'userName'
 			}, {
 				title: '员工号',
-				width: 120,
 				align: 'center',
 				dataIndex: 'userNum'
 			}, {
 				title: '状态',
-				width: 60,
 				align: 'center',
 				dataIndex: 'status',
 				render: (t, r) => {
@@ -61,13 +65,11 @@ class User extends Common {
 				}
 			}, {
 				title: '职务',
-				width: 120,
 				align: 'center',
 				dataIndex: 'duties',
 
 			}, {
 				title: '性别',
-				width: 60,
 				align: 'center',
 				dataIndex: 'sex',
 				render: (t, r) => {
@@ -82,12 +84,10 @@ class User extends Common {
 				}
 			}, {
 				title: '所属组织',
-				width: 120,
 				align: 'center',
 				dataIndex: 'orgFullName',
 			}, {
 				title: '入职时间',
-				width: 120,
 				align: 'center',
 				dataIndex: 'entryDate'
 			}],
@@ -120,30 +120,30 @@ class User extends Common {
 			},
 		}
 	})
-		// 获取资源类型下拉框数据
-		getDictData = () => {
-			GetDictInfo({ dictCode: "sex" }).then(res => {
-				if (res.success != 1) {
-					message.error("性别下拉框资源未获取，服务器错误！")
-				} else {
-					let comboBox = Object.assign({}, this.state.comboBox, {
-						sex: res.data
-					})
-					console.log(res.data,1254)
-					this.setState({ comboBox: comboBox })
-				}
-			})
-			GetDictInfo({ dictCode: "status" }).then(res => {
-				if (res.success != 1) {
-					message.error("状态下拉框资源未获取，服务器错误！")
-				} else {
-					let comboBox = Object.assign({}, this.state.comboBox, {
-						status: res.data
-					})
-					this.setState({ comboBox: comboBox })
-				}
-			})
-		}
+	// 获取资源类型下拉框数据
+	getDictData = () => {
+		GetDictInfo({ dictCode: "sex" }).then(res => {
+			if (res.success != 1) {
+				message.error("性别下拉框资源未获取，服务器错误！")
+			} else {
+				let comboBox = Object.assign({}, this.state.comboBox, {
+					sex: res.data
+				})
+				console.log(res.data, 1254)
+				this.setState({ comboBox: comboBox })
+			}
+		})
+		GetDictInfo({ dictCode: "status" }).then(res => {
+			if (res.success != 1) {
+				message.error("状态下拉框资源未获取，服务器错误！")
+			} else {
+				let comboBox = Object.assign({}, this.state.comboBox, {
+					status: res.data
+				})
+				this.setState({ comboBox: comboBox })
+			}
+		})
+	}
 	//禁用
 	disableItem = async () => {
 		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
@@ -339,7 +339,7 @@ class User extends Common {
 					<Option key={1} value={1}>男</Option>
 					<Option key={0} value={0}>女</Option> */}
 					<Option key={""} value={""}>请选择</Option>
-					{	this.state.comboBox.sex.map(t => <Option key={t.itemCode.toString()} value={t.itemCode.toString()}>{t.itemValue}</Option>)}
+					{this.state.comboBox.sex.map(t => <Option key={t.itemCode.toString()} value={t.itemCode.toString()}>{t.itemValue}</Option>)}
 				</Select>
 			</label>
 			<Button
@@ -366,13 +366,11 @@ class User extends Common {
 
 		</Col>
 		<Col span={12} style={{ textAlign: "right" }}>
-			
+
 			<Button style={{ marginRight: "10px" }} onClick={this.disableItem} type="info">禁用</Button>
 			<Button style={{ marginRight: "10px" }} onClick={this.editForm} type="info">修改</Button>
-			<Button style={{ marginRight: "10px" }}
-				onClick={_ => this.addmodal('modalconf', '新增人员信息')}
-				type="primary">新增</Button>
-			<Button style={{ marginRight: "10px" }} onClick={this.editPost} type="primary">关联岗位</Button>
+			<Button style={{ marginRight: "10px" }} onClick={_ => this.addmodal('modalconf', '新增人员信息')} type="primary">新增</Button>
+			<Button onClick={this.editPost} type="primary">关联岗位</Button>
 		</Col>
 	</Row>
 

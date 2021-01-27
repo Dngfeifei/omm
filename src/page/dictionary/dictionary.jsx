@@ -4,6 +4,9 @@ import { GetDictionary, AddDictionary, EditDictionary, DelDictionary, GetDictIte
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
+// 引入页面CSS
+import '/assets/less/pages/logBookTable.css'
+
 const { Option } = Select
 const { Item } = Form
 const { confirm } = Modal;
@@ -70,10 +73,30 @@ class EditableCell extends React.Component {
 }
 
 class content extends Component {
+    SortTable = () => {
+        setTimeout(() => {
+            let h = this.tableDom.clientHeight - 100;
+            console.log(h)
+            this.setState({
+                h: {
+                    y: (h)
+                }
+            });
+        }, 0)
+    }
+    componentDidMount() {
+        this.SortTable();
+        //窗口变动的时候调用
+        window.onresize = () => {
+            this.SortTable();
+        }
+    }
     async componentWillMount() {
         this.searchTree()
     }
     state = {
+        // 表格默认滚动高度
+        h: { y: 240 },
         // 首次进入 
         newEntry: true,
         // 可编辑字段标识
@@ -100,6 +123,14 @@ class content extends Component {
         table: {
             //右侧角色表格配置
             columns: [
+                {
+                    title: '序号',
+                    dataIndex: 'key',
+                    editable: false,
+                    align: 'center',
+                    width: '80px',
+                    render: (text, record, index) => `${index + 1}`
+                },
                 {
                     title: '字典值',
                     dataIndex: 'itemValue',
@@ -155,6 +186,18 @@ class content extends Component {
             dictName: null,//字典名称
             dictCode: null//字典编码
         },
+    }
+    //点击行选中选框
+    onRow = (record) => {
+        return {
+            onClick: () => {
+                let selectedKeys = [record.id], selectedItems = [record];
+                this.setState({
+                    tableSelecteds: selectedKeys,
+                    tableSelectedInfo: selectedItems
+                })
+            }
+        }
     }
     //数据字典树数据查询
     searchTree = async (params = {}) => {
@@ -283,6 +326,8 @@ class content extends Component {
                 dictName: data.dictName,
                 dictCode: data.dictCode
             },
+            tableSelecteds: [],
+            tableSelectedInfo: [],
             pageConf: Object.assign({}, this.state.pageConf, { offset: 0 })
         })
         // 选中后请求字典项详情列表数据
@@ -418,6 +463,10 @@ class content extends Component {
         let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
         let dictId = this.state.currentID;
         let params = Object.assign({}, pageConf, { dictId: dictId })
+        this.setState({
+            tableSelecteds: [],
+            tableSelectedInfo: []
+        })
         this.searchList(params)
     }
     // 分页条数变化
@@ -425,9 +474,25 @@ class content extends Component {
         let pageConf = Object.assign({}, this.state.pageConf, { limit: pageSize });
         let dictId = this.state.currentID;
         let params = Object.assign({}, pageConf, { dictId: dictId })
+        this.setState({
+            tableSelecteds: [],
+            tableSelectedInfo: []
+        })
         this.searchList(params)
     }
-
+    //点击行选中选框
+    onRow = (record) => {
+        console.log(record, 456)
+        return {
+            onClick: () => {
+                let selectedKeys = [record.id], selectedItems = [record];
+                this.setState({
+                    tableSelecteds: selectedKeys,
+                    tableSelectedInfo: selectedItems
+                })
+            }
+        }
+    }
     //判断是否可编辑
     isEditing = record => record.id == this.state.editingKey
 
@@ -480,7 +545,7 @@ class content extends Component {
         }
         console.log(tableSelecteds, "456")
         let key = tableSelecteds[0];
-      
+
         if (this.state.editingKey) {
             this.cancel()
         }
@@ -498,7 +563,7 @@ class content extends Component {
             return
         }
         let key = this.state.tableSelecteds[0];
-        let _this=this;
+        let _this = this;
         confirm({
             title: '删除后不可恢复,确定删除吗？',
             onOk() {
@@ -514,7 +579,7 @@ class content extends Component {
                 })
             },
         });
-       
+
     }
     //保存字典项
     saveItem = () => {
@@ -559,7 +624,7 @@ class content extends Component {
     //取消
     cancel = () => {
         if (!this.state.editingKey) {
-           return
+            return
         }
         let _this = this
         // confirm({
@@ -606,29 +671,32 @@ class content extends Component {
             };
         });
         const { getFieldDecorator } = this.props.form
-        return <div style={{ display: 'flex', height: "100%" }}>
+        const { h } = this.state;
+        return <div className="pageAuto" style={{ display: 'flex', height: "100%" }}>
             {/* 左侧字典 tree */}
-            <Card style={{ flex: "3" }}>
+            <Card style={{ flex: "5" }}>
                 <TreeParant treeData={this.state.tree.treeData} selectedKeys={[this.state.currentID]}
                     addTree={this.addGroup} editTree={this.editGroup} deletetTree={this.delGroup}
                     onSelect={this.onTreeSelect}  //点击树节点触发事件
                 ></TreeParant>
             </Card>
             {/* 右侧角色table表格 */}
-            <Card style={{ flex: "8" }}>
+            <Card style={{ flex: "19", display: "flex", flexDirection: "column" }}>
                 <Form style={{ width: '100%' }}>
                     <Row style={{ textAlign: 'right' }}>
+                        <Button type="info" style={{ marginLeft: '10px' }} onClick={this.delItem}>删除</Button>
+                        <Button type="info" style={{ marginLeft: '10px' }} onClick={this.editItem}>修改</Button>
+                        <Button disabled={this.state.editingKey?false:true} type="info" style={{ marginLeft: '10px' }} onClick={this.cancel}>取消</Button>
+                        <Button disabled={this.state.editingKey?false:true} type="info" style={{ marginLeft: '10px' }} onClick={this.saveItem}>保存</Button>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.addItem}>新增</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.editItem}>修改</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.delItem}>删除</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.saveItem}>保存</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.cancel}>取消</Button>
                     </Row>
                 </Form>
-                <Provider value={this.props.form}>
-                    <Table bordered rowSelection={{ onChange: this.onTableSelect, type: "radio" }} dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} size="small"/>
-                </Provider>
-                <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
+                <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
+                    <Provider value={this.props.form}>
+                        <Table className='jxlTable' bordered onRow={this.onRow} rowSelection={{ type: "radio", onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds }} dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} size="small" scroll={h} />
+                    </Provider>
+                    <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
+                </div>
             </Card>
             {/* 字典新增修改弹窗 */}
             <Modal
@@ -641,7 +709,7 @@ class content extends Component {
             >
                 <Row>
                     <label htmlFor="字典名称" className="ant-form-item-required">
-                        <span style={{ width: "18%", display: "inline-block" }}>字典名称：</span>
+                        <span style={{ width: "16%", display: "inline-block" }}>字典名称：</span>
                         <Input placeholder="请输入" value={this.state.newGroup.dictName} onChange={this.getdictName} style={{ margin: "2% 10px", width: '70%' }} /></label>
                 </Row>
                 <Row>

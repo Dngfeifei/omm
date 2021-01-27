@@ -42,24 +42,24 @@ class resources extends Component {
 			visible: [],
 			openMethod: []
 		},
-		resourceType:[
-			{itemCode:"1",itemValue:"固定子菜单"},
-			{itemCode:"2",itemValue:"工作台左侧portalet"},
-			{itemCode:"3",itemValue:"工作台右侧portalet"},
-			{itemCode:"4",itemValue:"外部链接"},
-			{itemCode:"5",itemValue:"普通按钮"},
+		resourceType: [
+			{ itemCode: "1", itemValue: "菜单" },
+			{ itemCode: "2", itemValue: "工作台左侧Portalet" },
+			{ itemCode: "3", itemValue: "工作台右侧Portalet" },
+			{ itemCode: "4", itemValue: "外部链接" },
+			{ itemCode: "5", itemValue: "普通按钮" },
 		],
-		resourceType2:[
-			{itemCode:"1",itemValue:"固定子菜单"},
-			{itemCode:"2",itemValue:"工作台左侧portalet"},
-			{itemCode:"3",itemValue:"工作台右侧portalet"},
-			{itemCode:"4",itemValue:"外部链接"},
-			{itemCode:"5",itemValue:"普通按钮"},
+		resourceType2: [
+			{ itemCode: "1", itemValue: "菜单" },
+			{ itemCode: "2", itemValue: "工作台左侧Portalet" },
+			{ itemCode: "3", itemValue: "工作台右侧Portalet" },
+			{ itemCode: "4", itemValue: "外部链接" },
+			{ itemCode: "5", itemValue: "普通按钮" },
 		],
-		resourceType3:[
-			{itemCode:"1",itemValue:"固定子菜单"},
-			{itemCode:"2",itemValue:"工作台左侧portalet"},
-			{itemCode:"3",itemValue:"工作台右侧portalet"},
+		resourceType3: [
+			{ itemCode: "1", itemValue: "菜单" },
+			{ itemCode: "2", itemValue: "工作台左侧Portalet" },
+			{ itemCode: "3", itemValue: "工作台右侧Portalet" },
 		],
 		//资源数数据
 		treeData: [],
@@ -143,15 +143,15 @@ class resources extends Component {
 			{
 				label: '显示顺序',
 				key: 'serialNumber',
-				// option: {
-				// 	rules: [
-				// 		{
-				// 			message: "请输入数字",
-				// 			pattern: "^[0-9]*$",
-				// 			trigger: "blur",
-				// 		}
-				// 	]
-				// },
+				option: {
+					rules: [
+						{
+							message: "请输入数字",
+							pattern: /^[0-9]{0,}$/,
+							trigger: "blur",
+						}
+					]
+				},
 				render: _ => <Input disabled={!this.state.editable} />
 			},
 			{
@@ -171,7 +171,7 @@ class resources extends Component {
 						}
 					]
 				},
-				render: _ => <TextArea disabled={!this.state.editable} />
+				render: _ => <TextArea style={{width:"800px"}} autoSize={{minRows: 4, maxRows: 6}} disabled={!this.state.editable} />
 			}
 		],
 	})
@@ -230,20 +230,20 @@ class resources extends Component {
 			return
 		}
 		// 选中数据详情
-		let source=info.selectedNodes[0].props.dataRef
+		let source = info.selectedNodes[0].props.dataRef
 		this.setState({
-			selected:source,
+			selected: source,
 			type: null, editable: false
-		},_=>{
+		}, _ => {
 			this.getTreeNodeInfo()
 		});
 		//通过获取key值从资源树查询对应资源详情
 		// let item = this.getDataByTree(this.state.treeData, selectedKeys[0]);
-		
+
 	}
 	//查询tree节点详情
 	getTreeNodeInfo = () => {
-		let id=this.state.selected.id;
+		let id = this.state.selected.id;
 		GetResourceInfo(id)
 			.then(res => {
 				if (res.success != 1) {
@@ -270,13 +270,13 @@ class resources extends Component {
 			autoExpandParent: false,
 		});
 	};
-	
+
 
 	//新增按钮
 	addBtn = () => {
-		let row=this.state.selected;
-		if(row.hasOwnProperty("resourceCategoryId")){
-			if( row.resourceCategoryId==4||row.resourceCategoryId==5){
+		let row = this.state.selected;
+		if (row.hasOwnProperty("resourceCategoryId")) {
+			if (row.resourceCategoryId == 4 || row.resourceCategoryId == 5) {
 				message.destroy()
 				message.warning("外部链接和普通按钮下不能新建资源")
 				return
@@ -291,15 +291,15 @@ class resources extends Component {
 	}
 	//修改按钮
 	editBtn = () => {
-		let row=this.state.selected;
-		if(row.hasOwnProperty("children")){
-			if(row.children.length){
+		let row = this.state.selected;
+		if (row.hasOwnProperty("children")) {
+			if (row.children.length) {
 				this.setState({
-					resourceType:this.state.resourceType3
+					resourceType: this.state.resourceType3
 				})
-			}else{
+			} else {
 				this.setState({
-					resourceType:this.state.resourceType2
+					resourceType: this.state.resourceType2
 				})
 			}
 		}
@@ -322,15 +322,15 @@ class resources extends Component {
 	//删除按钮
 	delBtn = async_ => {
 		let selected = this.state.selected;
-		console.log(this.state.selected,4564)
-	
+		console.log(this.state.selected, 4564)
+
 		//1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
 		if (selected.id == "" || selected.id == null) {
 			message.destroy()
 			message.warning('没有选中数据,无法进行删除!');
 			return
 		}
-        if(selected.children&&selected.children.length){
+		if (selected.children && selected.children.length) {
 			message.destroy()
 			message.warning('选中资源下存在子资源项,请先删除子资源再进行此项操作!');
 			return
@@ -383,6 +383,16 @@ class resources extends Component {
 	//保存
 	save = _ => {
 		this.getFormData();
+	}
+	cancel = _ => {
+		// this.setState({ editable: false })
+		let type = this.state.type;
+		if (type == 1) {
+			this.addBtn()
+		} else if (type == 2) {
+			this.getTreeNodeInfo()
+		}
+		this.setState({ editable: false })
 	}
 	//新增保存
 	addSave = async (params) => {
@@ -507,13 +517,13 @@ class resources extends Component {
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
 		return (<div className="mgrWrapper" style={{ display: "flex", height: "100%" }}>
-			<Card style={{ flex: 3 }}>
+			<Card style={{ flex: 5 }}>
 				<TreeParant treeData={this.state.treeData} draggable={true}
 					addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn}
 					onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
 				></TreeParant>
 			</Card>
-			<Card style={{ flex: 8 }}>
+			<Card style={{ flex: 19 }}>
 				<Form
 					labelCol={{ span: 4 }}
 					wrapperCol={{ span: 14 }}
@@ -537,7 +547,8 @@ class resources extends Component {
 					</Row>
 					<Row >
 						<Col span={21} style={{ display: 'block', textAlign: "right" }}>
-							<Button type="primary" disabled={!this.state.editable} onClick={this.save}>保存</Button>
+							<Button type="primary" disabled={!this.state.editable} onClick={this.save}  style={{ marginRight: "18px" }}>保存</Button>
+							<Button type="info" disabled={!this.state.editable} onClick={this.cancel}>取消</Button>
 						</Col>
 					</Row>
 				</Form>

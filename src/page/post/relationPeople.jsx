@@ -257,7 +257,7 @@ class People extends Component {
 							/>
 							<Button
 								onClick={this.searchUserByName}
-								type="info" icon="search">查询</Button>
+								type="primary" icon="search">查询</Button>
 							<Button
 								style={{ float: "right" }}
 								onClick={this.relationPost}
