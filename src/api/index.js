@@ -3,6 +3,7 @@ import whitelist from '/api/whitelist'
 import { message } from 'antd'
 import { hashHistory } from 'react-router'
 import qs from 'qs'
+let countNum = false;
 const handleRequest = (url, method, body = {}, json = false) => {
 	let has = false
 	whitelist.forEach(val => {
@@ -43,10 +44,15 @@ const handleResponse = res => new Promise((rsl, rej) => {
 })
 .then(res => {
 	if (res.status == '2006' || res.status == '2007') {
-		message.error(res.message);
+		if(countNum) {
+			message.error(res.message);
+		}
+		countNum = false;
 		localStorage.clear();
 		window.resetStore();
 		hashHistory.push('/login') //开发模式下不经过改跳转
+	}else{
+		countNum = true;
 	}
 	return res
 })

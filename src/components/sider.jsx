@@ -74,7 +74,7 @@ class DSider extends Component{
 		}
 	}
 	renderMenuTitle = (val,leva) => <span>
-		{val.icon ? <Icon type={val.icon} /> : leva ? <Icon type="pie-chart" /> :null}
+		{val.icon ? <Icon type={val.icon} /> : leva ? <Icon type="bars" /> :null}
 		<span>{val.resourceName}</span>
 	</span>
 	//监听菜单缩放事件并重置collapsed触发收缩
