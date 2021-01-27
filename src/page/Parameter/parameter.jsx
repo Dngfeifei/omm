@@ -524,7 +524,7 @@ class Parameter extends Component {
         return (
             <div style={{ border: '0px solid red', background: ' #fff',height:'100%' }} >
                 <Row  gutter={24} className="main_height">
-                    <Col span={5} className="gutter-row" style={{ backgroundColor: 'white',overflowY: 'auto',paddingTop:'24px',height:'100%',borderRight:'1px solid #d9d9d9'}}>
+                    <Col span={5} className="gutter-row" style={{ backgroundColor: 'white',overflowY: 'auto',paddingTop:'16px',height:'100%',borderRight:'1px solid #d9d9d9'}}>
                         <TreeParant treeData={data} draggable={true}
                             addTree={this.addTree} editTree={this.editTree} deletetTree={this.deletetTree} 
                             onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件

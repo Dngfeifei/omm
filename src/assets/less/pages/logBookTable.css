@@ -1,3 +1,6 @@
-.jxlTable .ant-table-thead > tr th {
+.jxlTable .ant-table-thead > tr th ,.ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-tbody > tr > td:nth-child(1){
     text-align: center;
+}
+.jxlTable .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-tbody > tr > td:nth-child(1) .ant-radio-wrapper{
+    margin-right: 0;
 }

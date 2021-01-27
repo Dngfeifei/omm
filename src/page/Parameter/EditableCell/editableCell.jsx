@@ -390,7 +390,7 @@ class TableRow extends React.Component {
                 <Provider value={this.props.form}>
                     <Table
                         className="jxlTable"
-                         onRow={this.onRow}
+                        onRow={this.onRow}
                         components={components}   //覆盖默认的 table 元素
                         bordered
                         rowKey={"id"}
@@ -400,6 +400,7 @@ class TableRow extends React.Component {
                         scroll={this.props.scroll}
                         rowClassName="editable-row"
                         pagination={false}
+                        size={'small'}
                         style={{ marginTop: '16px', overflowY: 'auto' }}
                     />
                     {this.props.children}
