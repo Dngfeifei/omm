@@ -7,6 +7,7 @@ import TreeNode from '/components/tree/'
 
 import '@/assets/less/pages/oragizePeo.less'
 const FormItem = Form.Item
+const { confirm } = Modal;
 class systempeo extends Component {
     constructor(props){
         super(props)
@@ -29,19 +30,19 @@ class systempeo extends Component {
             {
                 label: '姓名',
                 key: 'realName',
-                render: _ => <Input style={{ width: 200 }} />
+                render: _ => <Input style={{ width: 130 }} />
             },
             {
-                label: '账号',
+                label: '系统账号',
                 key: 'userName',
-                render: _ => <Input style={{ width: 200 }} />
+                render: _ => <Input style={{ width: 130 }} />
             },
             {
                 label: '状态',
                 key: 'status',
-                render: _ => <Select style={{ width: 200 }} placeholder="选择状态">
-                    <Option value='0' key='0'>启用</Option>
-                    <Option value='1' key='1'>禁用</Option>
+                render: _ => <Select style={{ width: 130 }} placeholder="选择状态">
+                    <Option value='1' key='1'>启用</Option>
+                    <Option value='0' key='0'>禁用</Option>
                 </Select>
             }
         ],
@@ -83,7 +84,7 @@ class systempeo extends Component {
                 key: 'realName',
                 render: _ => <Input style={{ width: 200 }} />
             },{
-                label: '账号',
+                label: '系统账号',
                 key: 'userName',
                 render: _ => <Input style={{ width: 200 }} />
             },{
@@ -114,9 +115,10 @@ class systempeo extends Component {
         columns: [
             {
                 title: '姓名',
-                dataIndex: 'realName'
+                dataIndex: 'realName',
+                width:80,
             }, {
-                title: '工号',
+                title: '员工号',
                 dataIndex: 'userNum',
                 ellipsis: {
                     showTitle: false,
@@ -127,15 +129,23 @@ class systempeo extends Component {
                     </Tooltip>
                   ),
             }, {
-                title: '账号',
+                title: '系统账号',
                 dataIndex: 'userName',
+                width:90,
             }, {
                 title: '性别',
                 dataIndex: 'sex',
-                render: t => t == '1' ? '男' : '女'
+                render: t => t == '1' ? '男' : '女',
+                width:70,
             }, {
                 title: '所属组织',
-                dataIndex: 'org',
+                dataIndex: 'orgFullName',
+                width:110,
+                render: orgFullName => (
+                    <Tooltip placement="topLeft" title={orgFullName}>
+                      {orgFullName}
+                    </Tooltip>
+                  ),
             }, {
                 title: '职务',
                 dataIndex: 'duties',
@@ -158,17 +168,17 @@ class systempeo extends Component {
         ],
         peocolumns:[
             {
-                title: '用户名',
+                title: '姓名',
                 dataIndex: 'realName',
                 width:100,
             },{
-                title: '工号',
+                title: '员工号',
                 dataIndex: 'userNum',
                 width:100,
             },{
-                title: '账号',
+                title: '系统账号',
                 dataIndex: 'userName',
-                width:80,
+                width:90,
             },{
                 title: '邮箱',
                 dataIndex: 'email',
@@ -184,11 +194,11 @@ class systempeo extends Component {
             },{
                 title: '固定电话',
                 dataIndex: 'fixedPhone',
-                width:120,
+                width:110,
             },{
                 title: '移动电话',
                 dataIndex: 'mobilePhone',
-                width:120,
+                width:110,
             },
         ],
         tabledata: [],
@@ -290,11 +300,19 @@ class systempeo extends Component {
     // 删除树
     deleteT = _ => {
         if (this.state.selectedTreeId) {
-            deleteJG({ id: this.state.selectedTreeId }).then(res => {
-                this.getTreeAll();
-            }).catch(res => {
-                console.log(res)
-            })
+            let _this = this;
+            confirm({
+                title: '删除后不可恢复,确定删除吗？',
+                onOk() {
+                    let params = _this.state.selectedTreeId;
+                    deleteJG({ id: params }).then(res => {
+                        _this.getTreeAll();
+                    }).catch(res => {
+                        console.log(res)
+                    })
+                },
+            });
+            
         }else{
             message.warning('请先选择机构！')
         }
@@ -383,12 +401,19 @@ class systempeo extends Component {
             id:info.dragNode.props.eventKey,
             orgParentId:info.node.props.eventKey,
         }
-        saveEditJG(data3).then(res =>{
-            console.log(res);
-            this.getTreeAll();
-        }).catch( err =>{
-            console.log(err)
-        })
+        let _this = this;
+            confirm({
+                title: '确定移动机构吗？',
+                onOk() {
+                    saveEditJG(data3).then(res =>{
+                        console.log(res);
+                        _this.getTreeAll();
+                    }).catch( err =>{
+                        console.log(err)
+                    })
+                },
+            });
+        
         // const dropPos = info.node.props.pos.split('-');
         // const dropPosition = info.dropPosition - Number(dropPos[dropPos.length - 1]);
 
@@ -571,6 +596,8 @@ class systempeo extends Component {
                 if(res.status == '200'){
                     let data = Object.assign({}, {orgId:this.state.selectedTreeId},this.state.pageConf)
                     this.checkPeo(data);
+                    this.state.selectedRowKeys = [];
+                    this.state.selectedRowKeys2 = [];
                     message.success('关联成功')
                 }
                 // this.dialogData = res.data;
@@ -625,20 +652,23 @@ class systempeo extends Component {
             selectedRowKeys2,
             onChange: this.onSelectChange2
         };
-        return <div  className="main_height">
-            <Row className="main_height">
-                <Col span={6} className="main_height" >
+        return <div  className="my_height" >
+            <Row className="my_height" style={{paddingTop:'5px'}}>
+                <Col span={9} className="my_height" style={{ borderRight: '2px solid #E8E8E8',}}>
                     <Col style={{ textAlign: 'center' }}>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.add}>新增</Button>
+                        {/* <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.add}>新增</Button>
                         <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.edit}>修改</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deleteT}>删除</Button>
+                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deleteT}>删除</Button> */}
                     </Col>
                     {
                         this.state.treeData.length > 0 && 
-                        <Tree
-                            className="mapTree draggable-tree"
+                        <TreeNode
+                            className=""
                             draggable
                             blockNode
+                            addTree={this.add}
+                            editTree={this.edit}
+                            deletetTree={this.deleteT}
                             // style={{position:'absolute',width:'100%',top:'50px',bottom:'0', overflow: 'auto'}}
                             defaultExpandAll={true}
                             autoExpandParent={true}
@@ -651,18 +681,18 @@ class systempeo extends Component {
                     }
                     
                 </Col>
-                <Col span={18} className="main_height">
-                    <Form style={{ width: '100%' }}>
+                <Col span={15} className="my_height" style={{ paddingLeft: '10px', background: "#fff"}}>
+                    <Form style={{ width: '100%' ,}}>
                         <Row gutter={24}>
                             {this.state.rules.map((val, index) =>
                                 <Col key={index} span={8} style={{ display: 'block' }}>
                                     <FormItem
-                                        label={val.label} labelCol={{ span: 4 }}>
+                                        label={val.label} labelCol={{ span: 8 }}>
                                         {getFieldDecorator(val.key, val.option)(val.render())}
                                     </FormItem>
                                 </Col>)}
                         </Row>
-                        <Row style={{ marginTop: '10px' ,textAlign:"right"}}>
+                        <Row style={{ marginTop: '0px' ,textAlign:"right"}}>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.checkPeoId}>查询</Button>
                             <Button type="info" style={{ marginLeft: '10px' }} onClick={this.clear}>清空</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>
@@ -672,7 +702,7 @@ class systempeo extends Component {
                     <Table
                         bordered
                         rowKey="id"
-                        size="small"
+                        // size="small"
                         onRow={this.onRow}
                         rowSelection={rowSelection}
                         dataSource={this.state.tabledata}
@@ -684,7 +714,7 @@ class systempeo extends Component {
                     <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
                 </Col>
             </Row>
-            <Modal title='添加人员'
+            <Modal title='关联人员'
                 onOk={this.JGsave}
                 visible={this.state.visible}
                 // confirmLoading={this.state.loading}
