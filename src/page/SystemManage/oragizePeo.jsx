@@ -30,17 +30,17 @@ class systempeo extends Component {
             {
                 label: '姓名',
                 key: 'realName',
-                render: _ => <Input style={{ width: 130 }} />
+                render: _ => <Input style={{ width: 150 }} />
             },
             {
                 label: '系统账号',
                 key: 'userName',
-                render: _ => <Input style={{ width: 130 }} />
+                render: _ => <Input style={{ width: 150 }} />
             },
             {
                 label: '状态',
                 key: 'status',
-                render: _ => <Select style={{ width: 130 }} placeholder="选择状态">
+                render: _ => <Select style={{ width: 150 }} placeholder="选择状态">
                     <Option value='1' key='1'>启用</Option>
                     <Option value='0' key='0'>禁用</Option>
                 </Select>
@@ -87,30 +87,31 @@ class systempeo extends Component {
                 label: '系统账号',
                 key: 'userName',
                 render: _ => <Input style={{ width: 200 }} />
-            },{
-                label: '性别',
-                key: 'sex',
-                render: _ => <Select style={{ width: 200 }} placeholder="请选择性别">
-                    <Option value='0' key='0'>男</Option>
-                    <Option value='1' key='1'>女</Option>
-                </Select>
-            },{
-                label: '邮箱',
-                key: 'email',
-                render: _ => <Input style={{ width: 200 }} />
-            },{
-                label: '员工号',
-                key: 'userNum',
-                render: _ => <Input style={{ width: 200 }} />
-            },{
-                label: '固定电话',
-                key: 'fixedPhone',
-                render: _ => <Input style={{ width: 200 }} />
-            },{
-                label: '移动电话',
-                key: 'mobilePhone',
-                render: _ => <Input style={{ width: 200 }} />
-            },
+            }
+            // ,{
+            //     label: '性别',
+            //     key: 'sex',
+            //     render: _ => <Select style={{ width: 200 }} placeholder="请选择性别">
+            //         <Option value='0' key='0'>男</Option>
+            //         <Option value='1' key='1'>女</Option>
+            //     </Select>
+            // },{
+            //     label: '邮箱',
+            //     key: 'email',
+            //     render: _ => <Input style={{ width: 200 }} />
+            // },{
+            //     label: '员工号',
+            //     key: 'userNum',
+            //     render: _ => <Input style={{ width: 200 }} />
+            // },{
+            //     label: '固定电话',
+            //     key: 'fixedPhone',
+            //     render: _ => <Input style={{ width: 200 }} />
+            // },{
+            //     label: '移动电话',
+            //     key: 'mobilePhone',
+            //     render: _ => <Input style={{ width: 200 }} />
+            // },
         ],
         columns: [
             {
@@ -132,6 +133,11 @@ class systempeo extends Component {
                 title: '系统账号',
                 dataIndex: 'userName',
                 width:90,
+                render: userName => (
+                    <Tooltip placement="topLeft" title={userName}>
+                      {userName}
+                    </Tooltip>
+                  ),
             }, {
                 title: '性别',
                 dataIndex: 'sex',
@@ -170,19 +176,16 @@ class systempeo extends Component {
             {
                 title: '姓名',
                 dataIndex: 'realName',
-                width:100,
             },{
                 title: '员工号',
                 dataIndex: 'userNum',
-                width:100,
             },{
                 title: '系统账号',
                 dataIndex: 'userName',
-                width:90,
             },{
                 title: '邮箱',
                 dataIndex: 'email',
-                width:100,
+                width:200,
             },{
                 title: '性别',
                 dataIndex: 'sex',
@@ -190,16 +193,7 @@ class systempeo extends Component {
             },{
                 title: '职务',
                 dataIndex: 'duties',
-                width:100,
-            },{
-                title: '固定电话',
-                dataIndex: 'fixedPhone',
-                width:110,
-            },{
-                title: '移动电话',
-                dataIndex: 'mobilePhone',
-                width:110,
-            },
+            }
         ],
         tabledata: [],
         tableLogdata: [],
@@ -302,7 +296,11 @@ class systempeo extends Component {
         if (this.state.selectedTreeId) {
             let _this = this;
             confirm({
-                title: '删除后不可恢复,确定删除吗？',
+                title: '删除',
+                content: '删除后不可恢复,确定删除吗？',
+                okText: '确定',
+                okType: 'danger',
+                cancelText: '取消',
                 onOk() {
                     let params = _this.state.selectedTreeId;
                     deleteJG({ id: params }).then(res => {
@@ -532,16 +530,27 @@ class systempeo extends Component {
             userIds: this.state.tableID,
         }
         if (this.state.tableID.length > 0) {
-            deleteGL(data).then(res => {
-                console.log(res);
-                if (res.status == '200') {
-                    let data = Object.assign({}, {orgId:this.state.selectedTreeId},this.state.pageConf)
-                    this.checkPeo(data);
-                    message.success('解除成功')
-                }
-            }).catch(err => {
-                console.log(err)
-            })
+            let _this = this;
+            confirm({
+                title: '解除关联',
+                content: '解除后不可恢复,确定解除吗？',
+                okText: '确定',
+                okType: 'danger',
+                cancelText: '取消',
+                onOk() {
+                    deleteGL(data).then(res => {
+                        console.log(res);
+                        if (res.status == '200') {
+                            let data = Object.assign({}, {orgId:_this.state.selectedTreeId},_this.state.pageConf)
+                            _this.checkPeo(data);
+                            message.success('解除成功')
+                        }
+                    }).catch(err => {
+                        console.log(err)
+                    })
+                },
+            });
+            
         } else {
             message.warning('请先勾选解除关联人员!')
         }
@@ -653,15 +662,10 @@ class systempeo extends Component {
             onChange: this.onSelectChange2
         };
         return <div  className="my_height" >
-            <Row className="my_height" style={{paddingTop:'5px'}}>
-                <Col span={9} className="my_height" style={{ borderRight: '2px solid #E8E8E8',}}>
-                    <Col style={{ textAlign: 'center' }}>
-                        {/* <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.add}>新增</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.edit}>修改</Button>
-                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deleteT}>删除</Button> */}
-                    </Col>
+            <Row className="my_height" style={{paddingTop:'0px'}}>
+                <Col span={5} className="my_height oragizTree" style={{ borderRight: '4px solid #E8E8E8',}}>
                     {
-                        this.state.treeData.length > 0 && 
+                        this.state.treeData.length > 0 &&
                         <TreeNode
                             className=""
                             draggable
@@ -681,20 +685,20 @@ class systempeo extends Component {
                     }
                     
                 </Col>
-                <Col span={15} className="my_height" style={{ paddingLeft: '10px', background: "#fff"}}>
+                <Col span={19} className="my_height" style={{ paddingLeft: '10px', paddingTop:'8px',background: "#fff"}}>
                     <Form style={{ width: '100%' ,}}>
                         <Row gutter={24}>
                             {this.state.rules.map((val, index) =>
-                                <Col key={index} span={8} style={{ display: 'block' }}>
+                                <Col key={index} span={6} style={{ display: 'block' }}>
                                     <FormItem
-                                        label={val.label} labelCol={{ span: 8 }}>
+                                        label={val.label} labelCol={{ span: 7 }}>
                                         {getFieldDecorator(val.key, val.option)(val.render())}
                                     </FormItem>
                                 </Col>)}
+                            <Button type="primary" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.checkPeoId}>查询</Button>
+                            <Button type="info" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.clear}>清空</Button>
                         </Row>
                         <Row style={{ marginTop: '0px' ,textAlign:"right"}}>
-                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.checkPeoId}>查询</Button>
-                            <Button type="info" style={{ marginLeft: '10px' }} onClick={this.clear}>清空</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.deletePeo}>解除关联人员</Button>
                         </Row>
@@ -725,18 +729,17 @@ class systempeo extends Component {
                 okText="提交"
                 cancelText="取消">
                 <Form>
-                    <Row gutter={24}>
+                    <Row gutter={2}>
                         {this.state.pepplerules.map((val, index) =>
-                            <Col key={index} span={10} style={{ display: 'block' }}>
+                            <Col key={index} span={8} style={{ display: 'block' }}>
                                 <FormItem
                                     label={val.label} labelCol={{ span: 7 }}>
                                     {getFieldDecorator(val.key, val.option)(val.render())}
                                 </FormItem>
                             </Col>)}
-                        
-                            <Button type="primary" style={{ marginLeft: '10px',marginTop: '20px' }} onClick={this.clear}>清空</Button>
-                            <Button type="primary" style={{ marginLeft: '10px',marginTop: '50px' }} onClick={this.checkDialogData}>查询</Button>
-                        
+                            <Button type="primary" style={{ marginLeft: '10px',marginTop: '5px' }} onClick={this.checkDialogData}>查询</Button>
+                            <Button type="info" style={{ marginLeft: '10px',marginTop: '5px' }} onClick={this.clear}>清空</Button>
+                          
                     </Row>
                 </Form>
                 <Table
@@ -748,7 +751,7 @@ class systempeo extends Component {
                         pagination={false}
                         // size={}
                         scroll={{ x: 800, y: 300 }}
-                        style={{ marginTop: '16px' }}
+                        style={{ marginTop: '0px' }}
                     />
                 <Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} />
             </Modal>

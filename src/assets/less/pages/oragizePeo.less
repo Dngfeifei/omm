@@ -1,24 +1,23 @@
-.tree{
-    position: absolute;
-    width: 100%;
-    top: 35px;
-    bottom: -3px;
-    overflow: scroll;
-}
-// .mapTree:hover{
-//     overflow-y: auto;
-// }
 .my_height{
     height: 100%;
     // background: rgb(32, 100, 202);
     
 }
-.TreeContent{
+.oragizTree .TreeContent{
     height: 100%;
-}
-.ant-spin-nested-loading{
-    height: 100%;
-}
-.ant-spin-container{
-    height: 100%;
+    padding: 10px;
+     .ant-spin-nested-loading{
+         height: 100%;
+        .ant-spin-container{
+            position: relative;
+            height: 100%;
+            .ant-tree{
+                width: 100%;
+                 position: absolute;
+                 top: 35px;
+                 bottom: 0px;
+                 overflow-y: auto;
+            }
+        }
+     }
 }
