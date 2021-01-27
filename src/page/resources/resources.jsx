@@ -171,7 +171,7 @@ class resources extends Component {
 						}
 					]
 				},
-				render: _ => <TextArea style={{ width: "800px" }} autoSize={{ minRows: 4, maxRows: 6 }} disabled={!this.state.editable} />
+				render: _ => <TextArea autoSize={{ minRows: 4, maxRows: 6 }} disabled={!this.state.editable} />
 			}
 		],
 	})
@@ -534,34 +534,36 @@ class resources extends Component {
 				</Col>
 				<Col span={19} className="gutter-row main_height" style={{ padding: '30px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
 
-					<Form
-						labelCol={{ span: 4 }}
-						wrapperCol={{ span: 14 }}
-						layout="horizontal"
-					>
-						<Row gutter={24}>
+
+					<Row gutter={24}>
+						<Form
+							labelCol={{ span: 4 }}
+							
+							layout="horizontal"
+						>
 							{this.state.rules.map((val, index) =>
 								val.key == "description" ?
 									<Col key={index} span={24} style={{ display: 'block' }}>
 										<FormItem
-											label={val.label} labelCol={{ span: 2 }}>
+											label={val.label} labelCol={{ span: 2 }} wrapperCol={{ span: 14 }}>
 											{getFieldDecorator(val.key, val.option)(val.render())}
 										</FormItem>
 									</Col> : <Col key={index} span={12} style={{ display: 'block' }}>
 										<FormItem
-											label={val.label} labelCol={{ span: 4 }}>
+											label={val.label} labelCol={{ span: 4 }} wrapperCol={{ span: 19 }}>
 											{getFieldDecorator(val.key, val.option)(val.render())}
 										</FormItem>
 									</Col>
 							)}
-						</Row>
-						<Row >
-							<Col span={21} style={{ display: 'block', textAlign: "right" }}>
-								<Button type="info" disabled={!this.state.editable} onClick={this.cancel} style={{ marginRight: "18px" }}>取消</Button>
-								<Button type="primary" disabled={!this.state.editable} onClick={this.save}>保存</Button>
-							</Col>
-						</Row>
-					</Form>
+						</Form>
+
+					</Row>
+					<Row >
+						<Col span={21} style={{ display: 'block', textAlign: "right" }}>
+							<Button type="info" disabled={!this.state.editable} onClick={this.cancel} style={{ marginRight: "18px" }}>取消</Button>
+							<Button type="primary" disabled={!this.state.editable} onClick={this.save}>保存</Button>
+						</Col>
+					</Row>
 				</Col>
 			</Row>
 		</div >)
