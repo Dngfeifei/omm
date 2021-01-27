@@ -159,7 +159,7 @@ class People extends Component {
 			return
 		}
 		let positionId = this.props.windowData.ID;
-		RelationPeople({ userId: userId, positionId: positionId }).then(res => {
+		RelationPeople({ userId: userId, positionId: positionId,flag:"position"}).then(res => {
 			if (res.success == 1) {
 				this.getUsers({ positionId: this.state.positionId })
 			}

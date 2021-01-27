@@ -3,8 +3,28 @@ import { Table, message, LocaleProvider } from 'antd'
 import zhCN from 'antd/lib/locale-provider/zh_CN';
 import { momentFormat } from '/api/tools'
 
-class Common extends Component{
+class Common extends Component {
+	componentDidMount() {
+		this.SortTable();
+		//窗口变动的时候调用
+		window.onresize = () => {
+			this.SortTable();
+		}
+	}
+	SortTable = () => {
+		setTimeout(() => {
+			let h = this.tableDom.clientHeight - 100;
+			console.log(h)
+			this.setState({
+				h: {
+					y: (h)
+				}
+			});
+		}, 0)
+	}
 	state = {
+		// 表格默认滚动高度
+		h: { y: 240 },
 		total: 0,
 		columns: [],
 		selectedtable: true, //是否可以选择
@@ -14,11 +34,11 @@ class Common extends Component{
 		tabledata: [],
 		visible: false,
 		search: {},
-		pageconf: {limit: 10, offset: 0}, //分页信息
-		sorter: {sortField: null, sortOrder: null},//排序信息
+		pageconf: { limit: 10, offset: 0 }, //分页信息
+		sorter: { sortField: null, sortOrder: null },//排序信息
 		pagination: {
 			total: 0,
-	  	showTotal: total => `共${total}条`,
+			showTotal: total => `共${total}条`,
 			size: 'small',
 			total: 1,
 			current: 1,
@@ -28,28 +48,34 @@ class Common extends Component{
 	}
 
 	onselect = (selectedKeys, selectedItems) => {
-		this.setState({selected: {
-			selectedKeys,
-			selectedItems
-		}})
+		this.setState({
+			selected: {
+				selectedKeys,
+				selectedItems
+			}
+		})
 	}
 	orderdetail = async item => {
-		await this.setState({selected: {
-			selectedKeys: [item.id],
-			selectedItems: [item]
-		}})
+		await this.setState({
+			selected: {
+				selectedKeys: [item.id],
+				selectedItems: [item]
+			}
+		})
 		this.addpane(1)
 	}
 	setselect = async (item, func) => {
-		await this.setState({selected: {
-			selectedKeys: [item.id],
-			selectedItems: [item]
-		}})
-		if(func) func()
+		await this.setState({
+			selected: {
+				selectedKeys: [item.id],
+				selectedItems: [item]
+			}
+		})
+		if (func) func()
 	}
 	changeSearch = val => {
 		let search = Object.assign({}, this.state.search, val, this.state.pageconf)
-		this.setState({search})
+		this.setState({ search })
 	}
 	handleTime = (search, key) => {
 		if (!search[key]) {
@@ -59,19 +85,19 @@ class Common extends Component{
 		}
 	}
 	research = async _ => {
-		await this.setState({search: Object.assign({}, this.state.pageconf), selected: {}})
+		await this.setState({ search: Object.assign({}, this.state.pageconf), selected: {} })
 		this.search()
 	}
 	changemodel = _ => {
 		if (this.state.selected.selectedKeys && this.state.selected.selectedKeys.length) {
-			this.setState({visible: !this.state.visible})
+			this.setState({ visible: !this.state.visible })
 		} else {
 			message.warning('请选中表格中的某一记录！')
 		}
 	}
 	cancelform = key => {
 		let config = {}
-		config[key] = Object.assign({}, this.state[key], {visible: false, item: {}})
+		config[key] = Object.assign({}, this.state[key], { visible: false, item: {} })
 		this.setState(config)
 	}
 	addmodal = async (key, title) => {
@@ -99,18 +125,18 @@ class Common extends Component{
 	}
 	handleOk = async (func, key, mess, backFunc = 'search') => {
 		if (this.state.selected.selectedKeys && this.state.selected.selectedKeys.length) {
-			await this.setState({confirmLoading: true})
+			await this.setState({ confirmLoading: true })
 			let param = {}
 			param[key] = this.state.selected.selectedKeys[0]
 			func(param)
-			.then(async res => {
-				await this.setState({visible: false, confirmLoading: false})
-				if (res.code == 200) {
-					message.success(`${mess}成功`)
-					this[backFunc]()
-					return	
-				}
-			})
+				.then(async res => {
+					await this.setState({ visible: false, confirmLoading: false })
+					if (res.code == 200) {
+						message.success(`${mess}成功`)
+						this[backFunc]()
+						return
+					}
+				})
 		} else {
 			message.warning('请选中表格中的某一记录！')
 		}
@@ -131,20 +157,24 @@ class Common extends Component{
 
 	//表格参数变化
 	handleTableChange = async (pagination, filters, sorter) => {
-    await this.setState({search: Object.assign({}, this.state.search, 
-    	{offset: (pagination.current - 1) * pagination.pageSize, 
-    		limit: pagination.pageSize, 
-    sortField: sorter.field,
-     sortOrder: sorter.order})})
-    this.search()
-  }
+		await this.setState({
+			search: Object.assign({}, this.state.search,
+				{
+					offset: (pagination.current - 1) * pagination.pageSize,
+					limit: pagination.pageSize,
+					sortField: sorter.field,
+					sortOrder: sorter.order
+				})
+		})
+		this.search()
+	}
 
 	renderSearch = _ => null
 	renderBtn = _ => null
 	renderBottomBtn = _ => null
 	rendermodal = _ => null
-	renderTable = (rowSelection, pagination = this.state.pagination) =>  <Table
-	    rowKey={"id"}
+	renderTable = (rowSelection, pagination = this.state.pagination) => <Table
+		rowKey={"id"}
 		size={'small'}
 		bordered
 		defaultExpandAllRows={true}
@@ -152,11 +182,13 @@ class Common extends Component{
 		rowSelection={rowSelection}
 		columns={this.state.columns}
 		pagination={pagination}
-		locale={{emptyText: '暂无数据'}}
+		locale={{ emptyText: '暂无数据' }}
 		dataSource={this.state.tabledata}
 		scroll={this.state.scroll || {}}
-		onChange={this.handleTableChange}/>
+		scroll={this.state.h}
+		onChange={this.handleTableChange} />
 	render = _ => {
+		const { h } = this.state;
 		const rowSelection = {
 			type: this.state.selecttype || 'radio',
 			selectedRowKeys: this.state.selected.selectedKeys,
@@ -167,17 +199,19 @@ class Common extends Component{
 			pageSizeOptions: ['10', '30', '50', '100', '300', '500'],
 			onShowSizeChange: async (current, size) => {
 				await this.setState({
-					pagination: Object.assign({}, this.state.pagination, {pageSize: size, current: 1}),
-					pageconf: Object.assign({}, this.state.pageconf, {limit: size, offset: 0}),
+					pagination: Object.assign({}, this.state.pagination, { pageSize: size, current: 1 }),
+					pageconf: Object.assign({}, this.state.pageconf, { limit: size, offset: 0 }),
 				})
 			}
 		}) : this.state.pagination
-		return <div className="mgrWrapper" style={{padding:"20px"}}>
+		return <div className="mgrWrapper" style={{ display: 'flex', flexDirection: "column", padding: "20px",height:"100%" }}>
 			{this.renderSearch()}
 			{this.renderBtn()}
-			{this.renderTable(this.state.selectedtable ? rowSelection : null, pagination)}
+			<div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
+				{this.renderTable(this.state.selectedtable ? rowSelection : null, pagination)}
+			</div>
 			{this.renderBottomBtn()}
-	        {this.rendermodal()}
+			{this.rendermodal()}
 		</div>
 	}
 }

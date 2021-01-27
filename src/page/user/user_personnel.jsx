@@ -13,6 +13,7 @@ class User extends Common {
 		this.search()
 		// this.exportTemplate()
 	}
+
 	state = Object.assign({}, this.state, {
 		search: Object.assign({
 			realName: '',
@@ -194,8 +195,8 @@ class User extends Common {
 			message.warning("请选中后再进行操作！")
 			return
 		}
-		let key=this.state.selected.selectedKeys[0];
-		var result=this.state.tabledata.filter(el=>{return el.id==key})
+		let key = this.state.selected.selectedKeys[0];
+		var result = this.state.tabledata.filter(el => { return el.id == key })
 		let item = result[0]
 		let conf = {}
 		conf["modalconf"] = {
@@ -325,15 +326,17 @@ class User extends Common {
 			<Button
 				onClick={this.exportData} style={{ marginRight: "10px" }}
 				type="info" loading={this.state.loading2}>数据导出</Button>
+			<Button style={{ marginRight: "10px" }} onClick={this.handleReset} type="info">重置密码</Button>
+
 		</Col>
 		<Col span={12} style={{ textAlign: "right" }}>
+			
+			<Button style={{ marginRight: "10px" }} onClick={this.disableItem} type="info">禁用</Button>
+			<Button style={{ marginRight: "10px" }} onClick={this.editForm} type="info">修改</Button>
 			<Button style={{ marginRight: "10px" }}
 				onClick={_ => this.addmodal('modalconf', '新增人员信息')}
 				type="primary">新增</Button>
-			<Button style={{ marginRight: "10px" }} onClick={this.editForm} type="primary">修改</Button>
-			<Button style={{ marginRight: "10px" }} onClick={this.disableItem} type="primary">禁用</Button>
 			<Button style={{ marginRight: "10px" }} onClick={this.editPost} type="primary">关联岗位</Button>
-			<Button style={{ marginRight: "10px" }} onClick={this.handleReset} type="primary">重置密码</Button>
 		</Col>
 	</Row>
 

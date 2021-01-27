@@ -380,6 +380,7 @@ class role extends Component {
             AddRoleGroup(params).then(res => {
                 if (res.success != 1) {
                     message.error(res.message)
+                    this.setState({ lock: false })
                     return
                 } else {
                     // 4 请求完成后关闭弹窗并将输入框赋值为空
@@ -387,14 +388,14 @@ class role extends Component {
                         roleGroupWindow: {
                             roleGroupModal: false
                         },
-                        newRoleGroup: {
+                        newRoleGroup: Object.assign({},this.state.newRoleGroup,{
                             newRoleGroupVal: ''
-                        }
+                        }),
+                        lock: false 
                     })
                     //5 左侧角色组tree刷新 
                     this.searchTree()
                 }
-                this.setState({ lock: false })
             })
 
         } else if (this.state.roleGroupWindow.roleGroupModalType == 1) {
@@ -406,6 +407,7 @@ class role extends Component {
             EditRoleGroup(params).then(res => {
                 if (res.success != 1) {
                     message.error(res.message)
+                    this.setState({ lock: false })
                     return
                 } else {
                     // 4 请求完成后关闭弹窗并将输入框赋值为空
@@ -413,20 +415,10 @@ class role extends Component {
                         roleGroupWindow: {
                             roleGroupModal: false
                         },
-                        // newRoleGroup: {
-                        //     newRoleGroupVal: ''
-                        // }
+                        lock: false 
                     })
-                    // newRoleGroup: {
-                    //     //tree当前选中项ID
-                    //     treeSelect: null,
-                    //     //新增或修改后的角色组数据
-                    //     newRoleGroupVal: null,
-                    // },
-                    //5 左侧角色组tree刷新 
                     this.searchTree()
                 }
-                this.setState({ lock: false })
             })
         }
         // 。。在3步骤内填写下面逻辑。。。。。。。。。
@@ -785,12 +777,6 @@ class role extends Component {
             currentRole: obj
         })
     };
-    //空白位置点击取消tree选中
-    // cancelSelected=_=>{
-    //     this.setState({
-    //         searchListID:[]
-    //     })
-    // }
     getDictData = () => {
         GetDictInfo({ dictCode: "status" }).then(res => {
             if (res.success != 1) {
@@ -806,9 +792,9 @@ class role extends Component {
     }
     render = _ => {
         const { h } = this.state;
-        return <div className="pageAuto" style={{ display: 'flex', height: "100%" }} onClick={this.cancelSelected}>
+        return <div className="pageAuto" style={{ display: 'flex', height: "100%" }} >
             {/* 左侧角色组 tree */}
-            <Card style={{ flex: "3" }}>
+            <Card style={{ flex: "3",height:"100%",overflow:"scrollY" }}>
                 <TreeParant treeData={this.state.tree.treeData}
                     addTree={this.addRoleGroup} editTree={this.editRoleGroup} deletetTree={this.delRoleGroup}
                     onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
@@ -832,14 +818,15 @@ class role extends Component {
                             <Button type="primary" onClick={this.searchRoleNameFun}>查询</Button>
                         </Col>
                         <Col  span={12} style={{ textAlign: 'right' }}>
-                            <Button type="primary" style={{ marginRight: '10px' }} onClick={this.addRoleItem}>新增</Button>
+                            <Button type="info"  style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
                             <Button type="info" style={{ marginRight: '10px' }} onClick={this.editRoleItem}>修改</Button>
-                            <Button type="info" onClick={this.delRoleItem}>删除</Button>
+                            <Button type="primary" onClick={this.addRoleItem}>新增</Button>
+
                         </Col>
                     </Row>
                 </Form>
                 <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
-                    <Table bordered rowSelection={{ onChange: this.onTableSelect, type: "radio" }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h} size="small" />
+                    <Table bordered rowSelection={{ onChange: this.onTableSelect, type: "radio" }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h} size="small"/>
                     <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                 </div>
             </Card>

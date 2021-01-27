@@ -142,7 +142,7 @@ class People extends Component {
 		}
 		let userId = this.state.userId;
 		console.log(positionId)
-		RelationPeople({ userId: userId, positionId: positionId }).then(res => {
+		RelationPeople({ userId: userId, positionId: positionId,flag:"user"}).then(res => {
 			if (res.success == 1) {
 				message.success('操作成功')
 				this.GetRelation()
