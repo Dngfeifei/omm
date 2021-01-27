@@ -1,7 +1,10 @@
 import React from 'react'
 import { Input, Button, Modal, message, Select, Upload, Row, Col } from 'antd'
-import { getUserList, DisableUser, ResetPass, ExportFileModel, ExportFile } from '/api/user'
 import Common from '/page/common.jsx'
+
+import { getUserList, DisableUser, ResetPass, ExportFileModel, ExportFile } from '/api/user'
+import { GetDictInfo } from '/api/dictionary'
+
 const ButtonGroup = Button.Group
 const { confirm } = Modal;
 const { Option } = Select;
@@ -11,6 +14,7 @@ let token = localStorage.getItem('token')
 class User extends Common {
 	async componentWillMount() {
 		this.search()
+		this.getDictData()
 		// this.exportTemplate()
 	}
 
@@ -23,6 +27,10 @@ class User extends Common {
 			duties: '',
 			sex: "",
 		}, this.state.pageconf),
+		comboBox:{
+		   status:[],
+		   sex:[]
+		},
 		columns: [
 			{
 				title: '姓名',
@@ -112,6 +120,30 @@ class User extends Common {
 			},
 		}
 	})
+		// 获取资源类型下拉框数据
+		getDictData = () => {
+			GetDictInfo({ dictCode: "sex" }).then(res => {
+				if (res.success != 1) {
+					message.error("性别下拉框资源未获取，服务器错误！")
+				} else {
+					let comboBox = Object.assign({}, this.state.comboBox, {
+						sex: res.data
+					})
+					console.log(res.data,1254)
+					this.setState({ comboBox: comboBox })
+				}
+			})
+			GetDictInfo({ dictCode: "status" }).then(res => {
+				if (res.success != 1) {
+					message.error("状态下拉框资源未获取，服务器错误！")
+				} else {
+					let comboBox = Object.assign({}, this.state.comboBox, {
+						status: res.data
+					})
+					this.setState({ comboBox: comboBox })
+				}
+			})
+		}
 	//禁用
 	disableItem = async () => {
 		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
@@ -288,9 +320,11 @@ class User extends Common {
 				addonBefore="员工号" placeholder="请输入" />
 			<label>状态：
 				<Select style={{ width: 120, marginRight: "18px" }} allowClear={true} placeholder="请选择" value={this.state.search.status} onChange={e => this.changeSearch({ status: e })}>
-					<Option key={""} value={""}>请选择</Option>
+					{/* <Option key={""} value={""}>请选择</Option>
 					<Option key={1} value={1}>启用</Option>
-					<Option key={0} value={0}>禁用</Option>
+					<Option key={0} value={0}>禁用</Option> */}
+					<Option key={""} value={""}>请选择</Option>
+					{this.state.comboBox.status.map(t => <Option key={t.itemCode.toString()} value={t.itemCode.toString()}>{t.itemValue}</Option>)}
 				</Select>
 			</label>
 			<Input
@@ -301,9 +335,11 @@ class User extends Common {
 				addonBefore="职务" placeholder="请输入" />
 			<label>性别:
 				<Select style={{ width: 120, marginRight: "20px" }} allowClear={true} placeholder="请选择" defaultValue={""} value={this.state.search.sex} onChange={e => this.changeSearch({ sex: e })}>
-					<Option key={""} value={""}>请选择</Option>
+					{/* 
 					<Option key={1} value={1}>男</Option>
-					<Option key={0} value={0}>女</Option>
+					<Option key={0} value={0}>女</Option> */}
+					<Option key={""} value={""}>请选择</Option>
+					{	this.state.comboBox.sex.map(t => <Option key={t.itemCode.toString()} value={t.itemCode.toString()}>{t.itemValue}</Option>)}
 				</Select>
 			</label>
 			<Button

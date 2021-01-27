@@ -168,20 +168,7 @@ class Common extends Component {
 		})
 		this.search()
 	}
-	//点击行选中选框
-	onRow = (record)=>{
-		return {
-			onClick: ()=>{
-				let selectedKeys = [record.id],selectedItems = [record];
-				this.setState({
-					selected: {
-						selectedKeys,
-						selectedItems
-					}
-				})
-			}
-		}
-	}
+
 	renderSearch = _ => null
 	renderBtn = _ => null
 	renderBottomBtn = _ => null
@@ -195,7 +182,6 @@ class Common extends Component {
 		rowSelection={rowSelection}
 		columns={this.state.columns}
 		pagination={pagination}
-		onRow={this.onRow}
 		locale={{ emptyText: '暂无数据' }}
 		dataSource={this.state.tabledata}
 		scroll={this.state.scroll || {}}
@@ -206,7 +192,6 @@ class Common extends Component {
 		const rowSelection = {
 			type: this.state.selecttype || 'radio',
 			selectedRowKeys: this.state.selected.selectedKeys,
-			columnWidth:'30px',
 			onChange: this.onselect
 		}
 		const pagination = this.state.pagination && this.state.pagesizechange ? Object.assign({}, this.state.pagination, {

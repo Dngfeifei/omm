@@ -442,7 +442,13 @@ class content extends Component {
     };
     // 新增字典项
     addItem = () => {
-      
+        let selected = this.state.currentID;
+        //1 判断字典tree是否有选中 如无选中提示无选中数据无法修改
+        if (selected == "" || selected == null) {
+            message.destroy()
+            message.warning('请先选中您要添加的数据字典类型，然后再进行新增数据字典操作!');
+            return
+        }
         if (this.state.editingKey) {
             this.cancel()
         }
@@ -620,7 +626,7 @@ class content extends Component {
                     </Row>
                 </Form>
                 <Provider value={this.props.form}>
-                    <Table bordered rowSelection={{ onChange: this.onTableSelect, type: "radio" }} dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} />
+                    <Table bordered rowSelection={{ onChange: this.onTableSelect, type: "radio" }} dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} size="small"/>
                 </Provider>
                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
             </Card>

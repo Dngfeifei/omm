@@ -329,7 +329,7 @@ class CertItem extends Component {
 			style={{ top: 50, marginBottom: 100 }}
 			footer={null}
 		>
-			<Form>
+			<Form className="form-error">
 				<Row gutter={24}>
 					{this.state.rules.map((val, index) => val.key != 'description' ? <Col key={index} span={12} style={{ display: 'block' }}>
 						<FormItem

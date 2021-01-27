@@ -271,19 +271,25 @@ textarea{
   background: rgba(0, 0, 0, 0.1);
 }
 // 表单报错样式
-.has-error .ant-form-explain, .has-error .ant-form-split {
+.form-error .has-error .ant-form-explain,
+.form-error .has-error .ant-form-split {
   color: #f5222d;
   position: absolute;
   left: 120px;
   display: block;
 }
-.ant-form-explain{
+
+.form-error .ant-form-explain {
   display: none;
 }
-.ant-form-item-with-help{
+
+.form-error .ant-form-item-with-help {
   margin-bottom: 24px;
 }
+
 // 表格自适应
-.pageAuto .ant-card .ant-card-body{
-  height:100%;display: flex; flex-direction: column;
+.pageAuto .ant-card .ant-card-body {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
