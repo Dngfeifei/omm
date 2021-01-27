@@ -179,7 +179,7 @@ class TableRow extends React.Component {
                 dataIndex: 'key',
                 editable: false,
                 align:'center',
-                width:'10%',
+                width:'5%',
                 // 第一种：每一页都从1开始
                 render:(text,record,index)=> `${index+1}`
 

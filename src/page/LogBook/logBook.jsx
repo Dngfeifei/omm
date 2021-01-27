@@ -33,9 +33,7 @@ class logBook extends Component {
 
         this.SortTable();
         //窗口变动的时候调用
-        window.onresize = () => {
-            this.SortTable();
-        }
+        window.addEventListener("resize", ()=>{this.SortTable()}, false)
     }
 
 
@@ -92,6 +90,7 @@ class logBook extends Component {
                 title: '序号',
                 dataIndex: 'index',
                 align:'center',
+                width:'5%',
                 // 第一种：每一页都从1开始
                 render:(text,record,index)=> `${index+1}`
 
@@ -141,7 +140,7 @@ class logBook extends Component {
     SortTable = () => {
         setTimeout(() => {
             console.log(this.tableDom.offsetHeight);
-            let h = this.tableDom.clientHeight - 100;
+            let h = this.tableDom.clientHeight - 125;
             this.setState({
                 h: {
                     y: (h)
@@ -299,19 +298,16 @@ class logBook extends Component {
        
         return (
             <div style={{ border: '0px solid red',background:' #fff'}} className="main_height" style={{display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
-                <Form layout="inline" style={{ width: '100%', paddingTop: '10px',marginLeft:'15px'}}>
-                    <Row>
-                        {this.state.rules.map((val, index) =>
-                            <FormItem
-                              label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                              {getFieldDecorator(val.key, val.option)(val.render())}
-                          </FormItem>)}
-                          <FormItem>
-                            <Button type="primary" style={{marginLeft:'25px'}} onClick={this.onSearch}>查询</Button>
-                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
-                          </FormItem>
-                        
-                    </Row>
+                <Form layout='inline' style={{ width: '100%', paddingTop: '24px',marginLeft:'15px'}} id="logbookForm">
+                    {this.state.rules.map((val, index) =>
+                        <FormItem
+                            label={val.label} style={{ marginBottom: '8px' }} key={index}>
+                            {getFieldDecorator(val.key, val.option)(val.render())}
+                        </FormItem>)}
+                    <FormItem>
+                        <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
+                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
+                    </FormItem>
                 </Form>
                 <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
                     <Table
@@ -321,11 +317,14 @@ class logBook extends Component {
                         columns={this.state.columns}
                         pagination={false}
                         scroll={h}
+                        size={'small'}
                         style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}}
                         loading={this.state.loading}  //设置loading属性
                     />
+                    {/* 分页器组件 */}
+                    <Pagination total={this.state.total} pageSize={this.state.pagination.limit} current={(this.state.pagination.offset)}  onChange={this.onPageChange} onShowSizeChange={this.onShowSizeChange}></Pagination>
                 </div>
-                <Pagination total={this.state.total} pageSize={this.state.pagination.limit} current={(this.state.pagination.offset)}  onChange={this.onPageChange} onShowSizeChange={this.onShowSizeChange}></Pagination>
+                
 
                 {/* 详情页--对话框 底部内容，当不需要默认底部按钮时，可以设为 footer={null} */}
                 <Modal title="日志详情" visible={this.state.visible} onCancel={this.handleCancel} footer={null}>

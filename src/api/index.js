@@ -42,14 +42,12 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		rsl(res.json())
 })
 .then(res => {
-	if (res.code == 700) {
+	if (res.status == '2006' || res.status == '2007') {
+		message.error(res.message);
 		localStorage.clear();
 		window.resetStore();
 		hashHistory.push('/login') //开发模式下不经过改跳转
-	} else if (res.code != 200) {
-		// message.error(res.message);
 	}
-	//
 	return res
 })
 .catch(err => {

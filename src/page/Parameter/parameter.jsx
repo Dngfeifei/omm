@@ -236,7 +236,7 @@ class Parameter extends Component {
                 middleStatus:'addTree'
             })
         } else {
-            message.warning('请先选择机构！')
+            message.warning('请先选择系统参数类别！')
         }
     }
 

@@ -4,3 +4,6 @@
 .jxlTable .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-tbody > tr > td:nth-child(1) .ant-radio-wrapper{
     margin-right: 0;
 }
+#logbookForm .ant-form-item {
+    margin-right: 16px !important;
+  }
