@@ -524,7 +524,7 @@ class resources extends Component {
 	}
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
-		return (<div className="mgrWrapper" style={{ display: "flex", height: "100%" }}>
+		return (<div className="mgrWrapper pageAuto" style={{ display: "flex", height: "100%" }}>
 			<Card style={{ flex: 5 }}>
 				<TreeParant treeData={this.state.treeData} draggable={true}
 					addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn}
