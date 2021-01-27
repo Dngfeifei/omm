@@ -26,6 +26,7 @@ class systempeo extends Component {
 
     state = {
         // search: Object.assign({name: '', num: ''}, this.state.pageconf),
+        selectedKeys:[],
         RoleName:'',
         RoleNum:'',
         DRoleName:'',
@@ -419,7 +420,7 @@ class systempeo extends Component {
     onSelect = (selectedKeys, info) => {
         this.state.selectedRowKeys = [],
         console.log('selected', selectedKeys, info);
-            this.setState({ selectedTreeId: selectedKeys[0] })
+            this.setState({ selectedTreeId: selectedKeys[0] ,selectedKeys:selectedKeys})
         // console.log(selectedKeys[0])
         let pdata = Object.assign({}, {orgId:selectedKeys[0]},this.state.pageConf)
             this.checkPeo(pdata);
@@ -755,6 +756,7 @@ class systempeo extends Component {
                             editTree={this.edit}
                             deletetTree={this.deleteT}
                             showLine={true}
+                            selectedKeys={this.state.selectedKeys}
                             // style={{position:'absolute',width:'100%',top:'50px',bottom:'0', overflow: 'auto'}}
                             defaultExpandAll={true}
                             autoExpandParent={true}
