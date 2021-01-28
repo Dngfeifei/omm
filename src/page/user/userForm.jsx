@@ -297,6 +297,8 @@ class CertItem extends Component {
 								if (res.success == 1) {
 									this.props.done()
 									message.success('操作成功')
+								}else{
+									message.error(res.message)
 								}
 								this.setState({ lock: false })
 							})
@@ -307,6 +309,8 @@ class CertItem extends Component {
 								if (res.success == 1) {
 									message.success('操作成功')
 									this.props.done()
+								}else{
+									message.error(res.message)
 								}
 								this.setState({ lock: false })
 							})

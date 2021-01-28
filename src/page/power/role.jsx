@@ -473,7 +473,7 @@ class role extends Component {
                 })
                 let pageConf = Object.assign({}, this.state.pagination, {
                     limit: res.data.size,
-                    offset: (res.data.current - 1) * 10,
+                    offset: (res.data.current - 1) * res.data.size,
                 })
                 this.setState({ table: data, pagination: pagination, pageConf: pageConf })
             } else {
@@ -715,7 +715,7 @@ class role extends Component {
     }
     // 分页页码变化
     pageIndexChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
+        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
         this.setState({
             pageConf: pageConf,
             tableSelecteds: [],
@@ -788,7 +788,7 @@ class role extends Component {
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
             <Row gutter={24} className="main_height">
                 <Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
-                    <TreeParant treeData={this.state.tree.treeData}
+                    <TreeParant treeData={this.state.tree.treeData}  selectedKeys={[this.state.searchListID]}
                         addTree={this.addRoleGroup} editTree={this.editRoleGroup} deletetTree={this.delRoleGroup}
                         onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
                     ></TreeParant>
