@@ -9,18 +9,13 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	whitelist.forEach(val => {
 		if (val == url) has = true
 	})
-	let token =  localStorage.getItem('token') || '';
-	// if(process.env.NODE_ENV == 'production'){
-	// 	if (process.env.API_URL.indexOf('dat') > -1) {
-	// 		let name=`${process.env.ENV_NAME}_token`
-	// 		token = localStorage.getItem(window[name])
-	// 	}else if(process.env.API_URL.indexOf('uattoken'){
-	// 		token = localStorage.getItem(token)
-	// 	}
-	// }else{
-	// 	token = localStorage.getItem(token)
-	// }
 	
+	let token, tokenName='token', wholeUrl = url;
+	if(process.env.NODE_ENV == 'production'){
+		tokenName = `${process.env.ENV_NAME}_${tokenName}`
+		wholeUrl = url.split('/')[1] == 'static' ? `${url}` : `${process.env.API_URL}${url}`
+	}
+	token = localStorage.getItem(tokenName) || '';
 	
 	let header = Object.assign({}, {
 		'Content-Type': json ? 'application/json' : 'application/x-www-form-urlencoded'
@@ -34,19 +29,11 @@ const handleRequest = (url, method, body = {}, json = false) => {
 		headers: new Headers(header)
 	}
 	if (method == 'POST' || method == 'PUT') {
-		console.log(body,2)
 		req = Object.assign({
 			body: json ? JSON.stringify(body) : body,
 			bodyUsed: true
 		}, req)
 	}
-	// let wholeUrl = `${process.env.API_URL}${url}`
-	let wholeUrl = url
-	if (process.env.NODE_ENV == 'production') {
-		wholeUrl = url.split('/')[1] == 'static' ? `${url}` : `${process.env.API_URL}${url}`
-		//wholeUrl = `${process.env.API_URL}${url}`
-	}
-
 	return new Request(wholeUrl, req)
 }
 
