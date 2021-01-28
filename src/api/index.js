@@ -55,7 +55,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		countNum = true;
 		return res
 	}
-	return null;
+	return undefined;
 })
 .catch(err => {
 	message.error('请求超时');
