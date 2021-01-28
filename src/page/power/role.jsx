@@ -194,10 +194,10 @@ class role extends Component {
                     if (this.state.newEntry && res.data) {
                         this.setState({
                             searchListID: res.data[0].id,
-                            // newRoleGroup: {
-                            //     treeSelect: res.data[0].id,
-                            //     newRoleGroupVal: res.data[0].roleCategoryName,
-                            // },
+                            newRoleGroup: {
+                                treeSelect: res.data[0].id,
+                                newRoleGroupVal: res.data[0].roleCategoryName,
+                            },
                         })
                         this.searchRoleFun(res.data[0].id)
                         this.setState({ newEntry: false })

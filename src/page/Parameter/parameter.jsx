@@ -309,7 +309,7 @@ class Parameter extends Component {
         }
         var id = parseInt(selectedKeyss[0]);
 
-        this.setState({ selectedTreeId: selectedKeys ,selectedKeyss})
+        this.setState({ selectedTreeId: selectedKeyss ,selectedKeyss})
         let data = Object.assign({}, this.state.form, { parameterCategoryId: id })
         
         this.setState({
