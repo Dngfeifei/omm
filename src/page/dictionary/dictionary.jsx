@@ -464,7 +464,7 @@ class content extends Component {
 
     // 分页页码变化
     pageIndexChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize});
+        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
         let dictId = this.state.currentID;
         let params = Object.assign({}, pageConf, { dictId: dictId })
         this.setState({
@@ -582,7 +582,11 @@ class content extends Component {
                         return
                     } else {
                         _this.searchList({ dictId: ID })
-                        _this.setState({ editingKey: '' });
+                        _this.setState({
+                            editingKey: '', tableSelecteds: [],
+                            tableSelectedInfo: [],
+                        });
+
                     }
                 })
             },
