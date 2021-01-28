@@ -9,13 +9,18 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	whitelist.forEach(val => {
 		if (val == url) has = true
 	})
-	let token =  ''
-	if (process.env.NODE_ENV == 'production') {
-		let name=`${process.env.ENV_NAME}_token`
-		token = localStorage.getItem(window[name])
-	}else{
-		token = localStorage.getItem(token)
-	}
+	let token =  localStorage.getItem(token) || '';
+	// if(process.env.NODE_ENV == 'production'){
+	// 	if (process.env.API_URL.indexOf('dat') > -1) {
+	// 		let name=`${process.env.ENV_NAME}_token`
+	// 		token = localStorage.getItem(window[name])
+	// 	}else if(process.env.API_URL.indexOf('uattoken'){
+	// 		token = localStorage.getItem(token)
+	// 	}
+	// }else{
+	// 	token = localStorage.getItem(token)
+	// }
+	
 	
 	let header = Object.assign({}, {
 		'Content-Type': json ? 'application/json' : 'application/x-www-form-urlencoded'

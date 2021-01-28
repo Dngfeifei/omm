@@ -55,19 +55,19 @@ class Login extends Component {
 						if (res.status == '200') {
 							message.success('登录成功')
 							let user = res.data
-							let token =  ''
-							if (process.env.NODE_ENV == 'production') {
-								let name1=`${process.env.ENV_NAME}_token`
-								let name2=`${process.env.ENV_NAME}_userid`
-								let name3=`${process.env.ENV_NAME}_username`
-								await localStorage.setItem(window[name1], user.token)
-								await localStorage.setItem(window[name2], user.userId)
-								await localStorage.setItem(window[name3], user.userName)
-							}else{
+							// let token =  ''
+							// if (process.env.NODE_ENV == 'production') {
+							// 	let name1=`${process.env.ENV_NAME}_token`
+							// 	let name2=`${process.env.ENV_NAME}_userid`
+							// 	let name3=`${process.env.ENV_NAME}_username`
+							// 	await localStorage.setItem(window[name1], user.token)
+							// 	await localStorage.setItem(window[name2], user.userId)
+							// 	await localStorage.setItem(window[name3], user.userName)
+							// }else{
 								await localStorage.setItem('token', user.token)
 								await localStorage.setItem('userid', user.userId)
 								await localStorage.setItem('username', user.userName)
-							}
+							// }
 						
 
 							// 判断此用户是否是首次登陆  true-是，false-否
