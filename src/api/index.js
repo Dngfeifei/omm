@@ -53,8 +53,9 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		hashHistory.push('/login') //开发模式下不经过改跳转
 	}else{
 		countNum = true;
+		return res
 	}
-	return res
+	return null;
 })
 .catch(err => {
 	message.error('请求超时');
