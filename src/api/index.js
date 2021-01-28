@@ -16,7 +16,6 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	}else{
 		token = localStorage.getItem(token)
 	}
-	let token = localStorage.getItem('token') || ''
 	let header = Object.assign({}, {
 		'Content-Type': json ? 'application/json' : 'application/x-www-form-urlencoded'
 	}, has ? {} : {
