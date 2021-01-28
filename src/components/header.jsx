@@ -20,7 +20,14 @@ import {logout} from '@/api/login.js'
 class DHeader extends Component {
 
     componentWillMount = _ => {
-        let username = localStorage.getItem('username')
+        let name="";
+        if (process.env.NODE_ENV == 'production') {
+            name=`${process.env.ENV_NAME}_username`
+        }else{
+            name = localStorage.getItem('username')
+        }
+   
+        let username = localStorage.getItem(window[name])
         this.setState({ username })
         window.resetStore = this.props.reset;
     }
