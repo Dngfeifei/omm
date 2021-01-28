@@ -12,9 +12,9 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	let token =  ''
 	if (process.env.NODE_ENV == 'production') {
 		let name=`${process.env.ENV_NAME}_token`
-		token = localStorage.getItem(window[name])
+		token = localStorage.getItem(name)
 	}else{
-		token = localStorage.getItem(token)
+		token = localStorage.getItem("token")
 	}
 	let header = Object.assign({}, {
 		'Content-Type': json ? 'application/json' : 'application/x-www-form-urlencoded'
