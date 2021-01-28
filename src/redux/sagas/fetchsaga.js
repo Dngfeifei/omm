@@ -77,7 +77,7 @@ function* getMenu () {
 	yield takeLatest(ACTION.GET_MENU, function* (action) {
 		let data = action.data == 1 ? yield call(fetch.getMenu2) : yield call(fetch.getMenu);
 		let panes = yield select(state => state.global.panes)
-		if (data.data) {
+		if (data && data.data) {
 			yield put({type: ACTION.GET_MENU_SUCCESS, data: data.data})
 		}
 		if(panes.length){
