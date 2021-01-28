@@ -208,10 +208,6 @@ class User extends Common {
 		let search = Object.assign({}, this.state.search)
 		return getUserList(search)
 			.then(res => {
-				// let data = (f => f(f))(f => list => list.map(val => {
-				// 	let baseItem = Object.assign({}, val, { key: val.id })
-				// 	return baseItem
-				// }))(res.data.records)
 				if (res.success != 1) {
 					message.error("操作失败")
 					return
@@ -219,17 +215,18 @@ class User extends Common {
 					this.setState({
 						tabledata: res.data.records,
 						loading: false,
+						selected: {},
 						pagination: Object.assign({}, this.state.pagination, {
 							total: Number(res.data.total),
 							current: Number(res.data.current)
-						})
+						}),
+						
 					})
 				}
 			})
 	}
 	// 编辑用户
 	editForm = async () => {
-		console.log(this.state.selected)
 		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
 			message.destroy()
 			message.warning("请选中后再进行操作！")

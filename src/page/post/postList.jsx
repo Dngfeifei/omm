@@ -75,7 +75,7 @@ class Post extends Common {
 		GetPostData(params)
 			.then(res => {
 				if (res.success != 1) {
-					alert("请求错误")
+					message.error(res.message)
 					return
 				} else {
 					this.setState({
@@ -85,7 +85,8 @@ class Post extends Common {
 						pagination: Object.assign({}, this.state.pagination, {
 							total: Number(res.data.total),
 							current: Number(res.data.current)
-						})
+						}),
+						selected: [] 
 					})
 				}
 			})

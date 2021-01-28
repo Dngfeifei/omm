@@ -455,7 +455,7 @@ class content extends Component {
                 })
                 let pageConf = Object.assign({}, this.state.pagination, {
                     limit: res.data.size,
-                    offset: (res.data.current - 1) * 10,
+                    offset: (res.data.current - 1) * res.data.size,
                 })
                 this.setState({ table: data, pagination: pagination, pageConf: pageConf })
             }
@@ -464,7 +464,7 @@ class content extends Component {
 
     // 分页页码变化
     pageIndexChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
+        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize});
         let dictId = this.state.currentID;
         let params = Object.assign({}, pageConf, { dictId: dictId })
         this.setState({
