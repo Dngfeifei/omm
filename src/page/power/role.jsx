@@ -788,7 +788,7 @@ class role extends Component {
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
             <Row gutter={24} className="main_height">
                 <Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
-                    <TreeParant treeData={this.state.tree.treeData}
+                    <TreeParant treeData={this.state.tree.treeData}  selectedKeys={[this.state.searchListID]}
                         addTree={this.addRoleGroup} editTree={this.editRoleGroup} deletetTree={this.delRoleGroup}
                         onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
                     ></TreeParant>

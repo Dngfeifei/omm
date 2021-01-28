@@ -371,9 +371,10 @@ class resources extends Component {
 				params = Object.assign({}, val)
 				if (this.state.type == 1) {
 					params = Object.assign({}, params, { parentResourceId: this.state.selected.id })
+					console.log(params, 111)
 					this.addSave(params)
 				} else {
-					console.log(params, 666)
+					params = Object.assign({}, params, { parentResourceId: this.state.selected.parentResourceId })
 					this.editSave(params);
 				}
 			}
@@ -528,7 +529,7 @@ class resources extends Component {
 			<Row gutter={24} className="main_height">
 				<Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
 					<TreeParant treeData={this.state.treeData} draggable={true}
-						addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn}
+						addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn}  selectedKeys={[this.state.selected.id]}
 						onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
 					></TreeParant>
 				</Col>
