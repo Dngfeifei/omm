@@ -41,6 +41,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		rsl(res.json())
 })
 .then(res => {
+	console.log(res,1234,countNum)
 	if (res.status == '2006' || res.status == '2007') {
 		console.log(countNum)
 		if(countNum) {
@@ -50,12 +51,10 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		localStorage.clear();
 		window.resetStore();
 		hashHistory.push('/login') //开发模式下不经过改跳转
-		// return false;
 	}else{
 		countNum = true;
-		return res
 	}
-	
+	return res
 })
 .catch(err => {
 	message.error('请求超时');
