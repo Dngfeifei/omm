@@ -9,7 +9,7 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	whitelist.forEach(val => {
 		if (val == url) has = true
 	})
-	let token =  localStorage.getItem(token) || '';
+	let token =  localStorage.getItem('token') || '';
 	// if(process.env.NODE_ENV == 'production'){
 	// 	if (process.env.API_URL.indexOf('dat') > -1) {
 	// 		let name=`${process.env.ENV_NAME}_token`
