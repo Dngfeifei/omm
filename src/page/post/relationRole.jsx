@@ -275,11 +275,11 @@ class People extends Component {
 					</Card>
 				</div>
 				<div>
-					<Card title="已关联角色" style={{ marginTop: "20px", height: "360px" }} extra={<Button
+					<Card size="small" title="已关联角色" style={{ marginTop: "20px", height: "360px" }} extra={<Button
 								style={{ float: "right" }}
 								onClick={this.unRelationPost}
 								type="primary">取消关联</Button>}>
-						<Table bordered   style={{height:"205px"}} size="small"  scroll={{y: 165 }}  rowSelection={{ onChange: this.onRelTabSelect }} columns={this.state.allTableColumns} dataSource={this.state.relationTable}  pagination={false} rowKey="id" />
+						<Table bordered   style={{height:"240px"}} size="small"  scroll={{y: 200 }}  rowSelection={{ onChange: this.onRelTabSelect }} columns={this.state.allTableColumns} dataSource={this.state.relationTable}  pagination={false} rowKey="id" />
 						<Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} />
 					</Card>
 				</div>

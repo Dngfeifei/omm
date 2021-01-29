@@ -238,7 +238,7 @@ class Post extends Common {
 						type="info">删除</Button>
 					<Button style={{ margin: "0px 10px" }}
 						type="primary" onClick={_ => this.relationPeople()}>关联人员</Button>
-					<Button style={{ margin: "0px 10px" }}
+					<Button
 						type="primary" onClick={_ => this.relationRole()}>关联角色</Button>
 				</Col>
 			</Row>
