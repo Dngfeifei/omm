@@ -441,13 +441,13 @@ class Parameter extends Component {
         let id = parseInt(this.state.selectedTreeId[0]);
 
         let paramsName = this.getFormData().parameterCategoryName;
-        let param = {
-            parentId:this.state.categoryParentId,
-            id:id,
-            parameterCategoryName:paramsName
-        }
+        
         
         if (this.state.middleStatus == 'addTree') {
+            let param = {
+                parentId:id,
+                parameterCategoryName:paramsName
+            }
             addTree(param).then(res=>{
                 if (res.success == 1) {
                     message.success(res.message);
@@ -461,6 +461,11 @@ class Parameter extends Component {
                
             })
         }else if (this.state.middleStatus == 'editTree') {
+            let param = {
+                parentId:this.state.categoryParentId,
+                id:id,
+                parameterCategoryName:paramsName
+            }
             updateTree(param).then(res=>{
                 if (res.success == 1) {
                     message.success(res.message);
