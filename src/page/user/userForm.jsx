@@ -205,7 +205,7 @@ class CertItem extends Component {
 		GetOrgList()
 			.then(res => {
 				if (res.success == 0) {
-					alert("机构查询失败");
+					message.error("机构查询失败");
 				} else {
 					this.setState({ treeData: res.data })
 				}

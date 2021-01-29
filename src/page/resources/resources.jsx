@@ -203,7 +203,7 @@ class resources extends Component {
 		GetResourceTree()
 			.then(res => {
 				if (res.success != 1) {
-					alert("请求错误")
+					message.error("请求错误")
 					return
 				} else {
 					//给tree数据赋值key title

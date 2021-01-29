@@ -205,7 +205,7 @@ class content extends Component {
         GetDictionary(params)
             .then(res => {
                 if (res.success != 1) {
-                    alert("操作失败")
+                    message.error("操作失败")
                     return
                 } else {
                     //给tree数据赋值key title
