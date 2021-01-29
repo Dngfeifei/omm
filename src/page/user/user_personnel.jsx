@@ -316,7 +316,7 @@ class User extends Common {
 				style={{ width: 180, marginRight: "18px" }}
 				allowClear
 				onChange={e => this.changeSearch({ userName: e.target.value })}
-				addonBefore="帐号" placeholder="请输入" />
+				addonBefore="系统帐号" placeholder="请输入" />
 			<Input
 				value={this.state.search.userNum}
 				style={{ width: 180, marginRight: "18px" }}
@@ -349,7 +349,7 @@ class User extends Common {
 			</label>
 			<Button
 				onClick={this.search} style={{ marginRight: "10px" }}
-				type="primary" icon="search" >搜索</Button>
+				type="primary" icon="search" >查询</Button>
 			<Button
 				onClick={this.reset}
 			>重置</Button>

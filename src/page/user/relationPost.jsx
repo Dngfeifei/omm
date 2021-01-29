@@ -217,8 +217,9 @@ class People extends Component {
 								onChange={this.getPostName}
 							/>
 							<Button
+							style={{marginLeft:"10px"}}
 								onClick={this.GetAllPost}
-								type="info" icon="search">搜索</Button>
+								type="primary" icon="search">查询</Button>
 							<Button
 								style={{ float: "right" }}
 								onClick={this.relationPost}
