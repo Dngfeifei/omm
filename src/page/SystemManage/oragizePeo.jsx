@@ -428,7 +428,7 @@ class systempeo extends Component {
     };
     //拖拽结束时执行
     onDragEnd = info => {
-    
+         alert(1)
     }
     //拖拽tree，判断为哪个位置
     onDrop = info => {

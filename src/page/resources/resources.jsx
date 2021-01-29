@@ -322,7 +322,6 @@ class resources extends Component {
 	//删除按钮
 	delBtn = async_ => {
 		let selected = this.state.selected;
-		console.log(this.state.selected, 4564)
 
 		//1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
 		if (selected.id == "" || selected.id == null) {

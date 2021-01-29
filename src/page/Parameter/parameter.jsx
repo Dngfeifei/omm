@@ -139,7 +139,6 @@ class Parameter extends Component {
     // 获取表格高度
     SortTable = () => {
         setTimeout(() => {
-            console.log(this.tableDom.offsetHeight);
             let h = this.tableDom.clientHeight - 180;
             this.setState({
                 h: {

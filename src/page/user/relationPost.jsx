@@ -17,7 +17,6 @@ class People extends Component {
 			this.setState({
 				userId: params
 			})
-			console.log(params, 147)
 			// 获取已关联数据
 			this.GetRelation({ userId: params })
 		}
@@ -152,7 +151,6 @@ class People extends Component {
 			return
 		}
 		let userId = this.state.userId;
-		console.log(positionId)
 		RelationPeople({ userId: userId, positionId: positionId, flag: "user" }).then(res => {
 			if (res.success == 1) {
 				message.success('操作成功')

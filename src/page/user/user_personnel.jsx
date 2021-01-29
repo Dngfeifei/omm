@@ -110,7 +110,6 @@ class User extends Common {
 			showUploadList: false,
 			onChange(info) {
 				if (info.file.status !== 'uploading') {
-					console.log(info.file, info.fileList);
 				}
 				if (info.file.status === 'done') {
 					message.success(`${info.file.name} 文件上传成功`);
@@ -129,7 +128,6 @@ class User extends Common {
 				let comboBox = Object.assign({}, this.state.comboBox, {
 					sex: res.data
 				})
-				console.log(res.data, 1254)
 				this.setState({ comboBox: comboBox })
 			}
 		})

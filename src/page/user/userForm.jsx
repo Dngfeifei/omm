@@ -35,9 +35,13 @@ class CertItem extends Component {
 					fixedPhone: { value: mes.fixedPhone },
 					orgId: { value: mes.orgId },
 					duties: { value: mes.duties },
-					entryDate: { value: (mes.entryDate ? moment(mes.entryDate) : '') },
 					description: { value: mes.description }
 				})
+				if(mes.entryDate){
+					this.props.form.setFields({
+						entryDate: { value: moment(mes.entryDate) },
+					})
+				}
 			}
 		}
 	}
@@ -214,7 +218,6 @@ class CertItem extends Component {
 	}
 	//tree下拉框变化
 	onTreeSelectValChange = (value, label, extra) => {
-		console.log(value, label, extra, 456)
 		this.setState({ treeSelectVal: value });
 	};
 	// onChange = t => this.getCustomForm(t)
@@ -286,7 +289,6 @@ class CertItem extends Component {
 		if (!this.state.lock) {
 			await this.setState({ lock: true })
 			this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
-				console.log(err, 125)
 				if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 发起后台请求
 					let params = Object.assign({}, val)
 					if (params.entryDate) { params.entryDate = params.entryDate.format('YYYY-MM-DD') };

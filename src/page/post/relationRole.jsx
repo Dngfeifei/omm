@@ -89,7 +89,6 @@ class People extends Component {
 	// 请求全量机构树数据
 	searchRoleGroup = _ => {
 		GetRoleGroup().then(res => {
-			console.log(res.data,999)
 			if (res.success == 1) {
 				assignment(res.data)
 				this.setState({

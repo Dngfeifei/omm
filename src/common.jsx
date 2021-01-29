@@ -14,7 +14,6 @@ class Common extends Component {
 	SortTable = () => {
 		setTimeout(() => {
 			let h = this.tableDom.clientHeight - 100;
-			console.log(h)
 			this.setState({
 				h: {
 					y: (h)

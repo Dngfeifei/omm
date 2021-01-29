@@ -76,7 +76,6 @@ class content extends Component {
     SortTable = () => {
         setTimeout(() => {
             let h = this.tableDom.clientHeight - 100;
-            console.log(h)
             this.setState({
                 h: {
                     y: (h)
@@ -486,7 +485,6 @@ class content extends Component {
     }
     //点击行选中选框
     onRow = (record) => {
-        console.log(record, 456)
         return {
             onClick: () => {
                 let selectedKeys = [record.id], selectedItems = [record];
@@ -503,7 +501,6 @@ class content extends Component {
     // 表格选中后
     onTableSelect = (selectedRowKeys, info) => {
         //获取table选中项
-        console.log(selectedRowKeys, info)
         this.setState({
             tableSelecteds: selectedRowKeys,
             tableSelectedInfo: info
@@ -547,7 +544,6 @@ class content extends Component {
             message.warning("请选中后，再进行修改操作")
             return
         }
-        console.log(tableSelecteds, "456")
         let key = tableSelecteds[0];
 
         if (this.state.editingKey) {

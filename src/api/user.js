@@ -25,7 +25,6 @@ export const ResetPass = (params = {}) => {
 }
 //人员数据导出
 export const ExportFile = (params = {}) => {
-	console.log(params,"00")
 	return http.fetchBlobPost(`/user/userExport`, params)
 }
 //人员模板导出

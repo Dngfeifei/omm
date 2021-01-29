@@ -8,7 +8,6 @@ import {getPost} from '@/api/global.js'
 
 //创建一个缩放控制组件
 function Trigger (props){
-	console.log(props)
 	return (<div onClick={props.toggle} className={props.collapsed ? "trigger" : "trigger triggerClose"}>
 		<Icon type={ !props.collapsed ? "double-left" : "double-right"} />{!props.collapsed ?<span style={{fontSize:13,marginLeft:10,marginBottom:3}}>点击收缩</span>:null}
 	</div>)
