@@ -150,7 +150,7 @@ class People extends Component {
 				}
 				let pageConf = {
 					limit: res.data.size,
-					offset: (res.data.current - 1) * 10
+					offset: (res.data.current - 1) * res.data.size
 				}
 				this.setState({ unRelationTable: res.data.records, pagination: pagination, pageConf: pageConf })
 			} else {
@@ -200,7 +200,7 @@ class People extends Component {
 				}
 				let pageConf = {
 					limit: res.data.size,
-					offset: (res.data.current - 1) * 10
+					offset: (res.data.current - 1) * res.data.size
 				}
 				this.setState({
 					relationTable: res.data.records,
@@ -214,7 +214,7 @@ class People extends Component {
 
 	// 分页页码变化
 	pageIndexChange = (current, pageSize) => {
-		let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
+		let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
 		let roleCategoryId = this.state.currentroleCategoryId;
 		let params = Object.assign({}, pageConf, { roleCategoryId: roleCategoryId, roleName: this.state.searchUserName })
 		this.searchUser(params)
@@ -228,7 +228,7 @@ class People extends Component {
 	}
 	// 分页页码变化
 	pageIndexChange2 = (current, pageSize) => {
-		let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
+		let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
 		this.getUsers(pageConf)
 	}
 	// 分页条数变化
