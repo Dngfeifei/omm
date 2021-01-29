@@ -718,13 +718,13 @@ class content extends Component {
                 okText="保存"
             >
                 <Row>
-                    <label htmlFor="字典名称" className="ant-form-item-required">
-                        <span style={{ width: "16%", display: "inline-block" }}>字典名称：</span>
+                    <label htmlFor="字典名称">
+                        <span  className="ant-form-item-required" style={{ width: "18%", display: "inline-block",textAlign:"right" }}>字典名称：</span>
                         <Input placeholder="请输入" value={this.state.newGroup.dictName} onChange={this.getdictName} style={{ margin: "2% 10px", width: '70%' }} /></label>
                 </Row>
                 <Row>
-                    <label htmlFor="字典名称" className="ant-form-item-required">
-                        <span style={{ width: "16%", display: "inline-block" }}>编码值：</span>
+                    <label htmlFor="字典名称">
+                        <span  className="ant-form-item-required" style={{ width: "18%", display: "inline-block",textAlign:"right" }}>编码值：</span>
                         <Input placeholder="请输入" value={this.state.newGroup.dictCode} onChange={this.getdictCode} style={{ margin: "2% 10px", width: '70%' }} /></label>
                 </Row>
             </Modal>
