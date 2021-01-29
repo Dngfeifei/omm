@@ -19,6 +19,7 @@ class CertItem extends Component {
 				this.props.form.resetFields()
 				this.props.form.setFields({
 					entryDate: { value: moment() },
+					status: { value: 1 },
 				})
 			} else {
 				let mes = nextprops.config.item
@@ -87,7 +88,7 @@ class CertItem extends Component {
 				key: 'realName',
 				option: {
 					rules: [
-						{ required: true, message: "请输入账号" },
+						{ required: true, message: "请输入姓名" },
 					]
 				},
 				render: _ => <Input style={{ width: 200 }} />
@@ -135,7 +136,7 @@ class CertItem extends Component {
 				key: 'email',
 				option: {
 					rules: [
-						{ required: true, message: "请输入" },
+						{ required: true, message: "请输入邮箱" },
 						{
 							message: "请按照正确的邮箱格式输入",
 							pattern: "^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$",
@@ -193,7 +194,7 @@ class CertItem extends Component {
 				label: '备注',
 				key: 'description',
 				option: { rules: [] },
-				render: _ => <TextArea rows={2} style={{ width: 360 }} />
+				render: _ => <TextArea rows={2} />
 			}
 		],
 		customeRules: [],
@@ -334,18 +335,18 @@ class CertItem extends Component {
 			footer={null}
 		>
 			<Form className="form-error">
-				<Row gutter={24}>
+				<Row>
 					{this.state.rules.map((val, index) => val.key != 'description' ? <Col key={index} span={12} style={{ display: 'block' }}>
 						<FormItem
-							label={val.label} labelCol={{ span: 6 }}>
+							label={val.label} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
 							{getFieldDecorator(val.key, val.option)(val.render())}
 						</FormItem></Col> : <Col key={index} span={24} style={{ display: 'block' }}>
 							<FormItem
-								label={val.label} labelCol={{ span: 3 }}>
+								label={val.label} labelCol={{ span: 3 }} wrapperCol={{ span: 17 }}>
 								{getFieldDecorator(val.key, val.option)(val.render())}
 							</FormItem></Col>)}
 				</Row>
-				<Row gutter={24}>
+				<Row>
 					{this.state.customeRules.map((val, index) => <Col key={index} span={12} style={{ display: 'block' }}><FormItem
 						label={val.label} labelCol={{ span: 6 }}>
 						{getFieldDecorator(val.key, val.option)(val.render())}
