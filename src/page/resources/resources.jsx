@@ -371,7 +371,6 @@ class resources extends Component {
 				params = Object.assign({}, val)
 				if (this.state.type == 1) {
 					params = Object.assign({}, params, { parentResourceId: this.state.selected.id })
-					console.log(params, 111)
 					this.addSave(params)
 				} else {
 					params = Object.assign({}, params, { parentResourceId: this.state.selected.parentResourceId })
@@ -408,7 +407,8 @@ class resources extends Component {
 					this.searchTree()
 					message.success('操作成功')
 				} else {
-					message.error('操作失败')
+					message.destroy()
+					message.error(res.message)
 				}
 			})
 	}
@@ -422,7 +422,8 @@ class resources extends Component {
 					this.searchTree()
 					message.success('操作成功')
 				} else {
-					message.error('操作失败')
+					message.destroy()
+					message.error(res.message)
 				}
 			})
 	}
