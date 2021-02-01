@@ -79,6 +79,7 @@ class CertItem extends Component {
 				key: 'userNum',
 				option: {
 					rules: [
+						{ required: true, message: "请输入员工号" },
 						{
 							message: "请输入数字",
 							pattern: /^[0-9]{0,}$/,

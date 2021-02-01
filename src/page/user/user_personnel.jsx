@@ -336,7 +336,7 @@ class User extends Common {
 				allowClear
 				onChange={e => this.changeSearch({ duties: e.target.value })}
 				addonBefore="职务" placeholder="请输入" />
-			<label>性别:
+			<label>性别：
 				<Select style={{ width: 120, marginRight: "20px" }} allowClear={true} placeholder="请选择" defaultValue={""} value={this.state.search.sex} onChange={e => this.changeSearch({ sex: e })}>
 					{/* 
 					<Option key={1} value={1}>男</Option>
