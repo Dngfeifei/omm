@@ -15,6 +15,14 @@ export const AddUser = (params = {}) => {
 export const EditUser = (params = {}) => {
 	return http.fetchPut(`/sysUser`, params)
 }
+// 删除人员
+export const DelUser = (params = {}) => {
+	return http.fetchGet(`/user/delete`, params)
+}
+// 启用人员
+export const EnableUser = (params = {}) => {
+	return http.fetchGet(`/user/enable`, params)
+}
 // 禁用人员
 export const DisableUser = (params = {}) => {
 	return http.fetchPost(`/user/disable`, params,true)

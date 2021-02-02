@@ -204,7 +204,7 @@ class Parameter extends Component {
                 if (this.state.middleStatus == 'addTree'){
                     this.props.form.setFieldsValue({
                         parameterCategoryName:'',
-                        parentName:res.data.parentName
+                        parentName:res.data.parameterCategoryName
                     })
                 }else if (this.state.middleStatus == 'editTree') {
                     this.props.form.setFieldsValue({
@@ -244,6 +244,11 @@ class Parameter extends Component {
 
     // 编辑节点--类别
     editTree=()=>{
+        if (this.state.selectedTreeId=="1"){
+            message.destroy()
+            message.warning("根节点不可编辑")
+            return
+        }
         if (this.state.selectedTreeId) {
             var id = parseInt(this.state.selectedTreeId[0]);
             // 获取系统类别详情
@@ -260,6 +265,11 @@ class Parameter extends Component {
 
     // 删除节点--类别
     deletetTree=()=>{
+        if (this.state.selectedTreeId=="1"){
+            message.destroy()
+            message.warning("根节点不可删除")
+            return
+        }
         var _this = this;
         if (this.state.selectedTreeId) {
             var id = parseInt(_this.state.selectedTreeId[0]);

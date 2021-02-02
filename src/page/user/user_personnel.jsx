@@ -2,7 +2,7 @@ import React from 'react'
 import { Input, Button, Modal, message, Select, Upload, Row, Col } from 'antd'
 import Common from '/page/common.jsx'
 
-import { getUserList, DisableUser, ResetPass, ExportFileModel, ExportFile } from '/api/user'
+import { getUserList, DelUser, EnableUser, DisableUser, ResetPass, ExportFileModel, ExportFile } from '/api/user'
 import { GetDictInfo } from '/api/dictionary'
 
 const ButtonGroup = Button.Group
@@ -36,9 +36,9 @@ class User extends Common {
 				title: '序号',
 				dataIndex: 'key',
 				editable: false,
-				align:'center',
-				width:"80px",
-				render:(text,record,index)=> `${index+1}`
+				align: 'center',
+				width: "80px",
+				render: (text, record, index) => `${index + 1}`
 			},
 			{
 				title: '姓名',
@@ -117,7 +117,7 @@ class User extends Common {
 					message.error(`${info.file.name} 文件上传失败.`);
 				}
 			},
-		}
+		},
 	})
 	// 获取资源类型下拉框数据
 	getDictData = () => {
@@ -149,19 +149,91 @@ class User extends Common {
 			message.warning("请选中后再进行操作！")
 			return
 		}
+		if (!this.state.selected.selectedItems[0].status) {
+			message.destroy()
+			message.warning("当前选中项已是禁用状态！")
+			return
+		}
 		let params = [this.state.selected.selectedKeys[0]]
+		let user = this.state.selected.selectedItems[0].userName
 		let _this = this
 		confirm({
 			title: '禁用',
-            content: '您确定要进行禁用操作吗？',
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
+			content: '确定要禁用系统账号 ' + user + ' 吗？',
+			okText: '确定',
+			okType: 'danger',
+			cancelText: '取消',
 			onOk() {
 				DisableUser(params)
 					.then(res => {
 						if (res.success == 0) {
-							message.error("操作失败");
+							message.destroy()
+							message.error(res.message);
+						} else {
+							_this.search();
+						}
+					})
+			}
+		})
+	}
+	//启用
+	EnableUser = async () => {
+		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
+			message.destroy()
+			message.warning("请选中后再进行操作！")
+			return
+		}
+		if (this.state.selected.selectedItems[0].status) {
+			message.destroy()
+			message.warning("当前选中项已是启用状态！")
+			return
+		}
+		let params = this.state.selected.selectedKeys[0]
+		
+		let user = this.state.selected.selectedItems[0].userName
+		let _this = this
+		confirm({
+			title: '删除',
+			content: '确定要删除系统账号 ' + user + ' 吗？',
+			okText: '确定',
+			okType: 'danger',
+			cancelText: '取消',
+			onOk() {
+				EnableUser({ id: params })
+					.then(res => {
+						if (res.success == 0) {
+							message.destroy()
+							message.error(res.message);
+						} else {
+							_this.search();
+						}
+					})
+			}
+		})
+
+	}
+	// 删除
+	delUser = async () => {
+		if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
+			message.destroy()
+			message.warning("请选中后再进行操作！")
+			return
+		}
+		let params = this.state.selected.selectedKeys[0];
+		let user = this.state.selected.selectedItems[0].userName
+		let _this = this
+		confirm({
+			title: '删除',
+			content: '确定要删除系统账号 ' + user + ' 吗？',
+			okText: '确定',
+			okType: 'danger',
+			cancelText: '取消',
+			onOk() {
+				DelUser({ id: params })
+					.then(res => {
+						if (res.success == 0) {
+							message.destroy()
+							message.error(res.message);
 						} else {
 							_this.search();
 						}
@@ -180,10 +252,10 @@ class User extends Common {
 		let _this = this
 		confirm({
 			title: '删除',
-            content: '您确定要重置此用户密码吗？',
-            okText: '确定',
-            okType: 'danger',
-            cancelText: '取消',
+			content: '您确定要重置此用户密码吗？',
+			okText: '确定',
+			okType: 'danger',
+			cancelText: '取消',
 			onOk() {
 				ResetPass({ id: id })
 					.then(res => {
@@ -218,7 +290,7 @@ class User extends Common {
 							total: Number(res.data.total),
 							current: Number(res.data.current)
 						}),
-						
+
 					})
 				}
 			})
@@ -371,6 +443,8 @@ class User extends Common {
 		<Col span={12} style={{ textAlign: "right" }}>
 
 			<Button style={{ marginRight: "10px" }} onClick={this.disableItem} type="info">禁用</Button>
+			<Button style={{ marginRight: "10px" }} onClick={this.EnableUser} type="info">启用</Button>
+			<Button style={{ marginRight: "10px" }} onClick={this.delUser} type="info">删除</Button>
 			<Button style={{ marginRight: "10px" }} onClick={this.editForm} type="info">修改</Button>
 			<Button style={{ marginRight: "10px" }} onClick={_ => this.addmodal('modalconf', '新增人员信息')} type="primary">新增</Button>
 			<Button onClick={this.editPost} type="primary">关联岗位</Button>
