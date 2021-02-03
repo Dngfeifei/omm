@@ -20,9 +20,9 @@ import {logout} from '@/api/login.js'
 class DHeader extends Component {
 
     componentWillMount = _ => {
-        let name='username';
+        let name='realName';
         if (process.env.NODE_ENV == 'production') {
-            name=`${process.env.ENV_NAME}_username`
+            name=`${process.env.ENV_NAME}_realName`
         }
         console.log(!(process.env.NODE_ENV == 'production'))
         let username = localStorage.getItem(name)
@@ -49,12 +49,8 @@ class DHeader extends Component {
     }
 
     changePass = _ => {
-        let pane = {
-            title: '修改密码',
-            key: 'changepas',
-            url: `changePassword`
-        }
-        this.props.add(pane)
+        // 跳转到【重置密码】页面  
+		hashHistory.push('/initPassForm')
     }
 
     showMessage = _ => {
@@ -92,7 +88,8 @@ class DHeader extends Component {
             <span style={{ marginRight: 15 }}>欢迎，{this.state.username || '管理员'}</span>
             <Dropdown
                 overlay={<Menu>
-                    <Menu.Item onClick={this.showMessage}>消息中心</Menu.Item>
+                    {/* onClick={this.showMessage} */}
+                    <Menu.Item >消息中心</Menu.Item>
                     <Menu.Item onClick={this.changePass}>修改密码</Menu.Item>
                 </Menu>}>
                 <span>个人中心</span>

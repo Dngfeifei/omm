@@ -62,6 +62,7 @@ class Login extends Component {
 							await localStorage.setItem(`${name}token`, user.token)
 							await localStorage.setItem(`${name}userid`, user.userId)
 							await localStorage.setItem(`${name}username`, user.userName)
+							await localStorage.setItem(`${name}realName`, user.realName)
 							// 判断此用户是否是首次登陆  true-是，false-否
 							
 							if (user.firstLogin) {
