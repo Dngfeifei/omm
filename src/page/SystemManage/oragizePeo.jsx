@@ -511,6 +511,7 @@ class systempeo extends Component {
         // });
     };
     checkPeo = (params) => {
+        console.log(params)
 		// let params = Object.assign({}, this.state.pageConf, {orgId:Number(orgId)})
 		checkRY(params).then(res => {
 			if (res.success == 1) {
@@ -521,9 +522,10 @@ class systempeo extends Component {
 				}
 				let pageConf = {
 					limit: res.data.size,
-					offset: (res.data.current - 1) * 10
-				}
-				this.setState({ tabledata: res.data.records, pagination: pagination,  })
+					offset: (res.data.current - 1) * res.data.size
+                }
+                console.log(pagination)
+				this.setState({ tabledata: res.data.records, pagination: pagination, pageConf })
 			}
 		})
 	}
@@ -621,9 +623,11 @@ class systempeo extends Component {
                 current: res.data.current,
                 total: res.data.total,
             }
-            console.log(res);
-            this.setState({ tableLogdata: res.data.records })
-            this.setState({ pagination2: pagination2 })
+            let pageConf2 = {
+                limit: res.data.size,
+                offset: (res.data.current - 1) * res.data.size
+            }
+            this.setState({ tableLogdata: res.data.records,pagination2,pageConf2 })
         })
     }
     // 弹框里的人员查询
@@ -676,7 +680,8 @@ class systempeo extends Component {
     }
     // 分页页码变化
 	pageIndexChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, {orgId:this.state.selectedTreeId},{ offset: (current - 1) * 10 });
+        let {limit} = this.state.pageConf;
+        let pageConf = Object.assign({}, this.state.pageConf, {orgId:this.state.selectedTreeId},{ offset: (current - 1) * limit });
         this.checkPeo(pageConf)
 	}
 	// 分页条数变化
