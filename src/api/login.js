@@ -21,3 +21,14 @@ export const logout = (params = {}) => {
 export const changepass = (params = {}) => {
 	return http.fetchGet(`/updatePass`, params)
 }
+
+
+// 重置密码（修改密码）----邮件发送验证码
+export const sendEmail = (params = {}) => {
+	return http.fetchGet(`/auth/sendEmail`, params)
+}
+
+//  重置密码（修改密码）
+export const resetPasswords = (params = {}) => {
+	return http.fetchPost(`/auth/resetPassword`, params, true)
+}

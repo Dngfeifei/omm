@@ -686,7 +686,7 @@ class systempeo extends Component {
 	}
 	// 分页条数变化
 	pageSizeChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf,{orgId:this.state.selectedTreeId},{ limit: pageSize });
+        let pageConf = Object.assign({}, this.state.pageConf,{orgId:this.state.selectedTreeId},{ offset: 0,limit: pageSize});
 		this.checkPeo(pageConf)
     }
     // 分页页码变化
@@ -696,7 +696,7 @@ class systempeo extends Component {
 	}
 	// 分页条数变化
 	pageSizeChange2 = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf2,{ limit: pageSize });
+        let pageConf = Object.assign({}, this.state.pageConf2,{ offset: 0,limit: pageSize });
 		this.checkAllPeople(pageConf)
 	}
     onRow = (record) =>{
