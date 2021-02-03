@@ -777,8 +777,8 @@ class systempeo extends Component {
                 <Col span={19} className="my_height" style={{ paddingLeft: '10px', paddingTop:'8px',background: "#fff"}}>
                     {/* <Form style={{ width: '100%' ,}}> */}
                         {/* <Row gutter={24}> */}
-                        <div style={{display:'flex',justifyContent: "space-between",whiteSpace: "nowrap"}}>
-                            <div>
+                        <div style={{display:'flex',justifyContent: "space-between",whiteSpace: "nowrap",paddingTop:'3px'}}>
+                            <div style={{display:'flex'}}>
                                 <Input addonBefore="姓名"
                                     placeholder="请输入" 
                                     value={this.state.RoleName}
@@ -799,8 +799,8 @@ class systempeo extends Component {
                                     </Select>
                                 </label>
                                 
-                                <Button type="primary" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.checkPeoId}>查询</Button>
-                                <Button type="info" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.clear}>清空</Button>
+                                <Button type="primary" style={{ marginLeft: '10px'}} onClick={this.checkPeoId}>查询</Button>
+                                <Button type="info" style={{ marginLeft: '10px'}} onClick={this.clear}>清空</Button>
                             </div>
                             <div>
                                 <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>

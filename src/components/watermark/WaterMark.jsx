@@ -6,9 +6,9 @@ import moment from 'moment'
 
 const defaultOptions = {
   chunkWidth: 420,
-  chunkHeight: 120,
+  chunkHeight: 200,//120,
   textAlign: 'left',
-  textBaseline: 'top',
+  textBaseline: 'top',//'top',
   globalAlpha: 0.3,//0.25,
   font: '18px Microsoft Yahei',
   rotateAngle: -0.6,//-0.46,
@@ -21,7 +21,6 @@ const noop = function () {}
 class WaterMark extends React.Component {
 
   async componentWillMount () {
-    let date = moment().format('ll')
     //  this.props.waterMarkText = `银信科技保密材料${localStorage.getItem('username')}${date}查阅`
     if(!window.WATER_MARK_URL){
       window.WATER_MARK_URL = this.getCanvasUrl() 
@@ -110,7 +109,9 @@ class WaterMark extends React.Component {
 
   getCanvasUrl = () => {
     const {  options } = this.props
-    const waterMarkText = '银信保密材料'
+    let date = moment().format('ll')
+    const waterMarkText = `银信运维管理系统 ${localStorage.getItem('username')} ${date}查阅`
+    // const waterMarkText = `银信运维管理系统`
     const newOptions = Object.assign({}, defaultOptions, options)
     return getWaterMarkCanvas(waterMarkText, newOptions)
   }
