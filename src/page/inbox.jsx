@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {InboxMap} from '../assets/js/tabConfig'
+import WaterMark from '/components/watermark/WaterMark.jsx'
 
 
 class Inbox extends Component{

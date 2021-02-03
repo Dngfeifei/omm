@@ -30,7 +30,7 @@ class Container extends Component{
 	}
 
 	render = _ => 
-		<div style={{width: '100%', height: '100%'}}>
+		<div style={{flex:1}}>
 			<Tabs
 			  className="nav-tabs"
 	          hideAdd

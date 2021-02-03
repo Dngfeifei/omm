@@ -4,6 +4,8 @@ const { Content ,Footer} = Layout
 
 import Header from '/components/header.jsx'
 import Sider from '/components/sider.jsx'
+import FooterD from '/components/footer.jsx'
+import WaterMark from '/components/watermark/WaterMark.jsx'
 
 class Home extends Component{
 
@@ -16,17 +18,18 @@ class Home extends Component{
 	}
 
 	render = _ => 
+	<WaterMark>
 		<Layout className='wrapper'>
 			<Header />
 			<Layout>
 				<Sider />
-				<Content style = {{paddingLeft: 4}}>
+				<Content style = {{display: 'flex',flexDirection:'column'}}>
 					{this.props.children}
-					<Footer style={{height:40,borderTop:'1px solid #fafafa',margin:'0 -11px -11px -11px'}}>我是底部</Footer>
+					<FooterD />
 				</Content>
-				
 			</Layout>
 		</Layout>
+	</WaterMark>
 }
 
 export default Home
