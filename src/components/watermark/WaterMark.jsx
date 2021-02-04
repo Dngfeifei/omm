@@ -16,16 +16,16 @@ const defaultOptions = {
 }
 
 const waterMarkStyle = 'position: absolute;left: 0;right: 0;top:0;bottom:0;opacity: 0.7;z-index: 9999;pointer-events: none;overflow: hidden;background-color: transparent;background-repeat: repeat;'
-const noop = function () {}
+const noop = function () { }
 
 class WaterMark extends React.Component {
 
-  async componentWillMount () {
+  async componentWillMount() {
     //  this.props.waterMarkText = `银信科技保密材料${localStorage.getItem('username')}${date}查阅`
-    if(!window.WATER_MARK_URL){
-      window.WATER_MARK_URL = this.getCanvasUrl() 
+    if (!window.WATER_MARK_URL) {
+      window.WATER_MARK_URL = this.getCanvasUrl()
     }
-    this.setState({canvasUrl: window.WATER_MARK_URL})
+    this.setState({ canvasUrl: window.WATER_MARK_URL })
   }
 
   state = {
@@ -108,9 +108,13 @@ class WaterMark extends React.Component {
   }
 
   getCanvasUrl = () => {
-    const {  options } = this.props
+    const { options } = this.props
     let date = moment().format('ll')
-    const waterMarkText = `${localStorage.getItem('realName')} ${date}`
+    let name = '';
+    if (process.env.NODE_ENV == 'production') {
+      name = process.env.ENV_NAME + '_'
+    }
+    const waterMarkText = `${localStorage.getItem(`${name}realName`)} ${date}`
     // const waterMarkText = `银信运维管理系统`
     const newOptions = Object.assign({}, defaultOptions, options)
     return getWaterMarkCanvas(waterMarkText, newOptions)
@@ -134,7 +138,7 @@ class WaterMark extends React.Component {
     }
 
     return (
-      <div className='water_mark_div' style={{ position: 'relative',height:'100%' }} id={this.watermarkWrapperId}>
+      <div className='water_mark_div' style={{ position: 'relative', height: '100%' }} id={this.watermarkWrapperId}>
         <div style={styles} id={this.watermarkId} />
         {children}
       </div>
