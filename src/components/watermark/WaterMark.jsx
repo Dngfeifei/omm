@@ -110,7 +110,7 @@ class WaterMark extends React.Component {
   getCanvasUrl = () => {
     const {  options } = this.props
     let date = moment().format('ll')
-    const waterMarkText = `银信 ${localStorage.getItem('realName')} ${date}查阅`
+    const waterMarkText = `${localStorage.getItem('realName')} ${date}`
     // const waterMarkText = `银信运维管理系统`
     const newOptions = Object.assign({}, defaultOptions, options)
     return getWaterMarkCanvas(waterMarkText, newOptions)
