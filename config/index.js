@@ -51,6 +51,7 @@ module.exports = {
       '/getCode':target,  //获取验证码
       '/updatePass':target,  // 首次登录修改密码
       '/logout':target,  //退出登录
+      '/biUser':target,     // 工程师管理模块
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

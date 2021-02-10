@@ -19,7 +19,6 @@ class Dashbord extends Component {
     //在dom渲染后执行初始化
     componentDidMount() {
         this.draftSort();
-        console.log(comObj)
     }
 
 

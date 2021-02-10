@@ -7,3 +7,40 @@
 #logbookForm .ant-form-item {
     margin-right: 16px !important;
   }
+
+
+  /* 工程师管理--页面 */
+  
+  .ant-modal-body .tableCertificate .title:before {
+    content: '';
+    background: #49b3fd;
+    /* float: right; */
+    position: absolute;
+    /* bottom: 40px; */
+    display: block;
+    height: 27px;
+    width: 5px;
+    top: 3px;
+    left: 10px;
+}
+.tableCertificate .title {
+    position: relative;
+    padding-left: 20px;
+    font-weight: 650;
+    font-style: normal;
+    font-size: 20px;
+    color: rgba(2, 167, 240, 0.824);
+}
+#modalengineer .ant-advanced-search-form {
+    padding: 0px !important;
+    background: none !important;
+    border: none !important;
+    border-radius: 0px !important;
+  }
+#modalengineer .ant-advanced-search-form .ant-form-item {
+    display: flex;
+  }
+  
+#modalengineer .ant-advanced-search-form .ant-form-item-control-wrapper {
+    flex: 1;
+  }
