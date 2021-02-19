@@ -348,7 +348,7 @@ class engineer extends Component {
 
 
     // 单选框按钮---选中事件
-    onSelectChange = () => {
+    onSelectChange = (selectedRowKeys) => {
         this.setState({
             selectedRowKeys: selectedRowKeys
         });
@@ -359,8 +359,9 @@ class engineer extends Component {
     onClickRow = (record) => {
         return {
             onClick: () => {
+                let selectedKeys = [record.id]
                 this.setState({
-                    selectedRowKeys: record.id
+                    selectedRowKeys: selectedKeys
                 });
             },
         };

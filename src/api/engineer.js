@@ -12,7 +12,7 @@ export const getBiUser = (limit,offset,params = {}) => {
 
 // 查询工程师详情
 export const biUserInfo = (id,params = {}) => {
-	return http.fetchGet(`biUser/detail/${id}`, params)
+	return http.fetchGet(`/biUser/detail/${id}`, params)
 }
 
 // 获取 文化程度

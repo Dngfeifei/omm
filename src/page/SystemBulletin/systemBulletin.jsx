@@ -187,7 +187,7 @@ class systemBulletin extends Component {
     }
 
     // 单选框按钮---选中事件
-    onSelectChange=()=>{
+    onSelectChange=(selectedRowKeys)=>{
         this.setState({ 
             selectedRowKeys:selectedRowKeys 
         });
@@ -197,8 +197,9 @@ class systemBulletin extends Component {
     onClickRow = (record) => {
         return {
             onClick: () => {
+                let selectedKeys = [record.id]
                 this.setState({
-                    selectedRowKeys: record.id
+                    selectedRowKeys: selectedKeys
                 });
             },
         };
@@ -327,7 +328,7 @@ class systemBulletin extends Component {
                             {getFieldDecorator(val.key, val.option)(val.render())}
                         </Form.Item>)}
                     <Form.Item>
-                        <Button style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
+                        <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
                     </Form.Item>
                     <Form.Item style={{ position: 'absolute', right: '20px' }}>
                         <Button style={{ marginRight: '10px' }} onClick={this.handlerDelete}>删除</Button>
