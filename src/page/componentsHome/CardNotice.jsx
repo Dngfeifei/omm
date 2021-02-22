@@ -27,44 +27,32 @@ class CardNotice extends Component {
             content: "测试  已入库",
             createtime: "2020-12-10 11:42:01",
             id: 253,
-            title: "资质证书入库通知",
+            title: "资质证书入库通知DS4000存储最新微码最新版本发布",
             type: 2
         }, {
             content: "法人身份证原件  已更新",
             createtime: "2020-09-11 16:08:15",
             id: 252,
-            title: "资质证书更新通知",
+            title: "资质证书更新通知DS4000存储最新微码最新版本发布",
             type: 2
         }, {
             content: "法人身份证原件  已更新",
             createtime: "2020-09-11 16:04:23",
             id: 251,
-            title: "资质证书更新通知",
+            title: "资质证书更新通知法人身份证原件  已入库",
             type: 2
         }, {
             content: "法人身份证原件  已入库",
             createtime: "2020-09-11 15:59:56",
             id: 250,
-            title: "资质证书入库通知",
+            title: "资质证书入库通知DS4000存储最新微码最新版本发布",
             type: 2,
         }, {
             content: "浪潮商用机器-钻石牌合作伙伴  已入库",
             createtime: "2020-08-06 14:42:27",
             id: 249,
-            title: "资质证书入库通知",
+            title: "资质证书入库通知浪潮商用机器-钻石牌合作伙伴  已入库",
             type: 2,
-        }, {
-            content: "浪潮商用机器-最佳贡献奖  已入库",
-            createtime: "2020-08-06 14:41:26",
-            id: 248,
-            title: "资质证书入库通知",
-            type: 2
-        }, {
-            content: "ITSS全权成员单位  已入库",
-            createtime: "2020-08-05 14:51:38",
-            id: 247,
-            title: "资质证书入库通知",
-            type: 2
         }],
 
         // 控制当前页面的显示/隐藏--状态
@@ -116,10 +104,8 @@ class CardNotice extends Component {
                   <List itemLayout="horizontal" dataSource={this.state.data}
                       renderItem={item => (
                           <List.Item>
-                              <List.Item.Meta
-                                  title={item.title}
-                                  description={item.content + '-' + item.createtime}
-                              />
+                              <List.Item.Meta title={item.title} />
+                              <div>{item.createtime}</div>
                           </List.Item>
                       )}
                   />
