@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Layout, Menu, Icon, Dropdown, Breadcrumb,message } from 'antd'
+import { Layout, Menu, Icon, Dropdown, Badge,message } from 'antd'
 import { connect } from 'react-redux'
 import { TOGGLE, ADD_PANE, RESET, SET_BREADCRUMB ,GET_MENU} from '/redux/action'
 const { Header } = Layout
@@ -82,6 +82,11 @@ class DHeader extends Component {
             }
         </Breadcrumb> */}
         <div className="settingwrap">
+            <Badge count={5}>
+                <span className="head-example">
+                    <Icon type="bell" theme="filled" style={{ fontSize: 28, color: '#666'}} />
+                </span>
+            </Badge>
             <img
                 src="./static/images/avatar.png"
                 className="avatar" />
