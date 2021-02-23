@@ -58,8 +58,7 @@ class DSider extends Component{
 		let pane = {
 			title: item.resourceName, 
 			key: item.id,
-			url: item.resourcePath,
-			breadcrumb: (item.pcodes + ',' + item.resourceName).split(",")
+			url: item.resourcePath
 		}
 		this.props.add(pane)
 	}
