@@ -22,7 +22,7 @@ var buildconfig = {
 }
 
 var target = {target: 'http://172.16.100.81/api/dat'}
-// var target = {target: 'http://10.0.17.89:8111'}
+// var target = {target: 'http://10.0.16.234:8111'}
 module.exports = {
   build: buildconfig,
   dev: {
@@ -47,11 +47,12 @@ module.exports = {
       '/user' : target,//用户
       '/sysDicts' : target,//数据字典
       '/sysDictItems' : target,//数据字典项
-      '/sysLog':target,
+      '/sysLog':target, // 操作日志模块
       '/getCode':target,  //获取验证码
       '/updatePass':target,  // 首次登录修改密码
       '/logout':target,  //退出登录
       '/biUser':target,     // 工程师管理模块
+      '/biCustomer':target,     // 客户信息模块
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
