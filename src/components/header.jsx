@@ -87,7 +87,7 @@ class DHeader extends Component {
             }
         </Breadcrumb> */}
         <div className="settingwrap">
-            <Badge count={5} style={{cursor:'pointer'}}  onClick={()=> this.handleClick(true)}>
+            <Badge count={0} style={{cursor:'pointer'}}  onClick={()=> this.handleClick(true)}>
                 <span className="head-example">
                     <Icon type="bell" theme="filled" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
                 </span>
@@ -107,7 +107,12 @@ class DHeader extends Component {
             <span className="settings" onClick={this.quit}>退出</span>
         </div>
         <ModalDom title='头部对话框' width={700} visible={this.state.modalVisible} onOk={()=>this.handleClick(false)} onCancel={()=>this.handleClick(false)}>
-        
+          <p>some contents...</p>
+          <p>some contents...</p>
+          <p>some contents...</p>
+          <p>some contents...</p>
+          <p>some contents...</p>
+          <p>some contents...</p>
         </ModalDom>
     </Header>
 }

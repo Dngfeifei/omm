@@ -13,3 +13,4 @@ export const GET_MENU_SUCCESS = 'GET_MENU_SUCCESS'
 
 export const SET_BREADCRUMB = 'SET_BREADCRUMB'
 export const SET_PANE = 'SET_PANE'
+export const SET_WORKLIST = 'SET_WORKLIST'//刷新工作空间列表
