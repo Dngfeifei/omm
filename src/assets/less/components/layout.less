@@ -1,0 +1,46 @@
+.layoutOMM {
+    padding: 16px 30px 16px 30px;
+
+    .loPageTitle {
+        width: 100%;
+        position: relative;
+        padding-left: 20px;
+        font-size: 24px;
+        color: #4ea8f4;
+
+        &::before {
+            content: "";
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 5px;
+            height: 21px;
+            background-color: #4ea8f4;
+        }
+    }
+
+    .loPageContent {
+        padding: 20px;
+        .loArea {
+            margin-bottom: 20px;
+
+            .loAreaTitle {}
+
+            .loAreaContent {
+                padding: 10px 0 10px 24px;
+            }
+        }
+    }
+    .loFooterBtns{
+        padding: 20px;
+        text-align: center;
+        button{
+            margin:0 10px;
+        }
+    }
+    .ListError{
+        color: red;
+        margin-left: 20px;
+    }
+}
