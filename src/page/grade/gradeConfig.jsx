@@ -142,12 +142,11 @@ class engineerConfig extends Component {
                 let rules = res.data.comableFormula;
                 let rules2 = res.data.proableFormula;
                 this.state.comableType.forEach(item => {
-                    rules = rules.replace(item.key,item.name)
+                    rules = rules.replace(item.key, item.name)
                 })
                 this.state.proableType.forEach(item => {
-                    rules2 = rules2.replace(item.key,item.name)
+                    rules2 = rules2.replace(item.key, item.name)
                 })
-                console.log(rules,rules2)
                 this.setState({
                     status: res.data.status,
                     currentStatus: res.data.status,
@@ -292,13 +291,18 @@ class engineerConfig extends Component {
         // 工程师专业能力级别评定规则数据校验
         let current = competenceLevel[0].itemValue
         competenceLevel.forEach((el, i) => {
-            if (el.itemValue == "" || isNaN(Number(el.itemValue))||el.itemValue2 == "" || isNaN(Number(el.itemValue2))) {
-                el["error"] = "不能为空且必须是数字"
+            if (el.itemValue == "" || isNaN(Number(el.itemValue))) {
+                el["error"] = "分值不能为空且必须是数字"
                 error = false
             } else if (i != 0) {
                 if (el.itemValue * 1 >= current * 1 && current != "") {
                     el["error"] = "请填写正确的分值"
                     error = false
+                } else if (el.itemValue2 == "" || isNaN(Number(el.itemValue2))) {
+                    el["error"] = "案例说明数量不能为空且必须是数字"
+                    error = false
+                } else {
+                    el["error"] = ""
                 }
             } else {
                 el["error"] = ""
@@ -406,13 +410,12 @@ class engineerConfig extends Component {
             if (res.success != 1) {
                 message.error(res.message)
             } else {
+                this.setState({
+                    editStatus: true
+                })
                 this.init()
             }
         })
-        // 校验文案
-        // 1 状态未变不保存   文案
-        // 2 状态改变 开启-关闭 只保存状态值     关闭-开启 保存状态和规则
-
     }
 
     // 工程师自评估临时开启
@@ -425,8 +428,8 @@ class engineerConfig extends Component {
     }
 
     // 工程师选择器确定方法
-    onSelectorOK = (selectedKeys, info) => {
-        let params={ids:selectedKeys}
+    onSelectorOK = (selectedKeys) => {
+        let params = { ids: selectedKeys }
         TemporaryOpen(params).then(res => {
             if (res.success != 1) {
                 message.error(res.message)
@@ -488,7 +491,7 @@ class engineerConfig extends Component {
                                         <Input id={"m" + item.itemCode} disabled={this.state.editStatus} onChange={this.onChangeitemValue} style={{ width: "80px", margin: "0 5px" }} value={item.itemValue} />
                                         {'分以上；'}
                                         {'案例说明数量达到'}
-                                        <Input id={"m" + item.itemCode} disabled={this.state.editStatus} onChange={this.onChangeitemValue2} style={{ width: "80px", margin: "0 5px" }} value={item.itemValue2} />
+                                        <Input id={"n" + item.itemCode} disabled={this.state.editStatus} onChange={this.onChangeitemValue2} style={{ width: "80px", margin: "0 5px" }} value={item.itemValue2} />
                                         {'个以上；'}
                                         <span className="ListError">{item.error}</span>
                                     </List.Item>}
