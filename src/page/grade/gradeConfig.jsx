@@ -506,7 +506,7 @@ class engineerConfig extends Component {
                             })}
                         </div>
                         <div className="loAreaContent">
-                            <TextArea disabled={this.state.editStatus} rows={4} key={this.state.comableFormulaVal} value={this.state.comableFormulaVal} onChange={this.onChangecomableFormulaVal} style={{ marginTop: "10px" }} />
+                            <TextArea disabled={this.state.editStatus} rows={4} value={this.state.comableFormulaVal} onChange={this.onChangecomableFormulaVal} style={{ marginTop: "10px" }} />
                             <span className="ListError">{this.state.comableFormulaError}</span>
                         </div>
                     </div>
@@ -519,7 +519,7 @@ class engineerConfig extends Component {
                             })}
                         </div>
                         <div className="loAreaContent">
-                            <TextArea disabled={this.state.editStatus} rows={4} key={this.state.proableFormulaVal} value={this.state.proableFormulaVal} onChange={this.onChangeAllRules} style={{ marginTop: "10px" }} />
+                            <TextArea disabled={this.state.editStatus} rows={4} value={this.state.proableFormulaVal} onChange={this.onChangeAllRules} style={{ marginTop: "10px" }} />
                             <span className="ListError">{this.state.proableFormulaError}</span>
                         </div>
                     </div>
