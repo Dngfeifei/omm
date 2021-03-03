@@ -429,8 +429,7 @@ class engineerConfig extends Component {
 
     // 工程师选择器确定方法
     onSelectorOK = (selectedKeys) => {
-        let params = { ids: selectedKeys }
-        TemporaryOpen(params).then(res => {
+        TemporaryOpen(selectedKeys).then(res => {
             if (res.success != 1) {
                 message.error(res.message)
             } else {
@@ -470,7 +469,7 @@ class engineerConfig extends Component {
                                 split={false}
                                 size="small"
                                 rowKey={"time"}
-                                renderItem={(item, i) => <List.Item>{(i + 1) + "、 " + item.operateTime + " " + item.userName + item.content}</List.Item>}
+                                renderItem={(item, i) => <List.Item>{(i + 1) + "、 " + item.operateTime + " " + item.content}</List.Item>}
                             />
                         </div>
                     </div>
@@ -548,7 +547,7 @@ class engineerConfig extends Component {
                         </div>
                     </div>
                 </div>
-                <div className="loFooterBtns">
+                <div className="loRowBtns">
                     <Button type="info" onClick={this.init}>取消</Button>
                     {
                         this.state.currentStatus != this.state.status ? <Button type="primary" onClick={this.sava}>保存</Button> : <Button type="info" disabled>保存</Button>

@@ -4,7 +4,6 @@ const { Option } = Select;
 
 // 导入请求接口
 import { GetOrgTree, GetPeople } from '/api/post'
-
 // 引入 分页组件
 import Pagination from '/components/pagination'
 // 引入 Tree树形组件
@@ -227,12 +226,13 @@ class People extends Component {
 		let params = Object.assign({}, pageConf, { orgId }, this.state.searchParams)
 		this.searchUser(params)
 	}
-	onSubmit=()=>{
-		if(	this.state.resultID.length > 0){
+	onSubmit = () => {
+		let { resultID, result } = this.state;
+		if (resultID.length > 0) {
 			this.props.onOk(resultID, result)
-		}else{
-          message.destroy()
-		  message.error("未选择数据")
+		} else {
+			message.destroy()
+			message.error("未选择数据")
 		}
 	}
 	render = _ => {
