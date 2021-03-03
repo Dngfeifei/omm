@@ -4,7 +4,6 @@ const { Option } = Select;
 
 // 导入请求接口
 import { GetOrgTree, GetPeople } from '/api/post'
-
 // 引入 分页组件
 import Pagination from '/components/pagination'
 // 引入 Tree树形组件
@@ -166,7 +165,7 @@ class People extends Component {
 		}
 		// 过滤
 		let result = newArr.filter((item) => {
-			return selectedRowKeys.indexOf(item.id)>=0
+			return selectedRowKeys.indexOf(item.id) >= 0
 		})
 		//获取table选中项
 		this.setState({
@@ -227,10 +226,19 @@ class People extends Component {
 		let params = Object.assign({}, pageConf, { orgId }, this.state.searchParams)
 		this.searchUser(params)
 	}
+	onSubmit = () => {
+		let { resultID, result } = this.state;
+		if (resultID.length > 0) {
+			this.props.onOk(resultID, result)
+		} else {
+			message.destroy()
+			message.error("未选择数据")
+		}
+	}
 	render = _ => {
 		// 接受组件外传递的数据
 		const { type, status, onOk, onCancel } = this.props;
-		let { mechanismTree, currentOrgID, resultID, result, searchParams, pagination, tableColumns, tableColumns2, staffTable } = this.state
+		let { mechanismTree, currentOrgID, resultID, searchParams, pagination, tableColumns, tableColumns2, staffTable } = this.state
 		let rowSelection = {
 			onChange: this.onRowSelect,
 			type: type,
@@ -242,7 +250,7 @@ class People extends Component {
 			<ModalParant title="工程师选择器"
 				destroyOnClose={true}
 				visible={true}
-				onOk={_ => onOk(resultID, result)}
+				onOk={this.onSubmit}//若无选中数据 执行关闭方法
 				onCancel={onCancel}
 				width={1000}
 			>
