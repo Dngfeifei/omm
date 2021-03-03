@@ -46,7 +46,6 @@ class ModalDom extends Component {
     render=()=>{
 
         // const {bodyStyle,destroyOnClose,keyboard,mask,okText,title,width,visible} = this.props;
-       console.log(this.props)
         return (
             <Modal {...this.props}>
                 {this.props.children ? this.props.children : null}

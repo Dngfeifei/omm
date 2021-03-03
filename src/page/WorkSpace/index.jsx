@@ -24,7 +24,7 @@ import { ADD_PANE,SET_WORKLIST} from '/redux/action'
 import { getWorkList } from '/api/workspace'
 
 @connect(state => ({
-	resetwork: state.global.resetwork
+	resetwork: state.global.resetwork,
 }), dispath => ({
 	add(pane){dispath({ type: ADD_PANE, data: pane })},
 	setWorklist(data){dispath({ type: SET_WORKLIST,data})}
@@ -39,7 +39,7 @@ class workList extends Component {
 //本组件监控外部属性变化时调用回调
     componentWillReceiveProps (nextprops) {
         //当工单处理完成提交后刷新原工单列表
-        console.log(nextprops)
+        // console.log(nextprops)
         if(nextprops.resetwork.switch){
             console.log('该工单列表更新')
             this.init();
@@ -77,8 +77,25 @@ class workList extends Component {
 
         loading:false,  //表格加载太
         rules: [
+            // {
+            //     label: '工单号',
+            //     key: 'operateType',
+            //     render: _ => <Select style={{ width: 200 }} placeholder="请选择状态" allowClear={true}>
+            //         {
+            //             this.state.typeArr.map((items, index) => {
+            //                 return (<Option key={items.itemCode} value={items.itemCode}>{items.itemValue}</Option>)
+            //             })
+            //         }
+            //     </Select>
+               
+            // }
             {
                 label: '工单号',
+                key: 'workNo',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入人员名称"/>
+            },
+            {
+                label: '工单类型',
                 key: 'operateType',
                 render: _ => <Select style={{ width: 200 }} placeholder="请选择状态" allowClear={true}>
                     {
@@ -89,23 +106,35 @@ class workList extends Component {
                 </Select>
                
             },{
-                label: '操作用户',
+                label: '创建人',
                 key: 'userName',
-                render: _ => <Input style={{ width: 200 }} placeholder="请输入操作用户名称"/>
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入人员名称"/>
+            },{
+                label: '状态',
+                key: 'state',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择状态" allowClear={true}>
+                    {
+                        this.state.typeArr.map((items, index) => {
+                            return (<Option key={items.itemCode} value={items.itemCode}>{items.itemValue}</Option>)
+                        })
+                    }
+                </Select>
+               
             }, {
-                label: '操作时间',
+                label: '创建时间',
                 key: 'dataTime',
                 render:_=>  <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-            },{
-                label: '操作资源',
-                key: 'resourceName',
-                render: _ => <Input style={{ width: 200 }} />
-            },
-            {
-                label: '操作对象',
-                key: 'objectName',
-                render: _ => <Input style={{ width: 200 }} />
             }
+            // ,{
+            //     label: '操作资源',
+            //     key: 'resourceName',
+            //     render: _ => <Input style={{ width: 200 }} />
+            // },
+            // {
+            //     label: '操作对象',
+            //     key: 'objectName',
+            //     render: _ => <Input style={{ width: 200 }} />
+            // }
         ],
         columns: [{
                 title: '序号',
@@ -323,6 +352,7 @@ class workList extends Component {
     onClickRow = (record) => {
             return {
                 onClick: () => {
+                    // console.log(record)
                     let pane = {
                         title: '测试标签',
                         key: '10000',

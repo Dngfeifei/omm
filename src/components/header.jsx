@@ -106,7 +106,7 @@ class DHeader extends Component {
             </Dropdown>
             <span className="settings" onClick={this.quit}>退出</span>
         </div>
-        <ModalDom title='头部对话框' width={700} visible={this.state.modalVisible} onOk={()=>this.handleClick(false)} onCancel={()=>this.handleClick(false)}>
+        <ModalDom title='头部对话框' width={700} destroyOnClose={true} visible={this.state.modalVisible} onOk={()=>this.handleClick(false)} onCancel={()=>this.handleClick(false)}>
           <p>some contents...</p>
           <p>some contents...</p>
           <p>some contents...</p>
