@@ -45,9 +45,13 @@ class workOrer extends Component {
    async componentWillMount(){
         this.stateReset = {...this.state};
         //  console.log(this.props.params.dataType)
-        let {workControl,fileList,formControl} = this.state;
+        let {workControl,fileList,formControl,businessKey,formKey,listData,readonly} = this.state;
         let data = await getOperation({procInstId: this.props.params.dataType.record.procInstId,taskId:this.props.params.dataType.record.taskId}) //调用接口获取页面初始化必须数据
         console.log(data)
+        readonly = data.data.readonly ? data.data.readonly : true;
+        listData = data.data.messages ? data.data.messages : [];
+        businessKey = data.data.businessKey ? data.data.businessKey.split('-'): [];
+        formKey = data.data.formKey ? data.data.formKey.split('-'): '';
         workControl = data.data.businessPermission ? {...workControl,...data.data.businessPermission} : {...workControl};//获取到回传的按钮权限
         formControl =  data.data.formPermission ? {...formControl,...data.data.formPermission} : {...formControl}; //获取工单权限
     //    workControl = {...workControl,...bussinessPermission}; 
@@ -63,7 +67,7 @@ class workOrer extends Component {
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         //获取token值，为后续上传附件设置请求头使用
 
-       this.setState({listData:data.messages,workControl,header,fileList,formControl},()=>{  //重置状态数据
+       this.setState({workControl,header,fileList,formControl,formKey,businessKey,readonly,listData},()=>{  //重置状态数据
             console.log(this.state)
        })
     }
@@ -72,14 +76,16 @@ class workOrer extends Component {
         let nowKey = this.props.params.type,backKey = this.props.params.dataType.reset;
         let resetwork = {key: backKey, switch:true};
         this.props.setWorklist(resetwork);
-        this.props.remove(nowKey)
-        this.props.setKey(backKey)
+        // this.props.remove(nowKey)    //关闭当前标签页
+        // this.props.setKey(backKey)   //设置回到入口标签页
     }
     state = {
         swit: false,//右侧处理意见区域控制开关
         opinion: null, //处理意见,
         header:{},//上传附件的头部信息
-        orderCompont:this.props.params.dataType.record.procInstId, //工单组件标识
+        businessKey:[],//储存工单组件的名称以及工单参数ID
+        formKey:'',//储存工单组件的名称以及工单参数ID,优先级高
+        readonly:true,//工单当前状态是否为只读
         modal: {
             width: 700,//模态框宽度设置
             title:'',//模态框标题设置
@@ -123,25 +129,11 @@ class workOrer extends Component {
                 name: 'xxx.png',
                 status: 'done',
                 url: 'http://www.baidu.com/xxx.png',
-              },
-              {
-                uid: '-11',
-                name: 'xxx.png',
-                status: 'done',
-                url: 'http://www.baidu.com/xxx.png',
-              },
+              }
           ],
         listData:[     //流程记录数据
             '李总进行了审批',
-            '张总进行了驳回的审批意见',
-            'Australian walks 100km after outback crash.',
-            'Man charged over missing wedding girl.',
-            '张总进行了驳回的审批意见',
-            'Australian walks 100km after outback crash.',
-            'Man charged over missing wedding girl.',
-            '张总进行了驳回的审批意见',
-            'Australian walks 100km after outback crash.',
-            'Man charged over missing wedding girl.',
+            '张总进行了驳回的审批意见'
         ]
     }
     //绑定工单子组件
@@ -200,7 +192,8 @@ class workOrer extends Component {
     //重置state状态数据
     resetState = (res) => {
         if (res.success == 1) {
-            this.setState({...this.stateReset},()=>{
+            const {businessKey,formKey} = this.state;
+            this.setState({...this.stateReset,formKey,businessKey},()=>{
                 console.log(this.state)
             })
         } else if (res.success == 0) {
@@ -250,9 +243,9 @@ class workOrer extends Component {
     }
     //点击关闭弹出框
     closeModal = (modalVisible)=>{
-        const {modal} = this.state;
+        const {modal,businessKey,formKey} = this.state;
         this.setState({modal:{...modal,modalVisible}})
-        this.setState({...this.stateReset,modal:{swit:true}},()=>{
+        this.setState({...this.stateReset,modal:{swit:true},businessKey,formKey},()=>{
             console.log(this.state)
         })
     }
@@ -318,7 +311,8 @@ class workOrer extends Component {
         }
     }
     render = () => {
-        const { swit,workControl,listData,orderCompont } = this.state;
+        const { swit,workControl,listData,businessKey,formKey } = this.state;
+        const orderCompont = formKey ? formKey[0] : businessKey[0];
         let OrderComponent = comObj[orderCompont];
         let style = swit ? {height:'100%',paddingBottom:5} : {width:'auto',flex:'auto',height:'100%',paddingBottom:5}
         return (
@@ -382,11 +376,11 @@ class workOrer extends Component {
                                     </Button>
                                 </Upload> : null}
                             </Card> : null}
-                            {workControl.countersign ? <Card loading={this.state.loading} size="small" title="流转记录" bordered={false} extra={<span style={{visibility:'hidden'}}>1</span>}>
+                            {workControl.countersign ? <Card loading={this.state.loading} className="circulation" size="small" title="流转记录" style={{padding:0}} bordered={false} extra={<span style={{visibility:'hidden'}}>1</span>}>
             
                                     <List
                                         size="small"
-                                        bordered
+                                        bordered={false}
                                         dataSource={listData}
                                         renderItem={item => <List.Item>{item}</List.Item>}
                                     />

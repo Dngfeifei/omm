@@ -6,6 +6,9 @@ const { SubMenu } = Menu
 import { ADD_PANE, GET_MENU ,TOGGLE} from '/redux/action'
 import {getPost} from '@/api/global.js'
 
+const MyIcon = Icon.createFromIconfontCN({
+	scriptUrl: '//at.alicdn.com/t/font_2410657_j4x4ditkbv.js', // 在 iconfont.cn 上生成
+});
 //创建一个缩放控制组件
 function Trigger (props){
 	return (<div onClick={props.toggle} className={props.collapsed ? "trigger" : "trigger triggerClose"}>
@@ -37,11 +40,11 @@ class DSider extends Component{
 			// 		this.add(item)
 			// 	}
 			// })
-		if(nextprops.menu[0].children && nextprops.menu[0].children.length){
-			this.add(nextprops.menu[0].children[0]);
-		}else{
-			this.add(nextprops.menu[0]);
-		}
+			if(nextprops.menu[0].children && nextprops.menu[0].children.length){
+				this.add(nextprops.menu[0].children[0]);
+			}else{
+				this.add(nextprops.menu[0]);
+			}
 		   
 		}
 		else{
@@ -73,19 +76,23 @@ class DSider extends Component{
 	}
 	renderMenuTitle = (val,leva) => {
 		//工作台 93 系统配置 85 信息管理135 工作空间140
-		let icon = null;
+		let icon = null,MyIco;
 		if(val.id == 93){
 			icon = 'appstore'
 		}else if(val.id == 85){
-			icon = 'setting'
+			MyIco = () => (<MyIcon type="icontongyongshezhi" />)
 		}else if(val.id == 135){
-			icon = 'profile'
+			icon = 'deployment-unit'
 		}else if(val.id == 140){
-			icon = 'snippets'
+			icon = 'file-text'
 		}
 		return (<span>
-			{icon ? <Icon type={icon} /> : leva ? <Icon type="bars" /> :null}
+			{icon ? <Icon type={icon} /> : leva ? <MyIco /> :null}
 		<span>{val.resourceName}</span></span>)
+
+		// return (<span>
+		// 	{icon ? <Icon type={icon} /> : leva ? <Icon type="bars" /> :null}
+		// <span>{val.resourceName}</span></span>)
 	}
 	
 	//监听菜单缩放事件并重置collapsed触发收缩
@@ -107,7 +114,7 @@ class DSider extends Component{
           mode="inline"
           selectedKeys={[this.props.activeKey]}
 		//   openKeys={this.state.openKeys}
-		  inlineCollapsed={false}
+		//   inlineCollapsed={false}
 		// inlineIndent={12}
           theme="light"
           style={{ borderRight: '1px solid transparent' ,backgroundColor:'transparent'}}

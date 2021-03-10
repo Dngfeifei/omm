@@ -219,7 +219,7 @@ class workList extends Component {
     getOperateType= async ()=>{
         let typeArr = await getTicketType({ dictCode: 'operateType' });
         let statusArr = await getTicketType({ dictCode: 'operateType' });
-        this.setState({ typeArr: typeArr.data.length ? typeArr.data : [], statusArr: statusArr.data.length ? statusArr.data : [] });
+        this.setState({ typeArr: typeArr.data ? typeArr.data : [], statusArr: statusArr.data ? statusArr.data : [] });
     }
 
     // 初始化接口
