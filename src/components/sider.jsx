@@ -71,10 +71,23 @@ class DSider extends Component{
 			this.setState({openKeys: [item.id]})
 		}
 	}
-	renderMenuTitle = (val,leva) => <span>
-		{val.icon ? <Icon type={val.icon} /> : leva ? <Icon type="bars" /> :null}
-		<span>{val.resourceName}</span>
-	</span>
+	renderMenuTitle = (val,leva) => {
+		//工作台 93 系统配置 85 信息管理135 工作空间140
+		let icon = null;
+		if(val.id == 93){
+			icon = 'appstore'
+		}else if(val.id == 85){
+			icon = 'setting'
+		}else if(val.id == 135){
+			icon = 'profile'
+		}else if(val.id == 140){
+			icon = 'snippets'
+		}
+		return (<span>
+			{icon ? <Icon type={icon} /> : leva ? <Icon type="bars" /> :null}
+		<span>{val.resourceName}</span></span>)
+	}
+	
 	//监听菜单缩放事件并重置collapsed触发收缩
 	collapsed = (collapsed, type) => {
 		let {contNum} = this.state;

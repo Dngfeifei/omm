@@ -21,7 +21,7 @@ import '/assets/less/pages/logBookTable.css'
 
 import { ADD_PANE,SET_WORKLIST} from '/redux/action'
 //引入接口
-import { getWorkList } from '/api/workspace'
+import { getWorkList,getTicketType } from '/api/workspace'
 
 @connect(state => ({
 	resetwork: state.global.resetwork,
@@ -41,10 +41,13 @@ class workList extends Component {
         //当工单处理完成提交后刷新原工单列表
         // console.log(nextprops)
         if(nextprops.resetwork.switch){
-            console.log('该工单列表更新')
-            this.init();
-            let resetwork = {key:null,switch:false}
-            this.props.setWorklist(resetwork)
+            console.log(this.props.params.type,nextprops.resetwork.key)
+            if(this.props.params.type == nextprops.resetwork.key){
+                console.log('该工单列表更新')
+                this.init();
+                let resetwork = {key:null,switch:false}
+                this.props.setWorklist(resetwork)
+            }
         }
 		
 	}
@@ -64,7 +67,8 @@ class workList extends Component {
         pageSize:10,
         current:0,
         total:0,  //表格分页---设置显示一共几条数据
-        typeArr:[],
+        typeArr:[], //工单类型
+        statusArr:[],//状态
 
         pagination:{
             limit:10,
@@ -91,31 +95,31 @@ class workList extends Component {
             // }
             {
                 label: '工单号',
-                key: 'workNo',
+                key: 'ticketId',
                 render: _ => <Input style={{ width: 200 }} placeholder="请输入人员名称"/>
             },
             {
                 label: '工单类型',
-                key: 'operateType',
-                render: _ => <Select style={{ width: 200 }} placeholder="请选择状态" allowClear={true}>
+                key: 'ticketType',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
                     {
                         this.state.typeArr.map((items, index) => {
-                            return (<Option key={items.itemCode} value={items.itemCode}>{items.itemValue}</Option>)
+                            return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
                         })
                     }
                 </Select>
                
             },{
                 label: '创建人',
-                key: 'userName',
+                key: 'applyName',
                 render: _ => <Input style={{ width: 200 }} placeholder="请输入人员名称"/>
             },{
                 label: '状态',
-                key: 'state',
-                render: _ => <Select style={{ width: 200 }} placeholder="请选择状态" allowClear={true}>
+                key: 'status',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
                     {
-                        this.state.typeArr.map((items, index) => {
-                            return (<Option key={items.itemCode} value={items.itemCode}>{items.itemValue}</Option>)
+                        this.state.statusArr.map((items, index) => {
+                            return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
                         })
                     }
                 </Select>
@@ -147,42 +151,42 @@ class workList extends Component {
             },  
             {
                 title: '工单编号',
-                dataIndex: 'operateType',
+                dataIndex: 'businessKey',
                 ellipsis: {
                     showTitle: false,
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '工单类型',
-                dataIndex: 'operateTime',
+                dataIndex: 'ticketType',
                 ellipsis: {
                     showTitle: false,
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '受理人',
-                dataIndex: 'userName',
+                dataIndex: 'assigneeRealName',
                 ellipsis: {
                     showTitle: false,
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '创建人',
-                dataIndex: 'resourceName',
+                dataIndex: 'startRealName',
                 ellipsis: {
                     showTitle: false,
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '状态',
-                dataIndex: 'objectName',
+                dataIndex: 'statusText',
                 ellipsis: {
                     showTitle: false,
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '创建时间',
-                dataIndex: 'createTime',
+                dataIndex: 'createDate',
                 ellipsis: {
                     showTitle: false,
                 },
@@ -211,17 +215,11 @@ class workList extends Component {
         }, 0)
     }
 
-    // 获取 类型
-    getOperateType=()=>{
-        getByCode({dictCode:'operateType'}).then(res=>{
-            if (res.success == 1) {
-                this.setState({
-                    typeArr: res.data,
-                })
-            } else if (res.success == 0) {
-                message.error(res.message);
-            }
-        })
+    // 获取 类型 状态
+    getOperateType= async ()=>{
+        let typeArr = await getTicketType({ dictCode: 'operateType' });
+        let statusArr = await getTicketType({ dictCode: 'operateType' });
+        this.setState({ typeArr: typeArr.data.length ? typeArr.data : [], statusArr: statusArr.data.length ? statusArr.data : [] });
     }
 
     // 初始化接口
@@ -248,18 +246,29 @@ class workList extends Component {
                     ],
                 };
             }
-            console.log(this.props)
             let newParams = {
-                operateType:values.operateType,
-                startTime:values.dataTime[0],
-                endTime:values.dataTime[1],
-                userName:values.userName,
-                resourceName:values.resourceName,
-                objectName:values.objectName,
-                type: this.props.params.type ? this.props.params.type : ''
+                ticketId: values.ticketId, //工单编号
+                startTime:values.dataTime[0],//开始时间
+                endTime:values.dataTime[1],//结束时间
+                applyName:values.applyName,//申请人
+                ticketType: values.ticketType,//工单类型
+                status: values.status,//工单状态
+                ticketOpt: this.props.params.pathParam.split('?')[1] ? this.props.params.pathParam.split('?')[1] : '',
+                limit: this.state.pageSize, //每页显示的条数
+                offset: this.state.current //当前起始页的条数
             }
-    
-            getSysLog(this.state.pageSize, this.state.current, newParams).then(res => {
+            // getSysLog(this.state.pageSize, this.state.current, newParams).then(res => {
+            //     if (res.success == 1) {
+            //         this.setState({ loading: false })
+            //         this.setState({
+            //             tabledata: res.data.records,
+            //             total: parseInt(res.data.total)
+            //         })
+            //     } else if (res.success == 0) {
+            //         message.error(res.message);
+            //     }
+            // })
+             getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
                 if (res.success == 1) {
                     this.setState({ loading: false })
                     this.setState({
@@ -352,13 +361,15 @@ class workList extends Component {
     onClickRow = (record) => {
             return {
                 onClick: () => {
-                    // console.log(record)
                     let pane = {
-                        title: '测试标签',
-                        key: '10000',
+                        title: record.ticketType,
+                        key: record.procInstId,
+                        // title: '测试',
+                        // key: '100000',
                         url: 'WorkOrder/index.jsx',
                         params:{
-                            pKey:this.props.params.type
+                            reset:this.props.params.type,//刷新本页面key
+                            record
                         }
                     }
                     this.props.add(pane)
@@ -392,12 +403,12 @@ class workList extends Component {
                     <Table
                         className="jxlTable"
                         bordered
-                        dataSource={this.state.tabledata}
+                        dataSource={this.state.tabledata.length ? this.state.tabledata :[]}
                         onRow={this.onClickRow}
                         columns={this.state.columns}
                         pagination={false}
                         scroll={h}
-                        rowKey={"id"}
+                        rowKey={ "procInstId"}
                         size={'small'}
                         style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}}
                         loading={this.state.loading}  //设置loading属性

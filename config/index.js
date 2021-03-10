@@ -21,8 +21,8 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-var target = {target: 'http://172.16.100.81/api/dat'}
-// var target = {target: 'http://10.0.16.234:8111'}
+//var target = {target: 'http://172.16.100.81/api/dat'}
+var target = {target: 'http://10.0.11.115:8111'}
 module.exports = {
   build: buildconfig,
   dev: {
@@ -53,6 +53,7 @@ module.exports = {
       '/logout':target,  //退出登录
       '/biUser':target,     // 工程师管理模块
       '/biCustomer':target,     // 客户信息模块
+      '/process':target,     // 工作流模块
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
