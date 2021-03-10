@@ -257,18 +257,7 @@ class workList extends Component {
                 limit: this.state.pageSize, //每页显示的条数
                 offset: this.state.current //当前起始页的条数
             }
-            // getSysLog(this.state.pageSize, this.state.current, newParams).then(res => {
-            //     if (res.success == 1) {
-            //         this.setState({ loading: false })
-            //         this.setState({
-            //             tabledata: res.data.records,
-            //             total: parseInt(res.data.total)
-            //         })
-            //     } else if (res.success == 0) {
-            //         message.error(res.message);
-            //     }
-            // })
-             getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
+            getSysLog(this.state.pageSize, this.state.current, newParams).then(res => {
                 if (res.success == 1) {
                     this.setState({ loading: false })
                     this.setState({
@@ -279,6 +268,17 @@ class workList extends Component {
                     message.error(res.message);
                 }
             })
+            //  getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
+            //     if (res.success == 1) {
+            //         this.setState({ loading: false })
+            //         this.setState({
+            //             tabledata: res.data.records,
+            //             total: parseInt(res.data.total)
+            //         })
+            //     } else if (res.success == 0) {
+            //         message.error(res.message);
+            //     }
+            // })
            
 
         });
@@ -362,10 +362,10 @@ class workList extends Component {
             return {
                 onClick: () => {
                     let pane = {
-                        title: record.ticketType,
-                        key: record.procInstId,
-                        // title: '测试',
-                        // key: '100000',
+                        // title: record.ticketType,
+                        // key: record.procInstId,
+                        title: '测试',
+                        key: '100000',
                         url: 'WorkOrder/index.jsx',
                         params:{
                             reset:this.props.params.type,//刷新本页面key

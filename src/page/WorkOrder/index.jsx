@@ -15,6 +15,12 @@ const { TextArea } = Input;
 const { Dragger } = Upload;
 const { SHOW_PARENT } = TreeSelect;
 const { Option } = Select;
+
+//新增icon
+const MyIcon = Icon.createFromIconfontCN({
+	scriptUrl: '//at.alicdn.com/t/font_2410657_6wyd1gyezqb.js', // 在 iconfont.cn 上生成
+});
+
 function ModalSon (props){
     let Rdom = (<Select mode="multiple" dropdownStyle={{display:'none'}} placeholder="请选择人员" labelInValue allowClear onFocus={() =>{}} onChange={(selectedItems)=>props.handleChange(selectedItems,2)} value={props.modal.selectedItems} style={{ width: '87%' }} tokenSeparators={[',']}></Select>)
     let Reject = <Select placeholder="请选择流程节点" autoFocus value={props.modal.selected ? props.modal.selected : null} onChange={(selectedItems)=>props.handleChange(selectedItems,3)} style={{ width: '90%' }}>{props.modal.selecteds.map( (item)=>{return <Option key={item.taskDefKey} value={item.taskDefKey}>{item.taskName}</Option>})}</Select>
@@ -320,36 +326,47 @@ class workOrer extends Component {
                 <Row style={{height:50}}>
                     <Col className="gutter-row" span={12}>
                         <div className="button_group" style={{ paddingTop: 10, paddingLeft: 5, textAlign: 'left' }}>
-                            {workControl.revoke ? <Button style={{ marginRight: 8 }} onClick={this.backClick}>撤销</Button> : null}
-                           { workControl.reject ?<Button style={{ marginRight: 8 }} onClick={()=>this.openModal('驳回',3)}>驳回</Button> : null}
+                            {workControl.revoke ? <Button style={{ marginRight: 8 }} onClick={this.backClick}>
+                                <MyIcon type="iconchexiao" />
+                                <span>撤销</span>
+                            </Button> : null}
+                           { workControl.reject ?<Button style={{ marginRight: 8 }} onClick={()=>this.openModal('驳回',3)}>
+                               <MyIcon type="iconbohui" />
+                                <span>驳回</span>
+                            </Button> : null}
                             {workControl.flowChart ?<Button type="primary" onClick={()=>this.openModal('流程图查看',4)} style={{ marginRight: 8 }}>
-                                查看流程图
+                                <MyIcon type="iconliuchengtu" />
+                                <span>查看流程图</span>
                             </Button>:null}
                         </div>
                     </Col>
                     <Col className="gutter-row" span={12}>
                         <div className="button_group" style={{paddingTop:10,paddingRight:5,textAlign:'right'}}>
                             {workControl.flowChart ?<Button type="primary" style={{marginRight:8}} onClick={()=>this.openModal('转办',2)}>
-                                <Icon type="api" />
+                                <MyIcon type="iconzhuanban_line" />
                                 <span>转办</span>
                             </Button> : null}
                             {workControl.countersign ?<Button type="primary" onClick={()=>this.openModal('加签',1)} style={{marginRight:8}}>
-                                加签
+                                <MyIcon type="iconqianjiaqian" />
+                                <span>加签</span>
                             </Button>: null}
                             {workControl.approval ?<Button type="primary" style={{marginRight:8}}>
-                                审批
+                                <MyIcon type="iconshenpi" />
+                                <span>审批</span>
                             </Button>: null}
                             {workControl.submit ? workControl.submit == 1 ? <Button onClick={this.submit} type="primary" style={{marginRight:8}}>
-                                提交
+                                <MyIcon type="icontijiao" />
+                                <span>提交</span>
                             </Button> : <Button type="primary" style={{marginRight:8}} onClick={()=>this.openModal('提交',5)}>
-                                <Icon type="api" />
+                                <MyIcon type="icontijiao" />
                                 <span>提交</span>
                             </Button>: null}
                             {workControl.Inform ?<Button type="primary" style={{marginRight:8}}>
                                 知会
                             </Button>: null}
                             {workControl.save ?<Button type="primary" style={{marginRight:8}}>
-                                保存
+                                <MyIcon type="iconbaocun" />
+                                <span>保存</span>
                             </Button>: null}
                         </div>
                     </Col>
