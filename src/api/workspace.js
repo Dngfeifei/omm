@@ -67,3 +67,8 @@ export const getDeleteAttachment = (params = {}) => {
 	params = Object.assign({}, params)
 	return http.fetchGet(`/process/deleteAttachment`, params)
 }
+//获取流程图
+export const getRetrieve = (params = {}) => {
+	params = Object.assign({}, params)
+	return http.fetchGet(`/process/retrieve`, params)
+}

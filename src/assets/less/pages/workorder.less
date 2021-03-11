@@ -4,8 +4,14 @@
     }
 }
 
-.card_pra .ant-card-head .ant-card-head-title{
-    font-size: 16px !important;
+.card_pra  {
+    p{
+        margin-bottom: 0px;
+    }
+    .ant-card-head .ant-card-head-title{
+        font-size: 16px !important;
+    }
+    
 }
 
 // 设置已上传列表最大高度
@@ -21,6 +27,9 @@
         .ant-modal-footer{
             display: none;
         }
+        .ant-modal-body > div{
+           height: 100%;
+        }
     }
 }
 .circulation{
@@ -28,3 +37,19 @@
         padding: 0 12px;
     }
 } 
+.work_upload{
+    padding: 0 6px;
+    display: block;
+    .ant-upload.ant-upload-disabled{
+        width: 100%;
+        // display: block;
+        // padding: 0 6px;
+        .ant-btn{
+            width: 100%;
+            cursor: not-allowed;
+            color: currentcolor !important;
+            border-color: #eee !important;
+            color: currentcolor !important;
+        }
+    }
+}
