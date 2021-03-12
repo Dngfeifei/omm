@@ -371,7 +371,8 @@ class workOrer extends Component {
         const orderCompont = formKey ? formKey[0] : businessKey[0];
         let OrderComponent = comObj[orderCompont];
         let style = swit ? {height:'100%',paddingBottom:5} : {width:'auto',flex:'auto',height:'100%',paddingBottom:5},
-        modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'};
+        modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
+        params = {formRead:this.state.workControl.formRead,id: businessKey[1],formControl:this.state.formControl};
         return (
             <div className='work_order' style={{height: '100%',display:'flex',flexDirection:'column'}}>
                 <Spin spinning={spinning} size="large">
@@ -428,7 +429,7 @@ class workOrer extends Component {
                 <Row gutter={8} type="flex" style={{flex:'auto',marginLeft:0,marginRight:0,height:10}}>
                     <Col className="gutter-row" span={this.state.swit ? 18 : null} style={style}>
                         <div className="gutter-box" style={{height:'100%',overflow:'auto',border: '1px solid rgb(240, 242, 245)'}}>
-                            {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref} params={{formRead:this.state.workControl.formRead}}/> :<Empty />}
+                            {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref} params={params}/> :<Empty description={JSON.stringify(params)} />}
                         </div>
                     </Col>
                     {
