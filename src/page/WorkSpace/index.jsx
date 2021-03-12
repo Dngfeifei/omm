@@ -21,7 +21,7 @@ import '/assets/less/pages/logBookTable.css'
 
 import { ADD_PANE,SET_WORKLIST} from '/redux/action'
 //引入接口
-import { getWorkList,getTicketType } from '/api/workspace'
+import { getWorkList,getTicketType,getStatus } from '/api/workspace'
 
 @connect(state => ({
 	resetwork: state.global.resetwork,
@@ -37,24 +37,17 @@ class workList extends Component {
         this.getOperateType()
     }
 //本组件监控外部属性变化时调用回调
-    componentWillReceiveProps (nextprops) {
+    componentWillReceiveProps (nextprops,prevProps) {
         //当工单处理完成提交后刷新原工单列表
-        // console.log(nextprops)
-        if(nextprops.resetwork.switch){
-            console.log(this.props.params.type,nextprops.resetwork.key)
-            if(this.props.params.type == nextprops.resetwork.key){
-                console.log('该工单列表更新')
-                this.init();
-                let resetwork = {key:null,switch:false}
-                this.props.setWorklist(resetwork)
-            }
+        // console.log(nextprops,this.props)
+        if(nextprops.resetwork.switch != this.props.resetwork.switch){   //当改状态改变时调用数据刷新
+            this.init();
         }
 		
 	}
     // 挂载完成
     componentDidMount=()=>{
         this.init();
-
         this.SortTable();
         //窗口变动的时候调用
         window.addEventListener("resize", ()=>{this.SortTable()}, false)
@@ -218,7 +211,7 @@ class workList extends Component {
     // 获取 类型 状态
     getOperateType= async ()=>{
         let typeArr = await getTicketType({ dictCode: 'operateType' });
-        let statusArr = await getTicketType({ dictCode: 'operateType' });
+        let statusArr = await getStatus({ dictCode: 'operateType' });
         this.setState({ typeArr: typeArr.data ? typeArr.data : [], statusArr: statusArr.data ? statusArr.data : [] });
     }
 
@@ -408,7 +401,7 @@ class workList extends Component {
                         columns={this.state.columns}
                         pagination={false}
                         scroll={h}
-                        rowKey={ "procInstId"}
+                        rowKey={ "ticketId"}
                         size={'small'}
                         style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}}
                         loading={this.state.loading}  //设置loading属性

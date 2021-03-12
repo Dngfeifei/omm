@@ -39,7 +39,7 @@ function ModalSon (props){
     )
 }
 @connect(state => ({
-
+    resetwork: state.global.resetwork,
 }), dispath => ({
 	setWorklist(data){dispath({ type: SET_WORKLIST,data})},
     remove(key){dispath({type: REMOVE_PANE, key})},
@@ -84,10 +84,11 @@ class workOrer extends Component {
     //刷新工单列表数据
     backClick = () => {
         let nowKey = this.props.params.type,backKey = this.props.params.dataType.reset;
-        let resetwork = {key: backKey, switch:true};
+        let resetwork = {key: backKey, switch: !this.props.resetwork.switch};
         this.props.setWorklist(resetwork);
+        // this.props.setWorklist({key:null,switch:false})
         this.props.remove(nowKey)    //关闭当前标签页
-        this.props.setKey(backKey)   //设置回到入口标签页
+        // this.props.setKey(backKey)   //设置回到入口标签页
     }
     state = {
         swit: false,//右侧处理意见区域控制开关
@@ -427,7 +428,7 @@ class workOrer extends Component {
                 <Row gutter={8} type="flex" style={{flex:'auto',marginLeft:0,marginRight:0,height:10}}>
                     <Col className="gutter-row" span={this.state.swit ? 18 : null} style={style}>
                         <div className="gutter-box" style={{height:'100%',overflow:'auto',border: '1px solid rgb(240, 242, 245)'}}>
-                            {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref}/> :<Empty />}
+                            {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref} params={{formRead:this.state.workControl.formRead}}/> :<Empty />}
                         </div>
                     </Col>
                     {
