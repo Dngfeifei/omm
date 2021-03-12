@@ -268,7 +268,7 @@ class workOrer extends Component {
             })
             // console.log(data)
             // img = data.data;
-            modalWidth = 900;
+            modalWidth = 1000;
         }
         this.setState({modal:{...modal,identification,modalVisible:true,title,selecteds,width:modalWidth}})
     }
@@ -373,6 +373,7 @@ class workOrer extends Component {
         let style = swit ? {height:'100%',paddingBottom:5} : {width:'auto',flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
         params = {formRead:this.state.workControl.formRead,id: businessKey[1],formControl:this.state.formControl};
+        console.log(comObj)
         return (
             <div className='work_order' style={{height: '100%',display:'flex',flexDirection:'column'}}>
                 <Spin spinning={spinning} size="large">
