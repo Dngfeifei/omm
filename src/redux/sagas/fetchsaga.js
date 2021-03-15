@@ -103,10 +103,32 @@ function sortData(pane,newTree,nextpane){
 		}
 	})
 }
+//更新已处理工单状态
+function *setWorkStatus(){
+	yield takeLatest(ACTION.SET_WORKSTATUS, function* (action) {
+		let panes = yield select(state => state.global.panes) //select函数得到store中state的数据
+		//判断选择的这条数据是不是已经在选择过的数据保存当中
+		let pane = {}
+		let key
+		panes.forEach((i, k) => {
+			if ( i.key == action.data.key ) {
+				pane = i
+				key = k 
+			}
+		})
+		//修改当前板面信息数据
+		let nextpane = [...panes]
+		nextpane[key] = {...pane,...action.data.data}
+		yield put({ type: ACTION.SET_PANE_STATE, data: nextpane })
+		//判断选择的这条数据是不是已经在选择过的数据保存当中,如果使新增的话就添加这个数据到已有数据中
+		yield put({ type: ACTION.SET_PANE_ACTIVEKEY, data: action.data.data.key })
 
+	})
+}
 export default function* () {
 	yield fork(addpane)
 	yield fork(removepane)
 	yield fork(getMenu)
 	yield fork(tabChange)
+	yield fork(setWorkStatus)
 }

@@ -72,20 +72,8 @@ class workList extends Component {
 
 
 
-        loading:false,  //表格加载太
+        loading:true,  //表格加载太
         rules: [
-            // {
-            //     label: '工单号',
-            //     key: 'operateType',
-            //     render: _ => <Select style={{ width: 200 }} placeholder="请选择状态" allowClear={true}>
-            //         {
-            //             this.state.typeArr.map((items, index) => {
-            //                 return (<Option key={items.itemCode} value={items.itemCode}>{items.itemValue}</Option>)
-            //             })
-            //         }
-            //     </Select>
-               
-            // }
             {
                 label: '工单号',
                 key: 'ticketId',

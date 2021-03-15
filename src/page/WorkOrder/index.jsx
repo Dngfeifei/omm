@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Modal, message, Button, Row, Col,Icon,Card,Input , Upload,List,Empty,Spin,TreeSelect,Form, Select, Table, DatePicker, TimePicker,Tooltip } from 'antd'
 import ModalDom from '@/components/modal'
 import { connect } from 'react-redux'
-import { REMOVE_PANE,SET_WORKLIST,SET_PANE} from '/redux/action'
+import { REMOVE_PANE,SET_WORKLIST,SET_PANE,SET_WORKSTATUS} from '/redux/action'
 import PostArea from '@/components/selector/engineerSelector.jsx'
 import '@/assets/less/pages/workorder.less'
 // 引入首页模块组件文件
@@ -44,6 +44,7 @@ function ModalSon (props){
 	setWorklist(data){dispath({ type: SET_WORKLIST,data})},
     remove(key){dispath({type: REMOVE_PANE, key})},
 	setKey(key){dispath({type: SET_PANE, data: key})},
+    updatePane(data){dispath({type: SET_WORKSTATUS, data: data})},
 }))
 
 //转办/加签人员选择
@@ -56,12 +57,13 @@ class workOrer extends Component {
     }
     //初始化页面
     init = async () => {
-        let {workControl,fileList,formControl,businessKey,formKey,listData,readonly} = this.state;
+        let {workControl,fileList,formControl,businessKey,formKey,listData,ticketId} = this.state;
         let data = await getOperation({procInstId: this.props.params.dataType.record.procInstId,taskId:this.props.params.dataType.record.taskId}) //调用接口获取页面初始化必须数据
         console.log(data)
         listData = data.data.messages ? data.data.messages : [];
         businessKey = data.data.businessKey ? data.data.businessKey.split('-'): [];
-        formKey = data.data.formKey ? data.data.formKey.split('-'): '';
+        formKey = data.data.formKey ? data.data.formKey : '';
+        ticketId = data.data.ticketId
         workControl = data.data.formPermission ? {...workControl,...data.data.formPermission.businessPermission} : {...workControl,...data.data.businessPermission};//获取到回传的按钮权限
         formControl =  data.data.formPermission ? {...formControl,...data.data.formPermission.formPermission} : {...formControl}; //获取工单权限
     //    workControl = {...workControl,...bussinessPermission}; 
@@ -77,7 +79,7 @@ class workOrer extends Component {
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         //获取token值，为后续上传附件设置请求头使用
 
-       this.setState({workControl,header,fileList,formControl,formKey,businessKey,listData,spinning:false},()=>{  //重置状态数据
+       this.setState({workControl,header,fileList,formControl,formKey,businessKey,listData,spinning:false,ticketId},()=>{  //重置状态数据
             console.log(this.state)
        })
     }
@@ -97,7 +99,7 @@ class workOrer extends Component {
         header:{},//上传附件的头部信息
         businessKey:[],//储存工单组件的名称以及工单参数ID
         formKey:'',//储存工单组件的名称以及工单参数ID,优先级高
-        readonly:true,//工单当前状态是否为只读
+        ticketId:null,//工单当前状态是否为只读
         modal: {
             width: 700,//模态框宽度设置
             title:'',//模态框标题设置
@@ -255,7 +257,9 @@ class workOrer extends Component {
             console.log(data)
             selecteds = data.data;
         }else if(identification == 4){ //获取流程图
-            // let data = await getProcessImg({procInstId: this.props.params.dataType.record.procInstId})
+            //  let data = {key: this.props.params.type,data:{key:'100000',title:"我是更新后的标签",url:this.props.params.pathParam}};
+            // this.props.updatePane(data)
+            // return;
             getProcessImg({procInstId: this.props.params.dataType.record.procInstId}).then(res => {
                 const {modal} = this.state;
                 if(res.success == 1){
@@ -367,12 +371,12 @@ class workOrer extends Component {
         }
     }
     render = () => {
-        const { swit,workControl,listData,businessKey,formKey,spinning} = this.state;
+        const { swit,workControl,listData,businessKey,formKey,spinning,ticketId} = this.state;
         const orderCompont = formKey ? formKey[0] : businessKey[0];
         let OrderComponent = comObj[orderCompont];
         let style = swit ? {height:'100%',paddingBottom:5} : {width:'auto',flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
-        params = {formRead:this.state.workControl.formRead,id: businessKey[1],formControl:this.state.formControl};
+        params = {formRead:this.state.workControl.formRead,id: ticketId,formControl:this.state.formControl};
         console.log(comObj)
         return (
             <div className='work_order' style={{height: '100%',display:'flex',flexDirection:'column'}}>
