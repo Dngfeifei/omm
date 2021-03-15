@@ -6,9 +6,11 @@ const { SubMenu } = Menu
 import { ADD_PANE, GET_MENU ,TOGGLE} from '/redux/action'
 import {getPost} from '@/api/global.js'
 
+const MyIcon = Icon.createFromIconfontCN({
+	scriptUrl: '//at.alicdn.com/t/font_2410657_6wyd1gyezqb.js', // 在 iconfont.cn 上生成
+});
 //创建一个缩放控制组件
 function Trigger (props){
-	console.log(props)
 	return (<div onClick={props.toggle} className={props.collapsed ? "trigger" : "trigger triggerClose"}>
 		<Icon type={ !props.collapsed ? "double-left" : "double-right"} />{!props.collapsed ?<span style={{fontSize:13,marginLeft:10,marginBottom:3}}>点击收缩</span>:null}
 	</div>)
@@ -38,11 +40,11 @@ class DSider extends Component{
 			// 		this.add(item)
 			// 	}
 			// })
-		if(nextprops.menu[0].children && nextprops.menu[0].children.length){
-			this.add(nextprops.menu[0].children[0]);
-		}else{
-			this.add(nextprops.menu[0]);
-		}
+			if(nextprops.menu[0].children && nextprops.menu[0].children.length){
+				this.add(nextprops.menu[0].children[0]);
+			}else{
+				this.add(nextprops.menu[0]);
+			}
 		   
 		}
 		else{
@@ -59,8 +61,7 @@ class DSider extends Component{
 		let pane = {
 			title: item.resourceName, 
 			key: item.id,
-			url: item.resourcePath,
-			breadcrumb: (item.pcodes + ',' + item.resourceName).split(",")
+			url: item.resourcePath
 		}
 		this.props.add(pane)
 	}
@@ -73,10 +74,27 @@ class DSider extends Component{
 			this.setState({openKeys: [item.id]})
 		}
 	}
-	renderMenuTitle = (val,leva) => <span>
-		{val.icon ? <Icon type={val.icon} /> : leva ? <Icon type="bars" /> :null}
-		<span>{val.resourceName}</span>
-	</span>
+	renderMenuTitle = (val,leva) => {
+		//工作台 93 系统配置 85 信息管理135 工作空间140
+		let icon = null,MyIco;
+		if(val.id == 93){
+			icon = 'appstore'
+		}else if(val.id == 85){
+			MyIco = () => (<MyIcon type="iconxitongpeizhi1" />)
+		}else if(val.id == 135){
+			MyIco = () => (<MyIcon type="iconxinxiguanli1" />)
+		}else if(val.id == 140){
+			icon = 'file-text'
+		}
+		return (<span>
+			{icon ? <Icon type={icon} /> : leva ? <MyIco /> :null}
+		<span>{val.resourceName}</span></span>)
+
+		// return (<span>
+		// 	{icon ? <Icon type={icon} /> : leva ? <Icon type="bars" /> :null}
+		// <span>{val.resourceName}</span></span>)
+	}
+	
 	//监听菜单缩放事件并重置collapsed触发收缩
 	collapsed = (collapsed, type) => {
 		let {contNum} = this.state;
@@ -96,7 +114,7 @@ class DSider extends Component{
           mode="inline"
           selectedKeys={[this.props.activeKey]}
 		//   openKeys={this.state.openKeys}
-		  inlineCollapsed={false}
+		//   inlineCollapsed={false}
 		// inlineIndent={12}
           theme="light"
           style={{ borderRight: '1px solid transparent' ,backgroundColor:'transparent'}}

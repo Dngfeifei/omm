@@ -428,7 +428,7 @@ class systempeo extends Component {
     };
     //拖拽结束时执行
     onDragEnd = info => {
-         alert(1)
+        //  alert(1)
     }
     //拖拽tree，判断为哪个位置
     onDrop = info => {
@@ -511,6 +511,7 @@ class systempeo extends Component {
         // });
     };
     checkPeo = (params) => {
+        console.log(params)
 		// let params = Object.assign({}, this.state.pageConf, {orgId:Number(orgId)})
 		checkRY(params).then(res => {
 			if (res.success == 1) {
@@ -521,9 +522,10 @@ class systempeo extends Component {
 				}
 				let pageConf = {
 					limit: res.data.size,
-					offset: (res.data.current - 1) * 10
-				}
-				this.setState({ tabledata: res.data.records, pagination: pagination,  })
+					offset: (res.data.current - 1) * res.data.size
+                }
+                console.log(pagination)
+				this.setState({ tabledata: res.data.records, pagination: pagination, pageConf })
 			}
 		})
 	}
@@ -621,9 +623,11 @@ class systempeo extends Component {
                 current: res.data.current,
                 total: res.data.total,
             }
-            console.log(res);
-            this.setState({ tableLogdata: res.data.records })
-            this.setState({ pagination2: pagination2 })
+            let pageConf2 = {
+                limit: res.data.size,
+                offset: (res.data.current - 1) * res.data.size
+            }
+            this.setState({ tableLogdata: res.data.records,pagination2,pageConf2 })
         })
     }
     // 弹框里的人员查询
@@ -676,12 +680,13 @@ class systempeo extends Component {
     }
     // 分页页码变化
 	pageIndexChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, {orgId:this.state.selectedTreeId},{ offset: (current - 1) * 10 });
+        let {limit} = this.state.pageConf;
+        let pageConf = Object.assign({}, this.state.pageConf, {orgId:this.state.selectedTreeId},{ offset: (current - 1) * limit });
         this.checkPeo(pageConf)
 	}
 	// 分页条数变化
 	pageSizeChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf,{orgId:this.state.selectedTreeId},{ limit: pageSize });
+        let pageConf = Object.assign({}, this.state.pageConf,{orgId:this.state.selectedTreeId},{ offset: 0,limit: pageSize});
 		this.checkPeo(pageConf)
     }
     // 分页页码变化
@@ -691,7 +696,7 @@ class systempeo extends Component {
 	}
 	// 分页条数变化
 	pageSizeChange2 = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf2,{ limit: pageSize });
+        let pageConf = Object.assign({}, this.state.pageConf2,{ offset: 0,limit: pageSize });
 		this.checkAllPeople(pageConf)
 	}
     onRow = (record) =>{
@@ -772,8 +777,8 @@ class systempeo extends Component {
                 <Col span={19} className="my_height" style={{ paddingLeft: '10px', paddingTop:'8px',background: "#fff"}}>
                     {/* <Form style={{ width: '100%' ,}}> */}
                         {/* <Row gutter={24}> */}
-                        <div style={{display:'flex',justifyContent: "space-between",whiteSpace: "nowrap"}}>
-                            <div>
+                        <div style={{display:'flex',justifyContent: "space-between",whiteSpace: "nowrap",paddingTop:'3px'}}>
+                            <div style={{display:'flex'}}>
                                 <Input addonBefore="姓名"
                                     placeholder="请输入" 
                                     value={this.state.RoleName}
@@ -794,8 +799,8 @@ class systempeo extends Component {
                                     </Select>
                                 </label>
                                 
-                                <Button type="primary" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.checkPeoId}>查询</Button>
-                                <Button type="info" style={{ marginLeft: '10px' , marginTop:'5px'}} onClick={this.clear}>清空</Button>
+                                <Button type="primary" style={{ marginLeft: '10px'}} onClick={this.checkPeoId}>查询</Button>
+                                <Button type="info" style={{ marginLeft: '10px'}} onClick={this.clear}>清空</Button>
                             </div>
                             <div>
                                 <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.check}>关联机构人员</Button>

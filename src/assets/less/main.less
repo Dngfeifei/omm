@@ -26,7 +26,7 @@ textarea{
   //切换显示内容区根元素样式
   .ant-layout-content{
      flex: 1; 
-     padding: 0 11px 11px!important;
+     padding: 0 11px 0px!important;
   }
     
   .ant-tabs, .ant-tabs-tabpane{ height: 100%; }
@@ -35,6 +35,7 @@ textarea{
     flex-direction: column;
     .ant-tabs-content{
       flex: auto;
+      height: 10px;
     }
   }
   //tablist根元素样式 
@@ -82,6 +83,7 @@ textarea{
     overflow-y: hidden; 
     height: 100%;
     background: #fafafa;
+    padding-bottom: 46px;
   }
   .ant-layout-sider-children:hover{
     overflow-y: auto;
@@ -133,6 +135,7 @@ textarea{
   height: 40px;
   border-radius: 50%;
   margin-right: 15px;
+  margin-left: 20px;
 }
 
 .printWrap{
@@ -149,12 +152,12 @@ textarea{
 
 
 
-.ant-advanced-search-form {
-  padding: 24px;
-  background: #fbfbfb;
-  border: 1px solid #d9d9d9;
-  border-radius: 6px;
-}
+// .ant-advanced-search-form {
+//   padding: 24px;
+//   background: #fbfbfb;
+//   border: 1px solid #d9d9d9;
+//   border-radius: 6px;
+// }
 
 .ant-advanced-search-form .ant-form-item {
   display: flex;
@@ -255,6 +258,7 @@ textarea{
   height: 100%;
 }
 @import url('./pages/login');
+@import url('./pages/workorder');
 
 
 //进度条样式改写
@@ -278,7 +282,6 @@ textarea{
 .form-error .has-error .ant-form-split {
   color: #f5222d;
   position: absolute;
-  left: 120px;
   display: block;
 }
 

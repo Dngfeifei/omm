@@ -33,7 +33,6 @@ class role extends Component {
     SortTable = () => {
         setTimeout(() => {
             let h = this.tableDom.clientHeight - 100;
-            console.log(h)
             this.setState({
                 h: {
                     y: (h)
@@ -57,7 +56,7 @@ class role extends Component {
         GetResourceTree()
             .then(res => {
                 if (res.success != 1) {
-                    alert("请求错误")
+                    message.error("请求错误")
                     return
                 } else {
                     //给tree数据赋值key title
@@ -183,7 +182,7 @@ class role extends Component {
         GetRoleTree()
             .then(res => {
                 if (res.success != 1) {
-                    alert("请求错误")
+                    message.error("请求错误")
                     return
                 } else {
                     assignment(res.data)
@@ -540,7 +539,6 @@ class role extends Component {
         }
         let row = this.state.tableSelectedInfo[0];
         let ids = [];
-        console.log(row, 254)
         if (row.resources && row.resources.length > 0) {
             if (row.resources[0]) {
                 row.resources.forEach(item => { ids.push(item.id) })
@@ -595,7 +593,6 @@ class role extends Component {
         // 1 校验必填数据是否填写
         // 表单数据
         let formData = this.state.currentRole;
-        console.log(formData, "5555")
         if (!formData.roleName || formData.roleName.length == "" || formData.roleName.length == 0) {
             message.destroy()
             message.error("请输入角色名称");
@@ -758,7 +755,6 @@ class role extends Component {
     // 表格选中后
     onTableSelect = (selectedRowKeys, info) => {
         //获取table选中项
-        console.log(info, 78555)
         this.setState({
             tableSelecteds: selectedRowKeys,
             tableSelectedInfo: info
@@ -775,7 +771,6 @@ class role extends Component {
             if (res.success != 1) {
                 message.error(res.message)
             } else {
-                console.log(res.data, "888")
                 let comboBox = Object.assign({}, this.state.comboBox, {
                     status: res.data
                 })

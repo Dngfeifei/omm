@@ -139,7 +139,6 @@ class Parameter extends Component {
     // 获取表格高度
     SortTable = () => {
         setTimeout(() => {
-            console.log(this.tableDom.offsetHeight);
             let h = this.tableDom.clientHeight - 180;
             this.setState({
                 h: {
@@ -205,7 +204,7 @@ class Parameter extends Component {
                 if (this.state.middleStatus == 'addTree'){
                     this.props.form.setFieldsValue({
                         parameterCategoryName:'',
-                        parentName:res.data.parentName
+                        parentName:res.data.parameterCategoryName
                     })
                 }else if (this.state.middleStatus == 'editTree') {
                     this.props.form.setFieldsValue({
@@ -245,6 +244,11 @@ class Parameter extends Component {
 
     // 编辑节点--类别
     editTree=()=>{
+        if (this.state.selectedTreeId=="1"){
+            message.destroy()
+            message.warning("根节点不可编辑")
+            return
+        }
         if (this.state.selectedTreeId) {
             var id = parseInt(this.state.selectedTreeId[0]);
             // 获取系统类别详情
@@ -261,6 +265,11 @@ class Parameter extends Component {
 
     // 删除节点--类别
     deletetTree=()=>{
+        if (this.state.selectedTreeId=="1"){
+            message.destroy()
+            message.warning("根节点不可删除")
+            return
+        }
         var _this = this;
         if (this.state.selectedTreeId) {
             var id = parseInt(_this.state.selectedTreeId[0]);
@@ -441,13 +450,13 @@ class Parameter extends Component {
         let id = parseInt(this.state.selectedTreeId[0]);
 
         let paramsName = this.getFormData().parameterCategoryName;
-        let param = {
-            parentId:this.state.categoryParentId,
-            id:id,
-            parameterCategoryName:paramsName
-        }
+        
         
         if (this.state.middleStatus == 'addTree') {
+            let param = {
+                parentId:id,
+                parameterCategoryName:paramsName
+            }
             addTree(param).then(res=>{
                 if (res.success == 1) {
                     message.success(res.message);
@@ -461,6 +470,11 @@ class Parameter extends Component {
                
             })
         }else if (this.state.middleStatus == 'editTree') {
+            let param = {
+                parentId:this.state.categoryParentId,
+                id:id,
+                parameterCategoryName:paramsName
+            }
             updateTree(param).then(res=>{
                 if (res.success == 1) {
                     message.success(res.message);

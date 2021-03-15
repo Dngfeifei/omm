@@ -271,6 +271,10 @@ class TableRow extends React.Component {
                         if (res.success == 1) {
                             //  获取系统参数列表
                             _this.props.handleChange();
+                             // 选中项已删除,存储的选中项数据置为空
+                             _this.setState({
+                                selectedRowKeys:null
+                            })
                         } else if (res.success == 0) {
                             message.error(res.message);
                         }

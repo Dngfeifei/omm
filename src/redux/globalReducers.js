@@ -8,6 +8,7 @@ import {
 	SET_PANE_STATE,
 	SET_PANE_ACTIVEKEY,
 	GET_MENU_SUCCESS,
+	SET_WORKLIST
 } from './action'
 
 //redux状态管理原始配置数据
@@ -17,6 +18,10 @@ const globalDataStructure = {
 	activeKey: '',
 	menu: [],
 	breadcrumb:[],
+	resetwork:{
+		key:null,
+		switch:false
+	},
 	collapsed:true
 }
 //redux状态管理action执行操作函数
@@ -36,6 +41,8 @@ export const GlobalReducer = (state = globalDataStructure, action) => {
 		case SET_BREADCRUMB: return Assign(state, { breadcrumb: action.data })//设置面包屑数据
 		
 		case GET_MENU_SUCCESS: return Assign(state, { menu: action.data })//获取导航树节点
+
+		case SET_WORKLIST: return Assign(state, { resetwork: action.data })//获取导航树节点
 
 		case RESET: return globalDataStructure//重置所有状态
 

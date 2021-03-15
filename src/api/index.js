@@ -41,7 +41,6 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		rsl(res.json())
 })
 .then(res => {
-	console.log(res,1234,countNum)
 	if (res.status == '2006' || res.status == '2007') {
 		console.log(countNum)
 		if(countNum) {

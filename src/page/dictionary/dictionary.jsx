@@ -76,7 +76,6 @@ class content extends Component {
     SortTable = () => {
         setTimeout(() => {
             let h = this.tableDom.clientHeight - 100;
-            console.log(h)
             this.setState({
                 h: {
                     y: (h)
@@ -205,7 +204,7 @@ class content extends Component {
         GetDictionary(params)
             .then(res => {
                 if (res.success != 1) {
-                    alert("操作失败")
+                    message.error("操作失败")
                     return
                 } else {
                     //给tree数据赋值key title
@@ -486,7 +485,6 @@ class content extends Component {
     }
     //点击行选中选框
     onRow = (record) => {
-        console.log(record, 456)
         return {
             onClick: () => {
                 let selectedKeys = [record.id], selectedItems = [record];
@@ -503,7 +501,6 @@ class content extends Component {
     // 表格选中后
     onTableSelect = (selectedRowKeys, info) => {
         //获取table选中项
-        console.log(selectedRowKeys, info)
         this.setState({
             tableSelecteds: selectedRowKeys,
             tableSelectedInfo: info
@@ -547,7 +544,6 @@ class content extends Component {
             message.warning("请选中后，再进行修改操作")
             return
         }
-        console.log(tableSelecteds, "456")
         let key = tableSelecteds[0];
 
         if (this.state.editingKey) {
@@ -718,13 +714,13 @@ class content extends Component {
                 okText="保存"
             >
                 <Row>
-                    <label htmlFor="字典名称" className="ant-form-item-required">
-                        <span style={{ width: "16%", display: "inline-block" }}>字典名称：</span>
+                    <label htmlFor="字典名称">
+                        <span  className="ant-form-item-required" style={{ width: "18%", display: "inline-block",textAlign:"right" }}>字典名称：</span>
                         <Input placeholder="请输入" value={this.state.newGroup.dictName} onChange={this.getdictName} style={{ margin: "2% 10px", width: '70%' }} /></label>
                 </Row>
                 <Row>
-                    <label htmlFor="字典名称" className="ant-form-item-required">
-                        <span style={{ width: "16%", display: "inline-block" }}>编码值：</span>
+                    <label htmlFor="字典名称">
+                        <span  className="ant-form-item-required" style={{ width: "18%", display: "inline-block",textAlign:"right" }}>编码值：</span>
                         <Input placeholder="请输入" value={this.state.newGroup.dictCode} onChange={this.getdictCode} style={{ margin: "2% 10px", width: '70%' }} /></label>
                 </Row>
             </Modal>

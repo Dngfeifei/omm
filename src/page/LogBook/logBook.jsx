@@ -145,7 +145,6 @@ class logBook extends Component {
     // 获取表格高度
     SortTable = () => {
         setTimeout(() => {
-            console.log(this.tableDom.offsetHeight);
             let h = this.tableDom.clientHeight - 125;
             this.setState({
                 h: {

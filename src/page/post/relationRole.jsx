@@ -80,7 +80,7 @@ class People extends Component {
 
 		],
 		//未关联表格选中项
-		unRelRabSelecteds: null,
+		unrelRabSelecteds: null,
 		// 已关联人员
 		relationTable: [],
 		//关联表格选中项
@@ -89,7 +89,6 @@ class People extends Component {
 	// 请求全量机构树数据
 	searchRoleGroup = _ => {
 		GetRoleGroup().then(res => {
-			console.log(res.data,999)
 			if (res.success == 1) {
 				assignment(res.data)
 				this.setState({
@@ -122,14 +121,25 @@ class People extends Component {
 	onUnRelTabSelect = selectedRowKeys => {
 		//获取table选中项
 		this.setState({
-			unRelRabSelecteds: selectedRowKeys[0]
+			unrelRabSelecteds: selectedRowKeys[0]
 		})
 	};
+	 //点击行选中选框
+	 onRow = (record) => {
+        return {
+            onClick: () => {
+				// let selectedKeys = [record.id], selectedItems = [record];
+                this.setState({
+                    unrelRabSelecteds: record.id,
+                })
+            }
+        }
+    }
 	// 已关联表格选中后
 	onRelTabSelect = selectedRowKeys => {
 		//获取table选中项
 		this.setState({
-			RelRabSelecteds: selectedRowKeys
+			relRabSelecteds: selectedRowKeys
 		})
 	};
 	// 通过用户名请求机构用户数据
@@ -150,9 +160,9 @@ class People extends Component {
 				}
 				let pageConf = {
 					limit: res.data.size,
-					offset: (res.data.current - 1) * 10
+					offset: (res.data.current - 1) * res.data.size
 				}
-				this.setState({ unRelationTable: res.data.records, pagination: pagination, pageConf: pageConf })
+				this.setState({ unRelationTable: res.data.records, pagination: pagination, pageConf: pageConf,unrelRabSelecteds:""})
 			} else {
 				message.error("请求失败,请重试！")
 			}
@@ -160,7 +170,7 @@ class People extends Component {
 	}
 	// 岗位关联人员
 	relationPost = _ => {
-		let roleId = this.state.unRelRabSelecteds;
+		let roleId = this.state.unrelRabSelecteds;
 		if (roleId == "" || roleId == null) {
 			message.warning('请选中表格中的某一记录！')
 			return
@@ -174,7 +184,7 @@ class People extends Component {
 	}
 	// 解除关联人员
 	unRelationPost = _ => {
-		let roleId = this.state.RelRabSelecteds;
+		let roleId = this.state.relRabSelecteds;
 		if (!roleId || roleId.length == 0) {
 			message.warning('请选中表格中的某一记录！')
 			return
@@ -184,6 +194,7 @@ class People extends Component {
 		UnRelationRole(params).then(res => {
 			if (res.success == 1) {
 				this.getUsers({ positionId: this.state.positionId })
+				this.setState({relationTable:[],relRabSelecteds:[]})
 			}
 		})
 	}
@@ -200,7 +211,7 @@ class People extends Component {
 				}
 				let pageConf = {
 					limit: res.data.size,
-					offset: (res.data.current - 1) * 10
+					offset: (res.data.current - 1) * res.data.size
 				}
 				this.setState({
 					relationTable: res.data.records,
@@ -214,7 +225,7 @@ class People extends Component {
 
 	// 分页页码变化
 	pageIndexChange = (current, pageSize) => {
-		let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
+		let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
 		let roleCategoryId = this.state.currentroleCategoryId;
 		let params = Object.assign({}, pageConf, { roleCategoryId: roleCategoryId, roleName: this.state.searchUserName })
 		this.searchUser(params)
@@ -228,7 +239,7 @@ class People extends Component {
 	}
 	// 分页页码变化
 	pageIndexChange2 = (current, pageSize) => {
-		let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * 10 });
+		let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
 		this.getUsers(pageConf)
 	}
 	// 分页条数变化
@@ -270,16 +281,16 @@ class People extends Component {
 								onClick={this.relationPost}
 								type="primary">关联</Button>
 						</Row>
-						<Table style={{height:"180px"}} size="small"  scroll={{y: 140 }} bordered rowSelection={{ onChange: this.onUnRelTabSelect, type: "radio" }} columns={this.state.allTableColumns} dataSource={this.state.unRelationTable}  pagination={false} rowKey="id" />
+						<Table style={{height:"180px"}} size="small"  scroll={{y: 140 }} bordered rowSelection={{ onChange: this.onUnRelTabSelect, type: "radio",selectedRowKeys: [this.state.unrelRabSelecteds] }}  onRow={this.onRow} columns={this.state.allTableColumns} dataSource={this.state.unRelationTable}  pagination={false} rowKey="id" />
 						<Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
 					</Card>
 				</div>
 				<div>
-					<Card title="已关联角色" style={{ marginTop: "20px", height: "360px" }} extra={<Button
+					<Card size="small" title="已关联角色" style={{ marginTop: "20px", height: "360px" }} extra={<Button
 								style={{ float: "right" }}
 								onClick={this.unRelationPost}
 								type="primary">取消关联</Button>}>
-						<Table bordered   style={{height:"205px"}} size="small"  scroll={{y: 165 }}  rowSelection={{ onChange: this.onRelTabSelect }} columns={this.state.allTableColumns} dataSource={this.state.relationTable}  pagination={false} rowKey="id" />
+						<Table bordered   style={{height:"240px"}} size="small"  scroll={{y: 200 }}  rowSelection={{ onChange: this.onRelTabSelect }} columns={this.state.allTableColumns} dataSource={this.state.relationTable}  pagination={false} rowKey="id" />
 						<Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} />
 					</Card>
 				</div>

@@ -1,5 +1,5 @@
-import React ,{ Component}from 'react'
-import { Spin, Tree, Input, Icon,Button,Row,Col,Tooltip,Form} from 'antd'
+import React, { Component } from 'react'
+import { Spin, Tree, Input, Icon, Button, Row, Col, Tooltip, Form } from 'antd'
 
 // 参数类型
 import PropTypes from 'prop-types'
@@ -39,7 +39,7 @@ const generateList = (data) => {
     for (let i = 0; i < data.length; i++) {
         const node = data[i];
         const key = node.key;
-        dataList.push({key, title: node.title});
+        dataList.push({ key, title: node.title });
         if (node.children) {
             generateList(node.children);
         }
@@ -50,10 +50,10 @@ const generateList = (data) => {
 class TreeList extends Component {
     constructor(props) {
         super(props);
-        
+
         this.state = {
             treeData: [],//节点数据
-            visible:true,//加载loading
+            visible: true,//加载loading
 
             expandedKeys: [],
             searchValue: '',
@@ -65,17 +65,17 @@ class TreeList extends Component {
     // 设置默认props
     static defaultProps = {
         // 是否自动展开父节点
-        autoExpandParent:true,
+        autoExpandParent: true,
         // 节点前添加 Checkbox 复选框
-        checkable:false,
+        checkable: false,
         // 默认选中复选框的树节点
-        defaultCheckedKeys:[],
+        defaultCheckedKeys: [],
         // 默认展开所有树节点
-        defaultExpandAll:true,
+        defaultExpandAll: true,
         // 默认展开指定的树节点
-        defaultExpandedKeys:[],
+        defaultExpandedKeys: [],
         // 默认选中的树节点
-        defaultSelectedKeys:[],
+        defaultSelectedKeys: [],
         // 设置节点可拖拽（IE>8）
         draggable: false,
         // 支持点选多个节点（节点本身）
@@ -85,35 +85,34 @@ class TreeList extends Component {
         // 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式
         showIcon: false,
         // 是否展示连接线
-        showLine:true,
-
-
-
-
-
+        showLine: true,
+        // 是否开启搜索功能（查）
+        search: true,
+        // 是否开启编辑功能（增删改）
+        edit: true,
     }
 
     // 挂载完成时
     componentDidMount() {
         this.setState({
             treeData: this.props.treeData, //将传入的树  数据进行加载出来
-            visible:false
+            visible: false
         });
 
     };
 
-    
+
     loop = data => data.map((item) => {
-        let {searchValue} = this.state;
+        let { searchValue } = this.state;
         const index = item.title.indexOf(searchValue);
         const beforeStr = item.title.substr(0, index);
         const afterStr = item.title.substr(index + searchValue.length);
         const title = index > -1 ? (
             <span>
                 {beforeStr}
-                <span style={{color: '#4876e7',fontWeight:'bold'}}>{searchValue}</span>
+                <span style={{ color: '#4876e7', fontWeight: 'bold' }}>{searchValue}</span>
                 {afterStr}
-                </span>
+            </span>
         ) : <span>{item.title}</span>;
         if (item.children) {
             return (
@@ -122,13 +121,13 @@ class TreeList extends Component {
                 </TreeNode>
             );
         }
-        return <TreeNode dataRef={item} key={item.key} title={title}/>;
+        return <TreeNode dataRef={item} key={item.key} title={title} />;
     });
 
 
 
     // 输入框搜索节点
-    searchChange=(value)=>{
+    searchChange = (value) => {
         const expandedKeys = dataList.map((item) => {
             if (item.title.indexOf(value) > -1) {
                 return getParentKey(item.title, this.props.treeData);
@@ -146,11 +145,11 @@ class TreeList extends Component {
 
 
 
-    render=()=>{
+    render = () => {
 
-        const {treeData,autoExpandParent,checkable,defaultCheckedKeys,defaultExpandAll,defaultExpandedKeys,defaultSelectedKeys,draggable,multiple,selectable,showIcon,
-            showLine,onCheck,onDragEnd,onDrop,onExpand,onRightClick,onSelect,selectedKeys
-        
+        const { treeData, autoExpandParent, checkable, defaultCheckedKeys, defaultExpandAll, defaultExpandedKeys, defaultSelectedKeys, draggable, multiple, selectable, showIcon,
+            showLine, onCheck, onDragEnd, onDrop, onExpand, onRightClick, onSelect, selectedKeys, search, edit
+
         } = this.props;
         // 进行数组扁平化处理
         generateList(treeData);
@@ -159,24 +158,29 @@ class TreeList extends Component {
             <div className="TreeContent">
                 <Spin tip="Loading..." spinning={this.state.visible}>
                     <Row>
-                        <Col span={12}>
-                            <Search allowClear placeholder='请输入关键词' onSearch={this.searchChange} />
-                        </Col>
-                        <div className="btn" style={{position:'absolute',right:'0px'}}>
-                            <Tooltip placement="top" title='删除'>
-                                <Button onClick={this.props.deletetTree} icon="delete" />
-                            </Tooltip>
-                            <Tooltip placement="top" title='编辑'>
-                                <Button onClick={this.props.editTree} icon="edit" style={{ margin: '0 10px' }} />
-                            </Tooltip>
-                            <Tooltip placement="top" title='新增'>
-                                <Button type="primary" onClick={this.props.addTree} icon="plus" />
-                            </Tooltip>
-                        </div>
+                        {
+                            search ? <Col span={12}>
+                                <Search allowClear placeholder='请输入关键词' onSearch={this.searchChange} />
+                            </Col> : ""
+                        }
+
+                        {
+                            edit ? <div className="btn" style={{ position: 'absolute', right: '0px' }}>
+                                <Tooltip placement="top" title='删除'>
+                                    <Button onClick={this.props.deletetTree} icon="delete" />
+                                </Tooltip>
+                                <Tooltip placement="top" title='编辑'>
+                                    <Button onClick={this.props.editTree} icon="edit" style={{ margin: '0 10px' }} />
+                                </Tooltip>
+                                <Tooltip placement="top" title='新增'>
+                                    <Button type="primary" onClick={this.props.addTree} icon="plus" />
+                                </Tooltip>
+                            </div> : ""
+                        }
                     </Row>
                     <div className="treeContantier">
                         <Tree
-                            style={{paddingTop:'10px'}}
+                            // style={{ paddingTop: '5px' }}
                             className="tree"
                             autoExpandParent={autoExpandParent}   // 是否自动展开父节点
                             checkable={checkable}  // 节点前添加 Checkbox 复选框
@@ -200,7 +204,7 @@ class TreeList extends Component {
                             onSelect={onSelect}  //点击树节点触发
                         >{this.loop(treeData)}</Tree>
                     </div>
-                    
+
                 </Spin>
             </div>
         )
@@ -212,29 +216,29 @@ class TreeList extends Component {
 // 设置props参数类型
 TreeList.propTypes = {
     // 是否自动展开父节点
-    autoExpandParent:PropTypes.bool,
+    autoExpandParent: PropTypes.bool,
     // 展示数据（array）
     treeData: PropTypes.array,
     // 节点前添加 Checkbox 复选框
-    checkable:PropTypes.bool,
+    checkable: PropTypes.bool,
     // 默认选中复选框的树节点
-    defaultCheckedKeys:PropTypes.array,
-	// 默认展开所有树节点
-    defaultExpandAll:PropTypes.bool,
+    defaultCheckedKeys: PropTypes.array,
+    // 默认展开所有树节点
+    defaultExpandAll: PropTypes.bool,
     // 默认展开指定的树节点
-    defaultExpandedKeys:PropTypes.array,
+    defaultExpandedKeys: PropTypes.array,
     // 默认选中的树节点
-    defaultSelectedKeys:PropTypes.array,
+    defaultSelectedKeys: PropTypes.array,
     // 设置节点可拖拽（IE>8）
-    draggable:PropTypes.bool,
+    draggable: PropTypes.bool,
     // 支持点选多个节点（节点本身）
-    multiple:PropTypes.bool,
+    multiple: PropTypes.bool,
     // 是否可选中
-    selectable:PropTypes.bool,
+    selectable: PropTypes.bool,
     // 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式
-    showIcon:PropTypes.bool,
+    showIcon: PropTypes.bool,
     // 是否展示连接线
-    showLine:PropTypes.bool,
+    showLine: PropTypes.bool,
 };
 
 export default TreeList;

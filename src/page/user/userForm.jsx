@@ -19,6 +19,7 @@ class CertItem extends Component {
 				this.props.form.resetFields()
 				this.props.form.setFields({
 					entryDate: { value: moment() },
+					status: { value: 1 },
 				})
 			} else {
 				let mes = nextprops.config.item
@@ -34,9 +35,13 @@ class CertItem extends Component {
 					fixedPhone: { value: mes.fixedPhone },
 					orgId: { value: mes.orgId },
 					duties: { value: mes.duties },
-					entryDate: { value: (mes.entryDate ? moment(mes.entryDate) : '') },
 					description: { value: mes.description }
 				})
+				if(mes.entryDate){
+					this.props.form.setFields({
+						entryDate: { value: moment(mes.entryDate) },
+					})
+				}
 			}
 		}
 	}
@@ -74,6 +79,7 @@ class CertItem extends Component {
 				key: 'userNum',
 				option: {
 					rules: [
+						{ required: true, message: "请输入员工号" },
 						{
 							message: "请输入数字",
 							pattern: /^[0-9]{0,}$/,
@@ -87,7 +93,7 @@ class CertItem extends Component {
 				key: 'realName',
 				option: {
 					rules: [
-						{ required: true, message: "请输入账号" },
+						{ required: true, message: "请输入姓名" },
 					]
 				},
 				render: _ => <Input style={{ width: 200 }} />
@@ -135,7 +141,7 @@ class CertItem extends Component {
 				key: 'email',
 				option: {
 					rules: [
-						{ required: true, message: "请输入" },
+						{ required: true, message: "请输入邮箱" },
 						{
 							message: "请按照正确的邮箱格式输入",
 							pattern: "^[A-Za-z0-9\u4e00-\u9fa5]+@[a-zA-Z0-9_-]+(\.[a-zA-Z0-9_-]+)+$",
@@ -193,7 +199,7 @@ class CertItem extends Component {
 				label: '备注',
 				key: 'description',
 				option: { rules: [] },
-				render: _ => <TextArea rows={2} style={{ width: 360 }} />
+				render: _ => <TextArea rows={2} />
 			}
 		],
 		customeRules: [],
@@ -205,7 +211,7 @@ class CertItem extends Component {
 		GetOrgList()
 			.then(res => {
 				if (res.success == 0) {
-					alert("机构查询失败");
+					message.error("机构查询失败");
 				} else {
 					this.setState({ treeData: res.data })
 				}
@@ -213,7 +219,6 @@ class CertItem extends Component {
 	}
 	//tree下拉框变化
 	onTreeSelectValChange = (value, label, extra) => {
-		console.log(value, label, extra, 456)
 		this.setState({ treeSelectVal: value });
 	};
 	// onChange = t => this.getCustomForm(t)
@@ -285,7 +290,6 @@ class CertItem extends Component {
 		if (!this.state.lock) {
 			await this.setState({ lock: true })
 			this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
-				console.log(err, 125)
 				if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 发起后台请求
 					let params = Object.assign({}, val)
 					if (params.entryDate) { params.entryDate = params.entryDate.format('YYYY-MM-DD') };
@@ -298,6 +302,7 @@ class CertItem extends Component {
 									this.props.done()
 									message.success('操作成功')
 								}else{
+									message.destroy()
 									message.error(res.message)
 								}
 								this.setState({ lock: false })
@@ -310,6 +315,7 @@ class CertItem extends Component {
 									message.success('操作成功')
 									this.props.done()
 								}else{
+									message.destroy()
 									message.error(res.message)
 								}
 								this.setState({ lock: false })
@@ -334,18 +340,18 @@ class CertItem extends Component {
 			footer={null}
 		>
 			<Form className="form-error">
-				<Row gutter={24}>
+				<Row>
 					{this.state.rules.map((val, index) => val.key != 'description' ? <Col key={index} span={12} style={{ display: 'block' }}>
 						<FormItem
-							label={val.label} labelCol={{ span: 6 }}>
+							label={val.label} labelCol={{ span: 6 }} wrapperCol={{ span: 14 }}>
 							{getFieldDecorator(val.key, val.option)(val.render())}
 						</FormItem></Col> : <Col key={index} span={24} style={{ display: 'block' }}>
 							<FormItem
-								label={val.label} labelCol={{ span: 3 }}>
+								label={val.label} labelCol={{ span: 3 }} wrapperCol={{ span: 17 }}>
 								{getFieldDecorator(val.key, val.option)(val.render())}
 							</FormItem></Col>)}
 				</Row>
-				<Row gutter={24}>
+				<Row>
 					{this.state.customeRules.map((val, index) => <Col key={index} span={12} style={{ display: 'block' }}><FormItem
 						label={val.label} labelCol={{ span: 6 }}>
 						{getFieldDecorator(val.key, val.option)(val.render())}

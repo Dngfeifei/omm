@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
-import { Layout, Menu, Icon, Dropdown, Breadcrumb,message } from 'antd'
+import { Layout, Menu, Icon, Dropdown, Badge,message} from 'antd'
 import { connect } from 'react-redux'
 import { TOGGLE, ADD_PANE, RESET, SET_BREADCRUMB ,GET_MENU} from '/redux/action'
 const { Header } = Layout
 import { hashHistory } from 'react-router'
-
+import ModalDom from '@/components/modal'
 
 import {logout} from '@/api/login.js'
 
@@ -20,9 +20,9 @@ import {logout} from '@/api/login.js'
 class DHeader extends Component {
 
     componentWillMount = _ => {
-        let name='username';
+        let name='realName';
         if (process.env.NODE_ENV == 'production') {
-            name=`${process.env.ENV_NAME}_username`
+            name=`${process.env.ENV_NAME}_realName`
         }
         console.log(!(process.env.NODE_ENV == 'production'))
         let username = localStorage.getItem(name)
@@ -31,7 +31,8 @@ class DHeader extends Component {
     }
 
     state = {
-        username: ''
+        username: '',
+        modalVisible: false
     }
 
     quit = _ => {
@@ -49,12 +50,8 @@ class DHeader extends Component {
     }
 
     changePass = _ => {
-        let pane = {
-            title: '修改密码',
-            key: 'changepas',
-            url: `changePassword`
-        }
-        this.props.add(pane)
+        // 跳转到【重置密码】页面  
+		hashHistory.push('/initPassForm')
     }
 
     showMessage = _ => {
@@ -64,6 +61,10 @@ class DHeader extends Component {
             url: `message`
         }
         this.props.add(pane)
+    }
+    handleClick = (pa) => {
+        let modalVisible = pa;
+        this.setState({modalVisible});
     }
     render = _ => <Header
         className="header" style={{background:'#4876e7 url(static/images/topBG.png) 0 center no-repeat',backgroundSize: 'auto 102%'}}>
@@ -86,19 +87,33 @@ class DHeader extends Component {
             }
         </Breadcrumb> */}
         <div className="settingwrap">
+            <Badge count={0} style={{cursor:'pointer'}}  onClick={()=> this.handleClick(true)}>
+                <span className="head-example">
+                    <Icon type="bell" theme="filled" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
+                </span>
+            </Badge>
             <img
                 src="./static/images/avatar.png"
                 className="avatar" />
-            <span style={{ marginRight: 15 }}>欢迎，{this.state.username || '管理员'}</span>
+            <span style={{ marginRight: 15}}>欢迎，{this.state.username || '管理员'}</span>
             <Dropdown
                 overlay={<Menu>
-                    <Menu.Item onClick={this.showMessage}>消息中心</Menu.Item>
+                    {/* onClick={this.showMessage} */}
+                    <Menu.Item >消息中心</Menu.Item>
                     <Menu.Item onClick={this.changePass}>修改密码</Menu.Item>
                 </Menu>}>
                 <span>个人中心</span>
             </Dropdown>
             <span className="settings" onClick={this.quit}>退出</span>
         </div>
+        <ModalDom title='头部对话框' width={700} destroyOnClose={true} visible={this.state.modalVisible} onOk={()=>this.handleClick(false)} onCancel={()=>this.handleClick(false)}>
+          <p>some contents...</p>
+          <p>some contents...</p>
+          <p>some contents...</p>
+          <p>some contents...</p>
+          <p>some contents...</p>
+          <p>some contents...</p>
+        </ModalDom>
     </Header>
 }
 

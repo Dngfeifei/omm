@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Button, Modal, message, Row,Col } from 'antd'
+import { Input, Button, Modal, message, Row, Col } from 'antd'
 import { GetPostData, DelPost } from '/api/post'
 import Common from '/page/common.jsx'
 const { confirm } = Modal;
@@ -25,9 +25,9 @@ class Post extends Common {
 				title: '序号',
 				dataIndex: 'key',
 				editable: false,
-				align:'center',
-				width:'80px',
-				render:(text,record,index)=> `${index+1}`
+				align: 'center',
+				width: '80px',
+				render: (text, record, index) => `${index + 1}`
 			},
 			{
 				title: '编码',
@@ -86,7 +86,7 @@ class Post extends Common {
 							total: Number(res.data.total),
 							current: Number(res.data.current)
 						}),
-						selected: [] 
+						selected: []
 					})
 				}
 			})
@@ -189,6 +189,7 @@ class Post extends Common {
 					item: null
 				}
 			})
+			this.search()
 		} else if (type == "people") {
 			//关联人员逻辑完成
 			this.setState({
@@ -208,13 +209,12 @@ class Post extends Common {
 				}
 			})
 		}
-		this.search()
 	}
 
 	renderSearch = _ => <div>
 		<div className="mgrSearchBar">
 			{/* <Row style={{ display: 'flex', margin: "10px 0", padding: "0 10px" }}> */}
-			<Row style={{marginBottom: "10px" }}>
+			<Row style={{ marginBottom: "10px" }}>
 				<Col span={12}>
 					<Input
 						value={this.state.search.positionName}
@@ -238,7 +238,7 @@ class Post extends Common {
 						type="info">删除</Button>
 					<Button style={{ margin: "0px 10px" }}
 						type="primary" onClick={_ => this.relationPeople()}>关联人员</Button>
-					<Button style={{ margin: "0px 10px" }}
+					<Button
 						type="primary" onClick={_ => this.relationRole()}>关联角色</Button>
 				</Col>
 			</Row>

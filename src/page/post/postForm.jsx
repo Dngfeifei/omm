@@ -16,7 +16,6 @@ class postForm extends Component {
 				this.props.form.resetFields()
 			} else {
 				let mes = nextprops.windowData.item
-				console.log(mes, 987)
 				this.props.form.setFields({
 					positionCode: { value: mes.positionCode },
 					positionName: { value: mes.positionName },
@@ -78,7 +77,6 @@ class postForm extends Component {
 				if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 发起后台请求
 					let params = Object.assign({}, val)
 					if (this.props.windowData.type == 'add') {
-						console.log(params,1)
 						AddPost(params)
 							.then(res => {
 								if (res.success == 1) {

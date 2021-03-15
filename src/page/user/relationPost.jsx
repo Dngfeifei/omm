@@ -17,7 +17,6 @@ class People extends Component {
 			this.setState({
 				userId: params
 			})
-			console.log(params, 147)
 			// 获取已关联数据
 			this.GetRelation({ userId: params })
 		}
@@ -152,7 +151,6 @@ class People extends Component {
 			return
 		}
 		let userId = this.state.userId;
-		console.log(positionId)
 		RelationPeople({ userId: userId, positionId: positionId, flag: "user" }).then(res => {
 			if (res.success == 1) {
 				message.success('操作成功')
@@ -200,6 +198,7 @@ class People extends Component {
 	render = _ => {
 		return <div>
 			<Modal
+		    	title="关联岗位"
 				destroyOnClose={true}
 				visible={this.props.config.visible}
 				onCancel={this.props.done}
@@ -217,8 +216,9 @@ class People extends Component {
 								onChange={this.getPostName}
 							/>
 							<Button
+							style={{marginLeft:"10px"}}
 								onClick={this.GetAllPost}
-								type="info" icon="search">搜索</Button>
+								type="primary" icon="search">查询</Button>
 							<Button
 								style={{ float: "right" }}
 								onClick={this.relationPost}

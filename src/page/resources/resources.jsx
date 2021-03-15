@@ -1,12 +1,13 @@
 import React, { Component } from 'react'
 import { Tree, Input, Button, message, Select, Form, Row, Col, Modal, Card, Tooltip } from 'antd'
-
+import { connect } from 'react-redux'
+import { GET_MENU } from '/redux/action'
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
 import { GetResourceTree, AddResource, EditResource, DelResource, GetResourceInfo } from '/api/resources'
 import { GetDictInfo } from '/api/dictionary'
-const FormItem = Form.Item
+const FormItem = Form.Item;
 const { Option } = Select
 const { TextArea } = Input
 const { confirm } = Modal;
@@ -25,6 +26,12 @@ const assignment = (data) => {
 		}
 	});
 }
+@connect(state => ({
+	menu: state.global.menu
+}), dispath => ({
+	getMenu() { dispath({ type: GET_MENU }) }
+}))
+
 class resources extends Component {
 	async componentWillMount() {
 		// 获取数据字典树数据
@@ -203,7 +210,7 @@ class resources extends Component {
 		GetResourceTree()
 			.then(res => {
 				if (res.success != 1) {
-					alert("请求错误")
+					message.error("请求错误")
 					return
 				} else {
 					//给tree数据赋值key title
@@ -322,7 +329,6 @@ class resources extends Component {
 	//删除按钮
 	delBtn = async_ => {
 		let selected = this.state.selected;
-		console.log(this.state.selected, 4564)
 
 		//1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
 		if (selected.id == "" || selected.id == null) {
@@ -357,6 +363,7 @@ class resources extends Component {
 									title: null
 								}
 							})
+							_this.props.getMenu();
 						}
 					})
 			},
@@ -371,7 +378,6 @@ class resources extends Component {
 				params = Object.assign({}, val)
 				if (this.state.type == 1) {
 					params = Object.assign({}, params, { parentResourceId: this.state.selected.id })
-					console.log(params, 111)
 					this.addSave(params)
 				} else {
 					params = Object.assign({}, params, { parentResourceId: this.state.selected.parentResourceId })
@@ -407,8 +413,10 @@ class resources extends Component {
 					this.setState({ editable: false })
 					this.searchTree()
 					message.success('操作成功')
+					this.props.getMenu();
 				} else {
-					message.error('操作失败')
+					message.destroy()
+					message.error(res.message)
 				}
 			})
 	}
@@ -421,8 +429,10 @@ class resources extends Component {
 					this.setState({ editable: false })
 					this.searchTree()
 					message.success('操作成功')
+					this.props.getMenu();
 				} else {
-					message.error('操作失败')
+					message.destroy()
+					message.error(res.message)
 				}
 			})
 	}
@@ -529,7 +539,7 @@ class resources extends Component {
 			<Row gutter={24} className="main_height">
 				<Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
 					<TreeParant treeData={this.state.treeData} draggable={true}
-						addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn}  selectedKeys={[this.state.selected.id]}
+						addTree={this.addBtn} editTree={this.editBtn} deletetTree={this.delBtn} selectedKeys={[this.state.selected.id]}
 						onDrop={this.onDrop} onExpand={this.onExpand} onSelect={this.onSelect}  //点击树节点触发事件
 					></TreeParant>
 				</Col>
@@ -539,7 +549,7 @@ class resources extends Component {
 					<Row gutter={24}>
 						<Form
 							labelCol={{ span: 4 }}
-							
+
 							layout="horizontal"
 						>
 							{this.state.rules.map((val, index) =>

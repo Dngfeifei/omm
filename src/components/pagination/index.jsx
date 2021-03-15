@@ -9,7 +9,6 @@ class Paginations extends Component {
 
     // 挂载完成
     componentDidMount=()=>{
-        console.log(this.props)
     }
 
     showTotal=()=>{

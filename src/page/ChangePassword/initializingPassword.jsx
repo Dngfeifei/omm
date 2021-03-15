@@ -5,7 +5,10 @@
 
 
 import React, { Component } from 'react'
-import {Row, Input, Button, Form} from 'antd'
+import {Row, Input, Button, Form, message} from 'antd'
+import { hashHistory } from 'react-router'
+
+
 const FormItem = Form.Item
 
 const creatHistory = require("history").createHashHistory;
@@ -13,7 +16,7 @@ const history = creatHistory();//返回上一页这段代码
 
 
 // 引入API接口
-import {  } from '/api/login'
+import { sendEmail, resetPasswords} from '/api/login'
 // 引入css
 import "/assets/less/pages/resetPassword.css";
 
@@ -30,32 +33,8 @@ class ResetPassword extends Component {
     }
 
 
-    // 组件将要挂载时触发的函数
-    componentWillMount(){
-        
-
-    }
-
-
-    // 组件将要挂载完成后触发的函数
-    componentDidMount(){
-        
-
-    }
-
-
-    // 确认事件
-    handleSubmit=()=>{
-        this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
-            if (!err || !Object.getOwnPropertyNames(err).length) {
-                let params = Object.assign({}, val)
-
-                console.log(params)
-            }
-        })
-    }
-
     setInterval = () => {
+        this.setState({ counting: false, count: 60 });
         this.timer = setInterval(this.countDown, 1000)
     }
 
@@ -77,8 +56,21 @@ class ResetPassword extends Component {
 
     // 发送验证码
     send=()=>{
-        this.setInterval();
-       
+        console.log(this.props.form.getFieldValue('userName'))
+        if (!this.props.form.getFieldValue('userName')) {
+            message.warning('请先填写系统账号等信息！');
+        }else {
+            
+            sendEmail({userName:this.props.form.getFieldValue('userName')}).then(res=>{
+                if (res.success == 1) {
+                    message.success(res.message);
+
+                    this.setInterval();
+                }else if (res.success == 0) {
+                    message.error(res.message);
+                }
+            })
+        }
     }
 
     // 返回登录页
@@ -172,6 +164,32 @@ class ResetPassword extends Component {
     }
 
 
+    // 确认事件
+    handleSubmit=()=>{
+        this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
+            if (!err || !Object.getOwnPropertyNames(err).length) {
+                let params = Object.assign({}, val);
+
+
+                let newParams = {
+                    userName:params.userName,
+                    password:params.password,
+                    verifyCode:params.verifyCode
+                }
+
+                resetPasswords(newParams).then(res=>{
+                    if (res.success == 1) {
+                        // 修改成功后返回到【登录页面】
+                        hashHistory.push('/login')
+                    }else if (res.success == 0) {
+                        message.error(res.message);
+                    }
+                })
+
+            }
+        })
+    }
+
 
 
     render = _ => {
@@ -195,7 +213,7 @@ class ResetPassword extends Component {
                         <img src='static/images/resetPsd.png' />
                         <span className='logintitle'>重置密码</span>
                     </div>
-                    <Form onSubmit={this.handleSubmit}>
+                    <Form >
                         <FormItem label='系统账号' {...formItemLayout} hasFeedback>
                             {getFieldDecorator('userName', {
                                 rules: [{
@@ -209,7 +227,7 @@ class ResetPassword extends Component {
                                 <Input  style={{width: '90%'}} placeholder="请输入系统账号" />,
                             )}
                         </FormItem>
-                        <FormItem label='设置新密码' {...formItemLayout} style={{marginBottom: '24px'}} hasFeedback>
+                        <FormItem label='设置新密码' {...formItemLayout} style={{marginBottom: '24px'}} hasFeedback required>
                             {getFieldDecorator('password', {
                                 rules: [{
                                     validator: this.compareToFirstPassword,
@@ -230,9 +248,9 @@ class ResetPassword extends Component {
                                 <Input.Password style={{width: '90%'}} placeholder="须与设置的密码一样" />,
                             )}
                         </FormItem>
-                        <FormItem label='验证码' {...formItemLayout} style={{marginBottom: '24px'}} help="验证码将发送到系统账号本人企业邮箱" hasFeedback>
+                        <FormItem label='验证码' {...formItemLayout} style={{marginBottom: '24px'}} help="验证码将发送到系统账号本人企业邮箱">
                             <Row style={{ display: 'flex' }}>
-                                {getFieldDecorator('code', {
+                                {getFieldDecorator('verifyCode', {
                                     rules: [{
                                         required: true, message: '验证码不可以为空!',
                                     }]
@@ -249,7 +267,7 @@ class ResetPassword extends Component {
                         </FormItem>
                         <FormItem style={{textAlign:'center'}}>
                             <Button  onClick={this.back} type='primary' className="login-form-button" style={{marginRight:'8%'}}>取消</Button>
-                            <Button  htmlType="submit" type='primary' className="login-form-button">确认</Button>
+                            <Button type='primary' className="login-form-button" onClick={this.handleSubmit}>确认</Button>
                         </FormItem>
                         
                     </Form>
