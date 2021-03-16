@@ -17,3 +17,5 @@ export const releGL = (params = {}) => http.fetchPost('/organization/bindUser',p
 export const deleteGL = (params = {}) => http.fetchPost('/organization/unbindUser',params,true);
 // 添加人员
 export const addRY = (params = {}) => http.fetchPost('/rest/bsk/history/queryTxlogLikeHistory3',params);
+// 获取部门领导
+export const getLeader = (params = {}) => http.fetchGet('/organization/getLeader', params);

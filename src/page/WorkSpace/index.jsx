@@ -178,6 +178,7 @@ class workList extends Component {
     // 获取表格高度
     SortTable = () => {
         setTimeout(() => {
+            console.log(this.tableDom.clientHeight)
             let h = this.tableDom.clientHeight - 125;
             this.setState({
                 h: {

@@ -23,7 +23,7 @@ const MyIcon = Icon.createFromIconfontCN({
 
 function ModalSon (props){
     let Rdom = (<Select mode="multiple" dropdownStyle={{display:'none'}} placeholder="请选择人员" labelInValue allowClear onFocus={() =>{}} onChange={(selectedItems)=>props.handleChange(selectedItems,2)} value={props.modal.selectedItems} style={{ width: '87%' }} tokenSeparators={[',']}></Select>)
-    let Reject = <Select placeholder="请选择流程节点" autoFocus value={props.modal.selected ? props.modal.selected : null} onChange={(selectedItems)=>props.handleChange(selectedItems,3)} style={{ width: '90%' }}>{props.modal.selecteds.map( (item)=>{return <Option key={item.taskDefKey} value={item.taskDefKey}>{item.taskName}</Option>})}</Select>
+    let Reject = <Select placeholder="请选择流程节点" autoFocus  onChange={(selectedItems)=>props.handleChange(selectedItems,3)} style={{ width: '90%' }}>{props.modal.selecteds.map( (item)=>{return <Option key={item.taskDefKey} value={item.taskDefKey}>{item.taskName+' | '+item.userRealName}</Option>})}</Select>
     return (
     <div style={{display:'flex',flexDirection:'column'}}>
         <div className="operation_area" style={{display:'flex',alignItems:'center',marginBottom:15}}>

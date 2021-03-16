@@ -1,10 +1,11 @@
 import React, { Component } from 'react'
 import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table ,Tooltip } from 'antd'
 // import Common from '/page/common.jsx'
-import { getTree, saveJG, editJG, saveEditJG, deleteJG, checkRY, releGL, deleteGL, addRY } from '/api/ommJG'
+import { getTree, saveJG, editJG, saveEditJG, deleteJG, checkRY, releGL, deleteGL, addRY ,getLeader} from '/api/ommJG'
 import Pagination from '/components/pagination'
 import TreeNode from '/components/tree/'
-
+//工程师选择器
+import PostArea from '@/components/selector/engineerSelector.jsx'
 import '@/assets/less/pages/oragizePeo.less'
 const FormItem = Form.Item
 const { confirm } = Modal;
@@ -32,6 +33,8 @@ class systempeo extends Component {
         DRoleName:'',
         DRoleNum:'',
         stat:'',
+        modalVisible:false,//工程师选择器开关
+        leader:'',//部门领导显示
         rules: [
             {
                 label: '姓名',
@@ -420,7 +423,9 @@ class systempeo extends Component {
     onSelect = (selectedKeys, info) => {
         this.state.selectedRowKeys = [],
         console.log('selected', selectedKeys, info);
-            this.setState({ selectedTreeId: selectedKeys[0] ,selectedKeys:selectedKeys})
+            this.setState({ selectedTreeId: selectedKeys[0] ,selectedKeys:selectedKeys},()=>{
+                this.getLeader();
+            })
         // console.log(selectedKeys[0])
         let pdata = Object.assign({}, {orgId:selectedKeys[0]},this.state.pageConf)
             this.checkPeo(pdata);
@@ -737,6 +742,43 @@ class systempeo extends Component {
             DRoleNum: e.target.value
         })
     }
+
+    //获取部门领导
+    getLeader = _ => {
+        const {selectedTreeId} = this.state;
+        getLeader({id:selectedTreeId}).then( res =>{
+            if (res.success == 1) {
+                this.setState({leader: res.data.realName})
+            }
+        })
+    }
+    //工程师选择保存
+    postSave = (resultID,result) => {
+         console.log(resultID,result)
+         const {selectedTreeId} = this.state;
+         saveEditJG({id:selectedTreeId,leaderId: resultID[0]}).then(res =>{
+            if (res.success == 1) {
+                this.getLeader();
+                this.postClose();
+                message.success(res.message);
+            } else if (res.success == 0) {
+                message.error(res.message);
+            }
+         })
+        
+    }
+
+    //打开工程师选择器
+    plus = () => {
+        this.setState({modalVisible:true})
+    }
+    //工程师选择器关闭方法
+    postClose = ()=>{
+        // const {engineer}  = this.state;
+        this.setState({ modalVisible:false})
+    }
+
+
     render = _ => {
         const { getFieldDecorator } = this.props.form
         const { selectedRowKeys,selectedRowKeys2 } = this.state;
@@ -811,6 +853,7 @@ class systempeo extends Component {
                             
                         {/* </Row> */}
                     {/* </Form> */}
+        
                     <Table
                         bordered
                         rowKey="id"
@@ -824,8 +867,17 @@ class systempeo extends Component {
                         style={{ marginTop: '16px' }}
                     />
                     <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
+                    {this.state.leader ? <Row type="flex" align="middle" style={{height:50,border:'0px solid red',marginTop:-50,width:841}}>
+                        <Col span={4} style={{fontWeight:100,color:'rgba(0, 0, 0, 1)'}}>
+                            部门领导：{this.state.leader}
+                        </Col>
+                        <Col span={4}>
+                            <Button onClick={this.plus}>设置</Button>
+                        </Col>
+                    </Row> : null}
                 </Col>
             </Row>
+            {this.state.modalVisible ? <PostArea onOk={this.postSave} onCancel={this.postClose} /> : null}
             <Modal title='关联人员'
                 onOk={this.JGsave}
                 visible={this.state.visible}
@@ -900,7 +952,6 @@ class systempeo extends Component {
             </Modal>
         </div>
     }
-
 }
 const BranchContForm = Form.create()(systempeo)
 export default BranchContForm
