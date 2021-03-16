@@ -110,16 +110,6 @@ class workList extends Component {
                 key: 'dataTime',
                 render:_=>  <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
             }
-            // ,{
-            //     label: '操作资源',
-            //     key: 'resourceName',
-            //     render: _ => <Input style={{ width: 200 }} />
-            // },
-            // {
-            //     label: '操作对象',
-            //     key: 'objectName',
-            //     render: _ => <Input style={{ width: 200 }} />
-            // }
         ],
         columns: [{
                 title: '序号',
@@ -172,14 +162,15 @@ class workList extends Component {
                     showTitle: false,
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-            }, {
-                title: '操作详情',
-                dataIndex: 'content',
-                ellipsis: {
-                    showTitle: false,
-                },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-            }
+            },
+            //  {
+            //     title: '操作详情',
+            //     dataIndex: 'content',
+            //     ellipsis: {
+            //         showTitle: false,
+            //     },
+            //     render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+            // }
         ],
         tabledata: [],
     }
@@ -238,17 +229,7 @@ class workList extends Component {
                 limit: this.state.pageSize, //每页显示的条数
                 offset: this.state.current //当前起始页的条数
             }
-            // getSysLog(this.state.pageSize, this.state.current, newParams).then(res => {
-            //     if (res.success == 1) {
-            //         this.setState({ loading: false })
-            //         this.setState({
-            //             tabledata: res.data.records,
-            //             total: parseInt(res.data.total)
-            //         })
-            //     } else if (res.success == 0) {
-            //         message.error(res.message);
-            //     }
-            // })
+            //获取列表数据
              getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
                 if (res.success == 1) {
                     this.setState({ loading: false })
@@ -343,10 +324,8 @@ class workList extends Component {
             return {
                 onClick: () => {
                     let pane = {
-                        title: record.ticketType,
+                        title: record.businessKey,//record.ticketType,
                         key: record.procInstId,
-                        // title: '测试',
-                        // key: '100000',
                         url: 'WorkOrder/index.jsx',
                         params:{
                             reset:this.props.params.type,//刷新本页面key

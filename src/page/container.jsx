@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Tabs, message } from 'antd'
+import { Tabs, Icon,Tooltip } from 'antd'
 const TabPane = Tabs.TabPane
 import { connect } from 'react-redux'
 import { REMOVE_PANE, SET_PANE, ADD_PANE } from '/redux/action'
@@ -14,10 +14,6 @@ import Inbox from '/page/inbox.jsx'
 	add(pane){dispath({ type: ADD_PANE, data: pane })}
 }))
 class Container extends Component{
-	componentWillMount = _ => {
-		window.add = pane => this.props.add(pane)
-		window.remove = key => this.props.remove(key)
-	}
 
 	onChange = key => {
 		this.props.setKey(key)
@@ -28,7 +24,7 @@ class Container extends Component{
 	remove = activeKey => {
 		this.props.remove(activeKey)
 	}
-
+      
 	render = _ => 
 		<div style={{flex:1}}>
 			<Tabs
@@ -38,6 +34,7 @@ class Container extends Component{
 	          activeKey={this.props.activeKey}
 			  type="editable-card"
 	          onEdit={this.onEdit}
+			//   tabBarExtraContent={<Icon type="close-circle" />}
 	        >
 	          {this.props.panes.map(pane => 
 	          	<TabPane 

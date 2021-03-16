@@ -434,7 +434,7 @@ class workOrer extends Component {
                 <Row gutter={8} type="flex" style={{flex:'auto',marginLeft:0,marginRight:0,height:10}}>
                     <Col className="gutter-row" span={this.state.swit ? 18 : null} style={style}>
                         <div className="gutter-box" style={{height:'100%',overflow:'auto',border: '1px solid rgb(240, 242, 245)'}}>
-                            {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref} params={params}/> :<Empty description={JSON.stringify(params)} />}
+                            {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref} config={params}/> :<Empty description={JSON.stringify(params)} />}
                         </div>
                     </Col>
                     {
