@@ -61,7 +61,7 @@ class workOrer extends Component {
         let data = await getOperation({procInstId: this.props.params.dataType.record.procInstId,taskId:this.props.params.dataType.record.taskId}) //调用接口获取页面初始化必须数据
         console.log(data)
         listData = data.data.messages ? data.data.messages : [];
-        businessKey = data.data.businessKey ? data.data.businessKey.split('-'): [];
+        businessKey = data.data['businessKey.code'] ? data.data['businessKey.code']: '';
         formKey = data.data.formKey ? data.data.formKey : '';
         ticketId = data.data.ticketId
         workControl = data.data.formPermission ? {...workControl,...data.data.formPermission.businessPermission} : {...workControl,...data.data.businessPermission};//获取到回传的按钮权限
@@ -97,7 +97,7 @@ class workOrer extends Component {
         opinion: null, //处理意见,
         spinning:true,//加载效果
         header:{},//上传附件的头部信息
-        businessKey:[],//储存工单组件的名称以及工单参数ID
+        businessKey:'',//储存工单组件的名称以及工单参数ID
         formKey:'',//储存工单组件的名称以及工单参数ID,优先级高
         ticketId:null,//工单当前状态是否为只读
         modal: {
@@ -404,7 +404,7 @@ class workOrer extends Component {
     }
     render = () => {
         const { swit,workControl,listData,businessKey,formKey,spinning,ticketId} = this.state;
-        const orderCompont = formKey ? formKey[0] : businessKey[0];
+        const orderCompont = formKey ? formKey[0] : businessKey;
         let OrderComponent = comObj[orderCompont];
         let style = swit ? {height:'100%',paddingBottom:5} : {width:10,flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
@@ -464,7 +464,7 @@ class workOrer extends Component {
                 </Row> 
                 <Row gutter={8} type="flex" style={{flex:'auto',marginLeft:0,marginRight:0,height:10}}>
                     <Col className="gutter-row" span={this.state.swit ? 18 : null} style={style}>
-                        <div className="gutter-box" style={{height:'100%',overflow:'auto',border: '1px solid rgb(240, 242, 245)'}}>
+                        <div className="gutter-box work" style={{height:'100%',border: '1px solid rgb(240, 242, 245)'}}>
                             {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref} config={params}/> :<Empty description={JSON.stringify(params)} />}
                         </div>
                     </Col>
@@ -490,7 +490,7 @@ class workOrer extends Component {
                                         this.state.listData.map((item,index) => {
                                             return (
                                                 <Timeline.Item  key={index}>
-                                                    <p>{item.sourceUserRealName + ' ' + item.taskAction}</p>
+                                                    <p>{item.sourceUserRealName + ' ' + item.taskAction + ' ' + (item.targetUserRealName ? item.targetUserRealName : '')}</p>
                                                     <p>{item.comment}</p>
                                                     <p>{item.date}</p>
                                                 </Timeline.Item>
