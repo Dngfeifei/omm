@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, message, Button, Row, Col,Icon,Card,Input , Upload,List,Empty,Spin,TreeSelect,Form, Select, Table, DatePicker, TimePicker,Tooltip } from 'antd'
+import { Modal, message, Button, Row, Col,Icon,Card,Input , Upload,List,Empty,Spin,TreeSelect, Select,Timeline,Tooltip } from 'antd'
 import ModalDom from '@/components/modal'
 import { connect } from 'react-redux'
 import { REMOVE_PANE,SET_WORKLIST,SET_PANE,SET_WORKSTATUS} from '/redux/action'
@@ -79,7 +79,7 @@ class workOrer extends Component {
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         //获取token值，为后续上传附件设置请求头使用
 
-       this.setState({workControl,header,fileList,formControl,formKey,businessKey,listData,spinning:false,ticketId},()=>{  //重置状态数据
+       this.setState({workControl,header,fileList,formControl,formKey,listData,businessKey,spinning:false,ticketId},()=>{  //重置状态数据
             console.log(this.state)
        })
     }
@@ -157,16 +157,48 @@ class workOrer extends Component {
             //   }
           ],
         listData:[     //流程记录数据
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '张总进行了驳回的审批意见'
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // }
         ]
     }
     //绑定工单子组件
@@ -374,10 +406,9 @@ class workOrer extends Component {
         const { swit,workControl,listData,businessKey,formKey,spinning,ticketId} = this.state;
         const orderCompont = formKey ? formKey[0] : businessKey[0];
         let OrderComponent = comObj[orderCompont];
-        let style = swit ? {height:'100%',paddingBottom:5} : {width:'auto',flex:'auto',height:'100%',paddingBottom:5},
+        let style = swit ? {height:'100%',paddingBottom:5} : {width:10,flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
         params = {formRead:this.state.workControl.formRead,id: ticketId,formControl:this.state.formControl};
-        console.log(comObj)
         return (
             <div className='work_order' style={{height: '100%',display:'flex',flexDirection:'column'}}>
                 <Spin spinning={spinning} size="large">
@@ -453,14 +484,26 @@ class workOrer extends Component {
                                     <Icon type="upload" /> 请上传需要的附件
                                     </Button>
                                 </Upload> : null}
-                            {workControl.circulation ? <Card loading={this.state.loading} className="circulation" size="small" title="流转记录" style={{padding:0}} bordered={false} extra={<span style={{visibility:'hidden'}}>1</span>}>
-            
-                                    <List
+                            {workControl.circulation ? <Card loading={this.state.loading} className="circulation" size="small" title="流转记录" style={{padding:0}} bodyStyle={{paddingTop: 15}} bordered={false} extra={<span style={{visibility:'hidden'}}>1</span>}>
+                                {this.state.listData.length ? <Timeline>
+                                    {
+                                        this.state.listData.map((item,index) => {
+                                            return (
+                                                <Timeline.Item  key={index}>
+                                                    <p>{item.sourceUserRealName + ' ' + item.taskAction}</p>
+                                                    <p>{item.comment}</p>
+                                                    <p>{item.date}</p>
+                                                </Timeline.Item>
+                                            )
+                                        })
+                                    }
+                                </Timeline> : <Empty />}
+                                    {/* <List
                                         size="small"
                                         bordered={false}
                                         dataSource={listData}
                                         renderItem={item => <List.Item>{item}</List.Item>}
-                                    />
+                                    /> */}
                             </Card> : null}
                             </div>
                         </div>
