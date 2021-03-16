@@ -867,14 +867,14 @@ class systempeo extends Component {
                         style={{ marginTop: '16px' }}
                     />
                     <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
-                    {this.state.leader ? <Row type="flex" align="middle" style={{height:50,border:'0px solid red',marginTop:-50,width:841}}>
+                     <Row type="flex" align="middle" style={{height:50,border:'0px solid red',marginTop:-50,width:841}}>
                         <Col span={4} style={{fontWeight:100,color:'rgba(0, 0, 0, 1)'}}>
                             部门领导：{this.state.leader}
                         </Col>
                         <Col span={4}>
                             <Button onClick={this.plus}>设置</Button>
                         </Col>
-                    </Row> : null}
+                    </Row>
                 </Col>
             </Row>
             {this.state.modalVisible ? <PostArea onOk={this.postSave} onCancel={this.postClose} /> : null}
