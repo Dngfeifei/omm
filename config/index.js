@@ -21,8 +21,8 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-// var target = {target: 'http://172.16.100.81/api/dat'}
-var target = {target: 'http://10.0.11.115:8111'}
+var target = {target: 'http://172.16.100.81/api/dat'}
+// var target = {target: 'http://10.0.11.115:8111'}
 module.exports = {
   build: buildconfig,
   dev: {
@@ -54,6 +54,15 @@ module.exports = {
       '/biUser':target,     // 工程师管理模块
       '/biCustomer':target,     // 客户信息模块
       '/process':target,     // 工作流模块
+      '/biComproom':target,// 客户信息模块---机房地址信息·
+      '/biProject':target,     // 项目信息模块
+      '/biCert':target,     // 工程师信息---证书模块
+      '/biCompany':target,     // 工程师信息---公司列表
+      '/assess':target,     // 工程师信息---专业能力、工作经验以及软技能
+      '/biProjectArea':target,     // 项目信息---服务区域
+      '/biProjectMember':target,     // 项目信息---项目组成员列表
+      '/biCustContact':target,     // 项目信息---客户技术联系人列表
+      '/biServiceObject':target,     // 项目信息---服务对象列表
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

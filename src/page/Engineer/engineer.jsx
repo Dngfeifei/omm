@@ -4,6 +4,8 @@
  */
 import React, { Component } from 'react'
 import { Form, InputNumber, Input, Button, Modal, message, Select, Tooltip, Table, Row, Col, } from 'antd'
+import { connect } from 'react-redux'
+import { ADD_PANE} from '/redux/action'
 import Common from '/page/common.jsx'
 
 
@@ -11,21 +13,19 @@ const ButtonGroup = Button.Group
 const { Option } = Select;
 
 
-
 // 引入页面CSS
 import '@/assets/less/pages/logBookTable.css'
 // 分页组件
 import Pagination from "@/components/pagination/index"
-
-import SearchForm from "./formSearch.jsx"
-
-
-
 // 引入 API接口
 import { educationalLevel, getBiUser, biUserInfo } from '/api/engineer'
 
 
-
+@connect(state => ({
+    panes: state.global.panes,
+}), dispath => ({
+    add(pane) { dispath({type: ADD_PANE, data: pane})},
+}))
 
 
 
@@ -56,7 +56,7 @@ class engineer extends Component {
                 },
                 render: (text, record)=> 
                     <Tooltip placement="topLeft" title={text}>
-                        <span style={{ color: '#1890ff', cursor: 'pointer',display:'block' }} onClick={() => this.previewing(record.id)}>{text}</span>
+                        <span style={{ color: '#1890ff', cursor: 'pointer',display:'block' }} onClick={() => this.previewing(record)}>{text}</span>
                     </Tooltip>
             }, {
                 title: '所属部门',
@@ -92,6 +92,7 @@ class engineer extends Component {
                 ellipsis: {
                     showTitle: false,
                 },
+                align:'center',
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '工作省份',
@@ -109,7 +110,7 @@ class engineer extends Component {
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '人员类型',
-                dataIndex: 'job_type',
+                dataIndex: 'jobType',
                 ellipsis: {
                     showTitle: false,
                 },
@@ -188,10 +189,6 @@ class engineer extends Component {
                 previewing: '查看信息'
             },
             visibleStatus: 'add',
-            // 对话框表格数据集合
-            modalTable:[],
-            // 对话框form表单集合
-            modalFormArray:[],
             // 当前点击的工程师ID
             selectedRowKeys:null,
             tableId:null,
@@ -208,10 +205,7 @@ class engineer extends Component {
         this.init();
 
         // 查询工程师列表
-        this.getTableList()
-
-        // 父组件获取子组件的一个方法
-        // this.formSearchRef.getTableList();
+        this.getTableList();
 
     }
 
@@ -249,7 +243,6 @@ class engineer extends Component {
             }
         })
     }
-
 
 
     // 查询工程师列表（分页)
@@ -368,14 +361,20 @@ class engineer extends Component {
     }
 
     // 点击表格--姓名时，弹出二级对话框(只读状态)
-    previewing = (key) => {
-        // 对话框打开
-        this.setState({
-            visible: true,
-            visibleStatus: 'previewing'
-        })
-        // 获取 工程师信息 接口
-        this.getBiUserInfo(key);
+    previewing = (record) => {
+        let pane = {
+            title: record.name+'工程师档案',
+            key: Math.round(Math.random()*10000).toString(),
+            url: 'Engineer/formSearch.jsx',
+            params:{
+                id:record.id,
+                userId:record.userId
+            }
+        }
+        
+        this.props.add(pane)
+
+        
     }
 
 
@@ -491,33 +490,6 @@ class engineer extends Component {
 
                     <Pagination total={this.state.total} pageSize={this.state.pagination.limit} current={(this.state.pagination.offset)} onChange={this.onPageChange} onShowSizeChange={this.onShowSizeChange}></Pagination>
                 </div>
-
-
-                {/* 详情页--对话框 底部内容，当不需要默认底部按钮时，可以设为 footer={null} */}
-                {/* <Modal title={this.state.titleMap[this.state.visibleStatus]} visible={this.state.visible} onCancel={this.handleCancel} onOk={this.handleOk} width='65%' id="modalengineer">
-                   
-                   <div className="tableCertificate">
-                        <div className='title'>工程师基础信息</div>
-                        <div className="modalFrom" id="modalFrom" style={{height:'405px',padding:'15px 15px 15px 25px'}}>
-                            <Form className="ant-advanced-search-form" id="ant-advanced-search-form" {...formItemLayout}>
-                                <Row gutter={24}>{this.getFields()}</Row>
-                            </Form>
-                        </div>
-                       <div className='title'>证书信息</div>
-                       <Table
-                        className="jxlTable"
-                        bordered
-                        rowKey={record=>record.id} 
-                        dataSource={this.state.modalTable}
-                        columns={this.state.modalTableColumns}
-                        pagination={false}
-                        size={'small'}
-                        style={{ marginTop: '16px', padding: '0px 15px', height: 'calc(100vh - 770px)', overflowY: 'auto' }}
-                    />
-                   </div>
-                </Modal> */}
-
-                <SearchForm visible={this.state.visible} visibleStatus={this.state.visibleStatus} modalTable={this.state.modalTable} modalFormArray={this.state.modalFormArray} handleCancel={this.handleCancel} handleOk={this.handleOk} ></SearchForm>
             </div>
         )
     }
