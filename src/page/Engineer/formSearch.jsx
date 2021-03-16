@@ -429,8 +429,18 @@ class formSearch extends Component {
             wrapperCol: { span: 14 },
         };
 
-        const { h , } = this.state;
+        const { h , WorkExperience} = this.state;
         
+
+        let highCert = WorkExperience.certs.filter((item) => {
+            return item.certLevel == "高级"
+        })
+        let middleCert = WorkExperience.certs.filter((item) => {
+            return item.certLevel == "中级"
+        })
+        let elementaryCert = WorkExperience.certs.filter((item) => {
+            return item.certLevel == "初级"
+        })
 
         return (
             <div className="CustomerInforContent" style={{display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
@@ -505,15 +515,33 @@ class formSearch extends Component {
                                         <div className="key">数量</div>
                                         <div className="val">
                                             <div className="row">
-                                                <Tooltip placement="top" title="证书">
-                                                    <div className="val1">{this.state.WorkExperience.highCert}</div>
-                                                </Tooltip>
-                                                <Tooltip placement="top" title="证书">
-                                                    <div className="val1">{this.state.WorkExperience.middleCert}</div>
-                                                </Tooltip>
-                                                <Tooltip placement="top" title="证书">
-                                                    <div className="val1">{this.state.WorkExperience.elementaryCert}</div>
-                                                </Tooltip>
+                                                {
+                                                    highCert.length ? <Tooltip title={highCert.map((item, i) => {
+                                                        return <span key={i}>{(i + 1) + "、" + item.certName}<br /></span>
+                                                    })}>
+                                                        <span>
+                                                            <div className="val1">{this.state.WorkExperience.highCert}</div>
+                                                        </span>
+                                                    </Tooltip> : 0
+                                                }
+                                                {
+                                                    middleCert.length ? <Tooltip title={middleCert.map((item, i) => {
+                                                        return <span key={i}>{(i + 1) + "、" + item.certName}<br /></span>
+                                                    })}>
+                                                        <span>
+                                                            <div className="val1">{this.state.WorkExperience.middleCert}</div>
+                                                        </span>
+                                                    </Tooltip> : 0
+                                                }
+                                                {
+                                                    elementaryCert.length ? <Tooltip title={elementaryCert.map((item, i) => {
+                                                        return <span key={i}>{(i + 1) + "、" + item.certName}<br /></span>
+                                                    })}>
+                                                        <span>
+                                                            <div className="val1">{this.state.WorkExperience.elementaryCert}</div>
+                                                        </span>
+                                                    </Tooltip> : 0
+                                                }
                                             </div>
 
                                         </div>
