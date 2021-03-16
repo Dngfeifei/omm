@@ -17,11 +17,7 @@ class People extends Component {
 		this.searchAllOrgData()
 	}
 	async componentWillReceiveProps(nextprops) {
-		// 判断参数变化
-		// 1 参数visible为ture  窗口显示
-		if (nextprops.windowData != this.props.windowData && nextprops.windowData.visible) {
-
-		}
+	
 	}
 	state = {
 		// 分页参数
