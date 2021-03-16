@@ -68,7 +68,7 @@ class ENG extends Component {
                     title: '具备维护能力的产品线',
                     dataIndex: 'productLines',
                     align: 'center',
-                    width: 400,
+                    width: 380,
                     ellipsis: {
                         showTitle: false,
                     },
