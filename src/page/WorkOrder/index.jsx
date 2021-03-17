@@ -413,7 +413,7 @@ class workOrer extends Component {
     }
     render = () => {
         const { swit,workControl,listData,businessKey,formKey,spinning,ticketId} = this.state;
-        const orderCompont = ''//businessKey;
+        const orderCompont = businessKey;
         let OrderComponent = comObj[orderCompont];
         let style = swit ? {height:'100%',paddingBottom:5} : {width:10,flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
