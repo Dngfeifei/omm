@@ -21,8 +21,8 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-var target = {target: 'http://172.16.100.81/api/dat'}
-// var target = {target: 'http://10.0.11.115:8111'}
+// var target = {target: 'http://172.16.100.81/api/dat'}
+var target = {target: 'http://10.0.11.115:8111'}
 module.exports = {
   build: buildconfig,
   dev: {
@@ -54,6 +54,7 @@ module.exports = {
       '/biUser':target,     // 工程师管理模块
       '/biCustomer':target,     // 客户信息模块
       '/process':target,     // 工作流模块
+      '/eng':target,     // 工作流模块分支
       '/biComproom':target,// 客户信息模块---机房地址信息·
       '/biProject':target,     // 项目信息模块
       '/biCert':target,     // 工程师信息---证书模块

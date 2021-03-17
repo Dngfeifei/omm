@@ -39,6 +39,9 @@ const initPassForm = Load(() => import('/page/ChangePassword/initializingPasswor
 // 首次登陆重置密码
 const ChangePassForm = Load(() => import('/page/ChangePassword/changePassword.jsx'))
 
+// 页面出错后切换到的页面
+const Error = Load(() => import('/page/error'))
+
 
 
 //配置路由信息
@@ -51,6 +54,7 @@ const routeConfig = (
 		<Route path = {'login'} component = {Login}/>
 		<Route path = {'initPassForm'} component = {initPassForm}/>
 		<Route path = {'ChangePassForm'} component = {ChangePassForm}/>
+		<Route path = {'error'} component = {Error}/>
 	</Route>
 )
 

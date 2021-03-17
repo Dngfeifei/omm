@@ -9,7 +9,7 @@ import '@/assets/less/pages/workorder.less'
 import {comObj} from "@/utils/workorder";
 
 //引入接口
-import { getOperation,getBackTask ,getTransfer,getEndorse,getUnpass,getSubmit,getSubmit2,getProcessImg,getDeleteAttachment,getRetrieve} from '/api/workspace'
+import { getOperation,getBackTask ,getTransfer,getEndorse,getUnpass,getSubmit,getProcessImg,getDeleteAttachment,getRetrieve,getFinish,getReview} from '/api/workspace'
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -62,10 +62,10 @@ class workOrer extends Component {
         console.log(data)
         listData = data.data.messages ? data.data.messages : [];
         businessKey = data.data['businessKey.code'] ? data.data['businessKey.code']: '';
-        formKey = data.data.formKey ? data.data.formKey : '';
+        // formKey = data.data.formKey ? data.data.formKey : '';
         ticketId = data.data.ticketId
-        workControl = data.data.formPermission ? {...workControl,...data.data.formPermission.businessPermission} : {...workControl,...data.data.businessPermission};//获取到回传的按钮权限
-        formControl =  data.data.formPermission ? {...formControl,...data.data.formPermission.formPermission} : {...formControl}; //获取工单权限
+        workControl = {...workControl,...data.data['businessKey.permission'].consolePermission} ;//获取到回传的按钮权限
+        formControl =  {...formControl,...data.data['businessKey.permission'].formPermission}; //获取工单权限
     //    workControl = {...workControl,...bussinessPermission}; 
        fileList = data.data && data.data.attrData.length ? data.data.attrData.map(item => {//获取到回传的已上传附件列表
             return {uid:item.attachId,name:item.fileName,status:'done',url:item.url}
@@ -79,7 +79,7 @@ class workOrer extends Component {
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         //获取token值，为后续上传附件设置请求头使用
 
-       this.setState({workControl,header,fileList,formControl,formKey,listData,businessKey,spinning:false,ticketId},()=>{  //重置状态数据
+       this.setState({workControl,header,fileList,formControl,listData,businessKey,spinning:false,ticketId},()=>{  //重置状态数据
             console.log(this.state)
        })
     }
@@ -129,12 +129,14 @@ class workOrer extends Component {
             transferName: '转办', //转办文字名称
             countersign: 1, //加签
             countersignName: '加签', //加签文字名称
-            approval: 0, //审批
-            submit: 1, //提交 0 不显示，1显示不需选择二级专家，2需要选择二级专家
+            engReview: 0, //二线专家复评
+            engReviewName:'二线专家复评', 
+            submit: 1, //提交 
             submitName: '提交', //提交文字名称
             save: 1, //保存
             saveName: '保存', //保存文字名称
-            Inform: 0, //知会
+            engFinish: 0, //结束
+            engFinishName:'结束', 
             opinion: 1, //处理意见填写是否可操作0，不显示，1可上传删除，2仅显示不可上传删除
             upload: 1, //附件上传区是否可操作0，不显示，1可上传删除，2仅显示不可上传删除
             circulation: 1,//流转记录
@@ -326,7 +328,7 @@ class workOrer extends Component {
             })
 
         }else if(modal.identification == 5){
-            getSubmit2(upData).then(res => {
+            getReview(upData).then(res => {
                 this.resetState(res);
             })
         }else{
@@ -387,6 +389,13 @@ class workOrer extends Component {
             this.resetState(res);
         })
     }
+    //结束流程
+    gameOver = () => {
+        let upData = this.processing()
+        getFinish(upData).then(res => {
+            this.resetState(res);
+        })
+    }
     //数据提交统一接口（审批，提交，保存，驳回。。。。。）
     processing = (data) => {
         let {opinion,modal} = this.state;
@@ -404,7 +413,7 @@ class workOrer extends Component {
     }
     render = () => {
         const { swit,workControl,listData,businessKey,formKey,spinning,ticketId} = this.state;
-        const orderCompont = formKey ? formKey[0] : businessKey;
+        const orderCompont = ''//businessKey;
         let OrderComponent = comObj[orderCompont];
         let style = swit ? {height:'100%',paddingBottom:5} : {width:10,flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
@@ -441,19 +450,16 @@ class workOrer extends Component {
                                 <MyIcon type="iconqianjiaqian" />
                                 <span>加签</span>
                             </Button>: null}
-                            {workControl.approval ?<Button type="primary" style={{marginRight:8}}>
+                            {workControl.submit ? <Button onClick={this.submit} type="primary" style={{marginRight:8}}>
+                                <MyIcon type="icontijiao" />
+                                <span>提交</span>
+                            </Button> : null}
+                            {workControl.engReview ?<Button type="primary" style={{marginRight:8}} onClick={()=>this.openModal('提交',5)}>
                                 <MyIcon type="iconshenpi" />
-                                <span>审批</span>
+                                <span>提交复评</span>
                             </Button>: null}
-                            {workControl.submit ? workControl.submit == 1 ? <Button onClick={this.submit} type="primary" style={{marginRight:8}}>
-                                <MyIcon type="icontijiao" />
-                                <span>提交</span>
-                            </Button> : <Button type="primary" style={{marginRight:8}} onClick={()=>this.openModal('提交',5)}>
-                                <MyIcon type="icontijiao" />
-                                <span>提交</span>
-                            </Button>: null}
-                            {workControl.Inform ?<Button type="primary" style={{marginRight:8}}>
-                                知会
+                            {workControl.engFinish ?<Button type="primary" style={{marginRight:8}} onClick={this.gameOver}>
+                                结束
                             </Button>: null}
                             {workControl.save ?<Button type="primary" style={{marginRight:8}}>
                                 <MyIcon type="iconbaocun" />
