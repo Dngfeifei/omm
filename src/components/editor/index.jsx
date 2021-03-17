@@ -47,9 +47,9 @@ class App extends Component {
             <Editor
                 disabled={disabled}
                 init={{
-                    language_url: '/static/tinymce/langs/zh_CN.js',//你下载的语言包的路径
+                    language_url: 'static/tinymce/langs/zh_CN.js',//你下载的语言包的路径
                     language: 'zh_CN',
-                    skin_url: '/static/tinymce/skins/ui/oxide',//主题
+                    skin_url: 'static/tinymce/skins/ui/oxide',//主题
                     // images_upload_url: '/demo/upimg.php',
                     // images_upload_base_path: '/demo',
                     // plugins: 'print preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template code codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount imagetools textpattern help emoticons autosave   autoresize formatpainter ',
