@@ -68,7 +68,7 @@ class ENG extends Component {
                     title: '具备维护能力的产品线',
                     dataIndex: 'productLines',
                     align: 'center',
-                    width: 380,
+                    width: 400,
                     ellipsis: {
                         showTitle: false,
                     },
@@ -394,15 +394,15 @@ class ENG extends Component {
         let { experience, commskills, docskills } = this.state.baseData;
         let { info, pageConfig } = this.state;
         let readOnly = pageConfig.formRead == 2 || !info.status;
-        let highCert = info.certs.filter((item) => {
+        let highCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "高级"
-        })
-        let middleCert = info.certs.filter((item) => {
+        }) : [];
+        let middleCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "中级"
-        })
-        let elementaryCert = info.certs.filter((item) => {
+        }):[];
+        let elementaryCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "初级"
-        })
+        }):[];
         return (
             <div className="layoutOMM">
                 <div className="loPageContent">
