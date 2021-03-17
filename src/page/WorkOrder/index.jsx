@@ -55,6 +55,10 @@ class workOrer extends Component {
         this.init();
         
     }
+    //监控
+    // componentDidCatch(error, info) {
+    //     console.log(error,info)
+    // }
     //初始化页面
     init = async () => {
         let {workControl,fileList,formControl,businessKey,formKey,listData,ticketId} = this.state;
