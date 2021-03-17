@@ -22,10 +22,10 @@ class WaterMark extends React.Component {
 
   async componentWillMount() {
     //  this.props.waterMarkText = `银信科技保密材料${localStorage.getItem('username')}${date}查阅`
-    if (!window.WATER_MARK_URL) {
-      window.WATER_MARK_URL = this.getCanvasUrl()
-    }
-    this.setState({ canvasUrl: window.WATER_MARK_URL })
+    // if (!window.WATER_MARK_URL) {
+    //   window.WATER_MARK_URL = this.getCanvasUrl()
+    // }
+    this.setState({ canvasUrl: this.getCanvasUrl() })
   }
 
   state = {
