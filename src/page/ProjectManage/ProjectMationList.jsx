@@ -526,7 +526,7 @@ class projectMation extends Component {
                     <FormItem>
                         <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
                         <Button style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
-                        // <Button style={{ marginLeft: '10px' }} onClick={this.onClickShowModul}>重置</Button>
+                        {/* <Button style={{ marginLeft: '10px' }} onClick={this.onClickShowModul}>重置</Button>*/}
                     </FormItem>
                 </Form>
                 <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
