@@ -527,7 +527,7 @@ class People extends Component {
                                     <div className="formRow">
                                         <div className="formCol">
                                             <span className="formKey">客户名称：</span>
-                                            <Input disabled={type == "see" ? true : false} className="formVal" name={key} value={item.custName} onChange={this.onChangeCase} style={{ width: "auto" }} ></Input>
+                                            <Input  disabled={type == "see" ? true : false} className="formVal" name={key} value={item.custName} onChange={this.onChangeCase} style={{ width: "100px" }} ></Input>
                                         </div>
                                         <div className="formCol">
                                             <span className="formKey"> 产品线：</span>
@@ -542,9 +542,9 @@ class People extends Component {
                                                 }
                                             </Select>
                                         </div>
-                                        <div className="formCol">
+                                        <div className="formCol2">
                                             <span className="formKey"> 能力项：</span>
-                                            <Cascader disabled={type == "see" ? true : false} allowClear={false} fieldNames={{ label: 'name', value: 'code' }} value={filterTree3(serviceClass, item)} options={filterTree2(serviceClass, key)} onChange={this.onSelectCase2} placeholder="请选择" />
+                                            <Cascader  className="formVal"  disabled={type == "see" ? true : false} allowClear={false} fieldNames={{ label: 'name', value: 'code' }} value={filterTree3(serviceClass, item)} options={filterTree2(serviceClass, key)} onChange={this.onSelectCase2} placeholder="请选择" />
                                         </div>
                                     </div>
                                     <div className="formRow">
