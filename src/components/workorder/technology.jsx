@@ -335,6 +335,7 @@ class People extends Component {
             }
             return arr
         }
+        // 
         let filterTree2 = (tree = [], ref = "") => {
             let result = []   //最终数据数组
             let allCode = [] //一级目录id
@@ -363,6 +364,7 @@ class People extends Component {
             })
             return result
         }
+        // 
         let filterTree3 = (tree = [], caseItem) => {
             let result = [];
             if (!tree.length) {
@@ -384,6 +386,14 @@ class People extends Component {
             })
             return result
         }
+        // 通过下拉框选择项过滤后的产品
+        let productLineDatas = [];
+        if (this.state.brandId && this.state.productLineLevelCode) {
+            productLineDatas = productLine.filter((item) => {
+                return item.parentId == this.state.brandId && item.strValue1 == this.state.productLineLevelCode;
+            })
+        }
+
         return <div>
             <ModalParant title={title}
                 destroyOnClose={true}
@@ -453,13 +463,11 @@ class People extends Component {
                                 </div>
                             </div>
                             <div style={{ paddingLeft: "97px", marginBottom: "20px" }}>
-                                <Card>
+                                {productLineDatas.length ? <Card>
                                     <Checkbox.Group disabled={type == "see" ? true : false} style={{ width: '100%' }} value={this.state.productLineCodes} onChange={this.onChange4} >
                                         <Row>
                                             {
-                                                this.state.brandId && this.state.productLineLevelCode ? (productLine.filter((item) => {
-                                                    return item.parentId == this.state.brandId && item.strValue1 == this.state.productLineLevelCode;
-                                                }).map((item, index) => {
+                                                this.state.brandId && this.state.productLineLevelCode ? (productLineDatas.map((item, index) => {
                                                     return <Col span={4} key={index} >
                                                         <Checkbox value={item.code}>{item.name}</Checkbox>
                                                     </Col>
@@ -467,7 +475,8 @@ class People extends Component {
                                             }
                                         </Row>
                                     </Checkbox.Group>
-                                </Card>
+                                </Card> : ""}
+
                             </div>
 
                             <div className="formRow">
@@ -487,15 +496,27 @@ class People extends Component {
                             </div>
                             <div style={{ paddingLeft: "97px" }}>
                                 {type != "see" ? <TreeParant treeData={filterTree(serviceClass)}
+                                    expandedKeys={(() => {
+                                        let arr = []
+                                        filterTree(serviceClass).forEach((el) => {
+                                            arr.push(el.code)
+                                        })
+                                        return arr
+                                    })()}
                                     checkable={true}
                                     onCheck={this.onTreeSelect6}  //点击树节点触发事件
                                     checkedKeys={this.state.serviceItemCodes}
-                                    autoExpandParent={true}
                                 /> : <TreeParant treeData={filterTree2(serviceClass, 999)}
+                                    expandedKeys={(() => {
+                                        let arr = []
+                                        filterTree2(serviceClass, 999).forEach((el) => {
+                                            arr.push(el.code)
+                                        })
+                                        return arr
+                                    })()}
                                     checkable={true}
                                     onCheck={this.onTreeSelect6}  //点击树节点触发事件
                                     checkedKeys={this.state.serviceItemCodes}
-                                    autoExpandParent={true}
                                     disabled
                                     />}
                             </div>

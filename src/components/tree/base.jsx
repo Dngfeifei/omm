@@ -16,8 +16,6 @@ import "./tree.css";
 
 
 
-
-
 const getParentKey = (title, tree) => {
     let parentKey;
     for (let i = 0; i < tree.length; i++) {
@@ -154,12 +152,11 @@ class TreeList extends Component {
     render = () => {
 
         const { treeData, autoExpandParent, checkable, defaultCheckedKeys, defaultExpandAll, defaultExpandedKeys, defaultSelectedKeys, draggable, multiple, selectable, showIcon,
-            showLine, onCheck, onDragEnd, onDrop, onExpand, onRightClick, onSelect, selectedKeys, checkedKeys, search, edit, disabled
+            showLine, onCheck, onDragEnd, onDrop, onExpand, onRightClick, onSelect, selectedKeys, checkedKeys, search, edit, disabled,expandedKeys
 
         } = this.props;
         // 进行数组扁平化处理
         generateList(treeData);
-
         return (
             <div className="TreeContent">
                 <Spin tip="Loading..." spinning={this.state.visible}>
@@ -181,6 +178,7 @@ class TreeList extends Component {
                         selectable={selectable} // 是否可选中 
                         showIcon={showIcon}  // 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式
                         showLine={showLine}     // 是否展示连接线
+                        expandedKeys={expandedKeys} //设置节点选中
                         //以下是事件触发
                         onCheck={onCheck} // 点击复选框触发（跟treeData属性搭配）
                         onDragEnd={onDragEnd}  // dragend 触发时调用（跟treeData属性搭配）

@@ -608,7 +608,16 @@ class role extends Component {
         let type = this.state.roleWindow.roleModalType
         // 当前选择的角色组ID
         let id = this.state.searchListID
-        let arr = []
+        // 资源树选中数组
+        let resourceArr = []
+        formData.resourcesInfo.checkedNodes.forEach((item) => {
+            if (item.props.parentResourceId ) {
+                resourceArr.push(item.props.id)
+            }
+            if (!item.props.parentResourceId && !item.props.children.length) {
+                resourceArr.push(item.props.id)
+            }
+        })
         if (formData.resources && formData.resources.length > 0) {
             formData.resources.forEach(item => {
                 arr.push({ id: item })
@@ -619,7 +628,7 @@ class role extends Component {
             let params = {
                 roleName: formData.roleName,
                 status: formData.status,
-                resources: arr,
+                resources: resourceArr,
                 roleCategoryId: id
             }
             if (this.state.lock) {
@@ -658,7 +667,7 @@ class role extends Component {
                     roleName: formData.roleName,
                     status: formData.status,
                     id: formData.id,
-                    resources: arr
+                    resources: resourceArr
                 }
                 if (this.state.lock) {
                     return
@@ -760,8 +769,9 @@ class role extends Component {
             tableSelectedInfo: info
         })
     };
+    // 资源树选中后
     onCheck = (checkedKeys, info) => {
-        let obj = Object.assign({}, this.state.currentRole, { resources: checkedKeys })
+        let obj = Object.assign({}, this.state.currentRole, { resources: checkedKeys, resourcesInfo: info })
         this.setState({
             currentRole: obj
         })
@@ -783,7 +793,7 @@ class role extends Component {
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
             <Row gutter={24} className="main_height">
                 <Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
-                    <TreeParant treeData={this.state.tree.treeData}  selectedKeys={[this.state.searchListID]}
+                    <TreeParant treeData={this.state.tree.treeData} selectedKeys={[this.state.searchListID]}
                         addTree={this.addRoleGroup} editTree={this.editRoleGroup} deletetTree={this.delRoleGroup}
                         onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
                     ></TreeParant>

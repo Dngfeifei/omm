@@ -56,6 +56,7 @@ class App extends Component {
                     // toolbar: 'code undo redo restoredraft | cut copy paste pastetext | forecolor backcolor bold italic underline strikethrough link anchor | alignleft aligncenter alignright alignjustify outdent indent | \
                     // styleselect formatselect fontselect fontsizeselect | bullist numlist | blockquote subscript superscript removeformat | \
                     // table image media charmap emoticons hr pagebreak insertdatetime print preview | fullscreen |   lineheight formatpainter ',
+                    menubar: "",
                     statusbar: false, // 隐藏编辑器底部的状态栏
                     autosave_ask_before_unload: false,
                     height: 250, //编辑器高度
