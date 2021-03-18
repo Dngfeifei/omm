@@ -104,7 +104,11 @@ class TreeList extends Component {
 
     };
 
-
+    onExpand = expandedKeys => {
+        this.setState({
+          expandedKeys,
+        });
+      };
     loop = data => data.map((item) => {
         let { searchValue } = this.state;
         const index = item.title.indexOf(searchValue);
@@ -151,7 +155,7 @@ class TreeList extends Component {
     render = () => {
 
         const { treeData, autoExpandParent, checkable, defaultCheckedKeys, defaultExpandAll, defaultExpandedKeys, defaultSelectedKeys, draggable, multiple, selectable, showIcon,
-            showLine, onCheck, onDragEnd, onDrop, onExpand, onRightClick, onSelect, selectedKeys, search, edit
+            showLine, onCheck, onDragEnd, onDrop, onRightClick, onSelect, selectedKeys, search, edit
 
         } = this.props;
         // 进行数组扁平化处理
@@ -203,7 +207,7 @@ class TreeList extends Component {
                             onCheck={onCheck} // 点击复选框触发（跟treeData属性搭配）
                             onDragEnd={onDragEnd}  // dragend 触发时调用（跟treeData属性搭配）
                             onDrop={onDrop}  // drop 触发时调用（跟treeData属性搭配）
-                            onExpand={onExpand}  // 展开/收起节点时触发
+                            onExpand={this.onExpand}  // 展开/收起节点时触发
                             onRightClick={onRightClick} // 响应右键点击
                             onSelect={onSelect}  //点击树节点触发
                         >{this.loop(treeData)}</Tree>
