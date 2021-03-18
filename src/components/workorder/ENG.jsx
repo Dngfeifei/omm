@@ -50,25 +50,21 @@ class ENG extends Component {
                     title: '技术类别',
                     dataIndex: 'skillTypeName',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '品牌',
                     dataIndex: 'brandName',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '产品线级别',
                     dataIndex: 'productLineLevel',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '具备维护能力的产品线',
                     dataIndex: 'productLines',
                     align: 'center',
-                    width: 380,
                     ellipsis: {
                         showTitle: false,
                     },

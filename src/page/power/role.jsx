@@ -610,17 +610,18 @@ class role extends Component {
         let id = this.state.searchListID
         // 资源树选中数组
         let resourceArr = []
-        formData.resourcesInfo.checkedNodes.forEach((item) => {
-            if (item.props.parentResourceId ) {
-                resourceArr.push(item.props.id)
-            }
-            if (!item.props.parentResourceId && !item.props.children.length) {
-                resourceArr.push(item.props.id)
-            }
-        })
+        // 过滤掉含有子节点的父节点
+        // formData.resourcesInfo.checkedNodes.forEach((item) => {
+        //     if (item.props.parentResourceId ) {
+        //         resourceArr.push(({ id:item.props.id})
+        //     }
+        //     if (!item.props.parentResourceId && !item.props.children.length) {
+        //         resourceArr.push({ id:item.props.id})
+        //     }
+        // })
         if (formData.resources && formData.resources.length > 0) {
             formData.resources.forEach(item => {
-                arr.push({ id: item })
+                resourceArr.push({ id: item })
             })
         }
         if (!type) {

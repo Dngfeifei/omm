@@ -24,12 +24,15 @@ const getParentKey = (title, tree) => {
         const node = tree[i];
         if (node.children) {
             if (node.children.some(item => item.title === title)) {
+                console.log("1",title,node.key)
                 parentKey = node.key;
             } else if (getParentKey(title, node.children)) {
+                console.log("2",title,node.children)
                 parentKey = getParentKey(title, node.children);
             }
         }
     }
+    console.log(3,parentKey)
     return parentKey;
 };
 
@@ -135,7 +138,7 @@ class TreeList extends Component {
             return null;
         }).filter((item, i, self) => item && self.indexOf(item) === i);
 
-
+        console.log(expandedKeys,"expandedKeys")
         this.setState({
             expandedKeys,
             searchValue: value,
@@ -195,6 +198,7 @@ class TreeList extends Component {
                             selectable={selectable} // 是否可选中 
                             showIcon={showIcon}  // 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式
                             showLine={showLine}     // 是否展示连接线
+                            expandedKeys={this.state.expandedKeys} //展开节点数据数组
                             //以下是事件触发
                             onCheck={onCheck} // 点击复选框触发（跟treeData属性搭配）
                             onDragEnd={onDragEnd}  // dragend 触发时调用（跟treeData属性搭配）
