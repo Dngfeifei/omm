@@ -107,6 +107,7 @@ class TreeList extends Component {
     onExpand = expandedKeys => {
         this.setState({
           expandedKeys,
+          autoExpandParent: false
         });
       };
     loop = data => data.map((item) => {
@@ -189,7 +190,7 @@ class TreeList extends Component {
                         <Tree
                             // style={{ paddingTop: '5px' }}
                             className="tree"
-                            autoExpandParent={autoExpandParent}   // 是否自动展开父节点
+                            autoExpandParent={this.state.autoExpandParent}   // 是否自动展开父节点
                             checkable={checkable}  // 节点前添加 Checkbox 复选框
                             defaultCheckedKeys={defaultCheckedKeys}  // 默认选中复选框的树节点
                             defaultExpandAll={defaultExpandAll}  //  默认展开所有树节点
