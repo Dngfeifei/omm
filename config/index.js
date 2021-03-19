@@ -64,6 +64,13 @@ module.exports = {
       '/biProjectMember':target,     // 项目信息---项目组成员列表
       '/biCustContact':target,     // 项目信息---客户技术联系人列表
       '/biServiceObject':target,     // 项目信息---服务对象列表
+
+      '/assessVersion':target,     // 工程师自评估配置-评估版本
+      '/assessConfig':target,     // 工程师自评估配置-配置数据
+      '/temporaryOpen':target,     // 工程师自评估配置-临时开启
+      '/assessProable':target,     // 工程师自评估新增专业技能
+      '/assess':target,     // 工程师自评专业数据查询
+      '/basedata':target,     // 工程师自评基础数据查询
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

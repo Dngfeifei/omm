@@ -14,25 +14,6 @@ const { Search } = Input;
 // 引入Css
 import "./tree.css";
 
-
-
-
-
-const getParentKey = (title, tree) => {
-    let parentKey;
-    for (let i = 0; i < tree.length; i++) {
-        const node = tree[i];
-        if (node.children) {
-            if (node.children.some(item => item.title === title)) {
-                parentKey = node.key;
-            } else if (getParentKey(title, node.children)) {
-                parentKey = getParentKey(title, node.children);
-            }
-        }
-    }
-    return parentKey;
-};
-
 const dataList = [];
 
 const generateList = (data) => {
@@ -101,9 +82,17 @@ class TreeList extends Component {
 
     };
     componentWillReceiveProps(nextprops) {
-
+        if(this.props!=nextprops){
+            this.setState({
+                expandedKeys:nextprops.expandedKeys
+            })
+        }
     }
-
+    onExpand = expandedKeys => {
+        this.setState({
+          expandedKeys,
+        });
+      };
     loop = data => data.map((item) => {
         let { searchValue } = this.state;
         const index = item.title.indexOf(searchValue);
@@ -132,34 +121,17 @@ class TreeList extends Component {
 
 
 
-    // 输入框搜索节点
-    searchChange = (value) => {
-        const expandedKeys = dataList.map((item) => {
-            if (item.title.indexOf(value) > -1) {
-                return getParentKey(item.title, this.props.treeData);
-            }
-            return null;
-        }).filter((item, i, self) => item && self.indexOf(item) === i);
-
-
-        this.setState({
-            expandedKeys,
-            searchValue: value,
-            autoExpandParent: true,
-        });
-    };
 
 
 
     render = () => {
 
         const { treeData, autoExpandParent, checkable, defaultCheckedKeys, defaultExpandAll, defaultExpandedKeys, defaultSelectedKeys, draggable, multiple, selectable, showIcon,
-            showLine, onCheck, onDragEnd, onDrop, onExpand, onRightClick, onSelect, selectedKeys, checkedKeys, search, edit, disabled
+            showLine, onCheck, onDragEnd, onDrop, onRightClick, onSelect, selectedKeys, checkedKeys, search, edit, disabled,expandedKeys
 
         } = this.props;
         // 进行数组扁平化处理
         generateList(treeData);
-
         return (
             <div className="TreeContent">
                 <Spin tip="Loading..." spinning={this.state.visible}>
@@ -167,7 +139,7 @@ class TreeList extends Component {
                         // style={{ paddingTop: '5px' }}
                         disabled={disabled}
                         className="tree"
-                        autoExpandParent={true}   // 是否自动展开父节点
+                        autoExpandParent={false}   // 是否自动展开父节点
                         checkable={checkable}  // 节点前添加 Checkbox 复选框
                         defaultCheckedKeys={defaultCheckedKeys}  // 默认选中复选框的树节点
                         defaultExpandAll={defaultExpandAll}  //  默认展开所有树节点
@@ -181,11 +153,12 @@ class TreeList extends Component {
                         selectable={selectable} // 是否可选中 
                         showIcon={showIcon}  // 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式
                         showLine={showLine}     // 是否展示连接线
+                        expandedKeys={this.state.expandedKeys} //设置节点选中
                         //以下是事件触发
                         onCheck={onCheck} // 点击复选框触发（跟treeData属性搭配）
                         onDragEnd={onDragEnd}  // dragend 触发时调用（跟treeData属性搭配）
                         onDrop={onDrop}  // drop 触发时调用（跟treeData属性搭配）
-                        onExpand={onExpand}  // 展开/收起节点时触发
+                        onExpand={this.onExpand}  // 展开/收起节点时触发
                         onRightClick={onRightClick} // 响应右键点击
                         onSelect={onSelect}  //点击树节点触发
                     >{this.loop(treeData)}</Tree>

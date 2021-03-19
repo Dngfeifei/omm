@@ -50,25 +50,21 @@ class ENG extends Component {
                     title: '技术类别',
                     dataIndex: 'skillTypeName',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '品牌',
                     dataIndex: 'brandName',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '产品线级别',
                     dataIndex: 'productLineLevel',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '具备维护能力的产品线',
                     dataIndex: 'productLines',
                     align: 'center',
-                    width: 380,
                     ellipsis: {
                         showTitle: false,
                     },
@@ -376,19 +372,26 @@ class ENG extends Component {
             message.error("请将工程师相关信息填写完整再进行提交！")
             return
         }
-        PostAssessData(params).then(res => {
-            if (res.success != 1) {
-                message.error(res.message)
-            } else {
-                let pageConfig = Object.assign({}, this.state.pageConfig, { formRead: 2 })
-                console.log(pageConfig, "pageConfig1")
-                this.setState({
-                    pageConfig
-                }, () => {
-                    console.log(pageConfig, "pageConfig2")
+        let _this = this
+        // 删除提示+删除操作   
+        confirm({
+            title: '提交',
+            content: '提交后不可修改，确定提交吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                PostAssessData(params).then(res => {
+                    if (res.success != 1) {
+                        message.error(res.message)
+                    } else {
+                        let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
+                        _this.setState({
+                            pageConfig
+                        })
+                    }
                 })
-            }
-        })
+            }})
     }
     render = _ => {
         let { experience, commskills, docskills } = this.state.baseData;
