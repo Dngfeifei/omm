@@ -167,7 +167,7 @@ class role extends Component {
             id: null,
             roleName: null,
             status: null,
-            resources: []
+            resources: [],
         },
         //表格选中项
         tableSelecteds: [],
@@ -542,8 +542,10 @@ class role extends Component {
         if (row.resources && row.resources.length > 0) {
             if (row.resources[0]) {
                 row.resources.forEach(item => { 
-                    let item1 = this.getId(this.state.resourceData,item);
-                    !item1 && ids.push(item.id);
+                    //代码修改过，源代码为 ids.push(item.id)
+                    let item1 = this.getId(this.state.resourceData,item.id);
+                    !item1 && ids.push(item.id);     
+                    //代码修改过，源代码为 ids.push(item.id)
                 })
             }
         }
@@ -622,8 +624,13 @@ class role extends Component {
         //         resourceArr.push({ id:item.props.id})
         //     }
         // })
-
-        //重新格式化上传数据
+       /* if (formData.resources && formData.resources.length > 0) {
+            formData.resources.forEach(item => {
+                resourceArr.push({ id: item })
+            })
+        }原代码*/
+		
+		//重新格式化上传数据
         let updata = [];
         if (formData.resources && formData.resources.length > 0) {
             formData.resources.forEach(item => {
@@ -802,14 +809,14 @@ class role extends Component {
             }
         })
     }
-    //找到要渲染的数据
+	 //判断该节点是否渲染
     getId = (list,id)=>{
         for (let i in list) {
 			if(list[i].id==id && list[i].children && list[i].children.length){
 				return true
 			}
 			if(list[i].children){
-				let node=getParentId2(list[i].children,id);
+				let node= this.getId(list[i].children,id);
 				if(node){
 					return true
 				}
@@ -817,7 +824,7 @@ class role extends Component {
         } 
     }
 
-    //格式化上传的树节点数据
+    //获取父节点数据
     getParentId = (list,id)=>{
         for (let i in list) {
 			if(list[i].id==id){
@@ -832,7 +839,6 @@ class role extends Component {
 			}
         }
     }
-
     render = _ => {
         const { h } = this.state;
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
@@ -908,7 +914,6 @@ class role extends Component {
                 <Card style={{ width: "500px", overflowY: "auto", marginLeft: "30px" }}>
                     <Tree
                         checkable
-                        // checkStrictly
                         onCheck={this.onCheck}
                         autoExpandParent={true}
                         checkedKeys={this.state.currentRole.resources}
