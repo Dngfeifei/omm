@@ -135,7 +135,7 @@ class workList extends Component {
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
-                title: '受理人',
+                title: '当前待办人',
                 dataIndex: 'assigneeRealName',
                 ellipsis: {
                     showTitle: false,

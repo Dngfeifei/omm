@@ -380,16 +380,15 @@ class workOrer extends Component {
     }
     //提交点击方法
     submit = (data) => {
-        // this.componentRef ? this.componentRef.change() : this.ref.change()
-        let continu = null;
         if(this.state.workControl.formRead == 1){
-            // this.componentRef ? let continue =  this.componentRef.submission() : this.ref.submission()
-            continu = this.componentRef ? this.componentRef.submission() : this.ref.submission();
-            if(!continu) {
-                message.error('表单提交失败！');
-                return false;
-            } 
+            this.ref.submission();
+        }else{
+            this.submission(true);
         }
+        
+    }
+    submission = (data)=>{
+        if(!data) return false;
         let upData = this.processing()
         getSubmit(upData).then(res => {
             this.resetState(res);
@@ -484,7 +483,7 @@ class workOrer extends Component {
                 <Row gutter={8} type="flex" style={{flex:'auto',marginLeft:0,marginRight:0,height:10}}>
                     <Col className="gutter-row" span={this.state.swit ? 18 : null} style={style}>
                         <div className="gutter-box work" style={{height:'100%',border: '1px solid rgb(240, 242, 245)'}}>
-                            {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref} config={params}/> :<Empty description={JSON.stringify(params)} />}
+                            {OrderComponent ? <OrderComponent setRef={ref => this.ref = ref} submission={this.submission} config={params}/> :<Empty description={JSON.stringify(params)} />}
                         </div>
                     </Col>
                     {

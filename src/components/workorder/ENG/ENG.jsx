@@ -178,6 +178,7 @@ class ENG extends Component {
             // 外部所传参数  1为可编辑 2为不可编辑  id为工单id号
             pageConfig: { formRead: "", id: "", sign: null }
         }
+        if(props.setRef) props.setRef(this) //初始化传递本组件this给父组件以便后续父组件调用子组件方法
     }
 
     // 页面初始化方法(回显数据)
@@ -380,7 +381,7 @@ class ENG extends Component {
     }
 
     //提交数据
-    submission = _ => {
+    submission = async _ => {
         let { id, experienceCode, commskillsCode, docskillsCode } = this.state.info;
         let params = { id, experienceCode, commskillsCode, docskillsCode };
         let checked = this.check(params);
@@ -391,16 +392,17 @@ class ENG extends Component {
         }
         let _this = this
         // 删除提示+删除操作   
-        confirm({
+      confirm({
             title: '提交',
             content: '提交后不可修改，确定提交吗？',
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
-            onOk() {
-                PostAssessData(params).then(res => {
+            onOk () {
+               PostAssessData(params).then(res => {
                     if (res.success != 1) {
                         message.error(res.message)
+                        _this.props.submission(false);
                     } else {
                         let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
                         _this.setState({
@@ -408,6 +410,7 @@ class ENG extends Component {
                         })
                         _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
                         );
+                        _this.props.submission(true);
                     }
                 })
             }

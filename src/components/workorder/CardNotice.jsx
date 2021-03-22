@@ -1,10 +1,15 @@
 import React, { Component } from 'react'
-
-import { List, Spin} from 'antd'
+import { connect } from 'react-redux'
+import { List, Spin,Form} from 'antd'
 // API
 import { getnotices } from '/api/notice'
 // 导入 卡片模板文件
 import Card from "@/components/card/card";
+@connect(state => ({
+    resetwork: state.global.resetwork,
+}), dispath => ({
+    setWorklist(data) { dispath({ type: SET_WORKLIST, data }) },
+}))
 
 class CardNotice extends Component {
     async componentWillMount () {
@@ -79,7 +84,9 @@ class CardNotice extends Component {
             isShow:false
         })
     }
-
+    submission = _ => {
+        alert()
+    }
 
     // 用于修改卡片的加载态
     refresh=()=>{
@@ -115,5 +122,5 @@ class CardNotice extends Component {
     }
   
 }
-
-export default CardNotice;
+const ENGForm = Form.create()(CardNotice)
+export default ENGForm;
