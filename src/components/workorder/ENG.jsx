@@ -2,10 +2,15 @@
  *  系统管理--工程师自评工单ENG
  * @auth yyp
  */
+
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { SET_WORKLIST } from '/redux/action'
 import { Form, Table, Button, Select, message, Tooltip, Modal } from 'antd'
 const { Option } = Select;
 const { confirm } = Modal;
+
+
 
 // 引入专业能力组件
 import Technology from './technology.jsx'
@@ -15,6 +20,12 @@ import '@/assets/less/components/layout.less'
 import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData } from '/api/selfEvaluation'
 // 引入为空校验方法
 import nullCheck from '@/assets/js/methods.js'
+@connect(state => ({
+    resetwork: state.global.resetwork,
+}), dispath => ({
+    setWorklist(data) { dispath({ type: SET_WORKLIST, data }) },
+}))
+
 
 class ENG extends Component {
     // 设置默认props
@@ -389,9 +400,12 @@ class ENG extends Component {
                         _this.setState({
                             pageConfig
                         })
+                        _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
+                        );
                     }
                 })
-            }})
+            }
+        })
     }
     render = _ => {
         let { experience, commskills, docskills } = this.state.baseData;
@@ -402,10 +416,10 @@ class ENG extends Component {
         }) : [];
         let middleCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "中级"
-        }):[];
+        }) : [];
         let elementaryCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "初级"
-        }):[];
+        }) : [];
         return (
             <div className="layoutOMM">
                 <div className="loPageContent">
