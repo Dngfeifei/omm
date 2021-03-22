@@ -26,23 +26,29 @@ import nullCheck from '@/assets/js/methods.js'
     setWorklist(data) { dispath({ type: SET_WORKLIST, data }) },
 }))
 
-
 class ENG extends Component {
     // 设置默认props
     static defaultProps = {
-        config: {
-            formRead: 1, id: "", //外部所传参数  1为可编辑 2为不可编辑  id为工单id号
-        }
+        // config: {
+        //     formRead: 1, id: "", //外部所传参数  1为可编辑 2为不可编辑  id为工单id号
+        // }
     }
     // 组件将要挂载前触发的函数
     async componentWillMount() {
-        // 获取外部传递参数
-        let config = this.props.config;
-        this.setState({
-            pageConfig: config
-        }, () => {
+        let assembly = this.props;
+        console.log(assembly, "assembly")
+        if (assembly.hasOwnProperty("config")) {
+            // 获取外部传递参数
+            let config = this.props.config;
+            this.setState({
+                pageConfig: config
+            }, () => {
+                this.init() // 页面初始化
+            })
+        } else {
             this.init() // 页面初始化
-        })
+        }
+
     }
     constructor(props) {
         super(props)
@@ -170,7 +176,7 @@ class ENG extends Component {
 
             },
             // 外部所传参数  1为可编辑 2为不可编辑  id为工单id号
-            pageConfig: { formRead: 1, id: "" }
+            pageConfig: { formRead: "", id: "", sign: null }
         }
     }
 
@@ -374,7 +380,7 @@ class ENG extends Component {
     }
 
     //提交数据
-    sava = _ => {
+    submission = _ => {
         let { id, experienceCode, commskillsCode, docskillsCode } = this.state.info;
         let params = { id, experienceCode, commskillsCode, docskillsCode };
         let checked = this.check(params);
@@ -408,9 +414,13 @@ class ENG extends Component {
         })
     }
     render = _ => {
+
         let { experience, commskills, docskills } = this.state.baseData;
         let { info, pageConfig } = this.state;
-        let readOnly = pageConfig.formRead == 2 || !info.status;
+        let readOnly = !info.status;
+        if (typeof (pageConfig.formRead) == "number") {
+            readOnly = pageConfig.formRead == 2
+        }
         let highCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "高级"
         }) : [];
@@ -547,7 +557,7 @@ class ENG extends Component {
                     </div>
 
                     <div className="loRowBtns alignRight">
-                        {!readOnly ? (<Button type="primary" onClick={this.sava}>提交</Button>) : ""}
+                        {readOnly || pageConfig.sign == 1 ? "" : (<Button type="primary" onClick={this.submission}>提交</Button>)}
                     </div>
                 </div>
                 {!this.state.config.visible ? "" : <Technology onOk={this.onOk} onCancel={this.onCancel}
