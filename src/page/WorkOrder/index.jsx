@@ -63,7 +63,7 @@ class workOrer extends Component {
     init = async () => {
         let {workControl,fileList,formControl,businessKey,formKey,listData,ticketId} = this.state;
         let data = await getOperation({procInstId: this.props.params.dataType.record.procInstId,taskId:this.props.params.dataType.record.taskId}) //调用接口获取页面初始化必须数据
-        console.log(data)
+        if(data.success != 1) { this.setState({spinning:false}); return false;};
         listData = data.data.messages ? data.data.messages : [];
         businessKey = data.data['businessKey.code'] ? data.data['businessKey.code']: '';
         // formKey = data.data.formKey ? data.data.formKey : '';
@@ -381,6 +381,15 @@ class workOrer extends Component {
     //提交点击方法
     submit = (data) => {
         // this.componentRef ? this.componentRef.change() : this.ref.change()
+        let continu = null;
+        if(this.state.workControl.formRead == 1){
+            // this.componentRef ? let continue =  this.componentRef.submission() : this.ref.submission()
+            continu = this.componentRef ? this.componentRef.submission() : this.ref.submission();
+            if(!continu) {
+                message.error('表单提交失败！');
+                return false;
+            } 
+        }
         let upData = this.processing()
         getSubmit(upData).then(res => {
             this.resetState(res);
@@ -421,7 +430,7 @@ class workOrer extends Component {
         let OrderComponent = comObj[orderCompont];
         let style = swit ? {height:'100%',paddingBottom:5} : {width:10,flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
-        params = {formRead:this.state.workControl.formRead,id: ticketId,formControl:this.state.formControl};
+        params = {formRead:this.state.workControl.formRead,id: ticketId,formControl:this.state.formControl,sign:1};
         return (
             <div className='work_order' style={{height: '100%',display:'flex',flexDirection:'column'}}>
                 <Spin spinning={spinning} size="large">

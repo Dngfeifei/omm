@@ -15,3 +15,4 @@ const requireComponent = require.context(
     // 若该组件是通过"export default"导出的，优先使用".default"，否则退回到使用模块的根
     comObj[names] = componentConfig.default || componentConfig;
   });
+  console.log(comObj)
