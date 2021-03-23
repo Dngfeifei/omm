@@ -19,3 +19,14 @@ export const biUserInfo = (id,params = {}) => {
 export const  educationalLevel = (params = {}) => {
 	return http.fetchGet('/sysDictItems/getByCode', params)
 }
+
+
+// 获取 证书信息
+export const  getCertificate = (userId,params = {}) => {
+	return http.fetchGet(`/biCert/byUser/${userId}`, params)
+}
+
+// 工作经验和专业能力接口
+export const  getSelectByUserId = (params = {}) => {
+	return http.fetchGet(`/assess/selectByUserId`, params)
+}

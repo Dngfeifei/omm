@@ -17,11 +17,7 @@ class People extends Component {
 		this.searchAllOrgData()
 	}
 	async componentWillReceiveProps(nextprops) {
-		// 判断参数变化
-		// 1 参数visible为ture  窗口显示
-		if (nextprops.windowData != this.props.windowData && nextprops.windowData.visible) {
-
-		}
+	
 	}
 	state = {
 		// 分页参数
@@ -244,10 +240,11 @@ class People extends Component {
 			type: type,
 			selectedRowKeys: resultID
 		}
+		console.log(mechanismTree,"mechanismTree")
 		// 若存在状态 则显示状态选择框和状态列
 		let tableColumnConfig = status ? tableColumns2 : tableColumns;
 		return <div>
-			<ModalParant title="工程师选择器"
+			<ModalParant title="选择工程师"
 				destroyOnClose={true}
 				visible={true}
 				onOk={this.onSubmit}//若无选中数据 执行关闭方法
@@ -260,6 +257,7 @@ class People extends Component {
 							edit={false}
 							onSelect={this.onTreeSelect}
 							defaultExpandAll={true}
+							autoExpandParent={true}
 							treeData={mechanismTree}
 							selectedKeys={[currentOrgID]}
 						/>

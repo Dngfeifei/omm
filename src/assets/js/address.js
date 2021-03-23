@@ -253,7 +253,7 @@ export default [
     ]
   },
   {
-    "name": "北京市",
+    "name": "北京",
     "city": [
       {
         "name": "北京市",
@@ -281,7 +281,7 @@ export default [
     ]
   },
   {
-    "name": "天津市",
+    "name": "天津",
     "city": [
       {
         "name": "天津市",

@@ -1,5 +1,5 @@
 /***
- *  系统管理--工程师管理
+ *  系统管理--工程师自评估配置
  * @auth yyp
  */
 import React, { Component } from 'react'
@@ -12,6 +12,7 @@ const { TextArea } = Input;
 
 // 引入工程师选择器组件
 import Selector from '/components/selector/engineerSelector.jsx'
+
 // 引入页面CSS
 import '@/assets/less/components/layout.less'
 // 引入 API接口
@@ -116,10 +117,7 @@ class engineerConfig extends Component {
         // 进入页面初始化页面数据 调用初始化方法
         this.init()
     }
-    // 组件将要挂载完成后触发的函数
-    componentDidMount() {
 
-    }
     // 页面初始化方法(回显数据)
     init = () => {
         // 获取开启日志历史数据
@@ -289,26 +287,33 @@ class engineerConfig extends Component {
         let { competenceLevel, comableFormulaVal, comableFormula, proableFormulaVal, proableFormula, engineerLevel } = this.state;
         // 数据校验
         // 工程师专业能力级别评定规则数据校验
-        let current = competenceLevel[0].itemValue
-        competenceLevel.forEach((el, i) => {
-            if (el.itemValue == "" || isNaN(Number(el.itemValue))) {
-                el["error"] = "分值不能为空且必须是数字"
-                error = false
-            } else if (i != 0) {
-                if (el.itemValue * 1 >= current * 1 && current != "") {
-                    el["error"] = "请填写正确的分值"
-                    error = false
-                } else if (el.itemValue2 == "" || isNaN(Number(el.itemValue2))) {
-                    el["error"] = "案例说明数量不能为空且必须是数字"
-                    error = false
-                } else {
-                    el["error"] = ""
-                }
-            } else {
-                el["error"] = ""
-            }
-            current = el.itemValue
+        // let current = competenceLevel[0].itemValue
+        // competenceLevel.forEach((el, i) => {
+        //     if (el.itemValue == "" || isNaN(Number(el.itemValue))) {
+        //         el["error"] = "分值不能为空且必须是数字"
+        //         error = false
+        //     } else if (i != 0) {
+        //         if (el.itemValue * 1 >= current * 1 && current != "") {
+        //             el["error"] = "请填写正确的分值"
+        //             error = false
+        //         } else if (el.itemValue2 == "" || isNaN(Number(el.itemValue2))) {
+        //             el["error"] = "案例说明数量不能为空且必须是数字"
+        //             error = false
+        //         } else {
+        //             el["error"] = ""
+        //         }
+        //     } else {
+        //         el["error"] = ""
+        //     }
+        //     current = el.itemValue
 
+        // })
+
+        competenceLevel.forEach((el, i) => {
+            if (el.itemValue == "" || isNaN(Number(el.itemValue))||el.itemValue2 == "" || isNaN(Number(el.itemValue2))) {
+                el["error"] = "分值和案例说明数量不能为空且必须是数字"
+                error = false
+            } 
         })
         this.setState({
             competenceLevel: competenceLevel
@@ -502,7 +507,7 @@ class engineerConfig extends Component {
                             <FormOutlined style={{ marginRight: "10px" }} />
                             工程师本项专业能力分值计算规则：
                             {this.state.comableType.map((item, key) => {
-                                return <Tag key={item.key} onClick={_ => this.appendComable(item)}>{item.name}</Tag>
+                                return <Tag key={key} onClick={_ => this.appendComable(item)}>{item.name}</Tag>
                             })}
                         </div>
                         <div className="loAreaContent">
@@ -515,7 +520,7 @@ class engineerConfig extends Component {
                             <FormOutlined style={{ marginRight: "10px" }} />
                             工程师综合能力分值计算规则：
                             {this.state.proableType.map((item, key) => {
-                                return <Tag key={item.key} onClick={_ => this.appendProable(item)}>{item.name}</Tag>
+                                return <Tag key={key} onClick={_ => this.appendProable(item)}>{item.name}</Tag>
                             })}
                         </div>
                         <div className="loAreaContent">
@@ -546,13 +551,14 @@ class engineerConfig extends Component {
                             />
                         </div>
                     </div>
+                    <div className="loRowBtns">
+                        <Button type="info" onClick={this.init}>取消</Button>
+                        {
+                            this.state.currentStatus != this.state.status ? <Button type="primary" onClick={this.sava}>保存</Button> : <Button type="info" disabled>保存</Button>
+                        }
+                    </div>
                 </div>
-                <div className="loRowBtns">
-                    <Button type="info" onClick={this.init}>取消</Button>
-                    {
-                        this.state.currentStatus != this.state.status ? <Button type="primary" onClick={this.sava}>保存</Button> : <Button type="info" disabled>保存</Button>
-                    }
-                </div>
+
                 {
                     this.state.selector.visible ? <Selector
                         onOk={this.onSelectorOK}

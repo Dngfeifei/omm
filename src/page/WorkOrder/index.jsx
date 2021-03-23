@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, message, Button, Row, Col,Icon,Card,Input , Upload,List,Empty,Spin,TreeSelect,Form, Select, Table, DatePicker, TimePicker,Tooltip } from 'antd'
+import { Modal, message, Button, Row, Col,Icon,Card,Input , Upload,List,Empty,Spin,TreeSelect, Select,Timeline,Tooltip } from 'antd'
 import ModalDom from '@/components/modal'
 import { connect } from 'react-redux'
 import { REMOVE_PANE,SET_WORKLIST,SET_PANE,SET_WORKSTATUS} from '/redux/action'
@@ -9,7 +9,7 @@ import '@/assets/less/pages/workorder.less'
 import {comObj} from "@/utils/workorder";
 
 //引入接口
-import { getOperation,getBackTask ,getTransfer,getEndorse,getUnpass,getSubmit,getSubmit2,getProcessImg,getDeleteAttachment,getRetrieve} from '/api/workspace'
+import { getOperation,getBackTask ,getTransfer,getEndorse,getUnpass,getSubmit,getProcessImg,getDeleteAttachment,getRetrieve,getFinish,getReview} from '/api/workspace'
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -23,7 +23,7 @@ const MyIcon = Icon.createFromIconfontCN({
 
 function ModalSon (props){
     let Rdom = (<Select mode="multiple" dropdownStyle={{display:'none'}} placeholder="请选择人员" labelInValue allowClear onFocus={() =>{}} onChange={(selectedItems)=>props.handleChange(selectedItems,2)} value={props.modal.selectedItems} style={{ width: '87%' }} tokenSeparators={[',']}></Select>)
-    let Reject = <Select placeholder="请选择流程节点" autoFocus value={props.modal.selected ? props.modal.selected : null} onChange={(selectedItems)=>props.handleChange(selectedItems,3)} style={{ width: '90%' }}>{props.modal.selecteds.map( (item)=>{return <Option key={item.taskDefKey} value={item.taskDefKey}>{item.taskName}</Option>})}</Select>
+    let Reject = <Select placeholder="请选择流程节点" autoFocus  onChange={(selectedItems)=>props.handleChange(selectedItems,3)} style={{ width: '90%' }}>{props.modal.selecteds.map( (item)=>{return <Option key={item.taskDefKey} value={item.taskDefKey}>{item.taskName+' | '+item.userRealName}</Option>})}</Select>
     return (
     <div style={{display:'flex',flexDirection:'column'}}>
         <div className="operation_area" style={{display:'flex',alignItems:'center',marginBottom:15}}>
@@ -55,17 +55,21 @@ class workOrer extends Component {
         this.init();
         
     }
+    //监控
+    // componentDidCatch(error, info) {
+    //     console.log(error,info)
+    // }
     //初始化页面
     init = async () => {
         let {workControl,fileList,formControl,businessKey,formKey,listData,ticketId} = this.state;
         let data = await getOperation({procInstId: this.props.params.dataType.record.procInstId,taskId:this.props.params.dataType.record.taskId}) //调用接口获取页面初始化必须数据
-        console.log(data)
+        if(data.success != 1) { this.setState({spinning:false}); return false;};
         listData = data.data.messages ? data.data.messages : [];
-        businessKey = data.data.businessKey ? data.data.businessKey.split('-'): [];
-        formKey = data.data.formKey ? data.data.formKey : '';
+        businessKey = data.data['businessKey.code'] ? data.data['businessKey.code']: '';
+        // formKey = data.data.formKey ? data.data.formKey : '';
         ticketId = data.data.ticketId
-        workControl = data.data.formPermission ? {...workControl,...data.data.formPermission.businessPermission} : {...workControl,...data.data.businessPermission};//获取到回传的按钮权限
-        formControl =  data.data.formPermission ? {...formControl,...data.data.formPermission.formPermission} : {...formControl}; //获取工单权限
+        workControl = {...workControl,...data.data['businessKey.permission'].consolePermission} ;//获取到回传的按钮权限
+        formControl =  {...formControl,...data.data['businessKey.permission'].formPermission}; //获取工单权限
     //    workControl = {...workControl,...bussinessPermission}; 
        fileList = data.data && data.data.attrData.length ? data.data.attrData.map(item => {//获取到回传的已上传附件列表
             return {uid:item.attachId,name:item.fileName,status:'done',url:item.url}
@@ -79,7 +83,7 @@ class workOrer extends Component {
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         //获取token值，为后续上传附件设置请求头使用
 
-       this.setState({workControl,header,fileList,formControl,formKey,businessKey,listData,spinning:false,ticketId},()=>{  //重置状态数据
+       this.setState({workControl,header,fileList,formControl,listData,businessKey,spinning:false,ticketId},()=>{  //重置状态数据
             console.log(this.state)
        })
     }
@@ -97,7 +101,7 @@ class workOrer extends Component {
         opinion: null, //处理意见,
         spinning:true,//加载效果
         header:{},//上传附件的头部信息
-        businessKey:[],//储存工单组件的名称以及工单参数ID
+        businessKey:'',//储存工单组件的名称以及工单参数ID
         formKey:'',//储存工单组件的名称以及工单参数ID,优先级高
         ticketId:null,//工单当前状态是否为只读
         modal: {
@@ -129,12 +133,14 @@ class workOrer extends Component {
             transferName: '转办', //转办文字名称
             countersign: 1, //加签
             countersignName: '加签', //加签文字名称
-            approval: 0, //审批
-            submit: 1, //提交 0 不显示，1显示不需选择二级专家，2需要选择二级专家
+            engReview: 0, //二线专家复评
+            engReviewName:'二线专家复评', 
+            submit: 1, //提交 
             submitName: '提交', //提交文字名称
             save: 1, //保存
             saveName: '保存', //保存文字名称
-            Inform: 0, //知会
+            engFinish: 0, //结束
+            engFinishName:'结束', 
             opinion: 1, //处理意见填写是否可操作0，不显示，1可上传删除，2仅显示不可上传删除
             upload: 1, //附件上传区是否可操作0，不显示，1可上传删除，2仅显示不可上传删除
             circulation: 1,//流转记录
@@ -157,16 +163,48 @@ class workOrer extends Component {
             //   }
           ],
         listData:[     //流程记录数据
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '李总进行了审批',
-            '张总进行了驳回的审批意见'
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // },
+            // {
+            //     comment: "",
+            //     date: "21-03-16",
+            //     sourceUserRealName: "常二帅",
+            //     taskAction: "提交申请"
+            // }
         ]
     }
     //绑定工单子组件
@@ -294,7 +332,7 @@ class workOrer extends Component {
             })
 
         }else if(modal.identification == 5){
-            getSubmit2(upData).then(res => {
+            getReview(upData).then(res => {
                 this.resetState(res);
             })
         }else{
@@ -342,7 +380,15 @@ class workOrer extends Component {
     }
     //提交点击方法
     submit = (data) => {
-        // this.componentRef ? this.componentRef.change() : this.ref.change()
+        if(this.state.workControl.formRead == 1){
+           this.ref.submission();
+        }else{
+            this.submission(true);
+        }
+        
+    }
+    submission = (data)=>{
+        if(!data) return false;
         let upData = this.processing()
         getSubmit(upData).then(res => {
             this.resetState(res);
@@ -352,6 +398,13 @@ class workOrer extends Component {
     retrieve =() => {
         let upData = this.processing()
         getRetrieve(upData).then(res => {
+            this.resetState(res);
+        })
+    }
+    //结束流程
+    gameOver = () => {
+        let upData = this.processing()
+        getFinish(upData).then(res => {
             this.resetState(res);
         })
     }
@@ -372,12 +425,11 @@ class workOrer extends Component {
     }
     render = () => {
         const { swit,workControl,listData,businessKey,formKey,spinning,ticketId} = this.state;
-        const orderCompont = formKey ? formKey[0] : businessKey[0];
+        const orderCompont = businessKey;
         let OrderComponent = comObj[orderCompont];
-        let style = swit ? {height:'100%',paddingBottom:5} : {width:'auto',flex:'auto',height:'100%',paddingBottom:5},
+        let style = swit ? {height:'100%',paddingBottom:5} : {width:10,flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
-        params = {formRead:this.state.workControl.formRead,id: ticketId,formControl:this.state.formControl};
-        console.log(comObj)
+        params = {formRead:this.state.workControl.formRead,id: ticketId,formControl:this.state.formControl,sign:1};
         return (
             <div className='work_order' style={{height: '100%',display:'flex',flexDirection:'column'}}>
                 <Spin spinning={spinning} size="large">
@@ -410,19 +462,16 @@ class workOrer extends Component {
                                 <MyIcon type="iconqianjiaqian" />
                                 <span>加签</span>
                             </Button>: null}
-                            {workControl.approval ?<Button type="primary" style={{marginRight:8}}>
+                            {workControl.submit ? <Button onClick={this.submit} type="primary" style={{marginRight:8}}>
+                                <MyIcon type="icontijiao" />
+                                <span>提交</span>
+                            </Button> : null}
+                            {workControl.engReview ?<Button type="primary" style={{marginRight:8}} onClick={()=>this.openModal('提交',5)}>
                                 <MyIcon type="iconshenpi" />
-                                <span>审批</span>
+                                <span>提交复评</span>
                             </Button>: null}
-                            {workControl.submit ? workControl.submit == 1 ? <Button onClick={this.submit} type="primary" style={{marginRight:8}}>
-                                <MyIcon type="icontijiao" />
-                                <span>提交</span>
-                            </Button> : <Button type="primary" style={{marginRight:8}} onClick={()=>this.openModal('提交',5)}>
-                                <MyIcon type="icontijiao" />
-                                <span>提交</span>
-                            </Button>: null}
-                            {workControl.Inform ?<Button type="primary" style={{marginRight:8}}>
-                                知会
+                            {workControl.engFinish ?<Button type="primary" style={{marginRight:8}} onClick={this.gameOver}>
+                                结束
                             </Button>: null}
                             {workControl.save ?<Button type="primary" style={{marginRight:8}}>
                                 <MyIcon type="iconbaocun" />
@@ -433,8 +482,8 @@ class workOrer extends Component {
                 </Row> 
                 <Row gutter={8} type="flex" style={{flex:'auto',marginLeft:0,marginRight:0,height:10}}>
                     <Col className="gutter-row" span={this.state.swit ? 18 : null} style={style}>
-                        <div className="gutter-box" style={{height:'100%',overflow:'auto',border: '1px solid rgb(240, 242, 245)'}}>
-                            {OrderComponent ? <OrderComponent wrappedComponentRef={(ref)=>this.componentRef = ref} ref={(ref)=> this.ref = ref} params={params}/> :<Empty description={JSON.stringify(params)} />}
+                        <div className="gutter-box work" style={{height:'100%',border: '1px solid rgb(240, 242, 245)'}}>
+                            {OrderComponent ? <OrderComponent setRef={ref => this.ref = ref} submission={this.submission} config={params}/> :<Empty description={JSON.stringify(params)} />}
                         </div>
                     </Col>
                     {
@@ -453,14 +502,26 @@ class workOrer extends Component {
                                     <Icon type="upload" /> 请上传需要的附件
                                     </Button>
                                 </Upload> : null}
-                            {workControl.circulation ? <Card loading={this.state.loading} className="circulation" size="small" title="流转记录" style={{padding:0}} bordered={false} extra={<span style={{visibility:'hidden'}}>1</span>}>
-            
-                                    <List
+                            {workControl.circulation ? <Card loading={this.state.loading} className="circulation" size="small" title="流转记录" style={{padding:0}} bodyStyle={{paddingTop: 15}} bordered={false} extra={<span style={{visibility:'hidden'}}>1</span>}>
+                                {this.state.listData.length ? <Timeline>
+                                    {
+                                        this.state.listData.map((item,index) => {
+                                            return (
+                                                <Timeline.Item  key={index}>
+                                                    <p>{item.sourceUserRealName + ' ' + item.taskAction + ' ' + (item.targetUserRealName ? item.targetUserRealName : '')}</p>
+                                                    <p>{item.comment}</p>
+                                                    <p>{item.date}</p>
+                                                </Timeline.Item>
+                                            )
+                                        })
+                                    }
+                                </Timeline> : <Empty />}
+                                    {/* <List
                                         size="small"
                                         bordered={false}
                                         dataSource={listData}
                                         renderItem={item => <List.Item>{item}</List.Item>}
-                                    />
+                                    /> */}
                             </Card> : null}
                             </div>
                         </div>

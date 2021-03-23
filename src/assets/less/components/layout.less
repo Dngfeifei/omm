@@ -1,5 +1,5 @@
 .layoutOMM {
-    padding: 16px 30px 16px 30px;
+    padding: 20px 30px;
 
     .loPageTitle {
         width: 100%;
@@ -29,29 +29,78 @@
             .loAreaTitle {}
 
             .loAreaContent {
-                padding: 10px 0 10px 24px;
+                padding: 5px 0 10px 24px;
             }
         }
     }
 
-    // 工作表单
+    // // 工作表单
     .worksheet {
-        ul {
+        text-align: center;
+
+        .row {
+            width: 100%;
+            display: flex;
             border: 1px solid #e8e8e8;
             margin-top: -1px;
-            display: flex;
+
+            .column {
+                flex: 1;
+                display: flex;
+                border-left: 1px solid #e8e8e8;
+                margin-left: -1px;
+            }
+
+            .column2 {
+                flex: 2;
+                display: flex;
+                border-left: 1px solid #e8e8e8;
+                margin-left: -1px;
+            }
+
+            .column3 {
+                flex: 3;
+                display: flex;
+                border-left: 1px solid #e8e8e8;
+                margin-left: -1px;
+            }
+
+            .column4 {
+                flex: 4;
+                display: flex;
+                border-left: 1px solid #e8e8e8;
+                margin-left: -1px;
+            }
         }
-        li {
-            flex: 1;
-            list-style: none;
-            float: left;
+
+        .key {
+            width: 150px;
+            background-color: #fafafa;
             border-right: 1px solid #e8e8e8;
+            height: 48px;
+            line-height: 48px;
+        }
+
+        .val {
+            flex: 2;
+            height: 48px;
+            line-height: 48px;
+
+            .row,
+            .column {
+                border-top: none;
+                border-bottom: none;
+            }
+
+            .row {
+                border-left: none;
+            }
         }
     }
 
     // 按钮
     .loRowBtns {
-        padding: 20px;
+        padding: 10px;
         text-align: center;
 
         button {
@@ -73,5 +122,36 @@
     .ListError {
         color: red;
         margin-left: 20px;
+    }
+}
+
+// 表格
+.layoutForm {
+    .formRow {
+        width: 100%;
+        display: flex;
+        margin-bottom: 20px;
+
+        .formCol {
+            flex: 1;
+            display: flex;
+            padding-right: 30px;
+            line-height: 30px;
+        }
+        .formCol2 {
+            flex: 2;
+            display: flex;
+            padding-right: 30px;
+            line-height: 30px;
+        }
+        .formKey {
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .formVal {
+            flex: auto;
+        }
+
     }
 }

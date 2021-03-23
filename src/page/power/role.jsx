@@ -541,7 +541,12 @@ class role extends Component {
         let ids = [];
         if (row.resources && row.resources.length > 0) {
             if (row.resources[0]) {
-                row.resources.forEach(item => { ids.push(item.id) })
+                row.resources.forEach(item => { 
+                    //代码修改过，源代码为 ids.push(item.id)
+                    let item1 = this.getId(this.state.resourceData,item.id);
+                    !item1 && ids.push(item.id);     
+                    //代码修改过，源代码为 ids.push(item.id)
+                })
             }
         }
         this.setState({
@@ -608,10 +613,35 @@ class role extends Component {
         let type = this.state.roleWindow.roleModalType
         // 当前选择的角色组ID
         let id = this.state.searchListID
-        let arr = []
+        // 资源树选中数组
+        let resourceArr = []
+        // 过滤掉含有子节点的父节点
+        // formData.resourcesInfo.checkedNodes.forEach((item) => {
+        //     if (item.props.parentResourceId ) {
+        //         resourceArr.push(({ id:item.props.id})
+        //     }
+        //     if (!item.props.parentResourceId && !item.props.children.length) {
+        //         resourceArr.push({ id:item.props.id})
+        //     }
+        // })
+       /* if (formData.resources && formData.resources.length > 0) {
+            formData.resources.forEach(item => {
+                resourceArr.push({ id: item })
+            })
+        }原代码*/
+		
+		//重新格式化上传数据
+        let updata = [];
         if (formData.resources && formData.resources.length > 0) {
             formData.resources.forEach(item => {
-                arr.push({ id: item })
+                let item1 = this.getParentId(this.state.resourceData,item);
+                updata = [...updata,...item1,...[item]];
+            })
+        }
+        updata = Array.from(new Set(updata))
+        if (updata && updata.length > 0) {
+            updata.forEach(item => {
+                resourceArr.push({ id: item })
             })
         }
         if (!type) {
@@ -619,7 +649,7 @@ class role extends Component {
             let params = {
                 roleName: formData.roleName,
                 status: formData.status,
-                resources: arr,
+                resources: resourceArr,
                 roleCategoryId: id
             }
             if (this.state.lock) {
@@ -658,7 +688,7 @@ class role extends Component {
                     roleName: formData.roleName,
                     status: formData.status,
                     id: formData.id,
-                    resources: arr
+                    resources: resourceArr
                 }
                 if (this.state.lock) {
                     return
@@ -760,8 +790,9 @@ class role extends Component {
             tableSelectedInfo: info
         })
     };
+    // 资源树选中后
     onCheck = (checkedKeys, info) => {
-        let obj = Object.assign({}, this.state.currentRole, { resources: checkedKeys })
+        let obj = Object.assign({}, this.state.currentRole, { resources: checkedKeys, resourcesInfo: info })
         this.setState({
             currentRole: obj
         })
@@ -778,12 +809,42 @@ class role extends Component {
             }
         })
     }
+	 //判断该节点是否渲染
+    getId = (list,id)=>{
+        for (let i in list) {
+			if(list[i].id==id && list[i].children && list[i].children.length){
+				return true
+			}
+			if(list[i].children){
+				let node= this.getId(list[i].children,id);
+				if(node){
+					return true
+				}
+			}
+        } 
+    }
+
+    //获取父节点数据
+    getParentId = (list,id)=>{
+        for (let i in list) {
+			if(list[i].id==id){
+				return []
+			}
+			if(list[i].children){
+				let node= this.getParentId(list[i].children,id);
+				if(node!==undefined){
+					console.log(list[i])
+					return node.concat(list[i].id)
+				}
+			}
+        }
+    }
     render = _ => {
         const { h } = this.state;
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
             <Row gutter={24} className="main_height">
                 <Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
-                    <TreeParant treeData={this.state.tree.treeData}  selectedKeys={[this.state.searchListID]}
+                    <TreeParant treeData={this.state.tree.treeData} selectedKeys={[this.state.searchListID]}
                         addTree={this.addRoleGroup} editTree={this.editRoleGroup} deletetTree={this.delRoleGroup}
                         onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
                     ></TreeParant>

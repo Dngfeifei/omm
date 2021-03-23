@@ -1,7 +1,11 @@
 import fetch from 'isomorphic-fetch'
 import whitelist from '/api/whitelist'
-import { message } from 'antd'
-import { hashHistory } from 'react-router'
+import {
+	message
+} from 'antd'
+import {
+	hashHistory
+} from 'react-router'
 import qs from 'qs'
 let countNum = false;
 const handleRequest = (url, method, body = {}, json = false) => {
@@ -9,21 +13,22 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	whitelist.forEach(val => {
 		if (val == url) has = true
 	})
-	
-	let token, tokenName='token', wholeUrl = url;
-	if(process.env.NODE_ENV == 'production'){
+
+	let token, tokenName = 'token',
+		wholeUrl = url;
+	if (process.env.NODE_ENV == 'production') {
 		tokenName = `${process.env.ENV_NAME}_${tokenName}`
 		wholeUrl = url.split('/')[1] == 'static' ? `${url}` : `${process.env.API_URL}${url}`
 	}
 	token = localStorage.getItem(tokenName) || '';
-	
+
 	let header = Object.assign({}, {
 		'Content-Type': json ? 'application/json' : 'application/x-www-form-urlencoded'
 	}, has ? {} : {
 		'Authorization': `Bearer ${token}`
 	})
-	
-	
+
+
 	let req = {
 		method,
 		headers: new Headers(header)
@@ -39,32 +44,34 @@ const handleRequest = (url, method, body = {}, json = false) => {
 
 const handleResponse = res => new Promise((rsl, rej) => {
 		rsl(res.json())
-})
-.then(res => {
-	if (res.status == '2006' || res.status == '2007') {
-		console.log(countNum)
-		if(countNum) {
-			message.error(res.message);
+	})
+	.then(res => {
+		if (res.status == '2006' || res.status == '2007') {
+			if (countNum) {
+				message.error(res.message);
+			}
+			countNum = false;
+			localStorage.clear();
+			window.resetStore();
+			hashHistory.push('/login') //开发模式下不经过改跳转
+		} else {
+			countNum = true;
+			return res
 		}
-		countNum = false;
-		localStorage.clear();
-		window.resetStore();
-		hashHistory.push('/login') //开发模式下不经过改跳转
-	}else{
-		countNum = true;
-		return res
-	}
-	return undefined;
-})
-.catch(err => {
-	message.error('请求超时');
-	console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
-})
+		return undefined;
+	})
+	.catch(err => {
+		message.error('请求超时');
+		console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
+	})
 
 const handleTimeout = (url, type, body = {}, json = false, times = 100000) => Promise.race([
 	new Promise((rsl, rej) => {
 		setTimeout(_ => {
-			rsl({status: 500, statusText: 'Timeout'})
+			rsl({
+				status: 500,
+				statusText: 'Timeout'
+			})
 		}, times)
 	}),
 	fetch(handleRequest(url, type, body, json))
@@ -94,8 +101,11 @@ const handleParams = (params, s = '') => {
 	return encodeURI(str)
 }
 //删除方法单个或批量操作格式化参数方法
-const handleDeleteParams = (params =[],s ='') => {
+const handleDeleteParams = (params = [], s = '') => {
 	let str = '';
+	if(!params.length){
+		return ""
+	}
 	str = params && params.length && s + params.join(",");
 	return encodeURI(str)
 }
@@ -109,61 +119,66 @@ const handleURL = url => {
 
 export default {
 	tools: {
-		handleParams, handleURL
+		handleParams,
+		handleURL
 	},
-	fetchGet (url, params = {}, times = 100000) { //get接口调用
+	fetchGet(url, params = {}, times = 100000) { //get接口调用
 		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, times)
-		.then(handleResponse)
+			.then(handleResponse)
 	},
-	fetchPost (url, params = {}, json = false, times = 100000) {//post接口调用
+	fetchPost(url, params = {}, json = false, times = 100000) { //post接口调用
 		return handleTimeout(url, 'POST', json ? params : handleParams(params), json, times)
-		.then(handleResponse)
+			.then(handleResponse)
 	},
-	fetchDelete (url, params = {}, json = false, times = 100000) {//Delet接口
+	fetchDelete(url, params = [], json = false, times = 100000) { //Delet接口
 		return handleTimeout(`${url}${handleDeleteParams(params, '/')}`, 'DELETE', null, null, times)
-		.then(handleResponse)
+			.then(handleResponse)
 	},
-	fetchPut (url, params = {}, json = false, times = 100000) {//put接口
+	fetchPut(url, params = {}, json = false, times = 100000) { //put接口
 		return handleTimeout(url, 'PUT', json ? params : handleParams(params), json, times)
-		.then(handleResponse)
+			.then(handleResponse)
 	},
-	fetchBlob (url, params = {}) {//get下载接口
-		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, 900000).then(function(response) {
-			if(response.status == 901){
+	fetchBlob(url, params = {}) { //get下载接口
+		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, 900000).then(function (response) {
+			if (response.status == 901) {
 				message.error('没有找到对应的资料')
 				return null;
-			}else{
-				 let filename = decodeURI(response.headers.get('Content-Disposition').split('filename=')[1]);
-				 response.arrayBuffer().then(response => {
-					let blobObj = new Blob([response], {type: "application/vnd.ms-excel"});
-	                let url = window.URL.createObjectURL(blobObj);
-	                var a = document.createElement("a");
-	                document.body.appendChild(a);
-	                a.href = url;
-	                a.download = decodeURI(filename);
-	                a.click();
-	                document.body.removeChild(a);
-				 });
+			} else {
+				let filename = decodeURI(response.headers.get('Content-Disposition').split('filename=')[1]);
+				response.arrayBuffer().then(response => {
+					let blobObj = new Blob([response], {
+						type: "application/vnd.ms-excel"
+					});
+					let url = window.URL.createObjectURL(blobObj);
+					var a = document.createElement("a");
+					document.body.appendChild(a);
+					a.href = url;
+					a.download = decodeURI(filename);
+					a.click();
+					document.body.removeChild(a);
+				});
 			}
 		})
 	},
-	fetchBlobPost (url, params = {},json = false,) {
-		console.log(params,1)
-		return handleTimeout(url, 'POST', json ? params : handleParams(params), null, 900000).then(function(response) {
-			if(response.status == 901){
+	fetchBlobPost(url, params = {}, json = false, ) {
+		console.log(params, 1)
+		return handleTimeout(url, 'POST', json ? params : handleParams(params), null, 900000).then(function (response) {
+			if (response.status == 901) {
 				message.error('没有找到对应的资料')
 				return null;
-			}else{
-				let filename = decodeURI(response.headers.get('Content-Disposition').split('filename=')[1]);
+			} else {
+				let filename = decodeURI(response.headers.get('Content-Disposition').split('filename=')[1]);
 				response.arrayBuffer().then(response => {
-				   let blobObj = new Blob([response], {type: "application/vnd.ms-excel"});
-                   let url = window.URL.createObjectURL(blobObj);
-                   var a = document.createElement("a");
-                   document.body.appendChild(a);
-                   a.href = url;
-                   a.download = decodeURI(filename);
-                   a.click();
-                   document.body.removeChild(a);
+					let blobObj = new Blob([response], {
+						type: "application/vnd.ms-excel"
+					});
+					let url = window.URL.createObjectURL(blobObj);
+					var a = document.createElement("a");
+					document.body.appendChild(a);
+					a.href = url;
+					a.download = decodeURI(filename);
+					a.click();
+					document.body.removeChild(a);
 				});
 			}
 		})

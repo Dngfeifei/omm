@@ -35,7 +35,7 @@ export const getSubmit = (params = {}) => {
 	params = Object.assign({}, params)
 	return http.fetchPost(`/process/commit`, params,true)
 }
-// 提交流程单2
+// 提交流程单2（已作废）
 export const getSubmit2 = (params = {}) => {
 	params = Object.assign({}, params)
 	return http.fetchPost(`/process/setNextTaskAssignee`, params,true)
@@ -71,4 +71,14 @@ export const getDeleteAttachment = (params = {}) => {
 export const getRetrieve = (params = {}) => {
 	params = Object.assign({}, params)
 	return http.fetchGet(`/process/retrieve`, params)
+}
+//提交二线专家复评
+export const getReview = (params = {}) => {
+	params = Object.assign({}, params)
+	return http.fetchPost(`/eng/review`, params,true)
+}
+//结束流程
+export const getFinish = (params = {}) => {
+	params = Object.assign({}, params)
+	return http.fetchPost(`/eng/finish`, params,true)
 }

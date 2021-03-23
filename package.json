@@ -13,6 +13,7 @@
   "license": "ISC",
   "dependencies": {
     "@ant-design/icons": "^4.3.0",
+    "@tinymce/tinymce-react": "^3.10.4",
     "antd": "^3.5.4",
     "babel-polyfill": "^6.5.0",
     "file-loader": "^6.2.0",
