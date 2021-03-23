@@ -17,7 +17,7 @@ import Technology from './technology.jsx'
 // 引入页面CSS
 import '@/assets/less/components/layout.less'
 // 引入 API接口
-import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData } from '/api/selfEvaluation'
+import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData,PostSaveData } from '/api/selfEvaluation'
 // 引入为空校验方法
 import nullCheck from '@/assets/js/methods.js'
 @connect(state => ({
@@ -381,8 +381,9 @@ class ENG extends Component {
     }
 
     //提交数据
-    submission = async _ => {
+    submission = _ => {
         let { id, experienceCode, commskillsCode, docskillsCode } = this.state.info;
+        let { pageConfig } = this.state;
         let params = { id, experienceCode, commskillsCode, docskillsCode };
         let checked = this.check(params);
         if (!checked) {
@@ -392,29 +393,45 @@ class ENG extends Component {
         }
         let _this = this
         // 删除提示+删除操作   
-      confirm({
+       confirm({
             title: '提交',
             content: '提交后不可修改，确定提交吗？',
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
             onOk () {
-               PostAssessData(params).then(res => {
-                    if (res.success != 1) {
-                        message.error(res.message)
-                        _this.props.submission(false);
-                    } else {
-                        let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
-                        _this.setState({
-                            pageConfig
-                        })
-                        _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
-                        );
-                        _this.props.submission(true);
-                    }
-                })
+               if( pageConfig.sign== 1) {
+                    PostSaveData(params).then(res => {
+                        if (res.success != 1) {
+                            if(_this.props.submission) _this.props.submission(false);
+                        } else {
+                            let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
+                            _this.setState({
+                                pageConfig
+                            })
+                            _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
+                            );
+                            if(_this.props.submission) _this.props.submission(true);
+                        }
+                    })
+               }else{
+                    PostAssessData(params).then(res => {
+                        if (res.success != 1) {
+                            message.error(res.message)
+                        } else {
+                            let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
+                            _this.setState({
+                                pageConfig
+                            })
+                            _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
+                            );
+                        }
+                    })
+               }
+                 
             }
         })
+    
     }
     render = _ => {
 

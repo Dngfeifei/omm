@@ -381,7 +381,7 @@ class workOrer extends Component {
     //提交点击方法
     submit = (data) => {
         if(this.state.workControl.formRead == 1){
-            this.ref.submission();
+           this.ref.submission();
         }else{
             this.submission(true);
         }
