@@ -24,6 +24,7 @@ import { ADD_PANE,SET_WORKLIST} from '/redux/action'
 import { getWorkList,getTicketType,getStatus } from '/api/workspace'
 
 @connect(state => ({
+    activeKey: state.global.activeKey,
 	resetwork: state.global.resetwork,
 }), dispath => ({
 	add(pane){dispath({ type: ADD_PANE, data: pane })},
@@ -50,7 +51,9 @@ class workList extends Component {
         this.init();
         this.SortTable();
         //窗口变动的时候调用
-        window.addEventListener("resize", ()=>{this.SortTable()}, false)
+        window.addEventListener("resize", ()=>{
+            if(this.props.activeKey == this.props.params.type) this.SortTable();
+        }, false)
     }
 
 
