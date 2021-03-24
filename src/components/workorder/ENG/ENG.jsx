@@ -7,6 +7,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import { SET_WORKLIST } from '/redux/action'
 import { Form, Table, Button, Select, message, Tooltip, Modal } from 'antd'
+import ModalDom from '@/components/modal'
 const { Option } = Select;
 const { confirm } = Modal;
 
@@ -17,7 +18,7 @@ import Technology from './technology.jsx'
 // 引入页面CSS
 import '@/assets/less/components/layout.less'
 // 引入 API接口
-import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData,PostSaveData } from '/api/selfEvaluation'
+import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData,PostSaveData,GetLeader } from '/api/selfEvaluation'
 // 引入为空校验方法
 import nullCheck from '@/assets/js/methods.js'
 @connect(state => ({
@@ -141,6 +142,13 @@ class ENG extends Component {
                 // competenceLevelVal: "",
                 // serviceItemCode: [],
                 // cases: [],
+            },
+            modal: {             //部门领导人选择添加弹框数据
+                width: 700,//模态框宽度设置
+                title:'选择部门领导',//模态框标题设置
+                modalVisible:false,//模态框打开开关
+                selectedItems:[],
+                selecteds:[{taskDefKey: "010", taskName: "张总"},{taskDefKey: "011", taskName: "张总"}],//历史任务节点存放
             },
             // 工程师回显数据
             info: {
@@ -278,7 +286,9 @@ class ENG extends Component {
             message.destroy()
             message.error("未选中列表项,请选中后再编辑")
         } else {
-            let echoData = this.state.selectedInfo[0]
+            let echoData = this.state.info.assessProableList.filter((item) => {
+                return item.id == this.state.selectedKeys
+            })[0]
             this.setState({
                 config: {
                     type: "edit",
@@ -381,9 +391,9 @@ class ENG extends Component {
     }
 
     //提交数据
-    submission = _ => {
+    submission = (res) => {
         let { id, experienceCode, commskillsCode, docskillsCode } = this.state.info;
-        let { pageConfig } = this.state;
+        let { pageConfig,modal } = this.state;
         let params = { id, experienceCode, commskillsCode, docskillsCode };
         let checked = this.check(params);
         if (!checked) {
@@ -399,7 +409,7 @@ class ENG extends Component {
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
-            onOk () {
+            onOk :async ()=> {
                if( pageConfig.sign== 1) {
                     PostSaveData(params).then(res => {
                         if (res.success != 1) {
@@ -415,13 +425,15 @@ class ENG extends Component {
                         }
                     })
                }else{
+                    params.leaderId = res || '';
                     PostAssessData(params).then(res => {
                         if (res.success != 1) {
                             message.error(res.message)
                         } else {
                             let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
                             _this.setState({
-                                pageConfig
+                                pageConfig,
+                                modal:{...modal,modalVisible:false}
                             })
                             _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
                             );
@@ -433,14 +445,33 @@ class ENG extends Component {
         })
     
     }
+    //点击提交按钮
+    submit = () => {
+        let {modal} = this.state;
+        GetLeader().then(res => {
+            if (res.success == 1) {
+               if(res.data.length){
+                    this.setState({modal:{...modal,modalVisible:true,selecteds:res.data}})
+               }else{
+                    this.submission()
+                }
+            }
+        });
+    }
+    //新增选择部门领导人之后点击保存按钮
+    deterMine = () => {
+        let { modal } = this.state;
+        this.submission(modal.selectedItems)
+    }
     render = _ => {
 
         let { experience, commskills, docskills } = this.state.baseData;
-        let { info, pageConfig } = this.state;
+        let { info, pageConfig,modal } = this.state;
         let readOnly = !info.status;
         if (typeof (pageConfig.formRead) == "number") {
             readOnly = pageConfig.formRead == 2
         }
+        console.log(readOnly, pageConfig)
         let highCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "高级"
         }) : [];
@@ -577,9 +608,16 @@ class ENG extends Component {
                     </div>
 
                     <div className="loRowBtns alignRight">
-                        {readOnly || pageConfig.sign == 1 ? "" : (<Button type="primary" onClick={this.submission}>提交</Button>)}
+                        {readOnly || pageConfig.sign == 1 ? "" : (<Button type="primary" onClick={this.submit}>提交</Button>)}
                     </div>
                 </div>
+                {/* 新增提交选择部门领导人 */}
+                <ModalDom title={this.state.modal.title} width={this.state.modal.width} destroyOnClose={true} visible={this.state.modal.modalVisible} onOk={() => this.deterMine()} onCancel={() => this.setState({modal:{...modal,modalVisible:false}})}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <span style={{width:80,display:'inline-block'}}>请选择：</span>
+                        <Select placeholder="请选择部门领导" autoFocus  onChange={(selectedItems)=>this.setState({modal:{...modal,selectedItems}})} style={{ width: '90%' }}>{this.state.modal.selecteds.map( (item)=>{return <Option key={item.id} value={item.id}>{item.realName}</Option>})}</Select>
+                    </div>
+                </ModalDom>
                 {!this.state.config.visible ? "" : <Technology onOk={this.onOk} onCancel={this.onCancel}
                     baseData={this.state.baseData}
                     echoData={this.state.echoData}
