@@ -16,7 +16,6 @@ import 'tinymce/plugins/link';
 
 
 
-// import './content.css'
 
 class App extends Component {
     // 设置默认props
@@ -33,13 +32,13 @@ class App extends Component {
         this.props.getContent(content, this.props.name)
     }
     componentDidMount = () => {
-        tinymce.init({
-            selector: '.tiny',
-            plugins: ['paste', 'link'],
-            language_url: '/static/tinymce/langs/zh_CN.js',//你下载的语言包的路径
-            language: 'zh_CN',
-            skin_url: '/static/tinymce/skins/ui/oxide',//主题
-        });
+        // tinymce.init({
+        //     selector: '.tiny',
+        //     plugins: ['paste', 'link'],
+        //     language_url: '/static/tinymce/langs/zh_CN.js',//你下载的语言包的路径
+        //     language: 'zh_CN',
+        //     skin_url: '/static/tinymce/skins/ui/oxide',//主题
+        // });
     }
     render() {
         let { value, disabled } = this.props;
@@ -50,6 +49,7 @@ class App extends Component {
                     language_url: 'static/tinymce/langs/zh_CN.js',//你下载的语言包的路径
                     language: 'zh_CN',
                     skin_url: 'static/tinymce/skins/ui/oxide',//主题
+                    base_url: 'static/tinymce',
                     // images_upload_url: '/demo/upimg.php',
                     // images_upload_base_path: '/demo',
                     // plugins: 'print preview searchreplace autolink directionality visualblocks visualchars fullscreen image link media template code codesample table charmap hr pagebreak nonbreaking anchor insertdatetime advlist lists wordcount imagetools textpattern help emoticons autosave   autoresize formatpainter ',
