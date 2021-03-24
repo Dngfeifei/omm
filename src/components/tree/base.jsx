@@ -74,10 +74,11 @@ class TreeList extends Component {
     }
 
     // 挂载完成时
-    componentDidMount() {
+    componentWillMount() {
         this.setState({
             treeData: this.props.treeData, //将传入的树  数据进行加载出来
-            visible: false
+            visible: false,
+            expandedKeys:this.props.expandedKeys
         });
 
     };
