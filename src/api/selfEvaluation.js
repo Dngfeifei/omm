@@ -28,3 +28,8 @@ export const PostAssessData = (params = {}) => {
 export const PostSaveData = (params = {}) => {
 	return http.fetchPost(`/assess/save`, params, true)
 }
+
+// 查询部门领导
+export const GetLeader = (params = {}) => {
+	return http.fetchGet(`/assess/getLeader`, params)
+}

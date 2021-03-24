@@ -63,7 +63,13 @@ class workOrer extends Component {
     init = async () => {
         let {workControl,fileList,formControl,businessKey,formKey,listData,ticketId} = this.state;
         let data = await getOperation({procInstId: this.props.params.dataType.record.procInstId,taskId:this.props.params.dataType.record.taskId}) //调用接口获取页面初始化必须数据
-        if(data.success != 1) { this.setState({spinning:false}); return false;};
+       console.log(data)
+
+        if(data.success != 1) {
+             message.error(data.message);
+             this.setState({spinning:false});
+             return false;
+        };
         listData = data.data.messages ? data.data.messages : [];
         businessKey = data.data['businessKey.code'] ? data.data['businessKey.code']: '';
         // formKey = data.data.formKey ? data.data.formKey : '';
