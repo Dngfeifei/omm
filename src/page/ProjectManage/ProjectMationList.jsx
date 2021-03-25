@@ -9,8 +9,7 @@ import { Modal, message, Button, Row, Col, Form, Input, Select, Table,Tooltip } 
 import { connect } from 'react-redux'
 import { ADD_PANE} from '/redux/action'
 
-// 引入工程师选择器组件
-import Selector from '/components/selector/projectSelector.jsx'
+
 // 分页组件
 import Pagination from "@/components/pagination/index";
 // 引入页面CSS
@@ -277,49 +276,6 @@ class projectMation extends Component {
             servicesTypeList:[],
 
 
-            //////////////////////////////////////////////////////////
-            moduleTitle:'项目选择器',
-            visibleModule:false,
-            moduleData:{
-                tableData:[{
-                    id:1,
-                    custNum:'100010000',
-                    custName:'张三'
-                }],
-                tableColumns:[{
-                    title: '序号',
-                    dataIndex: 'index',
-                    align: 'center',
-                    width: '80px',
-                    // 第一种：每一页都从1开始
-                    render: (text, record, index) => `${index + 1}`
-                },{
-                    title: '客户编码',
-                    dataIndex: 'custNum',
-                    ellipsis: {
-                        showTitle: false,
-                    },
-                    width: '240px',
-                    render: (text, record)=> 
-                        <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-                },{
-                    title: '客户名称',
-                    dataIndex: 'custName',
-                    ellipsis: {
-                        showTitle: false,
-                    },
-                    render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-                }],
-                formRules:[{
-                    label: '客户编码',
-                    key: 'custNum',
-                    render: _ => <Input style={{ width: 200 }} placeholder="请输入客户编码" />
-                },{
-                    label: '客户名称',
-                    key: 'custName',
-                    render: _ => <Input style={{ width: 200 }} placeholder="请输入客户名称" />
-                }]
-            }
         }
     }
 
@@ -500,11 +456,7 @@ class projectMation extends Component {
         this.props.add(pane)
     }
 
-    close=()=>{
-        this.setState({
-            visibleModule:false
-        })
-    }
+    
 
 
     render = _ => {
@@ -546,9 +498,7 @@ class projectMation extends Component {
                     <Pagination total={this.state.total} pageSize={this.state.pagination.limit} current={(this.state.pagination.offset)} onChange={this.onPageChange} onShowSizeChange={this.onShowSizeChange}></Pagination>
                 </div>
 
-                {
-                    this.state.visibleModule ? <Selector title={this.state.moduleTitle} onCancel={this.close} data={this.state.moduleData}></Selector> : null 
-                }
+                
                 
             </div>
         )

@@ -104,7 +104,7 @@ class CustomerInfo extends Component{
                 render: _ => <Select style={{ width: 200 }} placeholder="请选择项目状态" allowClear={true}>
                     {
                         this.state.projectStatusList.map((items, index) => {
-                            return (<Option key={index} value={items.itemValue}>{items.itemCode}</Option>)
+                            return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
                         })
                     }
                 </Select>
@@ -114,7 +114,7 @@ class CustomerInfo extends Component{
                 render: _ => <Select style={{ width: 200 }} placeholder="请选择服务类别" allowClear={true}>
                     {
                         this.state.typeServiceList.map((items, index) => {
-                            return (<Option key={index} value={items.itemValue}>{items.itemCode}</Option>)
+                            return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
                         })
                     }
                 </Select>
@@ -579,7 +579,7 @@ class CustomerInfo extends Component{
                             <Select style={{ width: 300 }} placeholder="请选择客户级别" allowClear={true} onChange={this.handleChange} value={this.state.newGroup.custLevel} disabled={this.state.custormerId ? true : false}>
                                 {
                                     this.state.rankArray.map((items, index) => {
-                                        return (<Option key={index} value={items.itemValue}>{items.itemCode}</Option>)
+                                        return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
                                     })
                                 }
                             </Select>
@@ -667,7 +667,7 @@ class CustomerInfo extends Component{
                                     <Select style={{ width: 300 }} placeholder="请选择客户级别" allowClear={true} onChange={this.handleEngineerInforChange} value={this.state.EngineerInfor.custLevel} >
                                         {
                                             this.state.rankArray.map((items, index) => {
-                                                return (<Option key={index} value={items.itemValue}>{items.itemCode}</Option>)
+                                                return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
                                             })
                                         }
                                     </Select>

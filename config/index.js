@@ -21,9 +21,9 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-// var target = {target: 'http://172.16.100.81/api/dat'}
-// var target = {target: 'http://10.0.11.115:8111'}
-var target = {target: 'http://10.0.17.160:8111'}
+var target = {target: 'http://172.16.100.81/api/dat'}
+// var target = {target: 'http://10.0.17.212:8111'}
+
 module.exports = {
   build: buildconfig,
   dev: {
@@ -65,7 +65,7 @@ module.exports = {
       '/biProjectMember':target,     // 项目信息---项目组成员列表
       '/biCustContact':target,     // 项目信息---客户技术联系人列表
       '/biServiceObject':target,     // 项目信息---服务对象列表
-
+      '/sql':target, //服务需求表-工单号
       '/assessVersion':target,     // 工程师自评估配置-评估版本
       '/assessConfig':target,     // 工程师自评估配置-配置数据
       '/temporaryOpen':target,     // 工程师自评估配置-临时开启

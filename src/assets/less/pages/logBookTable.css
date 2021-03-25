@@ -1,46 +1,72 @@
-.jxlTable .ant-table-thead > tr th ,.ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-tbody > tr > td:nth-child(1){
-    text-align: center;
+.jxlTable .ant-table-thead>tr th, .ant-table-small>.ant-table-content>.ant-table-scroll>.ant-table-body>table>.ant-table-tbody>tr>td:nth-child(1) {
+  text-align: center;
 }
-.jxlTable .ant-table-small > .ant-table-content > .ant-table-scroll > .ant-table-body > table > .ant-table-tbody > tr > td:nth-child(1) .ant-radio-wrapper{
-    margin-right: 0;
+
+.jxlTable .ant-table-small>.ant-table-content>.ant-table-scroll>.ant-table-body>table>.ant-table-tbody>tr>td:nth-child(1) .ant-radio-wrapper {
+  margin-right: 0;
 }
+
 #logbookForm .ant-form-item {
-    margin-right: 16px !important;
-  }
-
-
-  /* 工程师管理--页面 */
-  
-  .ant-modal-body .tableCertificate .title:before {
-    content: '';
-    background: #49b3fd;
-    /* float: right; */
-    position: absolute;
-    /* bottom: 40px; */
-    display: block;
-    height: 27px;
-    width: 5px;
-    top: 3px;
-    left: 10px;
+  margin-right: 16px !important;
 }
+
+.performanceContent .config .ant-descriptions-row  .ant-descriptions-item-content {
+  position: relative !important;
+}
+.performanceContent .config .upload .ant-upload {
+  position: absolute;
+  right: 5px;
+  top: 8px;
+  color: #1890ff;
+  width: 50px;
+  cursor: pointer;
+}
+.performanceContent .config .upload .ant-upload-list div {
+  float: left;
+  display: block;
+  margin-left: 7px;
+}
+
+
+
+
+
+
+/* 工程师管理--页面 */
+
+.ant-modal-body .tableCertificate .title:before {
+  content: '';
+  background: #49b3fd;
+  /* float: right; */
+  position: absolute;
+  /* bottom: 40px; */
+  display: block;
+  height: 27px;
+  width: 5px;
+  top: 3px;
+  left: 10px;
+}
+
 .tableCertificate .title {
-    position: relative;
-    padding-left: 20px;
-    font-weight: 650;
-    font-style: normal;
-    font-size: 20px;
-    color: rgba(2, 167, 240, 0.824);
+  position: relative;
+  padding-left: 20px;
+  font-weight: 650;
+  font-style: normal;
+  font-size: 20px;
+  color: rgba(2, 167, 240, 0.824);
 }
+
 #modalengineer .ant-advanced-search-form {
-    padding: 0px !important;
-    background: none !important;
-    border: none !important;
-    border-radius: 0px !important;
-  }
+  padding: 0px !important;
+  background: none !important;
+  border: none !important;
+  border-radius: 0px !important;
+}
+
 #modalengineer .ant-advanced-search-form .ant-form-item {
-    display: flex;
-  }
-  
+  display: flex;
+}
+
 #modalengineer .ant-advanced-search-form .ant-form-item-control-wrapper {
-    flex: 1;
-  }
+  flex: 1;
+}
