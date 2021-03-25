@@ -4,7 +4,7 @@
  */
 import React, { Component } from 'react'
 // 引入工程师自评工单组件
-import ENG from '@/components/workorder/ENG.jsx'
+import ENG from '@/components/workorder/ENG/ENG.jsx'
 class selfEvaluation extends Component {
     // 设置默认props
     static defaultProps = {

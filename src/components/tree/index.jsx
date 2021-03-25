@@ -24,12 +24,15 @@ const getParentKey = (title, tree) => {
         const node = tree[i];
         if (node.children) {
             if (node.children.some(item => item.title === title)) {
+                console.log("1",title,node.key)
                 parentKey = node.key;
             } else if (getParentKey(title, node.children)) {
+                console.log("2",title,node.children)
                 parentKey = getParentKey(title, node.children);
             }
         }
     }
+    console.log(3,parentKey)
     return parentKey;
 };
 
@@ -101,7 +104,12 @@ class TreeList extends Component {
 
     };
 
-
+    onExpand = expandedKeys => {
+        this.setState({
+          expandedKeys,
+          autoExpandParent: false
+        });
+      };
     loop = data => data.map((item) => {
         let { searchValue } = this.state;
         const index = item.title.indexOf(searchValue);
@@ -135,7 +143,7 @@ class TreeList extends Component {
             return null;
         }).filter((item, i, self) => item && self.indexOf(item) === i);
 
-
+        console.log(expandedKeys,"expandedKeys")
         this.setState({
             expandedKeys,
             searchValue: value,
@@ -148,7 +156,7 @@ class TreeList extends Component {
     render = () => {
 
         const { treeData, autoExpandParent, checkable, defaultCheckedKeys, defaultExpandAll, defaultExpandedKeys, defaultSelectedKeys, draggable, multiple, selectable, showIcon,
-            showLine, onCheck, onDragEnd, onDrop, onExpand, onRightClick, onSelect, selectedKeys, search, edit
+            showLine, onCheck, onDragEnd, onDrop, onRightClick, onSelect, selectedKeys, search, edit
 
         } = this.props;
         // 进行数组扁平化处理
@@ -182,7 +190,7 @@ class TreeList extends Component {
                         <Tree
                             // style={{ paddingTop: '5px' }}
                             className="tree"
-                            autoExpandParent={autoExpandParent}   // 是否自动展开父节点
+                            autoExpandParent={this.state.autoExpandParent}   // 是否自动展开父节点
                             checkable={checkable}  // 节点前添加 Checkbox 复选框
                             defaultCheckedKeys={defaultCheckedKeys}  // 默认选中复选框的树节点
                             defaultExpandAll={defaultExpandAll}  //  默认展开所有树节点
@@ -195,11 +203,12 @@ class TreeList extends Component {
                             selectable={selectable} // 是否可选中 
                             showIcon={showIcon}  // 是否展示 TreeNode title 前的图标，没有默认样式，如设置为 true，需要自行定义图标相关样式
                             showLine={showLine}     // 是否展示连接线
+                            expandedKeys={this.state.expandedKeys} //展开节点数据数组
                             //以下是事件触发
                             onCheck={onCheck} // 点击复选框触发（跟treeData属性搭配）
                             onDragEnd={onDragEnd}  // dragend 触发时调用（跟treeData属性搭配）
                             onDrop={onDrop}  // drop 触发时调用（跟treeData属性搭配）
-                            onExpand={onExpand}  // 展开/收起节点时触发
+                            onExpand={this.onExpand}  // 展开/收起节点时触发
                             onRightClick={onRightClick} // 响应右键点击
                             onSelect={onSelect}  //点击树节点触发
                         >{this.loop(treeData)}</Tree>

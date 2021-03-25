@@ -24,3 +24,12 @@ export const DelAssessProable = (params) => {
 export const PostAssessData = (params = {}) => {
 	return http.fetchPost(`/assess`, params, true)
 }
+// 提交工程师自评数据
+export const PostSaveData = (params = {}) => {
+	return http.fetchPost(`/assess/save`, params, true)
+}
+
+// 查询部门领导
+export const GetLeader = (params = {}) => {
+	return http.fetchGet(`/assess/getLeader`, params)
+}

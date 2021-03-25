@@ -2,36 +2,54 @@
  *  系统管理--工程师自评工单ENG
  * @auth yyp
  */
+
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { SET_WORKLIST } from '/redux/action'
 import { Form, Table, Button, Select, message, Tooltip, Modal } from 'antd'
+import ModalDom from '@/components/modal'
 const { Option } = Select;
 const { confirm } = Modal;
+
+
 
 // 引入专业能力组件
 import Technology from './technology.jsx'
 // 引入页面CSS
 import '@/assets/less/components/layout.less'
 // 引入 API接口
-import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData } from '/api/selfEvaluation'
+import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData,PostSaveData,GetLeader } from '/api/selfEvaluation'
 // 引入为空校验方法
 import nullCheck from '@/assets/js/methods.js'
+@connect(state => ({
+    resetwork: state.global.resetwork,
+}), dispath => ({
+    setWorklist(data) { dispath({ type: SET_WORKLIST, data }) },
+}))
 
 class ENG extends Component {
     // 设置默认props
     static defaultProps = {
-        config: {
-            formRead: 1, id: "", //外部所传参数  1为可编辑 2为不可编辑  id为工单id号
-        }
+        // config: {
+        //     formRead: 1, id: "", //外部所传参数  1为可编辑 2为不可编辑  id为工单id号
+        // }
     }
     // 组件将要挂载前触发的函数
     async componentWillMount() {
-        // 获取外部传递参数
-        let config = this.props.config;
-        this.setState({
-            pageConfig: config
-        }, () => {
+        let assembly = this.props;
+        console.log(assembly, "assembly")
+        if (assembly.hasOwnProperty("config")) {
+            // 获取外部传递参数
+            let config = this.props.config;
+            this.setState({
+                pageConfig: config
+            }, () => {
+                this.init() // 页面初始化
+            })
+        } else {
             this.init() // 页面初始化
-        })
+        }
+
     }
     constructor(props) {
         super(props)
@@ -50,25 +68,21 @@ class ENG extends Component {
                     title: '技术类别',
                     dataIndex: 'skillTypeName',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '品牌',
                     dataIndex: 'brandName',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '产品线级别',
                     dataIndex: 'productLineLevel',
                     align: 'center',
-                    width: 200
                 },
                 {
                     title: '具备维护能力的产品线',
                     dataIndex: 'productLines',
                     align: 'center',
-                    width: 400,
                     ellipsis: {
                         showTitle: false,
                     },
@@ -129,6 +143,13 @@ class ENG extends Component {
                 // serviceItemCode: [],
                 // cases: [],
             },
+            modal: {             //部门领导人选择添加弹框数据
+                width: 700,//模态框宽度设置
+                title:'选择部门领导',//模态框标题设置
+                modalVisible:false,//模态框打开开关
+                selectedItems:[],
+                selecteds:[{taskDefKey: "010", taskName: "张总"},{taskDefKey: "011", taskName: "张总"}],//历史任务节点存放
+            },
             // 工程师回显数据
             info: {
                 // id: "",                            //工程师自评价ID
@@ -163,8 +184,9 @@ class ENG extends Component {
 
             },
             // 外部所传参数  1为可编辑 2为不可编辑  id为工单id号
-            pageConfig: { formRead: 1, id: "" }
+            pageConfig: { formRead: "", id: "", sign: null }
         }
+        if(props.setRef) props.setRef(this) //初始化传递本组件this给父组件以便后续父组件调用子组件方法
     }
 
     // 页面初始化方法(回显数据)
@@ -264,7 +286,9 @@ class ENG extends Component {
             message.destroy()
             message.error("未选中列表项,请选中后再编辑")
         } else {
-            let echoData = this.state.selectedInfo[0]
+            let echoData = this.state.info.assessProableList.filter((item) => {
+                return item.id == this.state.selectedKeys
+            })[0]
             this.setState({
                 config: {
                     type: "edit",
@@ -367,8 +391,9 @@ class ENG extends Component {
     }
 
     //提交数据
-    sava = _ => {
+    submission = (res) => {
         let { id, experienceCode, commskillsCode, docskillsCode } = this.state.info;
+        let { pageConfig,modal } = this.state;
         let params = { id, experienceCode, commskillsCode, docskillsCode };
         let checked = this.check(params);
         if (!checked) {
@@ -376,33 +401,86 @@ class ENG extends Component {
             message.error("请将工程师相关信息填写完整再进行提交！")
             return
         }
-        PostAssessData(params).then(res => {
-            if (res.success != 1) {
-                message.error(res.message)
-            } else {
-                let pageConfig = Object.assign({}, this.state.pageConfig, { formRead: 2 })
-                console.log(pageConfig, "pageConfig1")
-                this.setState({
-                    pageConfig
-                }, () => {
-                    console.log(pageConfig, "pageConfig2")
-                })
+        let _this = this
+        // 删除提示+删除操作   
+       confirm({
+            title: '提交',
+            content: '提交后不可修改，确定提交吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk :async ()=> {
+               if( pageConfig.sign== 1) {
+                    PostSaveData(params).then(res => {
+                        if (res.success != 1) {
+                            if(_this.props.submission) _this.props.submission(false);
+                        } else {
+                            let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
+                            _this.setState({
+                                pageConfig
+                            })
+                            _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
+                            );
+                            if(_this.props.submission) _this.props.submission(true);
+                        }
+                    })
+               }else{
+                    params.leaderId = res || '';
+                    PostAssessData(params).then(res => {
+                        if (res.success != 1) {
+                            message.error(res.message)
+                        } else {
+                            let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
+                            _this.setState({
+                                pageConfig,
+                                modal:{...modal,modalVisible:false}
+                            })
+                            _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
+                            );
+                        }
+                    })
+               }
+                 
             }
         })
+    
+    }
+    //点击提交按钮
+    submit = () => {
+        let {modal} = this.state;
+        GetLeader().then(res => {
+            if (res.success == 1) {
+               if(res.data.length){
+                    this.setState({modal:{...modal,modalVisible:true,selecteds:res.data}})
+               }else{
+                    this.submission()
+                }
+            }
+        });
+    }
+    //新增选择部门领导人之后点击保存按钮
+    deterMine = () => {
+        let { modal } = this.state;
+        this.submission(modal.selectedItems)
     }
     render = _ => {
+
         let { experience, commskills, docskills } = this.state.baseData;
-        let { info, pageConfig } = this.state;
-        let readOnly = pageConfig.formRead == 2 || !info.status;
-        let highCert = info.certs.filter((item) => {
+        let { info, pageConfig,modal } = this.state;
+        let readOnly = !info.status;
+        if (typeof (pageConfig.formRead) == "number") {
+            readOnly = pageConfig.formRead == 2
+        }
+        console.log(readOnly, pageConfig)
+        let highCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "高级"
-        })
-        let middleCert = info.certs.filter((item) => {
+        }) : [];
+        let middleCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "中级"
-        })
-        let elementaryCert = info.certs.filter((item) => {
+        }) : [];
+        let elementaryCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "初级"
-        })
+        }) : [];
         return (
             <div className="layoutOMM">
                 <div className="loPageContent">
@@ -530,9 +608,16 @@ class ENG extends Component {
                     </div>
 
                     <div className="loRowBtns alignRight">
-                        {!readOnly ? (<Button type="primary" onClick={this.sava}>提交</Button>) : ""}
+                        {readOnly || pageConfig.sign == 1 ? "" : (<Button type="primary" onClick={this.submit}>提交</Button>)}
                     </div>
                 </div>
+                {/* 新增提交选择部门领导人 */}
+                <ModalDom title={this.state.modal.title} width={this.state.modal.width} destroyOnClose={true} visible={this.state.modal.modalVisible} onOk={() => this.deterMine()} onCancel={() => this.setState({modal:{...modal,modalVisible:false}})}>
+                    <div style={{display:'flex',alignItems:'center'}}>
+                        <span style={{width:80,display:'inline-block'}}>请选择：</span>
+                        <Select placeholder="请选择部门领导" autoFocus  onChange={(selectedItems)=>this.setState({modal:{...modal,selectedItems}})} style={{ width: '90%' }}>{this.state.modal.selecteds.map( (item)=>{return <Option key={item.id} value={item.id}>{item.realName}</Option>})}</Select>
+                    </div>
+                </ModalDom>
                 {!this.state.config.visible ? "" : <Technology onOk={this.onOk} onCancel={this.onCancel}
                     baseData={this.state.baseData}
                     echoData={this.state.echoData}
