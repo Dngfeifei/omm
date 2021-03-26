@@ -18,9 +18,10 @@ import Technology from './technology.jsx'
 // 引入页面CSS
 import '@/assets/less/components/layout.less'
 // 引入 API接口
-import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData,PostSaveData,GetLeader } from '/api/selfEvaluation'
+import { GetBaseData, GetAssessData, DelAssessProable, PostAssessData, PostSaveData, GetLeader } from '/api/selfEvaluation'
 // 引入为空校验方法
 import nullCheck from '@/assets/js/methods.js'
+
 @connect(state => ({
     resetwork: state.global.resetwork,
 }), dispath => ({
@@ -37,7 +38,6 @@ class ENG extends Component {
     // 组件将要挂载前触发的函数
     async componentWillMount() {
         let assembly = this.props;
-        console.log(assembly, "assembly")
         if (assembly.hasOwnProperty("config")) {
             // 获取外部传递参数
             let config = this.props.config;
@@ -145,10 +145,10 @@ class ENG extends Component {
             },
             modal: {             //部门领导人选择添加弹框数据
                 width: 700,//模态框宽度设置
-                title:'选择部门领导',//模态框标题设置
-                modalVisible:false,//模态框打开开关
-                selectedItems:[],
-                selecteds:[{taskDefKey: "010", taskName: "张总"},{taskDefKey: "011", taskName: "张总"}],//历史任务节点存放
+                title: '选择部门领导',//模态框标题设置
+                modalVisible: false,//模态框打开开关
+                selectedItems: [],
+                selecteds: [{ taskDefKey: "010", taskName: "张总" }, { taskDefKey: "011", taskName: "张总" }],//历史任务节点存放
             },
             // 工程师回显数据
             info: {
@@ -186,7 +186,7 @@ class ENG extends Component {
             // 外部所传参数  1为可编辑 2为不可编辑  id为工单id号
             pageConfig: { formRead: "", id: "", sign: null }
         }
-        if(props.setRef) props.setRef(this) //初始化传递本组件this给父组件以便后续父组件调用子组件方法
+        if (props.setRef) props.setRef(this) //初始化传递本组件this给父组件以便后续父组件调用子组件方法
     }
 
     // 页面初始化方法(回显数据)
@@ -306,7 +306,9 @@ class ENG extends Component {
             message.destroy()
             message.error("未选中列表项,请选中后再查看")
         } else {
-            let echoData = this.state.selectedInfo[0]
+            let echoData = this.state.info.assessProableList.filter((item) => {
+                return item.id == this.state.selectedKeys
+            })[0]
             this.setState({
                 config: {
                     type: "see",
@@ -393,7 +395,7 @@ class ENG extends Component {
     //提交数据
     submission = (res) => {
         let { id, experienceCode, commskillsCode, docskillsCode } = this.state.info;
-        let { pageConfig,modal } = this.state;
+        let { pageConfig, modal } = this.state;
         let params = { id, experienceCode, commskillsCode, docskillsCode };
         let checked = this.check(params);
         if (!checked) {
@@ -403,17 +405,17 @@ class ENG extends Component {
         }
         let _this = this
         // 删除提示+删除操作   
-       confirm({
+        confirm({
             title: '提交',
             content: '提交后不可修改，确定提交吗？',
             okText: '确定',
             okType: 'danger',
             cancelText: '取消',
-            onOk :async ()=> {
-               if( pageConfig.sign== 1) {
+            onOk: async () => {
+                if (pageConfig.sign == 1) {
                     PostSaveData(params).then(res => {
                         if (res.success != 1) {
-                            if(_this.props.submission) _this.props.submission(false);
+                            if (_this.props.submission) _this.props.submission(false);
                         } else {
                             let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
                             _this.setState({
@@ -421,10 +423,10 @@ class ENG extends Component {
                             })
                             _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
                             );
-                            if(_this.props.submission) _this.props.submission(true);
+                            if (_this.props.submission) _this.props.submission(true);
                         }
                     })
-               }else{
+                } else {
                     params.leaderId = res || '';
                     PostAssessData(params).then(res => {
                         if (res.success != 1) {
@@ -433,26 +435,26 @@ class ENG extends Component {
                             let pageConfig = Object.assign({}, _this.state.pageConfig, { formRead: 2 })
                             _this.setState({
                                 pageConfig,
-                                modal:{...modal,modalVisible:false}
+                                modal: { ...modal, modalVisible: false }
                             })
                             _this.props.setWorklist({ switch: !_this.props.resetwork.switch }
                             );
                         }
                     })
-               }
-                 
+                }
+
             }
         })
-    
+
     }
     //点击提交按钮
     submit = () => {
-        let {modal} = this.state;
+        let { modal } = this.state;
         GetLeader().then(res => {
             if (res.success == 1) {
-               if(res.data.length){
-                    this.setState({modal:{...modal,modalVisible:true,selecteds:res.data}})
-               }else{
+                if (res.data.length) {
+                    this.setState({ modal: { ...modal, modalVisible: true, selecteds: res.data } })
+                } else {
                     this.submission()
                 }
             }
@@ -466,12 +468,11 @@ class ENG extends Component {
     render = _ => {
 
         let { experience, commskills, docskills } = this.state.baseData;
-        let { info, pageConfig,modal } = this.state;
+        let { info, pageConfig, modal } = this.state;
         let readOnly = !info.status;
         if (typeof (pageConfig.formRead) == "number") {
             readOnly = pageConfig.formRead == 2
         }
-        console.log(readOnly, pageConfig)
         let highCert = info.hasOwnProperty("certs") ? info.certs.filter((item) => {
             return item.certLevel == "高级"
         }) : [];
@@ -612,10 +613,10 @@ class ENG extends Component {
                     </div>
                 </div>
                 {/* 新增提交选择部门领导人 */}
-                <ModalDom title={this.state.modal.title} width={this.state.modal.width} destroyOnClose={true} visible={this.state.modal.modalVisible} onOk={() => this.deterMine()} onCancel={() => this.setState({modal:{...modal,modalVisible:false}})}>
-                    <div style={{display:'flex',alignItems:'center'}}>
-                        <span style={{width:80,display:'inline-block'}}>请选择：</span>
-                        <Select placeholder="请选择部门领导" autoFocus  onChange={(selectedItems)=>this.setState({modal:{...modal,selectedItems}})} style={{ width: '90%' }}>{this.state.modal.selecteds.map( (item)=>{return <Option key={item.id} value={item.id}>{item.realName}</Option>})}</Select>
+                <ModalDom title={this.state.modal.title} width={this.state.modal.width} destroyOnClose={true} visible={this.state.modal.modalVisible} onOk={() => this.deterMine()} onCancel={() => this.setState({ modal: { ...modal, modalVisible: false } })}>
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span style={{ width: 80, display: 'inline-block' }}>请选择：</span>
+                        <Select placeholder="请选择部门领导" autoFocus onChange={(selectedItems) => this.setState({ modal: { ...modal, selectedItems } })} style={{ width: '90%' }}>{this.state.modal.selecteds.map((item,i) => { return <Option key={i} value={item.id}>{item.realName}</Option> })}</Select>
                     </div>
                 </ModalDom>
                 {!this.state.config.visible ? "" : <Technology onOk={this.onOk} onCancel={this.onCancel}

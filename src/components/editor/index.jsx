@@ -26,10 +26,19 @@ class App extends Component {
     }
     constructor(props) {
         super(props);
+        this.state = {
+            value: ""
+        }
     }
     handleEditorChange = (e) => {
         let content = e.target.getContent();
         this.props.getContent(content, this.props.name)
+    }
+    componentWillMount = () => {
+        let { value } = this.props
+        this.setState({
+            value
+        })
     }
     componentDidMount = () => {
         // tinymce.init({
@@ -41,10 +50,11 @@ class App extends Component {
         // });
     }
     render() {
-        let { value, disabled } = this.props;
+        let { disabled } = this.props;
         return (
             <Editor
                 disabled={disabled}
+                initialValue={this.state.value}
                 init={{
                     language_url: 'static/tinymce/langs/zh_CN.js',//你下载的语言包的路径
                     language: 'zh_CN',
@@ -62,11 +72,12 @@ class App extends Component {
                     height: 250, //编辑器高度
                     min_height: 200,
                     //通过属性初始化
-                    setup: (editor) => {
-                        editor.on('init', (e) => {
-                            editor.setContent(value)
-                        })
-                    },
+                    // setup: (editor) => {
+                    //     editor.on('init', (e) => {
+                    //         console.log(value, "value")
+                    //         editor.setContent(value)
+                    //     })
+                    // },
                 }}
 
                 onChange={this.handleEditorChange}
