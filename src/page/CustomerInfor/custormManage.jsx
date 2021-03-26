@@ -52,7 +52,7 @@ class Customer extends Component{
                 render: _ => <Select style={{ width: 200 }} placeholder="请选择客户级别" allowClear={true}>
                     {
                         this.state.rankArray.map((items, index) => {
-                            return (<Option key={index} value={items.itemValue}>{items.itemCode}</Option>)
+                            return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
                         })
                     }
                 </Select>
@@ -448,7 +448,7 @@ class Customer extends Component{
                             <Select style={{ width: 300 }} placeholder="请选择客户级别" allowClear={true} onChange={this.handleChange} value={this.state.newGroup.custLevel}>
                                 {
                                     this.state.rankArray.map((items, index) => {
-                                        return (<Option key={index} value={items.itemValue}>{items.itemCode}</Option>)
+                                        return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
                                     })
                                 }
                             </Select>

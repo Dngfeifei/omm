@@ -167,7 +167,7 @@ class engineer extends Component {
                     render: _ => <Select style={{ width: 200 }} placeholder="请选择文化程度" allowClear={true}>
                         {
                             this.state.leavelArr.map((items, index) => {
-                                return (<Option key={index} value={items.itemValue}>{items.itemCode}</Option>)
+                                return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
                             })
                         }
                     </Select>

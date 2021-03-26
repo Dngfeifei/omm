@@ -1,9 +1,9 @@
 /***
- *  系统管理--工程师管理
+ *  系统管理--工程师专业能力编辑
  * @auth yyp
  */
 import React, { Component } from 'react'
-import { Form, Button, message, Card, Select, Row, Col, Checkbox, Input, Cascader, Modal } from 'antd'
+import { Form, Button, message, Card, Select, Row, Col, Checkbox, Input, Cascader, Modal, Tooltip } from 'antd'
 const { Option } = Select;
 const { confirm } = Modal;
 import {
@@ -289,7 +289,6 @@ class People extends Component {
         let { skillTypeCode, brandCode, productLineCodes, productLineLevelCode, proableLevel, serviceItemCodes, cases } = this.state;
 
         for (var i = 0; i < cases.length; i++) {
-            console.log(cases[i], i)
             let { custName, productLineCode, serviceItemCode, caseDesc } = cases[i];
             cases[i] = { custName, productLineCode, serviceItemCode, caseDesc }
         }
@@ -393,7 +392,6 @@ class People extends Component {
                 return item.parentId == this.state.brandId && item.strValue1 == this.state.productLineLevelCode;
             })
         }
-
         return <div>
             <ModalParant title={title}
                 destroyOnClose={true}
@@ -407,13 +405,13 @@ class People extends Component {
                         取消
                     </Button>
                 ] : [
-                        <Button key="back" onClick={onCancel}>
-                            取消
+                    <Button key="back" onClick={onCancel}>
+                        取消
                     </Button>,
-                        <Button key="submit" type="primary" onClick={this.onSubmit}>
-                            确定
+                    <Button key="submit" type="primary" onClick={this.onSubmit}>
+                        确定
                     </Button>,
-                    ]}
+                ]}
             >
                 <div className="layoutOMM layoutForm" style={{ height: "600px", overflowY: "auto" }}>
                     <div className="loPageContent" >
@@ -468,8 +466,15 @@ class People extends Component {
                                         <Row>
                                             {
                                                 this.state.brandId && this.state.productLineLevelCode ? (productLineDatas.map((item, index) => {
-                                                    return <Col span={4} key={index} >
-                                                        <Checkbox value={item.code}>{item.name}</Checkbox>
+                                                    return <Col span={6} key={index} >
+                                                        <Tooltip title={item.name}>
+                                                            <Checkbox value={item.code} style={{
+                                                                width: "100%",
+                                                                overflow: "hidden",
+                                                                textOverflow: "ellipsis",
+                                                                whiteSpace: "nowrap"
+                                                            }}>{item.name}</Checkbox>
+                                                        </Tooltip>
                                                     </Col>
                                                 })) : ""
                                             }
@@ -494,32 +499,37 @@ class People extends Component {
                                 <div className="formCol"></div>
                                 <div className="formCol"></div>
                             </div>
-                            <div style={{ paddingLeft: "97px" }}>
-                                {type != "see" ? <TreeParant treeData={filterTree(serviceClass)}
-                                    expandedKeys={(() => {
-                                        let arr = []
-                                        filterTree(serviceClass).forEach((el) => {
-                                            arr.push(el.code)
-                                        })
-                                        return arr
-                                    })()}
-                                    checkable={true}
-                                    onCheck={this.onTreeSelect6}  //点击树节点触发事件
-                                    checkedKeys={this.state.serviceItemCodes}
-                                /> : <TreeParant treeData={filterTree2(serviceClass, 999)}
-                                    expandedKeys={(() => {
-                                        let arr = []
-                                        filterTree2(serviceClass, 999).forEach((el) => {
-                                            arr.push(el.code)
-                                        })
-                                        return arr
-                                    })()}
-                                    checkable={true}
-                                    onCheck={this.onTreeSelect6}  //点击树节点触发事件
-                                    checkedKeys={this.state.serviceItemCodes}
-                                    disabled
-                                    />}
-                            </div>
+                            {
+                                !this.state.proableLevel ? "" : < div className="formRow">
+                                    <div className="formCol">
+                                        <span className="formKey"> 专业能力项：</span>
+                                        {type != "see" ? <TreeParant className="formVal" treeData={filterTree(serviceClass)}
+                                            expandedKeys={(() => {
+                                                let arr = []
+                                                filterTree(serviceClass).forEach((el) => {
+                                                    arr.push(el.code)
+                                                })
+                                                return arr
+                                            })()}
+                                            checkable={true}
+                                            onCheck={this.onTreeSelect6}  //点击树节点触发事件
+                                            checkedKeys={this.state.serviceItemCodes}
+                                        /> : <TreeParant className="formVal" treeData={filterTree2(serviceClass, 999)}
+                                            expandedKeys={(() => {
+                                                let arr = []
+                                                filterTree2(serviceClass, 999).forEach((el) => {
+                                                    arr.push(el.code)
+                                                })
+                                                return arr
+                                            })()}
+                                            checkable={true}
+                                            onCheck={this.onTreeSelect6}  //点击树节点触发事件
+                                            checkedKeys={this.state.serviceItemCodes}
+                                            disabled
+                                        />}
+                                    </div>
+                                </div>
+                            }
                         </Card>
                         {
                             this.state.cases.map((item, key) => {
@@ -527,11 +537,51 @@ class People extends Component {
                                     <div className="formRow">
                                         <div className="formCol">
                                             <span className="formKey">客户名称：</span>
-                                            <Input  disabled={type == "see" ? true : false} className="formVal" name={key} value={item.custName} onChange={this.onChangeCase} style={{ width: "100px" }} ></Input>
+                                            {
+                                                type == "see" ? <Tooltip title={item.custName}>
+                                                    <span>
+                                                        <Input disabled className="formVal" name={key} value={item.custName} onChange={this.onChangeCase} style={{ width: "142px" }} ></Input>
+                                                    </span>
+                                                </Tooltip> : <Input className="formVal" name={key} value={item.custName} onChange={this.onChangeCase} style={{ width: "142px" }} ></Input>
+                                            }
+
                                         </div>
                                         <div className="formCol">
                                             <span className="formKey"> 产品线：</span>
-                                            <Select disabled={type == "see" ? true : false} className="formVal" value={item.productLineCode} key={key} onSelect={this.onSelectCase1}>
+                                            {item.productLineCode ? <Tooltip title={
+                                                productLine.map((subItem) => {
+                                                    if (subItem.code == item.productLineCode) {
+                                                        return subItem.name
+                                                    } else {
+                                                        return ""
+                                                    }
+                                                })
+                                            }>
+                                                <Select disabled={type == "see" ? true : false} className="formVal" value={item.productLineCode} key={key} onSelect={this.onSelectCase1}
+                                                    style={{
+                                                        overflow: "hidden",
+                                                        textOverflow: "ellipsis",
+                                                        whiteSpace: "nowrap",
+                                                        width: "156px"
+                                                    }}
+                                                >
+                                                    <Option ref={key} value="">请选择</Option>
+                                                    {
+                                                        this.state.productLineCodes.length ? (productLine.filter((subItem) => {
+                                                            return this.state.productLineCodes.indexOf(subItem.code) >= 0
+                                                        }).map((subItem, index) => {
+                                                            return <Option ref={key} key={subItem.id} value={subItem.code}>{subItem.name}</Option>
+                                                        })) : ""
+                                                    }
+                                                </Select>
+                                            </Tooltip> : <Select disabled={type == "see" ? true : false} className="formVal" value={item.productLineCode} key={key} onSelect={this.onSelectCase1}
+                                                style={{
+                                                    overflow: "hidden",
+                                                    textOverflow: "ellipsis",
+                                                    whiteSpace: "nowrap",
+                                                    width: "156px"
+                                                }}
+                                            >
                                                 <Option ref={key} value="">请选择</Option>
                                                 {
                                                     this.state.productLineCodes.length ? (productLine.filter((subItem) => {
@@ -540,11 +590,12 @@ class People extends Component {
                                                         return <Option ref={key} key={subItem.id} value={subItem.code}>{subItem.name}</Option>
                                                     })) : ""
                                                 }
-                                            </Select>
+                                            </Select>}
+
                                         </div>
                                         <div className="formCol2">
                                             <span className="formKey"> 能力项：</span>
-                                            <Cascader  className="formVal"  disabled={type == "see" ? true : false} allowClear={false} fieldNames={{ label: 'name', value: 'code' }} value={filterTree3(serviceClass, item)} options={filterTree2(serviceClass, key)} onChange={this.onSelectCase2} placeholder="请选择" />
+                                            <Cascader className="formVal" disabled={type == "see" ? true : false} allowClear={false} fieldNames={{ label: 'name', value: 'code' }} value={filterTree3(serviceClass, item)} options={filterTree2(serviceClass, key)} onChange={this.onSelectCase2} placeholder="请选择" />
                                         </div>
                                     </div>
                                     <div className="formRow">
@@ -564,7 +615,7 @@ class People extends Component {
                     </div>
                 </div>
             </ModalParant>
-        </div>
+        </div >
 
     }
 }

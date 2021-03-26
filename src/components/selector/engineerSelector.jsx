@@ -17,7 +17,7 @@ class People extends Component {
 		this.searchAllOrgData()
 	}
 	async componentWillReceiveProps(nextprops) {
-	
+
 	}
 	state = {
 		// 分页参数
@@ -226,6 +226,7 @@ class People extends Component {
 		let { resultID, result } = this.state;
 		if (resultID.length > 0) {
 			this.props.onOk(resultID, result)
+			this.props.onCancel()
 		} else {
 			message.destroy()
 			message.error("未选择数据")
@@ -233,18 +234,18 @@ class People extends Component {
 	}
 	render = _ => {
 		// 接受组件外传递的数据
-		const { type, status, onOk, onCancel } = this.props;
+		const { type, status, onOk, onCancel, ...other } = this.props;
+		let title = other.hasOwnProperty("title") ? other.title : "选择工程师";
 		let { mechanismTree, currentOrgID, resultID, searchParams, pagination, tableColumns, tableColumns2, staffTable } = this.state
 		let rowSelection = {
 			onChange: this.onRowSelect,
 			type: type,
 			selectedRowKeys: resultID
 		}
-		console.log(mechanismTree,"mechanismTree")
 		// 若存在状态 则显示状态选择框和状态列
 		let tableColumnConfig = status ? tableColumns2 : tableColumns;
 		return <div>
-			<ModalParant title="选择工程师"
+			<ModalParant title={title}
 				destroyOnClose={true}
 				visible={true}
 				onOk={this.onSubmit}//若无选中数据 执行关闭方法

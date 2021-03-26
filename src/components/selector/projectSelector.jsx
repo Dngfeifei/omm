@@ -1,5 +1,11 @@
+/***
+ * 选择器组件------（目前此组件只应用于在了 项目选择器、客户选择器）
+ * 
+ * @author  jxl
+ */
+
 import React, { Component } from 'react'
-import { Input, Form, Row, Button, message, Card, Table, Select } from 'antd'
+import { Input, Form, Row, Button, message, Card, Table, Select , Tooltip} from 'antd'
 const { Option } = Select;
 
 
@@ -8,20 +14,14 @@ const { Option } = Select;
 import Pagination from '/components/pagination'
 // 引入 弹窗组件组件
 import ModalParant from "@/components/modal/index.jsx"
+// 引入 根据数据字典中查出------【服务类别、】API接口
+import { customerLevel} from '/api/customerInfor'
+// 引入 选择器 API接口
+import { getProjectSelector , } from '/api/selectorApi'
+
+
 
 class projectSelect extends Component {
-    async componentWillMount() {
-	
-	}
-	async componentWillReceiveProps(nextprops) {
-		// 判断参数变化
-		// 1 参数visible为ture  窗口显示
-		if (nextprops.windowData != this.props.windowData && nextprops.windowData.visible) {
-
-		}
-    }
-    
-
     constructor(props) {
         super(props)
 
@@ -37,25 +37,229 @@ class projectSelect extends Component {
                 limit: 10,
                 offset: 1
             },
-            loading: false,  //表格加载太
+            //表格加载太
+            loading: false,  
+            // 存放当前选中行的key
             selectedRowKeys:null,
+            // 存放当前选中行的row数据
+            selectedRows: null,   
 
+            // 项目选择器情况下的----Columns、form表单
+            projectParams:{
+                tableColumns:[{
+                    title: '序号',
+                    dataIndex: 'index',
+                    align: 'center',
+                    width: '80px',
+                    // 第一种：每一页都从1开始
+                    render: (text, record, index) => `${index + 1}`
+                },{
+                    title: '项目号',
+                    dataIndex: 'projectNumber',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    width: '240px',
+                    render: (text, record)=> 
+                        <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                },{
+                    title: '项目名称',
+                    dataIndex: 'projectName',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                },{
+                    title: '项目状态',
+                    dataIndex: 'projectStatus',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                }],
+                formRules:[{
+                    label: '项目号',
+                    key: 'projectNumber',
+                    render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入项目号" />
+                },{
+                    label: '项目名称',
+                    key: 'projectName',
+                    render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入项目名称" />
+                },{
+                    label: '项目状态',
+                    key: 'projectStatus',
+                    render: _ => <Select style={{ width: 200 }} placeholder="请选择项目状态" allowClear={true}>
+                        {
+                            this.state.projectStatusList.map((items, index) => {
+                                return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
+                            })
+                        }
+                    </Select>
+                }]
+            },
+            // 客户选择器情况下的----Columns、form表单
+            custorParams:{
+                tableColumns:[{
+                    title: '序号',
+                    dataIndex: 'index',
+                    align: 'center',
+                    width: '80px',
+                    // 第一种：每一页都从1开始
+                    render: (text, record, index) => `${index + 1}`
+                },{
+                    title: '客户编码',
+                    dataIndex: 'custNum',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    width: '240px',
+                    render: (text, record)=> 
+                        <Tooltip placement="topLeft" title={text}>
+                            <span style={{ color: '#1890ff', cursor: 'pointer',display:'block',textAlign:'center' }} onClick={() => this.previewing(record)}>{text}</span>
+                        </Tooltip>
+                },{
+                    title: '客户名称',
+                    dataIndex: 'custName',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                }],
+                formRules:[{
+                    label: '客户编码',
+                    key: 'custNum',
+                    render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入客户编码" />
+                },{
+                    label: '客户名称',
+                    key: 'custName',
+                    render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入客户名称" />
+                }]
+            },
+
+            // 数据集合
+            tabledata:[],
+            // 服务类别
+            projectStatusList:[],
+
+            rules:null,
+            columns:null,
+
+                  
         }
     }
 
+    // 挂载完成
+    componentWillMount = () => {
+        
+        // 判别出 【项目选择器】下的数据 还是【客户选择器】
+        if (this.props.title == '项目选择器') {
+            this.setState({
+                rules:this.state.projectParams.formRules,
+                columns:this.state.projectParams.tableColumns
+            })
+        }else if (this.props.title == '客户选择器') {
+            this.setState({
+                rules:this.state.custorParams.formRules,
+                columns:this.state.custorParams.tableColumns
+            })
+            
+        }
+
+       
+    }
+
+    componentDidMount(){
+        this.init();
+    }
+
+
+    init = () => {
+        this.getCustLevel();
+
+        this.getLists();
+    }
+
+    // 获取数据字典各项数据  
+    getCustLevel = () => {
+        // 项目状态
+        customerLevel({ dictCode: 'projectStatus' }).then(res => {
+            if (res.success == 1) {
+                this.setState({
+                    projectStatusList: res.data
+                })
+            } else if (res.success == 0) {
+                message.error(res.message)
+            }
+        })
+    }
+
+    
+
+
+    // 获取----table表格数据列表
+    getLists = () => {
+
+        this.props.form.validateFields((err, fieldsValue) => {
+            if (err) {
+                return;
+            }
+
+            this.setState({ loading: true })
+            var values = {
+                ...fieldsValue,
+            };
+
+
+            // 首先通过传递的title名称判断此时是【项目选择器】还是【客户选择器】
+            if (this.props.title == '项目选择器') {
+                getProjectSelector(this.state.pageSize, this.state.current, values).then(res => {
+                    if (res.success == 1) {
+                        this.setState({
+                            loading: false,
+                            tabledata: res.data.records,
+                            total: parseInt(res.data.total)
+                        })
+                    } else if (res.success == 0) {
+                        message.error(res.message);
+                    }
+                })
+            } else if (this.props.title == '客户选择器') {
+
+            }
+
+
+
+           
+        })
+
+    }
+
+    // 查询table表格列表---事件
+    onSearch=()=>{
+        this.getLists();
+    }
+
+    // 重置 头部form表单数据
+    onReset=()=>{
+        this.props.form.resetFields();
+    }
+
     // 单选框按钮---选中事件
-    onSelectChange=(selectedRowKeys)=>{
+    onSelectChange=(selectedRowKeys,selectedRows)=>{
         this.setState({
-            selectedRowKeys: selectedRowKeys
+            selectedRowKeys,
+            selectedRows
         });
     }
     // 选中行时就选中单选框按钮
     onClickRow = (record) => {
         return {
             onClick: () => {
-                let selectedKeys = [record.id]
+                let selectedKeys = [record.id];
+                let selectedRows = [record]
                 this.setState({
-                    selectedRowKeys: selectedKeys
+                    selectedRowKeys: selectedKeys,
+                    selectedRows
                 });
             },
         };
@@ -71,7 +275,7 @@ class projectSelect extends Component {
             pagination: data
         }, () => {
             // 获取选择器列表（分页)
-            
+            this.getLists();
         })
     }
 
@@ -85,51 +289,50 @@ class projectSelect extends Component {
             pagination: data
         }, () => {
             // 获取选择器列表（分页)
-
+            this.getLists();
         })
 
 
     }
     
+    // 确认--事件
     onSubmit=()=>{
 		if(	this.state.selectedRowKeys.length > 0){
-			this.props.onOk(selectedRowKeys, result)
+			// 向父组件传递当前选中的数据集合
+            this.props.onOk(this.state.selectedRows[0]);
+            // 父组件--关闭对话框
+            this.props.onCancel();
 		}else{
           message.destroy()
 		  message.error("未选择数据")
 		}
-	}
+    }
+    
+
+
 
     render = _ => {
         const { getFieldDecorator } = this.props.form;
 
-        const {selectedRowKeys} = this.state;
+        const {selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
             type:'radio'
         };
 
-        console.log('---------------------         选择器--页面        -------------------------')
-        console.log(this.props)
-
-        let rules = this.props.data.formRules;
-
-        let tabledata = this.props.data.tableData;
-
-        let columns = this.props.data.tableColumns;
 
         return (
             <div className="projectSelector">
-                <ModalParant title={this.props.title} destroyOnClose={true} visible={true} onOk={this.onSubmit} onCancel={this.props.onCancel} width={1000}>
+                <ModalParant title={this.props.title} destroyOnClose={true} visible={true} onOk={this.onSubmit} onCancel={this.props.onCancel} width={1080}>
                     <Form layout='inline' style={{ width: '100%', paddingTop: '24px', marginLeft: '15px' }} id="logbookForm">
-                        {rules.map((val, index) =>
+                        {this.state.rules.map((val, index) =>
                             <Form.Item label={val.label} style={{ marginBottom: '8px' }} key={index}>
                                 {getFieldDecorator(val.key, val.option)(val.render())}
                             </Form.Item>)}
                         <Form.Item>
-                            <Button type="primary" style={{ marginLeft: '25px' }}>查询</Button>
-                            <Button style={{ marginLeft: '10px' }}>重置</Button>
+                            <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
+                            <Button style={{ marginLeft: '10px' }} onClick={this.onReset}>重置</Button>
                         </Form.Item>
                     </Form>
                     <Table
@@ -138,12 +341,12 @@ class projectSelect extends Component {
                         rowKey={record => record.id} //在Table组件中加入这行代码
                         onRow={this.onClickRow}
                         rowSelection={rowSelection}
-                        dataSource={tabledata}
-                        columns={columns}
+                        dataSource={this.state.tabledata}
+                        columns={this.state.columns}
                         pagination={false}
                         scroll={this.state.h}
                         size={'small'}
-                        style={{ marginTop: '16px', padding: '0px 15px',height:this.state.h, overflowY: 'auto' }}
+                        style={{ marginTop: '16px', padding: '0px 15px', height: "280px" , overflowY: 'auto' }}
                         loading={this.state.loading}  //设置loading属性
                     />
                     {/* 分页器组件 */}

@@ -5,7 +5,7 @@
 
 
 import React, { Component } from 'react'
-import { Descriptions, Badge , Form , Input , Select , DatePicker } from 'antd'
+import { Descriptions, Badge, Form, Input, Select, DatePicker } from 'antd'
 
 const { Option } = Select;
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
@@ -16,6 +16,14 @@ import moment from 'moment'
 // 引入页面CSS
 import '/assets/less/pages/servies.less'
 
+// 引入--基本信息页面
+import BasicInfor from './basicInfor.jsx'
+// 引入--服务承诺页面
+import PerformancePledge from "./performancePledge.jsx"
+// 引入--服务区域表格组件
+import EditTable from "./serviceArea.jsx"
+
+
 
 
 class servies extends Component {
@@ -23,155 +31,102 @@ class servies extends Component {
         super(props)
 
         this.state = {
-            // 系统账号人员
-            username:'',
-            // 描述列表数据
-            descList:[{
-                label:'记录单号',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'公司名称',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'填写时间',
-                key:'',
-                render: _ => moment().format('YYYY-MM-DD HH:mm:ss'),   // 自动填写当前的系统日期时间
-            },{
-                label:'填写人',
-                key:'',
-                render: _ => this.state.username,
-            },{
-                label:'填写部门',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'项目类别',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'项目号',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'项目名称',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'服务类别',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'客户编码',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'客户名称',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'所属行业',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'客户级别',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'项目销售',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'销售联系方式',
-                render: _ => <Input />
-            },{
-                label:'是否有项目经理负责',
-                    render: _ => <Select style={{ width: 260 }} placeholder="请选择是否有项目经理负责" allowClear={true} disabled={this.state.projectID ? true : false}>
-                        <Option value='1'>是</Option>
-                        <Option value='0'>否</Option>
-                    </Select>
-            },{
-                label:'项目经理',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'项目经理联系方式',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'项目开始日期',
-                key:'',
-                span:2,
-                render: _ => <DatePicker />
-            },{
-                label:'项目结束日期',
-                key:'',
-                span:2,
-                render: _ => <DatePicker />
-            },{
-                label:'是否续签项目',
-                key:'',
-                render: _ => <Select style={{ width: 260 }} placeholder="请选择是否续签项目" allowClear={true} disabled={this.state.projectID ? true : false}>
-                        <Option value='1'>是</Option>
-                        <Option value='0'>否</Option>
-                    </Select>
-            },{
-                label:'续签项目号',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'续签项目名称',
-                key:'',
-                render: _ => <Input />
-            },{
-                label:'是否转包项目',
-                key:'',
-                span:2,
-                render: _ => <Select style={{ width: 260 }} placeholder="请选择是否转包项目" allowClear={true} disabled={this.state.projectID ? true : false}>
-                <Option value='1'>是</Option>
-                <Option value='0'>否</Option>
-            </Select>
-            },{
-                label:'最终客户名称',
-                key:'',
-                span:2,
-                render: _ => <Input />
-            },{
-                label:'是否有团建负责',
-                key:'',
-                span:2,
-                render: _ => <Select style={{ width: 260 }} placeholder="请选择是否有团建负责" allowClear={true} disabled={this.state.projectID ? true : false}>
-                <Option value='1'>是</Option>
-                <Option value='0'>否</Option>
-            </Select>
-            },{
-                label:'团建负责人',
-                key:'',
-                span:2,
-                render: _ => <Input />
-            }],
-
-
-            // 描述列表数据集合
-
+            
+            // 【服务区域】的table表格数据
+            serviceAreaTable:[],
+            // 【服务承诺】组件的所有数据
+            PerformanceData:{
+                serviceMode:'111',  // 服务方式
+                isReport:'11',  //是否提交验收报告
+                remoteCycle:'1',  //远程巡检周期
+                OnSiteCycle:'',      // 现场巡检周期
+                patrolSpecialDesc:'xxxxxxxxxxx', //巡检特殊说明
+                trainingTableData:[{
+                    id: 1,
+                    way: '1',
+                    teachers: '',
+                    courseDirection: '',
+                    courses: '',
+                    TrainingSessions: ''
+                }],
+                firstInspection:'0', //是否需要提供首次巡检服务
+                isOnSiteService:'无驻场',   // 项目是否约定驻场服务
+                persons:'1', //人数
+                specialDesc:'', //特殊说明
+                siCorrelationConfig:'0', // 是否收集相关配置信息
+                configDesc:'',//不收集配置信息原因说明
+                reportingCycle:'', //服务报告提交周期
+                orderRequire:'', //服务单要求
+                partsList:'',//合同承诺备机备件清单
+                partsArrivalTime:'',//合同承诺备机备件到库时间
+                isOutsourcing:'0',//是否有外包情况
+                outsourcer:'', //外包商
+                annexList:"",//上传外包合同设备清单附件
+                //集成/备件销售项目（101、102）售后服务约定
+                serverstartTime:'',
+                serverendTime:'',
+                otherImportant:'', //其他重要承诺及要求
+                configTable:[{
+                    id:'1',
+                    leavel:'S1',
+                    response:'',
+                    engineerParts:'',
+                    spareParts:'',
+                    resolutionTime:'',
+                    notes:'',
+                },{
+                    id:'2',
+                    leavel:'S2',
+                    response:'',
+                    engineerParts:'',
+                    spareParts:'',
+                    resolutionTime:'',
+                    notes:'',
+                },{
+                    id:'3',
+                    leavel:'S3',
+                    response:'',
+                    engineerParts:'',
+                    spareParts:'',
+                    resolutionTime:'',
+                    notes:'',
+                },{
+                    id:'4',
+                    leavel:'S4',
+                    response:'',
+                    engineerParts:'',
+                    spareParts:'',
+                    resolutionTime:'',
+                    notes:'',
+                },{
+                    id:'5',
+                    leavel:'S5',
+                    response:'',
+                    engineerParts:'',
+                    spareParts:'',
+                    resolutionTime:'',
+                    notes:'',
+                },{
+                    id:'6',
+                    leavel:'S6',
+                    response:'',
+                    engineerParts:'',
+                    spareParts:'',
+                    resolutionTime:'',
+                    notes:'',
+                }]
+            }
         }
     }
 
-    componentWillMount(){
-        let name='realName';
-        if (process.env.NODE_ENV == 'production') {
-            name=`${process.env.ENV_NAME}_realName`
-        }
-        console.log(!(process.env.NODE_ENV == 'production'))
-        let username = localStorage.getItem(name)
-        this.setState({ username })
+    componentWillMount() {
+      
     }
 
     // 挂载完成
     componentDidMount = () => {
         this.init();
-        
+
 
 
     }
@@ -182,6 +137,24 @@ class servies extends Component {
     }
 
 
+    //  接收到【服务承诺】子组件返回的数据  
+    getChildrenData=(info)=>{
+        console.log('****************       接收到【服务承诺】子组件返回的数据        ******************')
+        console.log(info)
+        this.setState({
+            PerformanceData:info
+        })
+    }
+
+    //  接收到【服务区域】子组件返回的数据  
+    getAreaChildren=(info)=>{
+        console.log('****************  接收到【服务区域】子组件返回的数据     ******************')
+        console.log(info)
+        this.setState({
+            serviceAreaTable:info
+        })
+    }
+
 
 
 
@@ -191,26 +164,25 @@ class servies extends Component {
 
         return (
             <div className="ServiesContent">
-                {/* 基本信息--区域 */}
-                <Descriptions bordered size='small'>
-                    {
-                        this.state.descList.map((item,index)=>{
-                            return (
-                                <Descriptions.Item label={item.label} span={item.span} key={index}>
-                                   { item.render()}
-                                </Descriptions.Item>
-                            )
-                        })
-                    }
-                </Descriptions>
-                {/* 服务区域--区域 */}
-                <div className=""></div>
 
+                {/* 基本信息--区域 */}
+                <div className="infor commTop">
+                    <div className="navTitle">基本信息</div>
+                    <BasicInfor></BasicInfor>
+                </div>
+
+                {/* 服务区域--区域 */}
+                <div className="commTop">
+                    <div className="navTitle">服务区域</div>
+                    <EditTable data={this.state.serviceAreaTable} onChange={this.getAreaChildren}></EditTable>
+                </div>
 
                 {/* 服务承诺---区域 */}
-                <div className=""></div>
+                <div className="commTop">
+                    <div className="navTitle">服务承诺</div>
+                    <PerformancePledge data={this.state.PerformanceData} onChange={this.getChildrenData}></PerformancePledge>
+                </div>
 
-                
             </div>
         )
     }
