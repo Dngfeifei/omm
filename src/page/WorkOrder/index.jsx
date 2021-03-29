@@ -253,7 +253,7 @@ class workOrer extends Component {
         }
         return file;
         });
-        this.setState({ fileList });
+        this.setState({ fileList: fileList.reverse()});
     }
     reMove = async (file) => {
         console.log(file)
