@@ -226,8 +226,13 @@ class People extends Component {
         }
         cases.splice(e, 1);
         this.setState({
-            cases
+            cases:[]
+        },()=>{
+            this.setState({
+                cases
+            })
         })
+       
     }
     // 案例 客户名称获取方法
     onChangeCase = (e) => {
@@ -263,6 +268,7 @@ class People extends Component {
     //获取富文本数据
     getContent = (content, key) => {
         let cases = this.state.cases;
+        console.log(cases,key,cases[key],cases[key])
         cases[key].caseDesc = content;
         this.setState({
             cases
@@ -608,7 +614,7 @@ class People extends Component {
                                         <div className="formCol">
                                             <span className="formKey">案例说明：</span>
                                             <div className="formVal">
-                                                <Editor key={type} disabled={type == "see" ? true : false} name={key} value={item.caseDesc} getContent={this.getContent} />
+                                                <Editor key={key} disabled={type == "see" ? true : false} name={key} value={item.caseDesc} getContent={this.getContent} />
                                             </div>
                                         </div>
                                     </div>
