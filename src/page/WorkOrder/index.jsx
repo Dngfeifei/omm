@@ -85,7 +85,7 @@ class workOrer extends Component {
        let tokenName='token',header = {},actionUrl = '';
        if(process.env.NODE_ENV == 'production'){
 		    tokenName = `${process.env.ENV_NAME}_${tokenName}`
-            actionUrl = `${process.env.API_URL}`
+            actionUrl = process.env.API_URL
         }
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         //获取token值，为后续上传附件设置请求头使用
