@@ -43,9 +43,7 @@ const assignment = (data) => {
 }
 
 class People extends Component {
-    async componentWillMount() {
-        // 请求全量机构树数据
-    }
+
     async componentWillReceiveProps(nextprops) {
 
     }
@@ -58,10 +56,13 @@ class People extends Component {
         },
         baseData: {},  //下拉框基础数据
     }
-    componentDidMount() {
-        let { echoData } = this.props;
+    componentWillMount() {
+        let { echoData, config } = this.props;
         let skillTypeId = "", brandId = "", competenceLevelId = ""
         let data = JSON.parse(JSON.stringify(Object.assign({}, this.state, echoData)))
+        if (config.type == "edit" && data.cases.length == 0) {
+            data.cases.push({ custName: "", productLineCode: "", serviceItemCode: "", caseDesc: "" })
+        }
         this.props.baseData.skillType.forEach((item) => {
             if (item.code == echoData.skillTypeCode) {
                 skillTypeId = item.id
@@ -268,7 +269,7 @@ class People extends Component {
         })
     }
     // 保存前数据校验
-    check = (obj, arr) => {
+    check = (obj, arr = []) => {
         let result = true
         Object.keys(obj).forEach(function (key) {
             if (nullCheck(obj[key])) {
@@ -290,7 +291,12 @@ class People extends Component {
 
         for (var i = 0; i < cases.length; i++) {
             let { custName, productLineCode, serviceItemCode, caseDesc } = cases[i];
-            cases[i] = { custName, productLineCode, serviceItemCode, caseDesc }
+            console.log(nullCheck(custName), "null")
+            if (nullCheck(custName) && nullCheck(productLineCode) && nullCheck(serviceItemCode) && nullCheck(caseDesc)) {
+                cases.splice(i, 1)
+            } else {
+                cases[i] = { custName, productLineCode, serviceItemCode, caseDesc }
+            }
         }
         let allData = { skillTypeCode, brandCode, productLineCodes, productLineLevelCode, proableLevel, serviceItemCodes }
         let checked = this.check(allData, cases);
@@ -299,7 +305,7 @@ class People extends Component {
             message.error("所有表单项均为必填项，请填写完整后再提交!")
             return
         }
-        let params = Object.assign({}, this.state)
+        let params = Object.assign({}, this.state, cases)
         // 专业能力数据提交
         PostAssessProable(params).then((res) => {
             if (res.success != 1) {
