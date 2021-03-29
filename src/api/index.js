@@ -61,7 +61,8 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		return undefined;
 	})
 	.catch(err => {
-		message.error('请求超时');
+		message.error('请求超时，请联系管理员！');
+		hashHistory.push('/login');
 		console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
 	})
 
