@@ -82,14 +82,15 @@ class workOrer extends Component {
        }) : [...fileList] ; 
        
        //获取token值，为后续上传附件设置请求头使用
-       let tokenName='token',header = {};
+       let tokenName='token',header = {},actionUrl = '';
        if(process.env.NODE_ENV == 'production'){
 		    tokenName = `${process.env.ENV_NAME}_${tokenName}`
+            actionUrl = `${process.env.API_URL}`
         }
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         //获取token值，为后续上传附件设置请求头使用
 
-       this.setState({workControl,header,fileList,formControl,listData,businessKey,spinning:false,ticketId},()=>{  //重置状态数据
+       this.setState({workControl,header,actionUrl,fileList,formControl,listData,businessKey,spinning:false,ticketId},()=>{  //重置状态数据
             console.log(this.state)
        })
     }
@@ -107,6 +108,7 @@ class workOrer extends Component {
         opinion: null, //处理意见,
         spinning:true,//加载效果
         header:{},//上传附件的头部信息
+        actionUrl:'',//上传路径前缀
         businessKey:'',//储存工单组件的名称以及工单参数ID
         formKey:'',//储存工单组件的名称以及工单参数ID,优先级高
         ticketId:null,//工单当前状态是否为只读
@@ -237,7 +239,7 @@ class workOrer extends Component {
 
         // 1. 限制上载文件的数量
         //只显示最近上传的两个文件，旧文件将被新文件替换
-        fileList = fileList.slice(-2);
+        // fileList = fileList.slice(-2);
 
         // 2.读取响应并显示文件链接
         fileList = fileList.map(file => {
@@ -278,8 +280,8 @@ class workOrer extends Component {
     }
     //重置方法
     resetFn = () => {
-        const {businessKey,formKey,workControl,formControl,swit,spinning,listData} = this.state;
-        this.setState({...this.stateReset,formKey,businessKey,workControl,formControl,swit,spinning,listData},()=>{
+        const {businessKey,formKey,workControl,formControl,swit,spinning,listData,actionUrl,header} = this.state;
+        this.setState({...this.stateReset,formKey,businessKey,workControl,formControl,swit,spinning,listData,actionUrl,header},()=>{
             console.log(this.state)
         })
     }
@@ -503,7 +505,7 @@ class workOrer extends Component {
                                 <p style={{fontSize:12,marginTop:2}}>填写内容不超过50个汉字{workControl.opinionWarn ? <span style={{color:'red',marginLeft:15}}>信息长度已超过最大显示</span> : null}</p>
                             </Card> : <Card size="small" title="处理意见" style={{maxHeight:'50%'}} bordered={false} extra={<Icon onClick={() => this.setState({swit: false})} type="double-right" />}><Empty /></Card>}
                             {workControl.upload ?
-                                <Upload action="/process/uploadAttachment" disabled={workControl.upload == 1 ? false : true} className="work_upload" headers={this.state.header} onRemove={this.reMove} data={{taskId:this.props.params.dataType.record.taskId}} onChange={this.upload} multiple fileList={this.state.fileList}>
+                                <Upload action={`${this.state.actionUrl}/process/uploadAttachment`} disabled={workControl.upload == 1 ? false : true} className="work_upload" headers={this.state.header} onRemove={this.reMove} data={{taskId:this.props.params.dataType.record.taskId}} onChange={this.upload} multiple fileList={this.state.fileList}>
                                     <Button>
                                     <Icon type="upload" /> 请上传需要的附件
                                     </Button>
