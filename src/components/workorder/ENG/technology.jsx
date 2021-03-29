@@ -294,24 +294,24 @@ class People extends Component {
     // 提交专业能力数据
     onSubmit = () => {
         let { skillTypeCode, brandCode, productLineCodes, productLineLevelCode, proableLevel, serviceItemCodes, cases } = this.state;
-
+        let newCase=[]
         for (var i = 0; i < cases.length; i++) {
             let { custName, productLineCode, serviceItemCode, caseDesc } = cases[i];
             console.log(nullCheck(custName), "null")
             if (nullCheck(custName) && nullCheck(productLineCode) && nullCheck(serviceItemCode) && nullCheck(caseDesc)) {
-                cases.splice(i, 1)
+                // cases.splice(i, 1)
             } else {
-                cases[i] = { custName, productLineCode, serviceItemCode, caseDesc }
+                newCase.push({ custName, productLineCode, serviceItemCode, caseDesc }) 
             }
         }
         let allData = { skillTypeCode, brandCode, productLineCodes, productLineLevelCode, proableLevel, serviceItemCodes }
-        let checked = this.check(allData, cases);
+        let checked = this.check(allData, newCase);
         if (!checked) {
             message.destroy()
             message.error("所有表单项均为必填项，请填写完整后再提交!")
             return
         }
-        let params = Object.assign({}, this.state, cases)
+        let params = Object.assign({}, this.state,{cases:newCase})
         // 专业能力数据提交
         PostAssessProable(params).then((res) => {
             if (res.success != 1) {
