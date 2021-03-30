@@ -3,7 +3,7 @@ import {Row, Input, Button, Form, message, Modal, Icon, Checkbox } from 'antd'
 const FormItem = Form.Item
 import { login, getCode, } from '/api/login'
 import { hashHistory } from 'react-router'
-import {onKey} from '@/assets/js/methods'
+import {onKey} from '@/assets/js/publicMethod'
 class Login extends Component {
 
 	
