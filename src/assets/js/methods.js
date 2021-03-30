@@ -32,7 +32,7 @@ let noHasProperty = (params) => {
 
 
 // 判断数据是否为空是否为空
-export default  nullCheck = (params) => {
+ const nullCheck = (params) => {
   if (typeof (params) == "string") {
     return empty(params)
   } else if (Object.prototype.toString.call(params) === '[object Array]') {
@@ -41,3 +41,4 @@ export default  nullCheck = (params) => {
     return noHasProperty(params)
   }
 }
+export default nullCheck;
