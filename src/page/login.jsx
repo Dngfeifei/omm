@@ -3,7 +3,7 @@ import {Row, Input, Button, Form, message, Modal, Icon, Checkbox } from 'antd'
 const FormItem = Form.Item
 import { login, getCode, } from '/api/login'
 import { hashHistory } from 'react-router'
-
+import {onKey} from '@/assets/js/methods'
 class Login extends Component {
 
 	
@@ -126,7 +126,7 @@ class Login extends Component {
 					        required: true, message: '用户名不能为空!',
 					    }]
 				    })(
-						<Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="请输入用户名"
+						<Input onKeyDown={(e) => onKey(e,this.submit)} prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="请输入用户名"
 					  />,
 					)}
 				</FormItem>
@@ -136,7 +136,7 @@ class Login extends Component {
 					        required: true, message: '密码不能为空!',
 					    }]
 				    })(
-						<Input prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="请输入密码"
+						<Input onKeyDown={(e) => onKey(e,this.submit)} prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />} type="password" placeholder="请输入密码"
 						/>,
 					)}
 				</FormItem>
@@ -147,7 +147,7 @@ class Login extends Component {
 								required: true, message: '验证码不可以为空!',
 							}]
 						})(
-							<Input prefix={<Icon type="safety-certificate" style={{ color: 'rgba(0,0,0,.25)' }} />} type="text" placeholder="验证码" className="code-input" />,
+							<Input onKeyDown={(e) => onKey(e,this.submit)} prefix={<Icon type="safety-certificate" style={{ color: 'rgba(0,0,0,.25)' }} />} type="text" placeholder="验证码" className="code-input" />,
 							
 						)}
 						<div className="identify_box" onClick={this.RefreshCode}>

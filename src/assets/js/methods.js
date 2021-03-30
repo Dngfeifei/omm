@@ -32,7 +32,7 @@ let noHasProperty = (params) => {
 
 
 // 判断数据是否为空是否为空
-const nullCheck = (params) => {
+export const nullCheck = (params) => {
   if (typeof (params) == "string") {
     return empty(params)
   } else if (Object.prototype.toString.call(params) === '[object Array]') {
@@ -41,4 +41,11 @@ const nullCheck = (params) => {
     return noHasProperty(params)
   }
 }
-export default nullCheck
+//回车操作事件
+export const onKey = (e,eventFn) => {
+  let keyCode = e.keyCode;
+  if(keyCode == 13 && typeof eventFn === "function"){
+      eventFn();
+      e.target.blur();
+  }
+}
