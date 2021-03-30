@@ -32,20 +32,12 @@ let noHasProperty = (params) => {
 
 
 // 判断数据是否为空是否为空
-export const nullCheck = (params) => {
+export default  nullCheck = (params) => {
   if (typeof (params) == "string") {
     return empty(params)
   } else if (Object.prototype.toString.call(params) === '[object Array]') {
     return zero(params)
   } else if (Object.prototype.toString.call(params) === '[object Object]') {
     return noHasProperty(params)
-  }
-}
-//回车操作事件
-export const onKey = (e,eventFn) => {
-  let keyCode = e.keyCode;
-  if(keyCode == 13 && typeof eventFn === "function"){
-      eventFn();
-      e.target.blur();
   }
 }
