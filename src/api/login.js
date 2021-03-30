@@ -19,7 +19,7 @@ export const logout = (params = {}) => {
 
 // 首次登录修改密码
 export const changepass = (params = {}) => {
-	return http.fetchPost(`/updatePass`, params)
+	return http.fetchPost(`/updatePass`, params,true)
 }
 
 
