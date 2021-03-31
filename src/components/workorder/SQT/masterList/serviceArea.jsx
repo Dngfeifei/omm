@@ -13,7 +13,7 @@ const { Provider, Consumer } = React.createContext()//组件之间传值
 
 
 // 引入 API接口
-import { addSysList, deleteSysList ,updateSysList } from '/api/systemParameter'
+import { } from '/api/systemParameter'
 // 引入页面CSS
 import '/assets/less/pages/logBookTable.css'
 // 引入省市地区数据
@@ -77,7 +77,7 @@ class EditableCell extends React.Component {
         return (
             <td {...restProps} className='my-cell-td'>
                 {editing ? (
-                    dataIndex == 'paramterName' ?
+                    dataIndex == 'area' ?
                         < Item style={{ margin: 0 }}>
                             {getFieldDecorator(dataIndex, {
                                 rules: [{
@@ -89,7 +89,7 @@ class EditableCell extends React.Component {
                                 // value={this.state.computerRegionValue}
                                 <Cascader options={this.state.computerRegion} onChange={this.handleComputerRegionChange} placeholder="请选择区域" />
                             )}
-                        </Item> : dataIndex == 'parameterValue' ?
+                        </Item> : dataIndex == 'isMainDutyArea' ?
                             <Item style={{ margin: 0 }}>
                                 {getFieldDecorator(dataIndex, {
                                     rules: [{
@@ -139,14 +139,11 @@ class serviceArea extends React.Component {
            
             radioLock:false,  
             selectedRowKeys:null,  //选中的table表格的id
-            RowLock:true, //用于判断 点击行时还是新增编辑数据时；默认为 true
         }
     }
 
     // 数据更新完成时触发的函数
     componentWillMount() {
-        console.log('-----------------        数据更新完成时触发的函数       -------------------')
-        console.log(this.props.data)
         this.setState({
             data: this.props.data,
             count: this.props.data.length + 1,
@@ -190,8 +187,8 @@ class serviceArea extends React.Component {
             const newData = {
                 key: count,
                 id: count,
-                paramterName: "",
-                parameterValue: "",
+                area: "",
+                isMainDutyArea: "",
                 address: '',
                 serviceAreaNew:[]
             };
@@ -203,7 +200,6 @@ class serviceArea extends React.Component {
                 count: count + 1,
                 editingKey: newData.id, //将当前新增的行放置到可编辑状态
                 selectedRowKeys: newSelectKey,   // 将当前新增的行进行选中
-                RowLock: false
             });
             
         }else {
@@ -252,16 +248,12 @@ class serviceArea extends React.Component {
         if (this.state.editLock) {   // 修改
             this.setState({
                 editingKey: '',
-                editLock:false,
-                RowLock:true
             })
         }else {  // 新增
             const data = [...this.state.data];
             this.setState({ 
                 data: data.filter(item => item.id !== id) ,
                 editingKey: '',
-                editLock:false,
-                RowLock:true
             },()=>{
                 this.updataToParent();
             });
@@ -283,13 +275,15 @@ class serviceArea extends React.Component {
             },
             {
                 title: '服务区域',
-                dataIndex: 'paramterName',
+                dataIndex: 'area',
                 editable: true,
-                
+                render:(record)=>{
+                   return  <span dangerouslySetInnerHTML={{ __html:record }}></span>
+                }
             },
             {
                 title: '是否是主责区域',
-                dataIndex: 'parameterValue',
+                dataIndex: 'isMainDutyArea',
                 render: t => t == '1' ? '是' : '否',
                 editable: true,
                
@@ -301,23 +295,20 @@ class serviceArea extends React.Component {
         ]
     }
 
-    // table表格复选框---选中事件
-    onSelectChange = (selectedRowKeys, selectedRows) => {
-        this.setState({ 
-            selectedRowKeys:selectedRowKeys 
-        });
-    }
 
     // 修改行内表格
     handleEdit=()=>{
         if (this.state.selectedRowKeys) {
+            console.log(this.state.selectedRowKeys)
             var ID = this.state.selectedRowKeys[0];
+            console.log(ID)
             // 将当前选中的【服务区域】的value(字符串)换成serviceAreaNew属性的数组形式
             let newData = [...this.state.data];
             let index = newData.findIndex((item) => ID === item.id);
             let item = newData[index];
+            console.log(item)
             // 将【省市地区】的数据另外存储在serviceAreaNew数组变量中
-            item.paramterName = item.serviceAreaNew;
+            item.area = item.serviceAreaNew;
 
             this.setState({
                 editingKey: ID,
@@ -368,20 +359,22 @@ class serviceArea extends React.Component {
 
             var params =JSON.parse( JSON.stringify(row));
             let newData = [...this.state.data];
+
             let index = newData.findIndex((item) => id === item.id);
             let item = newData[index];
 
             // 将【省市地区】的数据另外存储在serviceAreaNew数组变量中
-            item.serviceAreaNew = params.paramterName;
+            item.serviceAreaNew = params.area;
 
             // 判断当前选中的区域是否为主责区域
-            if (params.parameterValue == 0) {  //否
-                params.paramterName = params.paramterName.join("/");
+            if (params.isMainDutyArea == 0) {  //否
+                params.area = params.area.join("/");
                 this.setState({
                     radioLock:false
                 })
-            }else if(params.parameterValue == 1){  //是
-                params.paramterName = params.paramterName.join("/")+"【主责区域】"
+            }else if(params.isMainDutyArea == 1){  //是
+                // params.area = params.area.join("/")+ '【主责区域】'
+                params.area = params.area.join("/") + '<span style="color:red">【主责区域】</span>'
                 this.setState({
                     radioLock:true
                 })
@@ -392,30 +385,35 @@ class serviceArea extends React.Component {
                 ...item,
                 ...params
             });
+            
             this.setState({ data: newData, editingKey: '',selectedRowKeys:null},()=>{
                 this.updataToParent();
             });
 
-            
-            // console.log('----------------    赋值后的---   newData        ------------------')
-            // console.log(newData)
         })
 
     }
 
-
-    // 选中行
-    onClickRow = (record) => {
-        var selectedRowKeys = [];
-        selectedRowKeys.push(record.id)
+    // 单选框按钮---选中事件
+    selectChangeArea = (selectedRowKeys, selectedRows) => {
+        console.log('selectedRowKeys changed: ',selectedRowKeys, selectedRows);
+        this.setState({ 
+            selectedRowKeys:selectedRowKeys
+        });
+    }
+    // 选中行时就选中单选框按钮
+    onRow = (record) => {
+        console.log('**************       选中行时就选中单选框按钮       **************')
         return {
             onClick: () => {
+                let selectedKeys = [record.id];
                 this.setState({
-                    selectedRowKeys: selectedRowKeys
-                });
-            },
-        };
+                    selectedRowKeys: selectedKeys,
+                })
+            }
+        }
     }
+
 
     render() {
         this.init()
@@ -443,13 +441,13 @@ class serviceArea extends React.Component {
             };
         });
 
-        const {selectedRowKeys} = this.state;
-        const rowSelection = {
-            selectedRowKeys,
-            onChange: this.onSelectChange,
+        const rowSelectionArea = {
+            selectedRowKeys:this.state.selectedRowKeys,
+            onChange: this.selectChangeArea,
             type:'radio'
         };
 
+        
         return (
             <div>
                 <Row gutter={24} style={{textAlign:'right'}}>
@@ -476,11 +474,11 @@ class serviceArea extends React.Component {
                 <Provider value={this.props.form}>
                     <Table
                         className="jxlTable"
-                        onRow={this.onClickRow}
+                        // onRow={this.onRow}
                         components={components}   //覆盖默认的 table 元素
                         bordered
-                        rowKey={"id"}
-                        rowSelection={rowSelection}   //设置table的复选框
+                        rowKey={(record, index) => `areaId${record.id}${index}`}
+                        rowSelection={rowSelectionArea}  
                         dataSource={this.state.data}
                         columns={columns}
                         scroll={this.props.scroll}

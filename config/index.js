@@ -66,6 +66,7 @@ module.exports = {
       '/biCustContact':target,     // 项目信息---客户技术联系人列表
       '/biServiceObject':target,     // 项目信息---服务对象列表
       '/sql':target, //服务需求表-工单号
+      '/biSqtBase':target, //服务需求表
       '/assessVersion':target,     // 工程师自评估配置-评估版本
       '/assessConfig':target,     // 工程师自评估配置-配置数据
       '/temporaryOpen':target,     // 工程师自评估配置-临时开启
