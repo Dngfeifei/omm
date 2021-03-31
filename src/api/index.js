@@ -18,7 +18,7 @@ const handleRequest = (url, method, body = {}, json = false) => {
 		wholeUrl = url;
 	if (process.env.NODE_ENV == 'production') {
 		tokenName = `${process.env.ENV_NAME}_${tokenName}`
-		wholeUrl = url.split('/')[1] == 'static' ? `${url}` : `${process.env.API_URL}${url}`
+		wholeUrl = `${process.env.API_URL}${url}`
 	}
 	token = localStorage.getItem(tokenName) || '';
 

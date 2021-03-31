@@ -15,3 +15,4 @@ export const SET_BREADCRUMB = 'SET_BREADCRUMB'
 export const SET_PANE = 'SET_PANE'
 export const SET_WORKLIST = 'SET_WORKLIST'//刷新工作空间列表
 export const SET_WORKSTATUS = 'SET_WORKSTATUS'//刷新工单状态 setWorkStatus
+export const SET_LOGINSTATUS = 'SET_LOGINSTATUS'//设置登录状态 setWorkStatus
