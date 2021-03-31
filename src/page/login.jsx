@@ -4,6 +4,13 @@ const FormItem = Form.Item
 import { login, getCode, } from '/api/login'
 import { hashHistory } from 'react-router'
 import {onKey} from '@/assets/js/publicMethod'
+import { SET_LOGINSTATUS} from '/redux/action'
+import { connect } from 'react-redux'
+@connect(state => ({
+	loginStatus: state.global.loginStatus,
+}), dispath => ({
+	setLogin(data){dispath({ type: SET_LOGINSTATUS, data: data })},
+}))
 class Login extends Component {
 
 	
@@ -68,8 +75,10 @@ class Login extends Component {
 							if (user.firstLogin) {
 								// 跳转到【首次修改密码】页面  
 								hashHistory.push('/ChangePassForm')
+								this.props.setLogin(true)
 							}else {
 								hashHistory.push('/')
+								this.props.setLogin(false)
 							}
 							
 						}else {
