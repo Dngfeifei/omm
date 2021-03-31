@@ -7,7 +7,7 @@ import React, { Component } from 'react'
 //引入客户技术联系人组件
 import Contact from '/components/workorder/SQT/serviceArea/contact.jsx'
 //引入服务对象组件
-import Object from '/components/workorder/SQT/serviceArea/object.jsx'
+import ObjectEl from '/components/workorder/SQT/serviceArea/object.jsx'
 //引入项目组成员组件
 import Member from '/components/workorder/SQT/serviceArea/member.jsx'
 
@@ -16,7 +16,8 @@ class SA extends Component {
     static defaultProps = {
         dataSource: {},  //副表数据
         type: "",  //服务类别
-        power: {}  //编辑权限
+        power: {},  //编辑权限
+        onChange:()=>{} //数据变化后 外部接受最新数据的方法
     }
     constructor(props) {
         super(props)
@@ -164,14 +165,14 @@ class SA extends Component {
         return newErroor
     }
     render = _ => {
-        let { dataSource, title, objIsShow, contactIsEdit, memberIsEdit, contactIsEdit } = this.state
+        let { dataSource, title, objIsShow, contactIsEdit, memberIsEdit, objectIsEdit } = this.state
         return <div>
 
             <Contact title={title} edit={contactIsEdit} dataSource={dataSource.contactList} onChange={this.onChangeCTC}></Contact>
             {
-                objIsShow ? <Object title={title} edit={memberIsEdit} dataSource={dataSource.objectList} onChange={this.onChangeSO}></Object> : ""
+                objIsShow ? <ObjectEl title={title} edit={objectIsEdit} dataSource={dataSource.objectList} onChange={this.onChangeSO}></ObjectEl> : ""
             }
-            <Member title={title} edit={contactIsEdit} dataSource={dataSource.memberList} onChange={this.onChangePT}></Member>
+            <Member title={title} edit={memberIsEdit} dataSource={dataSource.memberList} onChange={this.onChangePT}></Member>
         </div>
     }
 }
