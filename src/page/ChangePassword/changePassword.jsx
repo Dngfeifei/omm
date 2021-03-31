@@ -14,8 +14,12 @@ const FormItem = Form.Item
 import { changepass } from '/api/login'
 // 引入css
 import "/assets/less/pages/resetPassword.css"
+import { connect } from 'react-redux';
 
-
+@connect(state => ({
+	loginStatus: state.global.loginStatus,
+}), dispath => ({
+}))
 
 class ChangePassword extends Component {
     constructor(props) {
@@ -25,7 +29,12 @@ class ChangePassword extends Component {
             showPasswordHelp:true,    // 用于定义 【新密码的提示信息】   
         }
     }
-
+    componentWillMount () {
+        console.log(this.props.loginStatus)
+        if(!this.props.loginStatus){
+            history.push('/')
+        }
+    }
     // 组件将要挂载完成后触发的函数
     componentDidMount(){
         

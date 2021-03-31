@@ -18,7 +18,7 @@ const handleRequest = (url, method, body = {}, json = false) => {
 		wholeUrl = url;
 	if (process.env.NODE_ENV == 'production') {
 		tokenName = `${process.env.ENV_NAME}_${tokenName}`
-		wholeUrl = url.split('/')[1] == 'static' ? `${url}` : `${process.env.API_URL}${url}`
+		wholeUrl = `${process.env.API_URL}${url}`
 	}
 	token = localStorage.getItem(tokenName) || '';
 
@@ -128,7 +128,7 @@ export default {
 			.then(handleResponse)
 	},
 	fetchPost(url, params = {}, json = false, times = 100000) { //post接口调用
-		return handleTimeout(url, 'POST', json ? params : handleParams(params), json, times)
+		return handleTimeout(url, 'POST',params, json, times)
 			.then(handleResponse)
 	},
 	fetchDelete(url, params = [], json = false, times = 100000) { //Delet接口
@@ -136,7 +136,7 @@ export default {
 			.then(handleResponse)
 	},
 	fetchPut(url, params = {}, json = false, times = 100000) { //put接口
-		return handleTimeout(url, 'PUT', json ? params : handleParams(params), json, times)
+		return handleTimeout(url, 'PUT', params, json, times)
 			.then(handleResponse)
 	},
 	fetchBlob(url, params = {}) { //get下载接口

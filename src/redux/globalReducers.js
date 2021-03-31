@@ -8,7 +8,8 @@ import {
 	SET_PANE_STATE,
 	SET_PANE_ACTIVEKEY,
 	GET_MENU_SUCCESS,
-	SET_WORKLIST
+	SET_WORKLIST,
+	SET_LOGINSTATUS
 } from './action'
 
 //redux状态管理原始配置数据
@@ -22,7 +23,8 @@ const globalDataStructure = {
 		key:null,
 		switch:false
 	},
-	collapsed:true
+	collapsed:true,
+	loginStatus:false
 }
 //redux状态管理action执行操作函数
 export const GlobalReducer = (state = globalDataStructure, action) => {
@@ -31,6 +33,8 @@ export const GlobalReducer = (state = globalDataStructure, action) => {
 		case TOGGLE: return Assign(state, { collapsed: !state.collapsed})//设置菜单面板隐藏收缩
 
 		case START_LOADING: return Assign(state, { loading: true }) //设置loading效果显示
+
+		case SET_LOGINSTATUS: return Assign(state, { loginStatus: action.data }) //设置是否为第一次登录
 
 		case CLOSE_LOADING: return Assign(state, { loading: false })//接口交互成功后取消loading显示
 
