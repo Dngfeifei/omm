@@ -5,9 +5,9 @@
 
 
 import React, { Component } from 'react'
-import { Input, Select, Table, Button, Radio, message, Row } from 'antd'
+import { Input, Select, Table, Button, Radio, message, Row, Modal } from 'antd'
 const { Option } = Select;
-
+const { confirm } = Modal;
 
 // 引入页面CSS
 import '@/assets/less/pages/servies.less'
@@ -15,12 +15,19 @@ import '@/assets/less/pages/servies.less'
 let rowCount = 0;
 
 class Contact extends Component {
+    // 设置默认props
+    static defaultProps = {
+        title: {},   // 当前服务区域名称
+        edit: true,  // 状态 是否可编辑
+        dataSource: {},  //客户联系人数据
+        onChange: () => { } //数据变化后 外部接受最新数据的方法
+    }
     constructor(props) {
         super(props)
         this.state = {
             // 表格数据
             dataSource: [],
-            // 表格配置项
+            // 表格配置项-可编辑
             columns: [
                 {
                     title: '服务区域',
@@ -29,7 +36,7 @@ class Contact extends Component {
                     width: "15%",
                     align: 'center',
                     render: (value, row, index) => {
-                        let content=<div dangerouslySetInnerHTML = {{__html:props.title}} ></div>
+                        let content = <div dangerouslySetInnerHTML={{ __html: props.title }} ></div>
                         const obj = {
                             children: content,
                             props: {},
@@ -59,7 +66,7 @@ class Contact extends Component {
                     width: "16%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Select  style={{ width: "100%" }} value={value} onSelect={this.onSelectContactType}>
+                        return <Select disabled={!props.edit} bordered={props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectContactType}>
                             <Option key={index} value={1}>职级主管</Option>
                             <Option key={index} value={2}>技术联系人</Option>
                         </Select>;
@@ -72,7 +79,7 @@ class Contact extends Component {
                     width: "16%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Input name={index} value={value} onChange={this.onChangeName} onBlur={this.onBlurName}></Input>;
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeName} onBlur={this.onBlurName}></Input>;
                     },
                 },
                 {
@@ -82,7 +89,7 @@ class Contact extends Component {
                     width: "20%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Input name={index} value={value} onChange={this.onChangeTel} onBlur={this.onBlurTel}></Input>;
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeTel} onBlur={this.onBlurTel}></Input>;
                     },
                 },
                 {
@@ -92,20 +99,90 @@ class Contact extends Component {
                     width: "26%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Input name={index} value={value} onChange={this.onChangeEmail} onBlur={this.onBlurEmail}></Input>;
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeEmail} onBlur={this.onBlurEmail}></Input>;
+                    },
+                },
+            ],
+            // 表格配置项-不可编辑
+            columns2: [
+                {
+                    title: '服务区域',
+                    dataIndex: 'area',
+                    key: 'area',
+                    width: "15%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        let content = <div dangerouslySetInnerHTML={{ __html: props.title }} ></div>
+                        const obj = {
+                            children: content,
+                            props: {},
+                        };
+                        if (index === 0) {
+                            obj.props.rowSpan = rowCount;
+                        }
+                        if (index > 0) {
+                            obj.props.rowSpan = 0;
+                        }
+                        return obj;
+                    },
+                },
+                {
+                    title: '联系人类型',
+                    dataIndex: 'type',
+                    key: 'type',
+                    width: "17%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectContactType}>
+                            <Option key={index} value={1}>职级主管</Option>
+                            <Option key={index} value={2}>技术联系人</Option>
+                        </Select>;
+                    },
+                },
+                {
+                    title: '姓名',
+                    dataIndex: 'name',
+                    key: 'name',
+                    width: "17%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeName} onBlur={this.onBlurName}></Input>;
+                    },
+                },
+                {
+                    title: '联系电话 ',
+                    dataIndex: 'mobile',
+                    key: 'mobile',
+                    width: "22%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeTel} onBlur={this.onBlurTel}></Input>;
+                    },
+                },
+                {
+                    title: '邮箱',
+                    dataIndex: 'email',
+                    key: 'email',
+                    width: "29%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeEmail} onBlur={this.onBlurEmail}></Input>;
                     },
                 },
             ],
             // 表格当前选中项
             current: null,
+            // 表单状态 是否可编辑
+            edit: true
         }
     }
     // 数据即将挂载
     componentWillMount() {
         let dataSource = Array.from(this.props.dataSource)
+        let { edit } = this.props
         rowCount = dataSource.length;
         this.setState({
-            dataSource
+            dataSource, edit
         })
     }
 
@@ -203,13 +280,23 @@ class Contact extends Component {
             message.warning("请选中后再进行删除操作！")
             return
         }
-        dataSource.splice(current, 1)
-        this.setState({
-            dataSource,
-            current: null
-        }, () => {
-            this.updateToparent()
-        })
+        let _this = this
+        confirm({
+            title: '删除',
+            content: '您确定要删除选中的数据吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                dataSource.splice(current, 1)
+                _this.setState({
+                    dataSource,
+                    current: null
+                }, () => {
+                    _this.updateToparent()
+                })
+            },
+        });
     }
     // 数据校验 字段为空返回false
     onCheck = (type = null) => {
@@ -284,16 +371,18 @@ class Contact extends Component {
         }
     }
     render = _ => {
-        let { dataSource, columns, current } = this.state
+        let { dataSource, columns, columns2, current, edit } = this.state
         return (
             <div className="commTop">
                 <div className="navTitle">客户技术联系人</div>
-                <Row gutter={24} style={{ textAlign: "right" }}>
-                    <Button style={{ marginRight: "10px" }} type="primary" onClick={this.addRow}>新增一行</Button>
-                    <Button style={{ marginRight: "10px" }} type="primary" onClick={this.delRow}>删除</Button>
-                </Row>
+                {
+                    edit ? <Row gutter={24} style={{ textAlign: "right" }}>
+                        <Button style={{ marginRight: "10px" }} type="primary" onClick={this.addRow}>新增一行</Button>
+                        <Button style={{ marginRight: "10px" }} type="primary" onClick={this.delRow}>删除</Button>
+                    </Row> : ""
+                }
                 <Radio.Group onChange={this.onChangeRadio} value={current} style={{ width: "100%" }}>
-                    <Table bordered dataSource={dataSource} columns={columns} pagination={false} rowKey={(record, i) => i} />
+                    <Table bordered dataSource={dataSource} columns={edit ? columns : columns2} pagination={false} rowKey={(record, i) => i} />
                 </Radio.Group>
 
             </div>

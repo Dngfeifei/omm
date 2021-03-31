@@ -5,9 +5,9 @@
 
 
 import React, { Component } from 'react'
-import { Input, Select, Table, Button, Radio, message, Row } from 'antd'
+import { Input, Select, Table, Button, Radio, message, Row, Modal } from 'antd'
 const { Option } = Select;
-
+const { confirm } = Modal;
 
 // 引入页面CSS
 import '@/assets/less/pages/servies.less'
@@ -19,7 +19,14 @@ let rowCount = 0;
 // 下拉框基础数据（产品类型-skillType,产品线- productLine）
 let baseData = { skillType: [], productLine: [], brand: [] }
 
-class Object extends Component {
+class ObjectEl extends Component {
+    // 设置默认props
+    static defaultProps = {
+        title: {},   // 当前服务区域名称
+        edit: true,  // 状态 是否可编辑
+        dataSource: {},  //服务对象数据数据
+        onChange: () => { } //数据变化后 外部接受最新数据的方法
+    }
     constructor(props) {
         super(props)
         this.state = {
@@ -29,7 +36,7 @@ class Object extends Component {
             dataSource: [],
             // 最新过滤后的产品线数组
             filterArr: [],
-            // 当前表格配置
+            // 当前表格配置-可编辑
             columns: [
                 {
                     title: '服务区域',
@@ -75,7 +82,7 @@ class Object extends Component {
                     width: "15%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Select style={{ width: "100%" }} value={value} onSelect={this.onSelectType}>
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectType}>
                             <Option value={""} index={index}>请选择</Option>
                             {
                                 baseData.skillType.length ? baseData.skillType.map((item) => {
@@ -104,7 +111,7 @@ class Object extends Component {
                                 return item.parentId == skillTypeID
                             })
                         }
-                        return <Select style={{ width: "100%" }} value={value} onSelect={this.onSelectBrand}>
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectBrand}>
                             <Option value={""} index={index}>请选择</Option>
                             {
                                 brandData.length ? brandData.map((item) => {
@@ -120,7 +127,7 @@ class Object extends Component {
                     width: "15%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Select style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
                             <Option value={""} index={index} >请选择</Option>
                             {this.state.filterArr[index] != undefined ? this.state.filterArr[index].map((item) => {
                                 return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
@@ -158,7 +165,7 @@ class Object extends Component {
                                 return "中低端"
                             }
                         } else if (levels.length >= 2) {
-                            return <Select style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
                                 <Option value={""} index={index} >请选择</Option>
                                 <Option value={"1"} index={index} >高端</Option>
                                 <Option value={"0"} index={index} >中低端</Option>
@@ -173,7 +180,7 @@ class Object extends Component {
                     width: "10%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Input name={index} value={value} onChange={this.onChangedeviceCount}></Input>;
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangedeviceCount}></Input>;
                     },
                 },
                 {
@@ -183,7 +190,157 @@ class Object extends Component {
                     width: "10%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Input name={index} value={value} onChange={this.onChangeoutsourceCount}></Input>;
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeoutsourceCount}></Input>;
+                    },
+                },
+            ],
+            // 当前表格配置-不可编辑
+            columns2: [
+                {
+                    title: '服务区域',
+                    dataIndex: 'area',
+                    key: 'area',
+                    width: "15%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        let content = <div dangerouslySetInnerHTML={{ __html: props.title }} ></div>
+                        const obj = {
+                            children: content,
+                            props: {},
+                        };
+                        if (index === 0) {
+                            obj.props.rowSpan = rowCount;
+                        }
+                        if (index > 0) {
+                            obj.props.rowSpan = 0;
+                        }
+                        return obj;
+                    },
+                },
+                {
+                    title: '序号',
+                    width: "7%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return index + 1
+                    },
+                },
+                {
+                    title: '产品类型',
+                    dataIndex: 'productType',
+                    key: 'productType',
+                    width: "16%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectType}>
+                            <Option value={""} index={index}>请选择</Option>
+                            {
+                                baseData.skillType.length ? baseData.skillType.map((item) => {
+                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
+                                }) : ""
+                            }
+                        </Select>;
+                    },
+                },
+                {
+                    title: '品牌',
+                    dataIndex: 'brand',
+                    key: 'brand',
+                    width: "13%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        let brandData = [];
+                        if (!row.productType == "") {
+                            let skillTypeID = ""
+                            baseData.skillType.map((item) => {
+                                if (item.code == row.productType) {
+                                    skillTypeID = item.id
+                                }
+                            });
+                            brandData = baseData.brand.filter((item) => {
+                                return item.parentId == skillTypeID
+                            })
+                        }
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectBrand}>
+                            <Option value={""} index={index}>请选择</Option>
+                            {
+                                brandData.length ? brandData.map((item) => {
+                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
+                                }) : ""
+                            }
+                        </Select>;
+                    },
+                },
+                {
+                    title: '产品线',
+                    dataIndex: 'productLine',
+                    width: "16%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
+                            <Option value={""} index={index} >请选择</Option>
+                            {this.state.filterArr[index] != undefined ? this.state.filterArr[index].map((item) => {
+                                return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
+                            }) : ""
+                            }
+                        </Select>;
+                    },
+                },
+                {
+                    title: '设备等级',
+                    dataIndex: 'deviceLevel',
+                    width: "11%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        // row.name==""?""
+                        let brandId = ""
+                        baseData.brand.map((item) => {
+                            if (item.code == row.brand) {
+                                brandId = item.id
+                            }
+                        });
+
+                        let levels = []
+                        baseData.productLine.map((item) => {
+                            if (item.name == row.productLineName && item.parentId == brandId) {
+                                levels.push(item.strValue1)
+                            }
+                        })
+                        if (levels.length == 0) {
+                            return ""
+                        } else if (levels.length == 1) {
+                            if (levels[0].toString() === "1") {
+                                return "高端"
+                            } else if (levels[0].toString() === "0") {
+                                return "中低端"
+                            }
+                        } else if (levels.length >= 2) {
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
+                                <Option value={""} index={index} >请选择</Option>
+                                <Option value={"1"} index={index} >高端</Option>
+                                <Option value={"0"} index={index} >中低端</Option>
+                            </Select>;
+                        }
+                    },
+                },
+                {
+                    title: '设备数量 ',
+                    dataIndex: 'deviceCount',
+                    key: 'deviceCount',
+                    width: "11%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangedeviceCount}></Input>;
+                    },
+                },
+                {
+                    title: '外包数量',
+                    dataIndex: 'outsourceCount',
+                    key: 'outsourceCount',
+                    width: "11%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeoutsourceCount}></Input>;
                     },
                 },
             ],
@@ -193,11 +350,11 @@ class Object extends Component {
     }
     // 数据即将挂载
     componentWillMount() {
-        this.getBaseData()
-        let { dataSource } = this.props
+        let dataSource = Array.from(this.props.dataSource)
+        let { edit } = this.props
         rowCount = dataSource.length;
         this.setState({
-            dataSource
+            dataSource, edit
         })
     }
 
@@ -416,13 +573,24 @@ class Object extends Component {
             message.warning("请选中后再进行删除操作！")
             return
         }
-        dataSource.splice(current, 1)
-        this.setState({
-            dataSource,
-            current: null
-        }, () => {
-            this.updateToparent()
-        })
+        let _this = this
+        confirm({
+            title: '删除',
+            content: '您确定要删除选中的数据吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                dataSource.splice(current, 1)
+                _this.setState({
+                    dataSource,
+                    current: null
+                }, () => {
+                    _this.updateToparent()
+                })
+            },
+        });
+
     }
     // 数据校验 字段为空返回false
     onCheck = () => {
@@ -466,19 +634,21 @@ class Object extends Component {
         }
     }
     render = _ => {
-        let { dataSource, columns, current } = this.state
+        let { dataSource, columns, columns2, current, edit } = this.state
         return (
             <div className="commTop">
                 <div className="navTitle">服务对象</div>
-                <Row gutter={24} style={{ textAlign: "right" }}>
-                    <Button style={{ marginRight: "10px" }} type="primary" onClick={this.addRow}>新增一行</Button>
-                    <Button style={{ marginRight: "10px" }} type="primary" onClick={this.delRow}>删除</Button>
-                </Row>
+                {
+                    edit ? <Row gutter={24} style={{ textAlign: "right" }}>
+                        <Button style={{ marginRight: "10px" }} type="primary" onClick={this.addRow}>新增一行</Button>
+                        <Button style={{ marginRight: "10px" }} type="primary" onClick={this.delRow}>删除</Button>
+                    </Row> : ""
+                }
                 <Radio.Group onChange={this.onChangeRadio} value={current} style={{ width: "100%" }}>
-                    <Table bordered dataSource={dataSource} columns={columns} pagination={false} rowKey={(record, i) => i} />
+                    <Table bordered dataSource={dataSource} columns={edit ? columns : columns2} pagination={false} rowKey={(record, i) => i} />
                 </Radio.Group>
             </div>
         )
     }
 }
-export default Object
+export default ObjectEl
