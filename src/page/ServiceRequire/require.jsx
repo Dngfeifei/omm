@@ -9,11 +9,24 @@ import { Button } from 'antd';
 const creatHistory = require("history").createHashHistory;
 const history = creatHistory();//返回上一页这段代码
 
-
+import { connect } from 'react-redux'
+import { REMOVE_PANE , ADD_PANE} from '/redux/action'
 
 // 引入服务需求表工单组件
-import SQT from '@/components/workorder/SQT/sqt.jsx'
-class selfSQT extends Component {
+import SQT from '@/components/workorder/SQT/SQT.jsx'
+
+
+@connect(state => ({
+	panes: state.global.panes,
+    activeKey: state.global.activeKey,
+}), dispath => ({
+    remove(key){dispath({type: REMOVE_PANE, key})},
+    add(pane) { dispath({type: ADD_PANE, data: pane})},
+}))
+
+
+
+class RequireSqt extends Component {
     // 设置默认props
     static defaultProps = {
 
@@ -26,28 +39,30 @@ class selfSQT extends Component {
         super(props)
         this.state = {
 
+
         }
     }
 
     // 服务需求表  ---- 提交按钮事件
     handleSubmit = () => {
         console.log('************       服务需求表  ---- 提交按钮事件        ***************')
-        if (this.ChildPage) {
-            this.ChildPage.dream('哈哈') //调用子组件的dream方法
-        }
+        
+         //调用组件进行通信
+         this.refs.getSwordButton.childMethod();
+         console.log(this.refs.getSwordButton.childMethod())
     }
 
     handleBack = () => {
-        // 返回登录页，重新登录
-        history.goBack();
+        this.props.remove(this.props.activeKey)
     }
+    
 
 
     render = _ => {
         return (
             <div className="service" style={{height:'100%', padding: '0 15px'}}>
-                {/*  把子组件的this指针挂载成父组件的一个变量 */}
-                <SQT onRef={c=>this.ChildPage=c}></SQT>
+                
+                <SQT ref="getSwordButton"></SQT>
                 {/* 提交按钮--区域 */}
                 <div className="btnContent" style={{textAlign:'right',marginTop:'10px'}}>
                     <Button type="primary" style={{ marginRight: '30px' }} onClick={this.handleSubmit}>提交</Button>
@@ -59,4 +74,4 @@ class selfSQT extends Component {
     }
 }
 
-export default selfSQT;
+export default RequireSqt;

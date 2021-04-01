@@ -233,7 +233,24 @@ class performance extends Component {
            this.state.fileList = this.state.PerformanceData.equipmentFileList;
 
             // 处理集成/备件销售项目（101、102）售后服务约定日期
-                
+            var obj = null ;
+            if (this.state.PerformanceData.afterSaleAgreement == '1' && this.state.PerformanceData.projectCycleType == '1' ) {
+                //  原厂服务--部分项目周期
+               obj = Object.assign({}, this.state.dateTime, { originalServiceParts_start: this.state.PerformanceData.cycleStart ,originalServiceParts_end:this.state.PerformanceData.cycleEnd});
+            } else if(this.state.PerformanceData.afterSaleAgreement == '1' && this.state.PerformanceData.projectCycleType == '2'){ 
+                //原厂服务--全部项目周期
+                obj = Object.assign({}, this.state.dateTime, { originalServiceAll_start: this.state.PerformanceData.cycleStart ,originalServiceAll_end:this.state.PerformanceData.cycleEnd});
+            }else if(this.state.PerformanceData.afterSaleAgreement == '2' && this.state.PerformanceData.projectCycleType == '2'){
+                // 我司服务--部分项目周期
+                obj = Object.assign({}, this.state.dateTime, { ourDriverParts_start: this.state.PerformanceData.cycleStart ,ourDriverParts_end:this.state.PerformanceData.cycleEnd});
+            }else if(this.state.PerformanceData.afterSaleAgreement == '2' && this.state.PerformanceData.projectCycleType == '2'){
+                // 我司服务--全部项目周期
+                obj = Object.assign({}, this.state.dateTime, { ourDriverAll_start: this.state.PerformanceData.cycleStart ,ourDriverAll_end:this.state.PerformanceData.cycleEnd});
+            }
+            this.setState({
+                dateTime: obj
+            })
+
         })
     }
 

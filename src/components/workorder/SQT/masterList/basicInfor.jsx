@@ -312,19 +312,26 @@ class basicInfor extends Component {
     }
 
     /**
-     *  自定义封装---用于一个对象给另一个对象赋值。
-     * params: 第一个对象取值 给 第二个对象赋值
-     */
-    format = (param1, param2) => {
-        Object.keys(param1).forEach(function (v) {
-            if (param1[v] != undefined && param1[v] != "") {
-                param2[v] = param1[v];
+       *  自定义封装---用于一个对象给另一个对象赋值。
+       * params: 第一个对象==赋值    第二个对象===取值 (意思就是：data给params赋值 返回的是params)
+       */
+    setInfo = (data, params) => {
+        var obj = {};
+        Object.keys(params).forEach(key => {
+            if (data[key]) {
+                obj[key] = data[key] || null;
             }
         });
-        return param2;
-    }
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                params[key] = obj[key]
+                //使用setsatte方法改变类中属性
+                var newData = Object.assign({}, params);
+            }
+        }
+        return newData
+    };
 
-    
 
     // 所有【select下拉框、input输入框】onchange事件
     handleChange = (element, value) => {
@@ -399,7 +406,7 @@ class basicInfor extends Component {
     }
     // 【项目选择器】点击确认之后，将对应的数据带入到基本信息中
     handleOk=(info)=>{
-        let newBasicInfor = this.format(info,this.state.basicInfor);
+        let newBasicInfor = this.setInfo(info,this.state.basicInfor);
         // 新增一项【项目id--projectId】
         newBasicInfor['projectId'] = info.id;
         

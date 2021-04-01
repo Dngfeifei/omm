@@ -5,7 +5,7 @@
 
 
 import React, { Component } from 'react'
-import { Button, Form} from 'antd'
+import { Button, Form } from 'antd'
 
 // 引入日期格式化
 import moment from 'moment'
@@ -25,118 +25,106 @@ class servies extends Component {
 
         this.state = {
 
-            basicInfor:{
-                workOrder:'',  //记录单号
-                companyName:'', //公司名称
-                writeTime:'', //填写时间
-                writeUserName:'',//填写人
-                writeDept:'', //填写部门
-                projectType:'', //项目类别
-                projectNumber:'',//项目号
-                projectName:'',//项目名称
-                serviceTypeName:'',//服务类别
-                custNum:'',//客户编码
-                custName:'',//客户名称
-                industry:'',//所属行业
-                custLevel:'',//客户级别
-                salesmanName:'',//项目销售
-                salesmanPhone:'',//销售联系方式
-                managerType:'',//项目经理类型
-                managerName:'',//项目经理
-                managerPhone:'',//项目经理联系方式
-                startDate:'',//项目开始日期
-                endDate:'',//项目结束日期
-                isRenewal:'1',// 是否续签项目,1是，0-否
-                renewalNumber:'',//续签项目号
-                renewalName:'',//续签项目名称
-                isSubcontract:'1',// 是否转包项目,1是，0-否
-                finalCustName:'',//最终客户名称
-                isLeagueBuild:'1',//是否有团建负责，1是，0否
-                leagueBuildName:'',//团建负责人
+            basicInfor: {
+                workOrder: '',  //记录单号
+                companyName: '', //公司名称
+                writeTime: '', //填写时间
+                writeUserName: '',//填写人
+                writeDept: '', //填写部门
+                projectType: '', //项目类别
+                projectNumber: '',//项目号
+                projectName: '',//项目名称
+                serviceTypeName: '',//服务类别
+                custNum: '',//客户编码
+                custName: '',//客户名称
+                industry: '',//所属行业
+                custLevel: '',//客户级别
+                salesmanName: '',//项目销售
+                salesmanPhone: '',//销售联系方式
+                managerType: '',//项目经理类型
+                managerName: '',//项目经理
+                managerPhone: '',//项目经理联系方式
+                startDate: '',//项目开始日期
+                endDate: '',//项目结束日期
+                isRenewal: '1',// 是否续签项目,1是，0-否
+                renewalNumber: '',//续签项目号
+                renewalName: '',//续签项目名称
+                isSubcontract: '1',// 是否转包项目,1是，0-否
+                finalCustName: '',//最终客户名称
+                isLeagueBuild: '1',//是否有团建负责，1是，0否
+                leagueBuildName: '',//团建负责人
             },
             // 【服务区域】的table表格数据
-            areaList:[{
-                id:1,
-
-                areaId:'1',
-                area:'',
-                address:'dsdasxdsa',
-                isMainDutyArea:'0'
-            },{
-                id:2,
-                areaId:'2',
-                area:'',
-                address:'dsdasxdsa',
-                isMainDutyArea:'0'
-            }],
+            areaList: [],
             // 【服务承诺】组件的所有数据
-            performancePledge:{
-                serviceMode:'',  // 服务方式
-                isReceiveReport:'',  // 是否提交验收报告1-是，0-否
-                longInspectionCycle:'',  //远程巡检周期
-                sceneInspectionCycle:'',      // 现场巡检周期
-                inspectionDesc:'', //巡检特殊说明
-                courseList:[{
+            performancePledge: {
+                serviceMode: '',  // 服务方式
+                isReceiveReport: '',  // 是否提交验收报告1-是，0-否
+                longInspectionCycle: '',  //远程巡检周期
+                sceneInspectionCycle: '',      // 现场巡检周期
+                inspectionDesc: '', //巡检特殊说明
+                courseList: [{
                     id: 1,
                     trainMode: 'online',  // 默认字段是 1-线上 0-线下
                     trainTeachers: '1',    // 培训师资
                     courseDirection: "",   // 课程方向
                     trainCourse: "", // 培训课程
-                    oursePersonTimes:"",  // 培训人次
+                    oursePersonTimes: "",  // 培训人次
                 }],
-                isFirstInspection:'0', // 是否需要提供首次巡检服务，1-是，0-否
-                onsiteService:'',   // 项目是否约定驻场服务
-                peopleNum:'1', //人数
-                specialDesc:'', //特殊说明
-                isCollectConfig:'0', // 是否收集相关配置信息，1-是，0-否
-                notCollectReason:'',    // 不收集配置信息原因说明
-                serviceReportCycle:'', // 服务报告提交周期
-                serviceListRequire:'', // 服务单要求
-                partsList:'',//合同承诺备机备件清单
-                sparePartsTime:'',// 合同承诺备机备件到库时间
-                isOutsource:'0',// 是否有外包情况（1-是，0-否，2-部分）
-                outsourcer:'', //外包商
-                sparePartsFileList:[],// 合同承诺备机备件清单
-                equipmentFileList:[], // 上传外包合同设备清单附件
-                afterSaleAgreement:'1', // 集成/备件销售项目（101、102）售后服务约定 1-原厂服务，2-我司服务
-                projectCycleType:'1',// 项目周期类型，1-部分项目周期，2-全部项目周期
-                cycleStart:'',  // 周期开始日期
-                cycleEnd:'', // 周期结束日期
-                otherPromise:'', //其他重要承诺及要求
-                slaList:[]
+                isFirstInspection: '0', // 是否需要提供首次巡检服务，1-是，0-否
+                onsiteService: '',   // 项目是否约定驻场服务
+                peopleNum: '1', //人数
+                specialDesc: '', //特殊说明
+                isCollectConfig: '0', // 是否收集相关配置信息，1-是，0-否
+                notCollectReason: '',    // 不收集配置信息原因说明
+                serviceReportCycle: '', // 服务报告提交周期
+                serviceListRequire: '', // 服务单要求
+                partsList: '',//合同承诺备机备件清单
+                sparePartsTime: '',// 合同承诺备机备件到库时间
+                isOutsource: '0',// 是否有外包情况（1-是，0-否，2-部分）
+                outsourcer: '', //外包商
+                sparePartsFileList: [],// 合同承诺备机备件清单
+                equipmentFileList: [], // 上传外包合同设备清单附件
+                afterSaleAgreement: '1', // 集成/备件销售项目（101、102）售后服务约定 1-原厂服务，2-我司服务
+                projectCycleType: '1',// 项目周期类型，1-部分项目周期，2-全部项目周期
+                cycleStart: '',  // 周期开始日期
+                cycleEnd: '', // 周期结束日期
+                otherPromise: '', //其他重要承诺及要求
+                slaList: []
 
-               
-                
+
+
             },
             // 判断 是否是从【自行创建服务计划表】的情况下进入；
-            isSelfCreation:false,
+            isSelfCreation: false,
+
+
         }
     }
 
     componentWillMount() {
-        
-        // 判断 是否是从【自行创建服务计划表】的情况下进入；
+
+        // 判断 是否是从【自行创建服务计划表】的情况下进入；true代表是  
         this.setState({
-            // isSelfCreation: this.props.params ? this.props.params.dataType.isSelfCreation : false
-            isSelfCreation:true
+            isSelfCreation: this.props.params ? this.props.params.dataType.isSelfCreation : true
         })
-      
+
 
         // 先判断paramsObj是否有数据
-        var arr = Object.keys(this.props.paramsObj ? this.props.paramsObj :{});
+        var arr = Object.keys(this.props.paramsObj ? this.props.paramsObj : {});
 
-        if (arr.length != 0) {  //true
-            
+        if (arr.length != 0) { //false
+
 
             // 进行【基本信息、服务区域、服务承诺】页面组件的赋值
-            let basicInfor = this.format( this.props.paramsObj,this.state.basicInfor);
+            let basicInfor = this.setInfo(this.props.paramsObj, this.state.basicInfor);
             let areaList = this.props.paramsObj.areaList;
-            let performancePledge = this.format(this.props.paramsObj,this.state.performancePledge);
-            
-            
-            
+            let performancePledge = this.setInfo(this.props.paramsObj, this.state.performancePledge);
+
+
+
             // 将【服务承诺】中附件数据加上uid 事件处理
-           
+
             let ContractFileList = performancePledge.sparePartsFileList;    // 合同承诺备机备件清单---已上传附件信息数据
             let FileList = performancePledge.equipmentFileList;  //上传外包合同设备清单附件---已上传附件信息数据
 
@@ -153,76 +141,105 @@ class servies extends Component {
                 return { uid: number, name: item.fileName, status: 'done', url: item.fileUrl }
             }) : [...FileList]
 
-            let data = Object.assign({}, performancePledge, { sparePartsFileList: ContractFileList, equipmentFileList:FileList});
+            let data = Object.assign({}, performancePledge, { sparePartsFileList: ContractFileList, equipmentFileList: FileList });
+
+
+            // 先进行key值和serviceAreaNew；因为在编辑操作会使用到
+
+            for (let index = 0; index < areaList.length; index++) {
+                const element = areaList[index];
+                element.key = index + 1;
+                element.serviceAreaNew = (element.area).split('/');
+                // 首先通过判断【是否是主责区域】，再去修改area属性(将数组修改为字符串)
+                if (element.isMainDutyArea == '1') {
+                    element.area = element.area + '<span style="color:red">【主责区域】</span>'
+                }
+            }
 
             this.setState({
                 basicInfor,
                 areaList,
-                performancePledge:data
+                performancePledge: data
             })
 
-           
+
         }
 
     }
 
 
-   
+
     /**
     *  自定义封装---用于一个对象给另一个对象赋值。
-    * params: 第一个对象取值 给 第二个对象赋值
+    * params: 第一个对象==赋值    第二个对象===取值 (意思就是：data给params赋值 返回的是params)
     */
-    format = (param1, param2) => {
-        Object.keys(param1).forEach(function (v) {
-            if (param1[v] != undefined && param1[v] != "") {
-                param2[v] = param1[v];
+    setInfo = (data, params) => {
+        var obj = {};
+        Object.keys(params).forEach(key => {
+            if (data[key]) {
+                obj[key] = data[key] || null;
             }
         });
-        return param2;
-    }
-
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                params[key] = obj[key]
+                //使用setsatte方法改变类中属性
+                var newData = Object.assign({}, params);
+            }
+        }
+        return newData
+    };
 
     //  接收到【基本信息】子组件返回的数据  
-    getChildrenInfo=(info)=>{
-        console.log('---------------     接收到【基本信息】子组件返回的数据      ---------------------')
-        console.log(info)
+    getChildrenInfo = (info) => {
         this.setState({
-            basicInfor:info
+            basicInfor: info
+        }, () => {
+            // 向父组件【SQT页面】传递数据
+            let {basicInfor,areaList,performancePledge}=this.state
+            let result=Object.assign({},basicInfor,performancePledge,{areaList})
+            this.props.onChangeData(result);
         })
     }
 
 
     //  接收到【服务区域】子组件返回的数据  
-    getAreaChildren=(info)=>{
-        console.log('---------------      接收到【服务区域】子组件返回的数据       ---------------------')
-        console.log(info)
+    getAreaChildren = (info) => {
         this.setState({
-            areaList:info
+            areaList: info
+        }, () => {
+             // 向父组件【SQT页面】传递数据
+             let {basicInfor,areaList,performancePledge}=this.state
+             let result=Object.assign({},basicInfor,performancePledge,{areaList})
+             this.props.onChangeData(result);
         })
     }
 
     //  接收到【服务承诺】子组件返回的数据  
     getChildrenData = (info) => {
-        console.log('---------------      接收到【服务承诺】子组件返回的数据       ---------------------')
-        console.log(info)
         this.setState({
             performancePledge: info
+        }, () => {
+          // 向父组件【SQT页面】传递数据
+          let {basicInfor,areaList,performancePledge}=this.state
+          let result=Object.assign({},basicInfor,performancePledge,{areaList})
+          this.props.onChangeData(result);
         })
     }
 
 
-     //  接收到【基本信息】子组件中【选择器】返回的数据  
-     onGetChangeSelect=(data)=>{
-       // 当选择器中的数据有返回时，将【服务区域、服务承诺】组件中需要带入的数据进行带入
-       let newPerformance = this.format(data,this.state.performancePledge);
+    //  接收到【基本信息】子组件中【选择器】返回的数据  
+    onGetChangeSelect = (data) => {
+        // 当选择器中的数据有返回时，将【服务区域、服务承诺】组件中需要带入的数据进行带入
+        let newPerformance = this.setInfo(data, this.state.performancePledge);
 
         this.setState({
-            performancePledge:newPerformance,
-            areaList:data.areaList
+            performancePledge: newPerformance,
+            areaList: data.areaList
         })
     }
 
-    
+
     render = _ => {
         return (
             <div className="ServiesContent">
@@ -244,7 +261,7 @@ class servies extends Component {
                     <div className="navTitle">服务承诺</div>
                     <PerformancePledge data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
-                
+
             </div>
         )
     }
