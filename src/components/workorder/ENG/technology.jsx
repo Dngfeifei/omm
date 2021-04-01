@@ -226,13 +226,13 @@ class People extends Component {
         }
         cases.splice(e, 1);
         this.setState({
-            cases:[]
-        },()=>{
+            cases: []
+        }, () => {
             this.setState({
                 cases
             })
         })
-       
+
     }
     // 案例 客户名称获取方法
     onChangeCase = (e) => {
@@ -268,7 +268,7 @@ class People extends Component {
     //获取富文本数据
     getContent = (content, key) => {
         let cases = this.state.cases;
-        console.log(cases,key,cases[key],cases[key])
+        console.log(cases, key, cases[key], cases[key])
         cases[key].caseDesc = content;
         this.setState({
             cases
@@ -294,14 +294,14 @@ class People extends Component {
     // 提交专业能力数据
     onSubmit = () => {
         let { skillTypeCode, brandCode, productLineCodes, productLineLevelCode, proableLevel, serviceItemCodes, cases } = this.state;
-        let newCase=[]
+        let newCase = []
         for (var i = 0; i < cases.length; i++) {
             let { custName, productLineCode, serviceItemCode, caseDesc } = cases[i];
             console.log(nullCheck(custName), "null")
             if (nullCheck(custName) && nullCheck(productLineCode) && nullCheck(serviceItemCode) && nullCheck(caseDesc)) {
                 // cases.splice(i, 1)
             } else {
-                newCase.push({ custName, productLineCode, serviceItemCode, caseDesc }) 
+                newCase.push({ custName, productLineCode, serviceItemCode, caseDesc })
             }
         }
         let allData = { skillTypeCode, brandCode, productLineCodes, productLineLevelCode, proableLevel, serviceItemCodes }
@@ -311,7 +311,7 @@ class People extends Component {
             message.error("所有表单项均为必填项，请填写完整后再提交!")
             return
         }
-        let params = Object.assign({}, this.state,{cases:newCase})
+        let params = Object.assign({}, this.state, { cases: newCase })
         // 专业能力数据提交
         PostAssessProable(params).then((res) => {
             if (res.success != 1) {
@@ -430,7 +430,7 @@ class People extends Component {
                         <Card style={{ marginBottom: "30px" }}>
                             <div className="formRow">
                                 <div className="formCol">
-                                    <span className="formKey">技术类别：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <span className="formKey  ant-form-item-required">技术类别：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                     <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.skillTypeCode} onSelect={this.onSelect1}
                                         showSearch
                                         optionFilterProp="children"
@@ -446,7 +446,7 @@ class People extends Component {
                                     </Select>
                                 </div>
                                 <div className="formCol">
-                                    <span className="formKey"> 品牌：</span>
+                                    <span className="formKey  ant-form-item-required">品牌：</span>
                                     <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.brandCode} onSelect={this.onSelect2}
                                         showSearch
                                         optionFilterProp="children"
@@ -464,7 +464,7 @@ class People extends Component {
                                     </Select>
                                 </div>
                                 <div className="formCol">
-                                    <span className="formKey"> 产品线级别：</span>
+                                    <span className="formKey ant-form-item-required">产品线级别：</span>
                                     <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.productLineLevelCode} onSelect={this.onSelect3}>
                                         <Option value="">请选择</Option>
                                         <Option value="1">高端</Option>
@@ -498,7 +498,7 @@ class People extends Component {
 
                             <div className="formRow">
                                 <div className="formCol">
-                                    <span className="formKey"> 专业能力级别：</span>
+                                    <span className="formKey ant-form-item-required">专业能力级别：</span>
                                     <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.proableLevel} onSelect={this.onSelect5}>
                                         <Option value="">请选择</Option>
                                         {
@@ -514,7 +514,7 @@ class People extends Component {
                             {
                                 !this.state.proableLevel ? "" : < div className="formRow">
                                     <div className="formCol">
-                                        <span className="formKey"> 专业能力项：</span>
+                                        <span className="formKey ant-form-item-required">专业能力项：</span>
                                         {type != "see" ? <TreeParant className="formVal" treeData={filterTree(serviceClass)}
                                             expandedKeys={(() => {
                                                 let arr = []

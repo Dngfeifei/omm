@@ -497,7 +497,7 @@ class ENG extends Component {
                                     <div className="val">{info.deptName}</div>
                                 </div>
                                 <div className="column">
-                                    <div className="key">经验</div>
+                                    <div className="key ant-form-item-required">工作经验</div>
                                     <div className="val" style={{ padding: "0 10px" }}>
                                         <Select disabled={!readOnly ? false : true} value={info.experienceCode} style={{ width: "100%" }} bordered={false} onSelect={this.onSelect1}>
                                             <Option value="">请选择</Option>
@@ -513,7 +513,7 @@ class ENG extends Component {
                             </div>
                             <div className="row">
                                 <div className="column2">
-                                    <div className="key">沟通能力</div>
+                                    <div className="key ant-form-item-required">沟通能力</div>
                                     <div className="val" style={{ padding: "0 10px" }}>
                                         <Select disabled={!readOnly ? false : true} value={info.commskillsCode} bordered={false} style={{ width: "100%" }} onSelect={this.onSelect2}>
                                             <Option value="">请选择</Option>
@@ -526,7 +526,7 @@ class ENG extends Component {
                                     </div>
                                 </div>
                                 <div className="column">
-                                    <div className="key">文档编辑能力</div>
+                                    <div className="key ant-form-item-required">文档编写能力</div>
                                     <div className="val" style={{ padding: "0 10px" }}>
                                         <Select disabled={!readOnly ? false : true} value={info.docskillsCode} bordered={false} style={{ width: "100%" }} onSelect={this.onSelect3}>
                                             <Option value="">请选择</Option>
