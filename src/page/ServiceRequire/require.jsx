@@ -12,7 +12,7 @@ const history = creatHistory();//返回上一页这段代码
 
 
 // 引入服务需求表工单组件
-import SQT from '@/components/workorder/SQT/Sqt.jsx'
+import SQT from '@/components/workorder/SQT/sqt.jsx'
 class selfSQT extends Component {
     // 设置默认props
     static defaultProps = {
