@@ -286,7 +286,9 @@ class formSearch extends Component {
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }],
             // 工作经验及软技能
-            WorkExperience:{},
+            WorkExperience:{
+                certs:[]
+            },
             // 详情页面接口中的userId
             userId:"",
 
@@ -394,11 +396,16 @@ class formSearch extends Component {
     //通过form.setFieldsValue将数据绑定到各个Form表单控件上，这里定义了返显的方法。
     setBaseInfo = (data) => {
         const { form } = this.props;
+        console.log(data)
+        console.log('***********    通过form.setFieldsValue将数据绑定到各个Form表单控件上，这里定义了返显的方法。    form.getFieldsValue()        ***************')
+        console.log(form.getFieldsValue())
         Object.keys(form.getFieldsValue()).forEach(key => {
             const obj = {};
             if (data[key]) {
                 obj[key] = data[key] || null;
             }
+            console.log('------------      合并处理后的 obj         -------------')
+            console.log(obj)
             form.setFieldsValue(obj);
         });
     };
@@ -431,16 +438,15 @@ class formSearch extends Component {
 
         const { h , WorkExperience} = this.state;
         
-
-        let highCert = WorkExperience.certs.filter((item) => {
+        let highCert = WorkExperience.hasOwnProperty("certs") ? WorkExperience.certs.filter((item) => {
             return item.certLevel == "高级"
-        })
-        let middleCert = WorkExperience.certs.filter((item) => {
+        }) : [];
+        let middleCert = WorkExperience.hasOwnProperty("certs") ? WorkExperience.certs.filter((item) => {
             return item.certLevel == "中级"
-        })
-        let elementaryCert = WorkExperience.certs.filter((item) => {
+        }) : [];
+        let elementaryCert = WorkExperience.hasOwnProperty("certs") ? WorkExperience.certs.filter((item) => {
             return item.certLevel == "初级"
-        })
+        }) : [];
 
         return (
             <div className="CustomerInforContent" style={{display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>

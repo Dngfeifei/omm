@@ -74,11 +74,11 @@ class Login extends Component {
 							
 							if (user.firstLogin) {
 								// 跳转到【首次修改密码】页面  
-								hashHistory.push('/ChangePassForm')
 								this.props.setLogin(true)
+								hashHistory.push('/ChangePassForm')
 							}else {
-								hashHistory.push('/')
 								this.props.setLogin(false)
+								hashHistory.push('/')
 							}
 							
 						}else {

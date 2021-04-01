@@ -1,5 +1,5 @@
 .ServiesContent {
-    padding: 14px 20px;
+    padding: 0px 20px;
     .ant-descriptions {
         .ant-descriptions-view {
             .ant-descriptions-row{
@@ -41,6 +41,66 @@
                     top: 12px;
                 }
             }
+        }
+    }
+}
+
+
+// 服务需求表--主表样式
+.SqtContent {
+    height: 94%;
+    overflow-y: auto;
+   .ant-tabs-nav .ant-tabs-tab {
+        font-size: 20px;
+        font-weight: bold;
+        position: relative;
+    }
+    .ant-tabs-tab::before  {
+        content: ' ';
+        display: block;
+        left: 3px;
+        top: 16px;
+        bottom: 10px;
+        width: 4px;
+        background: #797979;
+        position: absolute;
+        height: 23px;
+    }
+    .ant-tabs-tab-active {
+        color: #02A7F0;
+        font-weight: bolder !important;
+    }
+    .ant-tabs-tab-active::before {
+        content: ' ';
+        display: block;
+        left: 3px;
+        top: 16px;
+        bottom: 10px;
+        width: 4px;
+        background: #02A7F0;
+        position: absolute;
+        height: 23px;
+    }
+   
+    .ant-tabs-nav .ant-tabs-ink-bar {
+        display: none !important;
+    }
+    .btnContent {
+        text-align: right;
+    }
+    // 必填样式
+
+    .mustFill {
+        .ant-tabs-tab::before {
+            content: '*';
+            display: block;
+            left: 3px;
+            top: 16px;
+            bottom: 10px;
+            width: 4px;
+            background: #797979;
+            position: absolute;
+            height: 23px;
         }
     }
 }

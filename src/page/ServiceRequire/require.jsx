@@ -1,0 +1,77 @@
+/***
+ * 信息管理---服务需求表
+ * @author jxl
+ */
+
+
+import React , {Component} from 'react'
+import { Button } from 'antd';
+const creatHistory = require("history").createHashHistory;
+const history = creatHistory();//返回上一页这段代码
+
+import { connect } from 'react-redux'
+import { REMOVE_PANE , ADD_PANE} from '/redux/action'
+
+// 引入服务需求表工单组件
+import SQT from '@/components/workorder/SQT/SQT.jsx'
+
+
+@connect(state => ({
+	panes: state.global.panes,
+    activeKey: state.global.activeKey,
+}), dispath => ({
+    remove(key){dispath({type: REMOVE_PANE, key})},
+    add(pane) { dispath({type: ADD_PANE, data: pane})},
+}))
+
+
+
+class RequireSqt extends Component {
+    // 设置默认props
+    static defaultProps = {
+
+    }
+    // 组件将要挂载前触发的函数
+    async componentWillMount() {
+
+    }
+    constructor(props) {
+        super(props)
+        this.state = {
+
+
+        }
+    }
+
+    // 服务需求表  ---- 提交按钮事件
+    handleSubmit = () => {
+        console.log('************       服务需求表  ---- 提交按钮事件        ***************')
+        
+         //调用组件进行通信
+         this.refs.getSwordButton.childMethod();
+         console.log(this.refs.getSwordButton.childMethod())
+    }
+
+    handleBack = () => {
+        this.props.remove(this.props.activeKey)
+    }
+    
+
+
+    render = _ => {
+        return (
+            <div className="service" style={{height:'100%', padding: '0 15px'}}>
+                
+                <SQT ref="getSwordButton"></SQT>
+                {/* 提交按钮--区域 */}
+                <div className="btnContent" style={{textAlign:'right',marginTop:'10px'}}>
+                    <Button type="primary" style={{ marginRight: '30px' }} onClick={this.handleSubmit}>提交</Button>
+                    <Button onClick={this.handleBack}>返回</Button>
+                </div>
+            </div>
+
+        )
+    }
+}
+
+export default RequireSqt;

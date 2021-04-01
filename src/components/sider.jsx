@@ -7,7 +7,7 @@ import { ADD_PANE, GET_MENU ,TOGGLE} from '/redux/action'
 import {getPost} from '@/api/global.js'
 
 const MyIcon = Icon.createFromIconfontCN({
-	scriptUrl: '//at.alicdn.com/t/font_2410657_6wyd1gyezqb.js', // 在 iconfont.cn 上生成
+	scriptUrl: '//at.alicdn.com/t/font_2410657_lro68z0supn.js', // 在 iconfont.cn 上生成
 });
 //创建一个缩放控制组件
 function Trigger (props){
@@ -82,7 +82,7 @@ class DSider extends Component{
 		}else if(val.id == 85){
 			MyIco = () => (<MyIcon type="iconxitongpeizhi1" />)
 		}else if(val.id == 135){
-			MyIco = () => (<MyIcon type="iconxinxiguanli1" />)
+			icon="unordered-list"
 		}else if(val.id == 140){
 			icon = 'file-text'
 		}

@@ -3,19 +3,19 @@ import { Modal, Input, Form, Row, Button, message, Card, Tree, Table } from 'ant
 import { GetRoleGroup, GetRoleData, RelationRole, UnRelationRole } from '/api/post'
 import Pagination from '/components/pagination'
 const assignment = (data) => {
-    data.forEach((list, i) => {
-        list.key = list.id;
-        if (list.hasOwnProperty("roleCategoryName")) {
-            list.title = list.roleCategoryName;
-        } 
-        if (list.hasOwnProperty("children")) {
-            if (list.children.length > 0) {
-                assignment(list.children)
-            }
-        } else {
-            return
-        }
-    });
+	data.forEach((list, i) => {
+		list.key = list.id;
+		if (list.hasOwnProperty("roleCategoryName")) {
+			list.title = list.roleCategoryName;
+		}
+		if (list.hasOwnProperty("children")) {
+			if (list.children.length > 0) {
+				assignment(list.children)
+			}
+		} else {
+			return
+		}
+	});
 }
 class People extends Component {
 	async componentWillMount() {
@@ -68,7 +68,7 @@ class People extends Component {
 			{
 				title: '角色名称',
 				dataIndex: 'roleName',
-				align:"center"
+				align: "center"
 			},
 		],
 		// 当前机构id
@@ -124,17 +124,17 @@ class People extends Component {
 			unrelRabSelecteds: selectedRowKeys[0]
 		})
 	};
-	 //点击行选中选框
-	 onRow = (record) => {
-        return {
-            onClick: () => {
+	//点击行选中选框
+	onRow = (record) => {
+		return {
+			onClick: () => {
 				// let selectedKeys = [record.id], selectedItems = [record];
-                this.setState({
-                    unrelRabSelecteds: record.id,
-                })
-            }
-        }
-    }
+				this.setState({
+					unrelRabSelecteds: record.id,
+				})
+			}
+		}
+	}
 	// 已关联表格选中后
 	onRelTabSelect = selectedRowKeys => {
 		//获取table选中项
@@ -144,7 +144,7 @@ class People extends Component {
 	};
 	// 通过用户名请求机构用户数据
 	searchUserByName = _ => {
-		let params = { roleName: this.state.searchUserName, roleCategoryId: this.state.currentroleCategoryId }
+		let params = { roleName: this.state.searchUserName, roleCategoryId: this.state.currentroleCategoryId, offset: 0 }
 		this.searchUser(params)
 	}
 	//请求机构用户数据
@@ -162,7 +162,7 @@ class People extends Component {
 					limit: res.data.size,
 					offset: (res.data.current - 1) * res.data.size
 				}
-				this.setState({ unRelationTable: res.data.records, pagination: pagination, pageConf: pageConf,unrelRabSelecteds:""})
+				this.setState({ unRelationTable: res.data.records, pagination: pagination, pageConf: pageConf, unrelRabSelecteds: "" })
 			} else {
 				message.error("请求失败,请重试！")
 			}
@@ -194,13 +194,13 @@ class People extends Component {
 		UnRelationRole(params).then(res => {
 			if (res.success == 1) {
 				this.getUsers({ positionId: this.state.positionId })
-				this.setState({relationTable:[],relRabSelecteds:[]})
+				this.setState({ relationTable: [], relRabSelecteds: [] })
 			}
 		})
 	}
 	// 请求已关联岗位人员数据
 	getUsers = (params = {}) => {
-		let param = Object.assign({}, this.state.pageConf2, {positionId:this.state.positionId},params)
+		let param = Object.assign({}, this.state.pageConf2, { positionId: this.state.positionId }, params)
 		GetRoleData(param).then(res => {
 			if (res.success == 1) {
 				// 分页参数
@@ -215,8 +215,8 @@ class People extends Component {
 				}
 				this.setState({
 					relationTable: res.data.records,
-					pagination2:pagination,
-					pageConf2:pageConf
+					pagination2: pagination,
+					pageConf2: pageConf
 				})
 			}
 		})
@@ -250,7 +250,7 @@ class People extends Component {
 	render = _ => {
 		return <div>
 			<Modal title="关联角色"
-                destroyOnClose={true}              
+				destroyOnClose={true}
 				visible={this.props.windowData.visible}
 				onCancel={this.props.done}
 				width={1000}
@@ -281,16 +281,16 @@ class People extends Component {
 								onClick={this.relationPost}
 								type="primary">关联</Button>
 						</Row>
-						<Table style={{height:"180px"}} size="small"  scroll={{y: 140 }} bordered rowSelection={{ onChange: this.onUnRelTabSelect, type: "radio",selectedRowKeys: [this.state.unrelRabSelecteds] }}  onRow={this.onRow} columns={this.state.allTableColumns} dataSource={this.state.unRelationTable}  pagination={false} rowKey="id" />
+						<Table style={{ height: "180px" }} size="small" scroll={{ y: 140 }} bordered rowSelection={{ onChange: this.onUnRelTabSelect, type: "radio", selectedRowKeys: [this.state.unrelRabSelecteds] }} onRow={this.onRow} columns={this.state.allTableColumns} dataSource={this.state.unRelationTable} pagination={false} rowKey="id" />
 						<Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
 					</Card>
 				</div>
 				<div>
 					<Card size="small" title="已关联角色" style={{ marginTop: "20px", height: "360px" }} extra={<Button
-								style={{ float: "right" }}
-								onClick={this.unRelationPost}
-								type="primary">取消关联</Button>}>
-						<Table bordered   style={{height:"240px"}} size="small"  scroll={{y: 200 }}  rowSelection={{ onChange: this.onRelTabSelect }} columns={this.state.allTableColumns} dataSource={this.state.relationTable}  pagination={false} rowKey="id" />
+						style={{ float: "right" }}
+						onClick={this.unRelationPost}
+						type="primary">取消关联</Button>}>
+						<Table bordered style={{ height: "240px" }} size="small" scroll={{ y: 200 }} rowSelection={{ onChange: this.onRelTabSelect }} columns={this.state.allTableColumns} dataSource={this.state.relationTable} pagination={false} rowKey="id" />
 						<Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} />
 					</Card>
 				</div>
