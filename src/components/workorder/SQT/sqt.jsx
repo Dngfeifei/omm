@@ -18,7 +18,7 @@ import '@/assets/less/pages/servies.less'
 import ServicesMain from '/components/workorder/SQT/masterList/ServiceRequire.jsx'
 // 引入 接口
 import { SqtBaseDetail, } from '/api/serviceMain.js'
-
+import  ServiceArea from './serviceArea/serviceArea'
 
 
 class Sqt extends Component {
@@ -29,12 +29,16 @@ class Sqt extends Component {
             tabsList:[{
                 name:'主表信息'
             }],
-
+            datasources:[],
+            tabsListF:[],
             paramsObj:{
                 
             }
         }
     }
+    async componentWillMount () {
+        
+	}
 
     /**
     *  自定义封装---用于一个对象给另一个对象赋值。
@@ -90,7 +94,10 @@ class Sqt extends Component {
     childMethod=()=>{
         return this.state.paramsObj       
     }
+    //接受附表验证信息函数
+    getChildrenVildter = () => {
 
+    }
 
     render = _ => {
         return (
@@ -102,6 +109,14 @@ class Sqt extends Component {
                            <ServicesMain paramsObj={this.state.paramsObj} onChangeData={this.getChildrenData}></ServicesMain>
                         </TabPane>
                     ))}
+                    {
+                        this.state.tabsListF.map((item,index) => (
+                            <TabPane tab={item.name} key={index}>
+                                {/* 主表--组件  */}
+                               <ServiceArea dataSource={this.state.datasources} onChange={this.getChildrenData} type="" power=""></ServiceArea>
+                            </TabPane>
+                        ))
+                    }
                 </Tabs>
             </div>
         )
