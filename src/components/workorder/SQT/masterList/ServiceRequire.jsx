@@ -26,7 +26,7 @@ class servies extends Component {
         this.state = {
 
             basicInfor: {
-                workOrder: '',  //记录单号
+                orderNum: '',  //记录单号
                 companyName: '', //公司名称
                 writeTime: '', //填写时间
                 writeUserName: '',//填写人
@@ -96,20 +96,29 @@ class servies extends Component {
 
             },
             // 判断 是否是从【自行创建服务计划表】的情况下进入；
-            isSelfCreation: false,
-
+            isSelfCreation: true,
+            isEdit:false //默认所有权限为可编辑
 
         }
     }
 
     componentWillMount() {
-
+        let {power} = this.props;
+        let {isEdit} = this.state;
         // 判断 是否是从【自行创建服务计划表】的情况下进入；true代表是  
-        this.setState({
-            isSelfCreation: this.props.params ? this.props.params.dataType.isSelfCreation : true
-        })
-
-
+        // this.setState({
+        //     isSelfCreation: this.props.params ? this.props.params.dataType.isSelfCreation : true
+        // })
+        //判断工作流
+        if (power.formRead == 1) {
+            // 若为1 所有页面可编辑
+            if (power.masterList && power.masterList.isEdit) {
+                isEdit = power.masterList.isEdit;
+            }
+        } else if(power.formRead == 2){
+            // 若为2 所有只读
+            isEdit = false;
+        }
         // 先判断paramsObj是否有数据
         var arr = Object.keys(this.props.paramsObj ? this.props.paramsObj : {});
 
@@ -159,7 +168,9 @@ class servies extends Component {
             this.setState({
                 basicInfor,
                 areaList,
-                performancePledge: data
+                performancePledge: data,
+                isEdit,
+                isSelfCreation: this.props.config.sign ? false : true
             })
 
 
@@ -184,16 +195,30 @@ class servies extends Component {
             if (obj.hasOwnProperty(key)) {
                 params[key] = obj[key]
                 //使用setsatte方法改变类中属性
-                var newData = Object.assign({}, params);
             }
         }
+        var newData = Object.assign({}, params);
         return newData
     };
 
     //  接收到【基本信息】子组件返回的数据  
     getChildrenInfo = (info) => {
+        //@author gl
+        let {basicInfor,performancePledge}=this.state
+        if(info.serviceTypeName !=basicInfor.serviceTypeName){
+            if((this.props.power.masterList == 1 || this.props.power.masterList == 3 || !this.props.power.masterList )){
+                if(info.serviceTypeName == '支持与维护服务' || info.serviceTypeName == '软件支持与维护服务'){
+                   performancePledge = {...performancePledge,isFirstInspection:'1'};
+                }else{
+                   console.log(performancePledge)
+                   performancePledge = {...performancePledge,isFirstInspection:'0'};
+                }
+           }
+        }
+         //@author gl
         this.setState({
-            basicInfor: info
+            basicInfor: info,
+            performancePledge
         }, () => {
             // 向父组件【SQT页面】传递数据
             let {basicInfor,areaList,performancePledge}=this.state
@@ -231,11 +256,10 @@ class servies extends Component {
     //  接收到【基本信息】子组件中【选择器】返回的数据  
     onGetChangeSelect = (data) => {
         // 当选择器中的数据有返回时，将【服务区域、服务承诺】组件中需要带入的数据进行带入
-        let newPerformance = this.setInfo(data, this.state.performancePledge);
-
+        let newPerformance = this.setInfo(data, this.state.performancePledge),{areaList} = this.state;
         this.setState({
             performancePledge: newPerformance,
-            areaList: data.areaList
+            areaList: [...areaList,...data.areaList]
         })
     }
 
@@ -247,19 +271,19 @@ class servies extends Component {
                 {/* 基本信息--区域 */}
                 <div className="infor commTop">
                     <div className="navTitle">基本信息</div>
-                    <BasicInfor data={this.state.basicInfor} onChangeInfo={this.getChildrenInfo} isSelfCreation={this.state.isSelfCreation} onGetChange={this.onGetChangeSelect}></BasicInfor>
+                    <BasicInfor isEdit={this.state.isEdit} node={this.props.power.masterList ? this.props.power.masterList : 0} data={this.state.basicInfor} onChangeInfo={this.getChildrenInfo} isSelfCreation={this.state.isSelfCreation} onGetChange={this.onGetChangeSelect}></BasicInfor>
                 </div>
 
                 {/* 服务区域--区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务区域</div>
-                    <EditTable data={this.state.areaList} onChange={this.getAreaChildren}></EditTable>
+                    <EditTable isEdit={this.state.isEdit} data={this.state.areaList} onChange={this.getAreaChildren}></EditTable>
                 </div>
 
                 {/* 服务承诺---区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务承诺</div>
-                    <PerformancePledge data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
+                    <PerformancePledge isEdit={this.state.isEdit} serviceTypeName={this.state.basicInfor.serviceTypeName} node={this.props.power.masterList ? this.props.power.masterList : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
 
             </div>

@@ -33,7 +33,7 @@ class RequireSqt extends Component {
     }
     // 组件将要挂载前触发的函数
     async componentWillMount() {
-
+        // this.init();
     }
     constructor(props) {
         super(props)
@@ -48,8 +48,8 @@ class RequireSqt extends Component {
         console.log('************       服务需求表  ---- 提交按钮事件        ***************')
         
          //调用组件进行通信
-         this.refs.getSwordButton.childMethod();
-         console.log(this.refs.getSwordButton.childMethod())
+         this.refs.getSwordButton.submission();
+        //  console.log(this.refs.getSwordButton.submission())
     }
 
     handleBack = () => {
@@ -60,11 +60,11 @@ class RequireSqt extends Component {
 
     render = _ => {
         return (
-            <div className="service" style={{height:'100%', padding: '0 15px'}}>
+            <div className="service" style={{height:'100%', padding: '0 15px',overflow:'hidden'}}>
                 
-                <SQT ref="getSwordButton"></SQT>
+                <SQT ref="getSwordButton" config={{}}></SQT>
                 {/* 提交按钮--区域 */}
-                <div className="btnContent" style={{textAlign:'right',marginTop:'10px'}}>
+                <div className="btnContent" style={{textAlign:'right',marginTop:'0px'}}>
                     <Button type="primary" style={{ marginRight: '30px' }} onClick={this.handleSubmit}>提交</Button>
                     <Button onClick={this.handleBack}>返回</Button>
                 </div>
