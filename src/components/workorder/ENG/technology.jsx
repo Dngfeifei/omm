@@ -42,12 +42,10 @@ const assignment = (data) => {
         }
     });
 }
-
+// 当前选择类别产品线是否存在 存在就校验 不存在不校验 
+let productIsTrue = false;
 class People extends Component {
 
-    async componentWillReceiveProps(nextprops) {
-
-    }
     // 设置默认props
     static defaultProps = {
         config: {
@@ -129,7 +127,7 @@ class People extends Component {
                 skillTypeCode: "",
                 skillTypeId: "",
                 brandCode: "",    //	品牌编码
-                brandId:"",
+                brandId: "",
                 productLineCodes: [], //	产品线编码
                 productLineLevelCode: "", //	产品线级别编码
                 proableLevel: "", //	专业能力级别
@@ -152,7 +150,7 @@ class People extends Component {
         if (preVal != val) {
             this.setState({
                 brandCode: "",    //	品牌编码
-                brandId:"",
+                brandId: "",
                 productLineCodes: [], //	产品线编码
                 productLineLevelCode: "", //	产品线级别编码
                 skillTypeCode: val,
@@ -324,19 +322,27 @@ class People extends Component {
     // 保存前数据校验
     check = (obj, arr = []) => {
         let result = true
-        let _this=this
+        let _this = this
         Object.keys(obj).forEach(function (key) {
+            if (!productIsTrue && key == "productLineCodes") {
+                // "productLineCodes"不校验
+                return
+            }
             if (_this.state.productCategory == 1 && key == "productLineLevelCode") {
-
-            } else {
-                if (nullCheck(obj[key])) {
-                    result = false
-                }
+                // "productLineLevelCode"不校验
+                return
+            }
+            if (nullCheck(obj[key])) {
+                result = false
             }
 
         });
         arr.forEach((item) => {
             Object.keys(item).forEach(function (key) {
+                if (!productIsTrue && key == "productLineCode") {
+                    // productLineCode 不校验
+                    return
+                }
                 if (nullCheck(item[key])) {
                     result = false
                 }
@@ -465,11 +471,11 @@ class People extends Component {
             })
         } else if (this.state.brandId && this.state.productCategory == 1) {
             productLineDatas = productLine.filter((item) => {
-                console.log(this.state.brandId,"this.state.brandId")
+                console.log(this.state.brandId, "this.state.brandId")
                 return item.parentId == this.state.brandId
             })
         }
-        console.log(productLineDatas,"productLineDatas")
+        productLineDatas.length ? productIsTrue = true : productIsTrue = false;
         return <div>
             <ModalParant title={title}
                 destroyOnClose={true}
@@ -656,7 +662,8 @@ class People extends Component {
                                             }
 
                                         </div>
-                                        <div className="formCol">
+                                     {
+                                         productIsTrue?<div className="formCol">
                                             <span className="formKey"> 产品线：</span>
                                             {item.productLineCode ? <Tooltip title={
                                                 productLine.map((subItem) => {
@@ -702,7 +709,8 @@ class People extends Component {
                                                 }
                                             </Select>}
 
-                                        </div>
+                                        </div>:""
+                                     }
                                         <div className="formCol2">
                                             <span className="formKey"> 能力项：</span>
                                             <Cascader className="formVal" disabled={type == "see" ? true : false} allowClear={false} fieldNames={{ label: 'name', value: 'code' }} value={filterTree3(serviceClass, item)} options={filterTree2(serviceClass, key)} onChange={this.onSelectCase2} placeholder="请选择" />
