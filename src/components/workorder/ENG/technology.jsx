@@ -21,6 +21,7 @@ import Editor from "@/components/editor"
 
 // 引入 API接口
 import { PostAssessProable } from '/api/selfEvaluation'
+import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
 // 引入为空校验方法
 import nullCheck from '@/assets/js/methods.js'
@@ -57,6 +58,30 @@ class People extends Component {
         baseData: {},  //下拉框基础数据
     }
     componentWillMount() {
+        // 初始化界面数据
+        this.init()
+
+
+    }
+    state = {
+        // id: "",           //	专业id
+        assessId: "",     //   工程师自评价id
+        productCategory: "", //产品类别
+        skillTypeCode: "",   //	技术方向编码
+        brandCode: "",    //	品牌编码
+        productLineCodes: [], //	产品线编码
+        productLineLevelCode: "", //	产品线级别编码
+        proableLevel: "", //	专业能力级别
+        serviceItemCodes: [], //	服务项
+        cases: [{ custName: "", productLineCode: "", serviceItemCode: "", caseDesc: "" }],  //案例
+
+        skillTypeId: "",   //	技术类别编码
+        brandId: "",    //	品牌编码
+        competenceLevelId: "", //	专业能力级别
+        productCategoryData: [],//产品分类下拉框数据
+    }
+    // 界面数据初始化
+    init = _ => {
         let { echoData, config } = this.props;
         let skillTypeId = "", brandId = "", competenceLevelId = ""
         let data = JSON.parse(JSON.stringify(Object.assign({}, this.state, echoData)))
@@ -82,30 +107,52 @@ class People extends Component {
             ...data,
             skillTypeId, brandId, competenceLevelId
         })
-    }
-    state = {
-        // id: "",           //	专业id
-        assessId: "",     //   工程师自评价id
-        skillTypeCode: "",   //	技术类别编码
-        brandCode: "",    //	品牌编码
-        productLineCodes: [], //	产品线编码
-        productLineLevelCode: "", //	产品线级别编码
-        proableLevel: "", //	专业能力级别
-        serviceItemCodes: [], //	服务项
-        cases: [{ custName: "", productLineCode: "", serviceItemCode: "", caseDesc: "" }],  //案例
 
-        skillTypeId: "",   //	技术类别编码
-        brandId: "",    //	品牌编码
-        competenceLevelId: "", //	专业能力级别
+        // 获取数据字典-产品类别数据
+        GetDictInfo({ dictCode: "productCategory" }).then(res => {
+            if (res.success != 1) {
+                message.error("性别下拉框资源未获取，服务器错误！")
+            } else {
+                this.setState({
+                    productCategoryData: res.data
+                })
+            }
+        })
     }
-
-    // 技术类别选中方法
+    // 产品类别选中方法
+    onSelect0 = (val, option) => {
+        // 若技术类别选中项与之前选中数据不同 则品牌已选中项、产品线级别已选中项、产品线已选中项、案例数据中产品线已选中项为空
+        let preVal = this.state.productCategory;
+        if (preVal != val) {
+            this.setState({
+                productCategory: val,
+                skillTypeCode: "",
+                skillTypeId: "",
+                brandCode: "",    //	品牌编码
+                brandId:"",
+                productLineCodes: [], //	产品线编码
+                productLineLevelCode: "", //	产品线级别编码
+                proableLevel: "", //	专业能力级别
+                serviceItemCodes: [], //	服务项
+            })
+            let cases = this.state.cases;
+            cases.forEach((item) => {
+                item.productLineCode = ""
+                item.serviceItemCode = ""
+            })
+            this.setState({
+                cases
+            })
+        }
+    }
+    // 技术方向选中方法
     onSelect1 = (val, option) => {
         // 若技术类别选中项与之前选中数据不同 则品牌已选中项、产品线级别已选中项、产品线已选中项、案例数据中产品线已选中项为空
         let preVal = this.state.skillTypeCode;
         if (preVal != val) {
             this.setState({
                 brandCode: "",    //	品牌编码
+                brandId:"",
                 productLineCodes: [], //	产品线编码
                 productLineLevelCode: "", //	产品线级别编码
                 skillTypeCode: val,
@@ -277,10 +324,16 @@ class People extends Component {
     // 保存前数据校验
     check = (obj, arr = []) => {
         let result = true
+        let _this=this
         Object.keys(obj).forEach(function (key) {
-            if (nullCheck(obj[key])) {
-                result = false
+            if (_this.state.productCategory == 1 && key == "productLineLevelCode") {
+
+            } else {
+                if (nullCheck(obj[key])) {
+                    result = false
+                }
             }
+
         });
         arr.forEach((item) => {
             Object.keys(item).forEach(function (key) {
@@ -331,7 +384,14 @@ class People extends Component {
     render = _ => {
         // 接受组件外传递的数据
         let { onCancel, baseData } = this.props;
-        let { productLine, competenceLevel, serviceClass, skillType, brand } = baseData;
+        let { productCategoryData } = this.state;
+        let { productLine, competenceLevel, serviceClassSoft, serviceClassHard, skillType, brand } = baseData;
+        let serviceClass = [];
+        if (this.state.productCategory == 1) {
+            serviceClass = serviceClassSoft
+        } else if (this.state.productCategory == 2) {
+            serviceClass = serviceClassHard
+        }
         assignment(serviceClass)
         let { type, title, visible } = this.props.config;
 
@@ -399,11 +459,17 @@ class People extends Component {
         }
         // 通过下拉框选择项过滤后的产品
         let productLineDatas = [];
-        if (this.state.brandId && this.state.productLineLevelCode) {
+        if (this.state.brandId && this.state.productLineLevelCode && this.state.productCategory == 2) {
             productLineDatas = productLine.filter((item) => {
                 return item.parentId == this.state.brandId && item.strValue1 == this.state.productLineLevelCode;
             })
+        } else if (this.state.brandId && this.state.productCategory == 1) {
+            productLineDatas = productLine.filter((item) => {
+                console.log(this.state.brandId,"this.state.brandId")
+                return item.parentId == this.state.brandId
+            })
         }
+        console.log(productLineDatas,"productLineDatas")
         return <div>
             <ModalParant title={title}
                 destroyOnClose={true}
@@ -430,7 +496,18 @@ class People extends Component {
                         <Card style={{ marginBottom: "30px" }}>
                             <div className="formRow">
                                 <div className="formCol">
-                                    <span className="formKey  ant-form-item-required">技术类别：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <span className="formKey  ant-form-item-required">产品类别：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                                    <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.productCategory} onSelect={this.onSelect0}>
+                                        <Option value="">请选择</Option>
+                                        {
+                                            productCategoryData.map((item) => {
+                                                return <Option key={item.itemCode} value={item.itemCode}>{item.itemValue}</Option>
+                                            })
+                                        }
+                                    </Select>
+                                </div>
+                                <div className="formCol">
+                                    <span className="formKey  ant-form-item-required">技术方向：&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
                                     <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.skillTypeCode} onSelect={this.onSelect1}
                                         showSearch
                                         optionFilterProp="children"
@@ -439,7 +516,9 @@ class People extends Component {
                                         }>
                                         <Option value="">请选择</Option>
                                         {
-                                            skillType.map((item) => {
+                                            !this.state.productCategory ? "" : skillType.filter((item) => {
+                                                return item.strValue4 == this.state.productCategory;
+                                            }).map((item) => {
                                                 return <Option key={item.id} value={item.code}>{item.name}</Option>
                                             })
                                         }
@@ -463,21 +542,28 @@ class People extends Component {
                                         }
                                     </Select>
                                 </div>
+
+                            </div>
+                            {this.state.productCategory == "" || this.state.productCategory == 1 ? "" : <div className="formRow">
                                 <div className="formCol">
-                                    <span className="formKey ant-form-item-required">产品线级别：</span>
+                                    <span className="formKey ant-form-item-required">产品线级别：&nbsp;&nbsp;&nbsp;</span>
                                     <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.productLineLevelCode} onSelect={this.onSelect3}>
                                         <Option value="">请选择</Option>
                                         <Option value="1">高端</Option>
                                         <Option value="0">中低端</Option>
                                     </Select>
                                 </div>
+                                <div className="formCol"></div>
+                                <div className="formCol"></div>
                             </div>
+                            }
+
                             <div style={{ paddingLeft: "97px", marginBottom: "20px" }}>
                                 {productLineDatas.length ? <Card>
                                     <Checkbox.Group disabled={type == "see" ? true : false} style={{ width: '100%' }} value={this.state.productLineCodes} onChange={this.onChange4} >
                                         <Row>
                                             {
-                                                this.state.brandId && this.state.productLineLevelCode ? (productLineDatas.map((item, index) => {
+                                                this.state.productCategory == 1 ? (this.state.brandId ? (productLineDatas.map((item, index) => {
                                                     return <Col span={6} key={index} >
                                                         <Tooltip title={item.name}>
                                                             <Checkbox value={item.code} style={{
@@ -488,7 +574,19 @@ class People extends Component {
                                                             }}>{item.name}</Checkbox>
                                                         </Tooltip>
                                                     </Col>
-                                                })) : ""
+                                                })) : "") : (this.state.brandId && this.state.productLineLevelCode ? (productLineDatas.map((item, index) => {
+                                                    return <Col span={6} key={index} >
+                                                        <Tooltip title={item.name}>
+                                                            <Checkbox value={item.code} style={{
+                                                                width: "100%",
+                                                                overflow: "hidden",
+                                                                textOverflow: "ellipsis",
+                                                                whiteSpace: "nowrap"
+                                                            }}>{item.name}</Checkbox>
+                                                        </Tooltip>
+                                                    </Col>
+                                                })) : "")
+
                                             }
                                         </Row>
                                     </Checkbox.Group>
