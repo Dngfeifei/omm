@@ -65,7 +65,19 @@ class ENG extends Component {
                     render: (text, record, index) => `${index + 1}`
                 },
                 {
-                    title: '技术类别',
+                    title: '产品类别',
+                    dataIndex: 'productCategory',
+                    align: 'center',
+                    render: (text, record, index) => {
+                        if(record.productCategory==1){
+                            return "系统软件"
+                        }else if(record.productCategory==2){{
+                            return "硬件设备"
+                        }}
+                    }
+                },
+                {
+                    title: '技术方向',
                     dataIndex: 'skillTypeName',
                     align: 'center',
                 },
@@ -73,11 +85,19 @@ class ENG extends Component {
                     title: '品牌',
                     dataIndex: 'brandName',
                     align: 'center',
+
                 },
                 {
                     title: '产品线级别',
                     dataIndex: 'productLineLevel',
                     align: 'center',
+                    render: (text, record, index) => {
+                        if(record.productCategory=="1"){
+                            return ""
+                        }else{
+                            return record.productLineLevel
+                        }
+                    }
                 },
                 {
                     title: '具备维护能力的产品线',
@@ -512,7 +532,7 @@ class ENG extends Component {
                                 </div>
                             </div>
                             <div className="row">
-                                <div className="column2">
+                                <div className="column column2">
                                     <div className="key ant-form-item-required">沟通能力</div>
                                     <div className="val" style={{ padding: "0 10px" }}>
                                         <Select disabled={!readOnly ? false : true} value={info.commskillsCode} bordered={false} style={{ width: "100%" }} onSelect={this.onSelect2}>
