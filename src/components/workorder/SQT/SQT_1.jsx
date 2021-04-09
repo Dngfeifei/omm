@@ -32,15 +32,54 @@ class Sqt extends Component {
             }],   
             datasources:[],  //附表1数据存储
             tabsListF:[],
+            swich:true,//主表密钥
             paramsObj:{
                 
-            }
+            },
+            masterVildter:['orderNum',  //记录单号
+            'companyName', //公司名称
+            'writeTime', //填写时间
+            'writeUserName',//填写人
+            'writeDept', //填写部门
+            'projectType', //项目类别
+            'projectNumber',//项目号
+            'projectName',//项目名称
+            'serviceTypeName',//服务类别
+            'custNum',//客户编码
+            'custName',//客户名称
+            'industry',//所属行业
+            'custLevel',//客户级别
+            'salesmanName',//项目销售
+            'salesmanPhone',//销售联系方式
+            'managerType',//项目经理类型
+            'managerName',//项目经理
+            'managerPhone',//项目经理联系方式
+            'startDate',//项目开始日期
+            'endDate',//项目结束日期
+            'isRenewal',// 是否续签项目,1是，0-否
+            'renewalNumber',//续签项目号
+            'renewalName',//续签项目名称
+            'isSubcontract',// 是否转包项目,1是，0-否
+            'finalCustName',//最终客户名称
+            'isLeagueBuild',//是否有团建负责，1是，0否
+            'leagueBuildName',//团建负责人
+
+            'serviceMode',  // 服务方式
+            'longInspectionCycle',  //远程巡检周期
+            'sceneInspectionCycle',      // 现场巡检周期
+            'isFirstInspection', // 是否需要提供首次巡检服务，1-是，0-否
+            'isCollectConfig', // 是否收集相关配置信息，1-是，0-否
+            'notCollectReason',    // 不收集配置信息原因说明
+            'serviceReportCycle', // 服务报告提交周期
+            'serviceListRequire', // 服务单要求
+            'otherPromise', //其他重要承诺及要求
+            'slaList'
+            ]
         }
     }
-    async componentWillMount () {
+    componentWillMount () {
         this.init()
 	}
-
     /**
     *  自定义封装---用于一个对象给另一个对象赋值。
     * params: 第一个对象==赋值    第二个对象===取值 (意思就是：data给params赋值 返回的是params)
@@ -66,8 +105,12 @@ class Sqt extends Component {
     // 页面初始化方法(回显数据)
     init = () => {
     //根据节点获取paramsObj
+    // console.log(this.props.config.formControl,this.props.config.formControl.action.indexOf('masterList') > -1)
         if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('masterList') > -1){  //主表查询接口
-            this.getSqtDetail(this.props.config.id)
+            // console.log(this.props.config.id);
+            setTimeout(()=>{
+                this.getSqtDetail(this.props.config.id)
+            },0)
         }
         if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1){//附表1查询接口
             getAssistant({baseId:this.props.config.id}).then(res => {
@@ -87,9 +130,13 @@ class Sqt extends Component {
     // 服务计划表---查询接口
     getSqtDetail=(id)=>{
         SqtBaseDetail(id).then(res=>{
+            const {paramsObj} = this.state;
             if (res.success == '1') {
                 this.setState({
-                    paramsObj:res.data
+                    paramsObj:{...paramsObj,...res.data},
+                    swich:false
+                },()=>{
+                    // console.log(this.state)
                 })
             }else if (res.success == '0') {
                 message.error(res.message)
@@ -101,19 +148,23 @@ class Sqt extends Component {
 
     // 定义方法,
     getChildrenData = (dat) => {
-        this.setState({
-            paramsObj:dat
-        })
+        console.log(dat,!this.props.config.sign)
+        if((this.props.config.sign == 1 && !this.state.swich) || !this.props.config.sign){
+            const {paramsObj} = this.state;
+            this.setState({
+                paramsObj:{...paramsObj,...dat}
+            })
+        }
     }
 
 //服务需求表提交验证接口
 submission=async ()=>{
         let {paramsObj} = this.state,AssistantPonse,MasterPonse;
         if(!this.vildteMasterList()){
-            message.error('主表信息填写不完整，请检查！')
+            message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
             return false;
         }
-        if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1){//附表1查询接口
+        if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1){//附表1提交接口
             for(let i = 0,len = this.state.datasources; i < len ; i++ ){
                 if(datasources[i].error.state) {
                     message.error(res.message)
@@ -136,7 +187,7 @@ submission=async ()=>{
             message.error(AssistantPonse.message)
             return false;
         }
-        return this.state.paramsObj       
+        return true;       
     }
     //接受附表验证信息函数
     getChildrenVildter = (data,index) => {
@@ -145,21 +196,32 @@ submission=async ()=>{
     }
     //验证主表信息是否填写完整
     vildteMasterList = () => {
-        let vilde = true,{paramsObj} = this.state;
-        if(!paramsObj.orderNum){  //记录单号不能为空
-            vilde = false;
+        let vilde = true,{paramsObj,masterVildter} = this.state;
+        for(var i of masterVildter){
+            console.log(i,paramsObj)
+            if((i == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i == 'managerName' && paramsObj['managerType'] == 1) || ((i == 'renewalName' || i == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
+                continue;
+            }
+            if(!paramsObj[i]){
+                console.log(i,paramsObj[i])
+                return false;
+            }
         }
-        return vilde;
+        // if(!paramsObj.orderNum){  //记录单号不能为空
+        //     vilde = false;
+        // }
+         return true;
     }
     render = _ => {
         let {datasources} = this.state;
+        console.log(this.state.paramsObj)
         return (
             <div className="SqtContent">
                 <Tabs defaultActiveKey="0" tabPosition={'top'} style={{ overflowY:'auto' }}>
                     {this.state.tabsList.map((item,index) => (
                         <TabPane tab={item.name} key={index}>
                             {/* 主表--组件  */}
-                           <ServicesMain paramsObj={this.state.paramsObj} onChangeData={this.getChildrenData} power={this.props.config.formControl ? this.props.config.formControl : {}} ></ServicesMain>
+                           <ServicesMain paramsObj={this.state.paramsObj} onChangeData={this.getChildrenData} power={this.props.config ? this.props.config : {}} swich={this.state.swich} ></ServicesMain>
                         </TabPane>
                     ))}
                     {

@@ -223,7 +223,6 @@ class performance extends Component {
     }
 
     componentWillMount(){
-        console.log('接收一次数据','服务承诺')
         this.initData(this.props.data)
     }
     //@author  gl
@@ -450,11 +449,11 @@ class performance extends Component {
                         remarks: '',
                     })
                 }
-
                 var obj = Object.assign({}, this.state.PerformanceData, { slaList: slaLevelArray });
                 this.setState({
                     PerformanceData: obj
                 },()=>{
+                    console.log(this.state.PerformanceData)
                     this.updataToParent()
                 })
                 
@@ -489,10 +488,11 @@ class performance extends Component {
     };
     //  table表格删除一行--事件按钮
     handleDelete=(ID,Index)=>{
-        let training = this.state.PerformanceData.courseList;
-        const courseList = [...training];
-        this.setState({ 
-            courseList: courseList.filter(item => item.id !== ID) 
+        let courseList = [...this.state.PerformanceData.courseList];
+        this.setState({
+            PerformanceData:{
+                courseList: courseList.filter(item => item.id != ID)
+            }
         },()=>{
             this.updataToParent()
         });
@@ -517,7 +517,7 @@ class performance extends Component {
             // 【等级、响应时限（小时）、工程师到场时限（小时）、备件到场时限（小时）、解决时限（小时）、备注】----表格数据
             const data = this.state.PerformanceData.slaList;
             const footerTable = [...data];
-            const indexTable = footerTable.findIndex((item) => row.id === item.id);
+            const indexTable = footerTable.findIndex((item) => row.level === item.level);
             const itemTable = footerTable[indexTable];
             footerTable.splice(indexTable, 1, {
                 ...itemTable,
@@ -526,7 +526,7 @@ class performance extends Component {
             var obj = Object.assign({}, this.state.PerformanceData, { slaList:footerTable});
         }
 
-        
+
         this.setState({
             PerformanceData:obj
         },()=>{
@@ -540,7 +540,6 @@ class performance extends Component {
     TrainingTableRow=(record)=>{
         return {
 			onMouseEnter: (event)=>{
-                console.log('mouseEnter1')
                 this.setState({
                     currentState:record.id
                 })
@@ -553,7 +552,6 @@ class performance extends Component {
                 //         currentState:0
                 //     })
                 // },1000)
-                console.log('mouseLeave1')
                 this.setState({
                             currentState:0
                         })
@@ -563,13 +561,11 @@ class performance extends Component {
     }
 //鼠标移动到表格添加区域显示添加删除一行操作按钮
 addMouseEnter = (record) => {
-    console.log('mouseEnter')
     this.setState({
         currentState:record.id
     })
 }
 addMouseLeave = (record) => {
-    console.log('mouseLeave')
     this.setState({
         currentState:0
     })
@@ -583,7 +579,7 @@ addMouseLeave = (record) => {
     // 集成/备件销售项目（101、102）售后服务约定 ---【原厂服务】单选框的点击事件-----1-原厂服务，2-我司服务
     changeRadioOriginal=()=>{
         // 修改 afterSaleAgreement 集成/备件销售项目（101、102）售后服务约定的数据
-        let data = Object.assign({}, this.state.PerformanceData, { afterSaleAgreement: '1' });
+        let data = Object.assign({}, this.state.PerformanceData, { afterSaleAgreement: '1',cycleEnd : '',cycleStart : '' });
         this.setState({
             PerformanceData: data
         },()=>{
@@ -615,7 +611,7 @@ addMouseLeave = (record) => {
     // 集成/备件销售项目（101、102）售后服务约定 ----【我司服务】单选框的点击事件
     changeRadioStatus = () => {
         // 修改 afterSaleAgreement 集成/备件销售项目（101、102）售后服务约定的数据
-        let data = Object.assign({}, this.state.PerformanceData, { afterSaleAgreement: '2' });
+        let data = Object.assign({}, this.state.PerformanceData, { afterSaleAgreement: '2' ,cycleEnd : '',cycleStart : ''});
         this.setState({
             PerformanceData: data
         },()=>{
@@ -647,7 +643,7 @@ addMouseLeave = (record) => {
     changeOriginaPartsRadio=()=>{
 
        // 修改 projectCycleType 项目周期类型，1-部分项目周期，2-全部项目周期
-       let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '1' });
+       let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '1',cycleEnd : '',cycleStart : '' });
         this.setState({
             PerformanceData: data
         },()=>{
@@ -681,7 +677,7 @@ addMouseLeave = (record) => {
     // 【原厂服务】下的【全部项目周期】单选框事件按钮
     changeOriginaAllRadio = () => {
         // 修改 projectCycleType 项目周期类型，1-部分项目周期，2-全部项目周期
-        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '2' });
+        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '2',cycleEnd : '',cycleStart : '' });
         this.setState({
             PerformanceData: data
         }, () => {
@@ -708,7 +704,7 @@ addMouseLeave = (record) => {
     // 【我司服务】下的【部分项目周期】单选框事件按钮 
     changeOurPartsRadio=()=>{
         // 修改 projectCycleType 项目周期类型，1-部分项目周期，2-全部项目周期
-        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '1' });
+        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '1',cycleEnd : '',cycleStart : '' });
         this.setState({
             PerformanceData: data
         },()=>{
@@ -739,7 +735,7 @@ addMouseLeave = (record) => {
     // 【我司服务】下的【全部项目周期】单选框事件按钮
     changeOurAllRadio=()=>{
         // 修改 projectCycleType 项目周期类型，1-部分项目周期，2-全部项目周期
-        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '2' });
+        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '2',cycleEnd : '',cycleStart : '' });
         this.setState({
             PerformanceData: data
         }, () => {
@@ -807,7 +803,7 @@ addMouseLeave = (record) => {
 
     // 附件上传---合同承诺备机备件清单
     ContractChange=(info)=>{
-        console.log(info)
+        // console.log(info)
         let fileList = [...info.fileList];
         // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
         fileList = fileList.slice(-3);
@@ -858,7 +854,7 @@ addMouseLeave = (record) => {
     // 所有【日期时间】的onchange事件
     timeChange=(el, date, dateString)=>{
         console.log('----------------      所有【日期时间】的onchange事件         ---------------------')
-        console.log( dateString);
+        // console.log( dateString);
 
 
         // 判断 是【合同承诺备机备件到库时间】还是 【集成/备件销售项目（101、102）售后服务约】 时间日期选择器
@@ -927,7 +923,10 @@ addMouseLeave = (record) => {
         };
         // 【培训方式、培训师资、课程方向、培训课程、培训人次】----表格数据
         const columns = this.columns.map(col => {
-            if (!isEdit && !col.editable) {  //判断权限为不可编辑时不能对服务承诺区域进行操作
+            if(isEdit){
+                return col;
+            }
+            if (!col.editable) {  //判断权限为不可编辑时不能对服务承诺区域进行操作
                 return col;
             }
             return {
@@ -945,7 +944,10 @@ addMouseLeave = (record) => {
         });
         // 【等级、响应时限（小时）、工程师到场时限（小时）、备件到场时限（小时）、解决时限（小时）、备注】----表格数据
         const columnsLeavel = this.columnsLeavel.map(col => {
-            if (!isEdit && !col.editable) {
+            if(isEdit){
+                return col;
+            }
+            if (!col.editable) {
                 return col;
             }
             return {
@@ -960,7 +962,7 @@ addMouseLeave = (record) => {
             };
         });
 
-
+        // console.log(this.state.PerformanceData,isEdit)
         return (
             <div className="performanceContent">
                 <div className="formContent">
@@ -983,8 +985,8 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="远程巡检周期">
-                            <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.longInspectionCycle} onChange={({ target: { value } })=>this.inputChange('longInspectionCycle',value)}>
+                        <Descriptions.Item label="远程巡检周期" span={1}>
+                            <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.longInspectionCycle} onChange={(value)=>this.inputChange('longInspectionCycle',value)}>
                                 {
                                     this.state.inspectionCycleArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -992,8 +994,8 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="现场巡检周期">
-                        <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.sceneInspectionCycle} onChange={({ target: { value } })=>this.inputChange('sceneInspectionCycle',value)}>
+                        <Descriptions.Item label="现场巡检周期" span={1}>
+                        <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.sceneInspectionCycle} onChange={(value)=>this.inputChange('sceneInspectionCycle',value)}>
                                 {
                                     this.state.inspectionCycleArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -1047,7 +1049,7 @@ addMouseLeave = (record) => {
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} showSearch value={this.state.PerformanceData.onsiteService} onChange={(value)=>this.inputChange('onsiteService',value)}>
                                 <Option value="长期驻场">长期驻场</Option>
                                 <Option value="临时驻场">临时驻场</Option>
-                                <Option value="临时驻场">无驻场</Option>
+                                <Option value="无驻场">无驻场</Option>
                             </Select>
                         </Descriptions.Item>
                         <Descriptions.Item label="人数">
@@ -1080,7 +1082,7 @@ addMouseLeave = (record) => {
                             </Select>
                         </Descriptions.Item>
                         <Descriptions.Item label="服务单要求" span={2}>
-                            <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceReportCycle} onChange={(value) => this.inputChange('serviceReportCycle', value)}>
+                            <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceListRequire} onChange={(value) => this.inputChange('serviceListRequire', value)}>
                                 {
                                     this.state.serviceListRequireArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -1129,17 +1131,17 @@ addMouseLeave = (record) => {
                                     <div className="timeRight">
                                         <div className="partsProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.projectCycleType=='1'?true:false} onClick={this.changeOriginaPartsRadio} disabled={isEdit ? this.state.PerformanceData.afterSaleAgreement!='1'?true:false:false}>部分项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'?true:false :false} onClick={this.changeOriginaPartsRadio} disabled={isEdit ? true : (this.state.PerformanceData.afterSaleAgreement != '1' || !this.state.PerformanceData.afterSaleAgreement) ? true:false}>部分项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{width:'100%'}} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement=='2'?true:this.state.PerformanceData.projectCycleType=='2'?true:false:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'? this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null :null:null} disabled={isEdit ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='1'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceParts_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
-                                                        <DatePicker style={{width:'100%'}} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement=='2'?true:this.state.PerformanceData.projectCycleType=='2'?true:false:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'?this.state.PerformanceData.cycleEnd? moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={isEdit ? true :this.state.PerformanceData.afterSaleAgreement!='1'?true:this.state.PerformanceData.projectCycleType !='1'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceParts_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1148,19 +1150,19 @@ addMouseLeave = (record) => {
                                         </div>
                                         <div className="allProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.projectCycleType=='2'?true:false} onClick={this.changeOriginaAllRadio} disabled={isEdit ? this.state.PerformanceData.afterSaleAgreement!='1'?true:false:false}>全部项目周期</Radio> 
+                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?true:false : false} onClick={this.changeOriginaAllRadio} disabled={isEdit ? true :(this.state.PerformanceData.afterSaleAgreement != '1' || !this.state.PerformanceData.afterSaleAgreement)?true:false}>全部项目周期</Radio> 
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement=='2'?true:this.state.PerformanceData.projectCycleType=='1'?true:false:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={isEdit ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='2'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceAll_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement=='2'?true:this.state.PerformanceData.projectCycleType=='1'?true:false : false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={isEdit ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='2'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceAll_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1177,17 +1179,17 @@ addMouseLeave = (record) => {
                                     <div className="timeRight">
                                     <div className="partsProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.projectCycleType=='1'?true:false} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement!='2'?true:false:false} onClick={this.changeOurPartsRadio}>部分项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='2'? this.state.PerformanceData.projectCycleType=='1'?true:false :false} disabled={isEdit ? true : (this.state.PerformanceData.afterSaleAgreement != '2' || !this.state.PerformanceData.afterSaleAgreement) ? true:false} onClick={this.changeOurPartsRadio}>部分项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{width:'100%'}} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement!='2'?true:this.state.PerformanceData.projectCycleType!='1'?true:false:false} 
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='1'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={isEdit ? true : this.state.PerformanceData.afterSaleAgreement!='2'?true:this.state.PerformanceData.projectCycleType!='1'?true:false} 
                                                             onChange={(date, dateString)=>this.timeChange('ourDriverParts_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
-                                                        <DatePicker style={{width:'100%'}} disabled={this.state.PerformanceData.afterSaleAgreement!='2'?true:this.state.PerformanceData.projectCycleType!='1'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='1'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={isEdit ? true : this.state.PerformanceData.afterSaleAgreement!='2'?true:this.state.PerformanceData.projectCycleType!='1'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('ourDriverParts_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1196,18 +1198,18 @@ addMouseLeave = (record) => {
                                         </div>
                                         <div className="allProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.projectCycleType=='2'?true:false} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement!='2'?true:false:false} onClick={this.changeOurAllRadio}>全部项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='2'? this.state.PerformanceData.projectCycleType=='2'?true:false : false} disabled={isEdit ? true : (this.state.PerformanceData.afterSaleAgreement != '2' || !this.state.PerformanceData.afterSaleAgreement) ? true:false} onClick={this.changeOurAllRadio}>全部项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{width:'100%'}} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement!='2'?true:this.state.PerformanceData.projectCycleType!='2'?true:false:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={isEdit ? true : this.state.PerformanceData.afterSaleAgreement!='2'? true:this.state.PerformanceData.projectCycleType!='2'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('ourDriverAll_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} disabled={isEdit ?this.state.PerformanceData.afterSaleAgreement!='2'?true:this.state.PerformanceData.projectCycleType!='2'?true:false:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={isEdit ? true : this.state.PerformanceData.afterSaleAgreement!='2'? true:this.state.PerformanceData.projectCycleType!='2'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('ourDriverAll_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>

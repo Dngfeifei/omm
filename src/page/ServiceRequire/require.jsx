@@ -5,7 +5,7 @@
 
 
 import React , {Component} from 'react'
-import { Button } from 'antd';
+import { Button ,message} from 'antd';
 const creatHistory = require("history").createHashHistory;
 const history = creatHistory();//返回上一页这段代码
 
@@ -13,15 +13,17 @@ import { connect } from 'react-redux'
 import { REMOVE_PANE , ADD_PANE} from '/redux/action'
 
 // 引入服务需求表工单组件
-import SQT from '@/components/workorder/SQT/SQT.jsx'
+import SQT from '@/components/workorder/SQT/SQT_1.jsx'
 
 
 @connect(state => ({
 	panes: state.global.panes,
     activeKey: state.global.activeKey,
+    resetwork: state.global.resetwork,
 }), dispath => ({
     remove(key){dispath({type: REMOVE_PANE, key})},
     add(pane) { dispath({type: ADD_PANE, data: pane})},
+    setWorklist(data){dispath({ type: SET_WORKLIST,data})},
 }))
 
 
@@ -48,7 +50,14 @@ class RequireSqt extends Component {
         console.log('************       服务需求表  ---- 提交按钮事件        ***************')
         
          //调用组件进行通信
-         this.refs.getSwordButton.submission();
+         this.refs.getSwordButton.submission().then(res => {
+             if(res){
+                message.success('操作成功！');
+                let resetwork = {key: backKey, switch: !this.props.resetwork.switch};
+                this.props.setWorklist(resetwork);
+                this.handleBack();
+             }
+         })
         //  console.log(this.refs.getSwordButton.submission())
     }
 

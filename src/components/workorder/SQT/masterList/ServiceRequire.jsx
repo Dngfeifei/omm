@@ -18,6 +18,7 @@ import BasicInfor from './basicInfor.jsx'
 import PerformancePledge from "./performancePledge.jsx"
 // 引入--服务区域表格组件
 import EditTable from "./serviceArea.jsx"
+import { configConsumerProps } from 'antd/lib/config-provider'
 
 class servies extends Component {
     constructor(props) {
@@ -103,82 +104,83 @@ class servies extends Component {
     }
 
     componentWillMount() {
-        let {power} = this.props;
-        let {isEdit} = this.state;
-        // 判断 是否是从【自行创建服务计划表】的情况下进入；true代表是  
-        // this.setState({
-        //     isSelfCreation: this.props.params ? this.props.params.dataType.isSelfCreation : true
-        // })
-        //判断工作流
-        if (power.formRead == 1) {
-            // 若为1 所有页面可编辑
-            if (power.masterList && power.masterList.isEdit) {
-                isEdit = power.masterList.isEdit;
-            }
-        } else if(power.formRead == 2){
-            // 若为2 所有只读
-            isEdit = false;
-        }
-        // 先判断paramsObj是否有数据
-        var arr = Object.keys(this.props.paramsObj ? this.props.paramsObj : {});
-
-        if (arr.length != 0) { //false
-
-
-            // 进行【基本信息、服务区域、服务承诺】页面组件的赋值
-            let basicInfor = this.setInfo(this.props.paramsObj, this.state.basicInfor);
-            let areaList = this.props.paramsObj.areaList;
-            let performancePledge = this.setInfo(this.props.paramsObj, this.state.performancePledge);
-
-
-
-            // 将【服务承诺】中附件数据加上uid 事件处理
-
-            let ContractFileList = performancePledge.sparePartsFileList;    // 合同承诺备机备件清单---已上传附件信息数据
-            let FileList = performancePledge.equipmentFileList;  //上传外包合同设备清单附件---已上传附件信息数据
-
-
-            //获取 合同承诺备机备件清单-----到回传的已上传附件列表
-            ContractFileList = ContractFileList.length ? ContractFileList.map(item => {
-                let number = Math.random().toString().slice(-6);
-                return { uid: number, name: item.fileName, status: 'done', url: item.fileUrl }
-            }) : [...ContractFileList]
-
-            // 上传外包合同设备清单附件---到回传的已上传附件列表
-            FileList = FileList.length ? FileList.map(item => {
-                let number = Math.random().toString().slice(-6);
-                return { uid: number, name: item.fileName, status: 'done', url: item.fileUrl }
-            }) : [...FileList]
-
-            let data = Object.assign({}, performancePledge, { sparePartsFileList: ContractFileList, equipmentFileList: FileList });
-
-
-            // 先进行key值和serviceAreaNew；因为在编辑操作会使用到
-
-            for (let index = 0; index < areaList.length; index++) {
-                const element = areaList[index];
-                element.key = index + 1;
-                element.serviceAreaNew = (element.area).split('/');
-                // 首先通过判断【是否是主责区域】，再去修改area属性(将数组修改为字符串)
-                if (element.isMainDutyArea == '1') {
-                    element.area = element.area + '<span style="color:red">【主责区域】</span>'
-                }
-            }
-
-            this.setState({
-                basicInfor,
-                areaList,
-                performancePledge: data,
-                isEdit,
-                isSelfCreation: this.props.config.sign ? false : true
-            })
-
-
-        }
+        
 
     }
+    //@author  gl
+    componentWillReceiveProps (nextprops) {
+       // if(nextprops.power.sign == 1 && !nextprops.swich){
+            this.initData(nextprops)
+       // }
+    }
+initData = (nextprops) => {
+    
+    console.log(nextprops)
+    let {power} = nextprops;
+    let {isEdit} = this.state;
+    // 判断 是否是从【自行创建服务计划表】的情况下进入；true代表是  
+    // this.setState({
+    //     isSelfCreation: this.props.params ? this.props.params.dataType.isSelfCreation : true
+    // })
+    //判断工作流
+    if (power.formRead == 1) {
+        // 若为1 所有页面可编辑
+        isEdit = !power.formControl.masterList.isEdit;
+    } else if(power.formRead == 2){
+        // 若为2 所有只读
+        isEdit = true;
+    }
+    // 先判断paramsObj是否有数据
+    var arr = Object.keys(nextprops.paramsObj ? nextprops.paramsObj : {});
+    if (arr.length != 0) { //false
 
 
+        // 进行【基本信息、服务区域、服务承诺】页面组件的赋值
+        let basicInfor = this.setInfo(nextprops.paramsObj, this.state.basicInfor);
+        let areaList = nextprops.paramsObj.areaList;
+        let performancePledge = this.setInfo(nextprops.paramsObj, this.state.performancePledge);
+
+
+
+        // 将【服务承诺】中附件数据加上uid 事件处理
+
+        let ContractFileList = performancePledge.sparePartsFileList;    // 合同承诺备机备件清单---已上传附件信息数据
+        let FileList = performancePledge.equipmentFileList;  //上传外包合同设备清单附件---已上传附件信息数据
+
+
+        //获取 合同承诺备机备件清单-----到回传的已上传附件列表
+        ContractFileList = ContractFileList.length ? ContractFileList.map(item => {
+            let number = Math.random().toString().slice(-6);
+            return { uid: number, name: item.fileName, status: 'done', url: item.fileUrl }
+        }) : [...ContractFileList]
+
+        // 上传外包合同设备清单附件---到回传的已上传附件列表
+        FileList = FileList.length ? FileList.map(item => {
+            let number = Math.random().toString().slice(-6);
+            return { uid: number, name: item.fileName, status: 'done', url: item.fileUrl }
+        }) : [...FileList]
+
+        let data = Object.assign({}, performancePledge, { sparePartsFileList: ContractFileList, equipmentFileList: FileList });
+
+
+        // 先进行key值和serviceAreaNew；因为在编辑操作会使用到
+
+        for (let index = 0; index < areaList.length; index++) {
+            const element = areaList[index];
+            element.key = index + 1;
+            element.serviceAreaNew = (element.area).split('/');
+        }
+        this.setState({
+            basicInfor,
+            areaList,
+            performancePledge: data,
+            isEdit,
+            isSelfCreation: this.props.power.sign ? false : true
+        })
+
+
+    }
+}
 
     /**
     *  自定义封装---用于一个对象给另一个对象赋值。
@@ -204,13 +206,13 @@ class servies extends Component {
     //  接收到【基本信息】子组件返回的数据  
     getChildrenInfo = (info) => {
         //@author gl
-        let {basicInfor,performancePledge}=this.state
+        let {basicInfor,performancePledge,areaList}=this.state
         if(info.serviceTypeName !=basicInfor.serviceTypeName){
             if((this.props.power.masterList == 1 || this.props.power.masterList == 3 || !this.props.power.masterList )){
                 if(info.serviceTypeName == '支持与维护服务' || info.serviceTypeName == '软件支持与维护服务'){
                    performancePledge = {...performancePledge,isFirstInspection:'1'};
                 }else{
-                   console.log(performancePledge)
+                //    console.log(performancePledge)
                    performancePledge = {...performancePledge,isFirstInspection:'0'};
                 }
            }
@@ -220,8 +222,8 @@ class servies extends Component {
             basicInfor: info,
             performancePledge
         }, () => {
-            // 向父组件【SQT页面】传递数据
-            let {basicInfor,areaList,performancePledge}=this.state
+            //向父组件【SQT页面】传递数据
+             let {basicInfor,areaList,performancePledge}=this.state
             let result=Object.assign({},basicInfor,performancePledge,{areaList})
             this.props.onChangeData(result);
         })
@@ -234,7 +236,7 @@ class servies extends Component {
             areaList: info
         }, () => {
              // 向父组件【SQT页面】传递数据
-             let {basicInfor,areaList,performancePledge}=this.state
+             let {basicInfor,performancePledge,areaList}=this.state
              let result=Object.assign({},basicInfor,performancePledge,{areaList})
              this.props.onChangeData(result);
         })
@@ -247,7 +249,7 @@ class servies extends Component {
         }, () => {
           // 向父组件【SQT页面】传递数据
           let {basicInfor,areaList,performancePledge}=this.state
-          let result=Object.assign({},basicInfor,performancePledge,{areaList})
+           let result=Object.assign({},basicInfor,performancePledge,{areaList})
           this.props.onChangeData(result);
         })
     }

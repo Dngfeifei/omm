@@ -63,7 +63,7 @@ class workOrer extends Component {
     init = async () => {
         let {workControl,fileList,formControl,businessKey,formKey,listData,ticketId} = this.state;
         let data = await getOperation({procInstId: this.props.params.dataType.record.procInstId,taskId:this.props.params.dataType.record.taskId}) //调用接口获取页面初始化必须数据
-       console.log(data)
+    //    console.log(data)
 
         if(data.success != 1) {
              message.error(data.message);
@@ -91,7 +91,7 @@ class workOrer extends Component {
         //获取token值，为后续上传附件设置请求头使用
 
        this.setState({workControl,header,actionUrl,fileList,formControl,listData,businessKey,spinning:false,ticketId},()=>{  //重置状态数据
-            console.log(this.state)
+            // console.log(this.state)
        })
     }
     //刷新工单列表数据
@@ -217,7 +217,7 @@ class workOrer extends Component {
     }
     //绑定工单子组件
     bindRef = (ref)=>{
-      console.log(ref)
+    //   console.log(ref)
       this.child = ref;
     }
     //点击展开右侧处理意见区域
@@ -227,14 +227,14 @@ class workOrer extends Component {
      
     //处理意见区内容绑定
     areaChange=(e)=>{
-        console.log(e.target.value)
+        // console.log(e.target.value)
         let {opinion} = this.state;
         opinion = e.target.value;
         this.setState({opinion});
     }
     //文件上传
     upload = (info) => {
-        console.log(info)
+        // console.log(info)
         let fileList = [...info.fileList];
 
         // 1. 限制上载文件的数量
@@ -256,11 +256,11 @@ class workOrer extends Component {
         this.setState({ fileList: fileList.reverse()});
     }
     reMove = async (file) => {
-        console.log(file)
+        // console.log(file)
         if(file.status == 'error') return true;
         let param = {attachId:file.uid}
         let data = await getDeleteAttachment(param);
-        console.log(data)
+        // console.log(data)
         if(data.success == 1){
             return true
         }else if (data.success == 0){
@@ -282,7 +282,7 @@ class workOrer extends Component {
     resetFn = () => {
         const {businessKey,formKey,workControl,formControl,swit,spinning,listData,actionUrl,header} = this.state;
         this.setState({...this.stateReset,formKey,businessKey,workControl,formControl,swit,spinning,listData,actionUrl,header},()=>{
-            console.log(this.state)
+            // console.log(this.state)
         })
     }
     //点击关闭弹出框
@@ -300,7 +300,7 @@ class workOrer extends Component {
         let selecteds = [],img = '',modalWidth = 700;
         if(identification == 3){ //判断点击为驳回按钮时获取历史流程节点数据
             let data = await getBackTask({taskId: this.props.params.dataType.record.taskId})
-            console.log(data)
+            // console.log(data)
             selecteds = data.data;
         }else if(identification == 4){ //获取流程图
             //  let data = {key: this.props.params.type,data:{key:'100000',title:"我是更新后的标签",url:this.props.params.pathParam}};
@@ -350,11 +350,11 @@ class workOrer extends Component {
     
     //弹出框选择器改变操作
     handleChange = (selected,num) => {
-        console.log('onChange ', selected);
+        // console.log('onChange ', selected);
         const {modal} = this.state;
         num == 3 ? modal.selected = selected : modal.selectedItems = selected;
         this.setState({modal:{...modal}},()=>{
-            console.log(this.state.modal)
+            // console.log(this.state.modal)
         });
     }
     //打开工程师选择器
@@ -367,18 +367,18 @@ class workOrer extends Component {
         let explain = e.target.value;
         const {modal} = this.state;
         this.setState({modal:{...modal,explain}},()=>{
-            console.log(this.state.modal)
+            // console.log(this.state.modal)
         });
     } 
     //工程师选择保存
     postSave = (resultID,result) => {
-        console.log(resultID,result)
+        // console.log(resultID,result)
         const {modal,engineer} = this.state;
         let selectedItems = result.map((item,index)=>{
             return {key:item.id,label:item.realName}
         })
         this.setState({modal:{...modal,selectedItems},engineer:{...engineer, modalVisible:false}},()=>{
-            console.log(this.state.modal)
+            // console.log(this.state.modal)
         });
     }
     //工程师选择器关闭方法
@@ -438,6 +438,8 @@ class workOrer extends Component {
         let style = swit ? {height:'100%',paddingBottom:5} : {width:10,flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
         params = {formRead:this.state.workControl.formRead,id: ticketId,formControl:this.state.formControl,sign:1};
+        //params = {formRead:2,id: ticketId,formControl:this.state.formControl,sign:1};
+        // console.log(params)
         return (
             <div className='work_order' style={{height: '100%',display:'flex',flexDirection:'column'}}>
                 <Spin spinning={spinning} size="large">

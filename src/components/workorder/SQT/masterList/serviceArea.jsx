@@ -36,7 +36,7 @@ class EditableCell extends React.Component {
 
     // form[区域]下拉事件
     handleComputerRegionChange = (value) => {
-        console.log(value)
+        // console.log(value)
         this.setState({
             computerRegionValue: value
         })
@@ -63,7 +63,7 @@ class EditableCell extends React.Component {
     }
 
     onChange=(e)=>{
-        console.log(e)
+        // console.log(e)
         this.setState({
             value: e.target.value,
           });
@@ -165,7 +165,7 @@ class serviceArea extends React.Component {
     componentWillReceiveProps (nextprops) {
         if(!this.state.editingKey){
             this.initData(nextprops.data)
-            console.log(nextprops,this.state.data)
+            // console.log(nextprops,this.state.data)
         }
 		// this.initData(nextprops.data)
 	}
@@ -182,6 +182,7 @@ class serviceArea extends React.Component {
     }
     // 向父组件传递本页面数据集合
     updataToParent=()=>{
+        debugger
         this.props.onChange(this.state.data)
     }
     
@@ -350,16 +351,16 @@ class serviceArea extends React.Component {
 
     // 修改行内表格
     handleEdit=()=>{
-        console.log(this.state.selectedRowKeys);
+        // console.log(this.state.selectedRowKeys);
         if (this.state.selectedRowKeys) {
-            console.log(this.state.selectedRowKeys)
+            // console.log(this.state.selectedRowKeys)
             var ID = this.state.selectedRowKeys[0];
-            console.log(ID)
+            // console.log(ID)
             // 将当前选中的【服务区域】的value(字符串)换成serviceAreaNew属性的数组形式
             let newData = [...this.state.data];
             let index = newData.findIndex((item) => ID === item.key);
             let item = newData[index];
-            console.log(item)
+            // console.log(item)
             // 将【省市地区】的数据另外存储在serviceAreaNew数组变量中
             item.area = item.serviceAreaNew;
 
@@ -367,7 +368,7 @@ class serviceArea extends React.Component {
                 editingKey: ID,
                 editLock:true,
             },()=>{
-                console.log(this.state)
+                // console.log(this.state)
             })
         }else {
             message.warning('请先选择一行服务区域数据！')
@@ -388,7 +389,7 @@ class serviceArea extends React.Component {
                     var ID = _this.state.selectedRowKeys[0]
                     const dataSource = [..._this.state.data];
                     _this.setState({ data: dataSource.filter(item => item.key !== ID), editingKey: '',selectedRowKeys:null },()=>{
-                        console.log(_this.state)
+                        // console.log(_this.state)
                         _this.updataToParent();
                     });
                 },
@@ -429,13 +430,13 @@ class serviceArea extends React.Component {
             //     params.area = params.area.join("/");
             // }
             
-            params.area = params.area.join("/");
+             params.area = params.area.join("/");
             // 修改数据，进行赋值
             newData.splice(index, 1, {
                 ...item,
                 ...params
             });
-            console.log(this.state.radioLock,item,params,newData)
+            // console.log(this.state.radioLock,item,params,newData)
             this.setState({ data: newData, editingKey: '',selectedRowKeys:null},()=>{
                 this.updataToParent();
             });
@@ -446,7 +447,7 @@ class serviceArea extends React.Component {
 
     // 单选框按钮---选中事件
     selectChangeArea = (selectedRowKeys, selectedRows) => {
-        console.log('selectedRowKeys changed: ',selectedRowKeys, selectedRows);
+        // console.log('selectedRowKeys changed: ',selectedRowKeys, selectedRows);
         this.setState({ 
             selectedRowKeys:selectedRowKeys,
         });
@@ -476,7 +477,10 @@ class serviceArea extends React.Component {
 
         const columns = this.columns.map(col => {
 
-            if (!isEdit && !col.editable) {
+            if (isEdit && !col.editable) {
+                return col;
+            }
+            if (!col.editable) {
                 return col;
             }
             return {
@@ -498,10 +502,10 @@ class serviceArea extends React.Component {
             type:'radio'
         };
 
-        
+        console.log(isEdit)
         return (
             <div>
-                <Row gutter={24} style={{textAlign:'right',display: !isEdit ? 'visible' : 'hidden'}}>
+                <Row gutter={24} style={{textAlign:'right',visibility: !isEdit ? 'visible' : 'hidden'}}>
                     <Button style={{marginRight: '10px'}} onClick={this.handlerDelete}>删除</Button>
                     {
                         !this.state.editingKey ? <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button> : (
