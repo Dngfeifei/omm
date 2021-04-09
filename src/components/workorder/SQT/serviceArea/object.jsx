@@ -13,12 +13,13 @@ const { confirm } = Modal;
 import '@/assets/less/pages/servies.less'
 // 引入 API接口
 import { GetBaseData } from '/api/selfEvaluation'
-
+import { GetDictInfo } from '/api/dictionary'  //数据字典api
 // 当前表格条数 默认为0条
 let rowCount = 0;
 // 下拉框基础数据（产品类型-skillType,产品线- productLine）
 let baseData = { skillType: [], productLine: [], brand: [] }
-
+// 产品类别下拉框数据
+let productCategoryData = [];
 class ObjectEl extends Component {
     // 设置默认props
     static defaultProps = {
@@ -76,16 +77,37 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '产品类型',
-                    dataIndex: 'productType',
-                    key: 'productType',
-                    width: "15%",
+                    title: '产品类别',
+                    dataIndex: 'productCategory',
+                    key: 'productCategory',
+                    width: "8%",
                     align: 'center',
                     render: (value, row, index) => {
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectCategory}>
+                            <Option value={""} index={index}>请选择</Option>
+                            {
+                                productCategoryData.map((item) => {
+                                    return <Option key={item.itemCode} index={index} value={item.itemCode}>{item.itemValue}</Option>
+                                })
+                            }
+                        </Select>;
+                    },
+                },
+                {
+                    title: '技术方向',
+                    dataIndex: 'productType',
+                    key: 'productType',
+                    width: "13%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        let skillTypeData = [];
+                        skillTypeData = baseData.skillType.filter((item) => {
+                            return item.strValue4 == row.productCategory;
+                        })
                         return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectType}>
                             <Option value={""} index={index}>请选择</Option>
                             {
-                                baseData.skillType.length ? baseData.skillType.map((item) => {
+                                baseData.skillType.length ? skillTypeData.map((item) => {
                                     return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
                                 }) : ""
                             }
@@ -96,7 +118,7 @@ class ObjectEl extends Component {
                     title: '品牌',
                     dataIndex: 'brand',
                     key: 'brand',
-                    width: "11%",
+                    width: "10%",
                     align: 'center',
                     render: (value, row, index) => {
                         let brandData = [];
@@ -124,22 +146,26 @@ class ObjectEl extends Component {
                 {
                     title: '产品线',
                     dataIndex: 'productLine',
-                    width: "15%",
+                    width: "14%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
-                            <Option value={""} index={index} >请选择</Option>
-                            {this.state.filterArr[index] != undefined ? this.state.filterArr[index].map((item) => {
-                                return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
-                            }) : ""
-                            }
-                        </Select>;
+                        if (this.state.filterArr[index] != undefined && this.state.filterArr[index].length > 0) {
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
+                                <Option value={""} index={index} >请选择</Option>
+                                {this.state.filterArr[index].map((item) => {
+                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
+                                })
+                                }
+                            </Select>;
+                        } else {
+                            return ""
+                        }
                     },
                 },
                 {
                     title: '设备等级',
                     dataIndex: 'deviceLevel',
-                    width: "10%",
+                    width: "9%",
                     align: 'center',
                     render: (value, row, index) => {
                         // row.name==""?""
@@ -177,7 +203,7 @@ class ObjectEl extends Component {
                     title: '设备数量 ',
                     dataIndex: 'deviceCount',
                     key: 'deviceCount',
-                    width: "10%",
+                    width: "9%",
                     align: 'center',
                     render: (value, row, index) => {
                         return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangedeviceCount}></Input>;
@@ -187,7 +213,7 @@ class ObjectEl extends Component {
                     title: '外包数量',
                     dataIndex: 'outsourceCount',
                     key: 'outsourceCount',
-                    width: "10%",
+                    width: "9%",
                     align: 'center',
                     render: (value, row, index) => {
                         return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeoutsourceCount}></Input>;
@@ -226,16 +252,37 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '产品类型',
-                    dataIndex: 'productType',
-                    key: 'productType',
-                    width: "16%",
+                    title: '产品类别',
+                    dataIndex: 'productCategory',
+                    key: 'productCategory',
+                    width: "8%",
                     align: 'center',
                     render: (value, row, index) => {
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectCategory}>
+                            <Option value={""} index={index}>请选择</Option>
+                            {
+                                productCategoryData.map((item) => {
+                                    return <Option key={item.itemCode} index={index} value={item.itemCode}>{item.itemValue}</Option>
+                                })
+                            }
+                        </Select>;
+                    },
+                },
+                {
+                    title: '技术方向',
+                    dataIndex: 'productType',
+                    key: 'productType',
+                    width: "14%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        let skillTypeData = [];
+                        skillTypeData = baseData.skillType.filter((item) => {
+                            return item.strValue4 == row.productCategory;
+                        })
                         return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectType}>
                             <Option value={""} index={index}>请选择</Option>
                             {
-                                baseData.skillType.length ? baseData.skillType.map((item) => {
+                                baseData.skillType.length ? skillTypeData.map((item) => {
                                     return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
                                 }) : ""
                             }
@@ -246,7 +293,7 @@ class ObjectEl extends Component {
                     title: '品牌',
                     dataIndex: 'brand',
                     key: 'brand',
-                    width: "13%",
+                    width: "12%",
                     align: 'center',
                     render: (value, row, index) => {
                         let brandData = [];
@@ -274,22 +321,26 @@ class ObjectEl extends Component {
                 {
                     title: '产品线',
                     dataIndex: 'productLine',
-                    width: "16%",
+                    width: "14%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
-                            <Option value={""} index={index} >请选择</Option>
-                            {this.state.filterArr[index] != undefined ? this.state.filterArr[index].map((item) => {
-                                return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
-                            }) : ""
-                            }
-                        </Select>;
+                        if (this.state.filterArr[index] != undefined && this.state.filterArr[index].length > 0) {
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
+                                <Option value={""} index={index} >请选择</Option>
+                                {this.state.filterArr[index].map((item) => {
+                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
+                                })
+                                }
+                            </Select>;
+                        } else {
+                            return ""
+                        }
                     },
                 },
                 {
                     title: '设备等级',
                     dataIndex: 'deviceLevel',
-                    width: "11%",
+                    width: "10%",
                     align: 'center',
                     render: (value, row, index) => {
                         // row.name==""?""
@@ -327,7 +378,7 @@ class ObjectEl extends Component {
                     title: '设备数量 ',
                     dataIndex: 'deviceCount',
                     key: 'deviceCount',
-                    width: "11%",
+                    width: "10%",
                     align: 'center',
                     render: (value, row, index) => {
                         return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangedeviceCount}></Input>;
@@ -337,7 +388,7 @@ class ObjectEl extends Component {
                     title: '外包数量',
                     dataIndex: 'outsourceCount',
                     key: 'outsourceCount',
-                    width: "11%",
+                    width: "10%",
                     align: 'center',
                     render: (value, row, index) => {
                         return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeoutsourceCount}></Input>;
@@ -350,14 +401,28 @@ class ObjectEl extends Component {
     }
     // 数据即将挂载
     componentWillMount() {
+        //    页面数据初始化
+        this.init()
+    }
+    init = () => {
+        // 获取列表数据和是否可编辑权限
         let dataSource = Array.from(this.props.dataSource)
         let { edit } = this.props
         rowCount = dataSource.length;
         this.setState({
             dataSource, edit
         })
+        // 调用下拉框基础数据接口
+        this.getBaseData()
+        // 获取数据字典-产品类别数据
+        GetDictInfo({ dictCode: "productCategory" }).then(res => {
+            if (res.success != 1) {
+                message.error("性别下拉框资源未获取，服务器错误！")
+            } else {
+                productCategoryData = res.data;
+            }
+        })
     }
-
     // 获取下拉框基础数据方法
     getBaseData = () => {
         // 请求下拉框基础数据
@@ -387,7 +452,26 @@ class ObjectEl extends Component {
             this.updateToparent()
         })
     }
-    // 获取产品类型
+    // 获取产品类别
+    onSelectCategory = (val, { props }) => {
+        let { dataSource, filterArr } = this.state;
+        if (val == "" || dataSource[props.index].productCategory != val) {
+            dataSource[props.index].productType = ""
+            dataSource[props.index].productLine = ""
+            dataSource[props.index].brand = ""
+            dataSource[props.index].productLineName = ""
+            dataSource[props.index].deviceLevel = ""
+            filterArr[props.index] = []
+        }
+
+        dataSource[props.index].productCategory = val;
+        this.setState({
+            dataSource
+        }, () => {
+            this.updateToparent()
+        })
+    }
+    // 获取技术方向
     onSelectType = (val, { props }) => {
         let { dataSource, filterArr } = this.state;
         if (val == "" || dataSource[props.index].productType != val) {
@@ -403,7 +487,6 @@ class ObjectEl extends Component {
         }, () => {
             this.updateToparent()
         })
-
     }
     // 获取品牌
     onSelectBrand = (val, { props }) => {
@@ -596,8 +679,22 @@ class ObjectEl extends Component {
     onCheck = () => {
         let result = { state: true, message: "" }
         let data = this.state.dataSource;
-        data.forEach((el) => {
+        data.forEach((el, index) => {
             Object.keys(el).forEach(item => {
+                if (el.productCategory == 1 && item == "deviceLevel") {
+                    // 1 软件 不存在设备等级  若是软件类别并且是设备等级字段 此字典不校验
+                    return
+                }
+                if (this.state.filterArr.length) {
+                    let isHas = this.state.filterArr[index] == undefined ? false : true
+                    if (!isHas || !this.state.filterArr[index].length) {
+                        // 如果 此分类下的产品线不存在， 产品线和设备等级字段不校验
+                        if (item == "deviceLevel" || item == "productLine" || item == "productLineName") {
+                            return
+                        }
+                    }
+
+                }
                 if (el[item] == "") {
                     result = { state: false, message: "请将服务对象信息填写完整再进行其它操作" }
                 }

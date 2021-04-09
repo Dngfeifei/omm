@@ -166,7 +166,7 @@ class SA extends Component {
     }
     render = _ => {
         let { dataSource, title, objIsShow, contactIsEdit, memberIsEdit, objectIsEdit } = this.state
-        return <div>
+        return <div className="ServiesContent">
 
             <Contact title={title} edit={contactIsEdit} dataSource={dataSource.contactList} onChange={this.onChangeCTC}></Contact>
             {
