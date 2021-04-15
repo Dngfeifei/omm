@@ -372,7 +372,7 @@ class workList extends Component {
                         columns={this.state.columns}
                         pagination={false}
                         scroll={h}
-                        rowKey={ "ticketId"}
+                        rowKey={ (record, index) => `complete${record.id}${index}`}
                         size={'small'}
                         style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}}
                         loading={this.state.loading}  //设置loading属性

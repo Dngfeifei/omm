@@ -158,7 +158,12 @@ class EditableCell extends React.Component {
 class performance extends Component {
     constructor(props) {
         super(props)
-
+        let tokenName='token',header = {},actionUrl = '';
+        if(process.env.NODE_ENV == 'production'){
+		    tokenName = `${process.env.ENV_NAME}_${tokenName}`
+            actionUrl = process.env.API_URL
+        }
+        header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         this.state = {
             editing: false,
             count: 0,
@@ -169,11 +174,8 @@ class performance extends Component {
                 action:"/biSqtBase/upload",
                 // 接受的文件类型
                 // accept: '.xls,.xlsx,.doc,.txt,.PPT,.DOCS,.XLSX,.PPTX',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
+                headers: header,
                 multiple: true,
-                showUploadList: true,
             },
             //上传外包合同设备清单附件---已上传附件信息数据
             fileList:[],
@@ -216,9 +218,6 @@ class performance extends Component {
             trainModeArray:[],
             // 培训师资
             trainTeachersArray:[],
-            
-            
-
         }
     }
 
@@ -227,39 +226,17 @@ class performance extends Component {
     }
     //@author  gl
     componentWillReceiveProps (nextprops) {
+        let {PerformanceData} = this.state;
+        if(JSON.stringify(PerformanceData) == JSON.stringify(nextprops.data)) return false;
+        console.log(JSON.stringify(PerformanceData) == JSON.stringify(nextprops.data))
 		this.initData(nextprops.data)
 	}
     //初始化服务承诺接收数据  @author  gl
     initData = (data) => {
+        // console.log(data)
         this.setState({
             PerformanceData: data,
-            count: data.courseList.length + 1,
-        },()=>{
-            //console.log(((this.props.node == 1 || this.props.node == 3) && (this.props.serviceTypeName == 201 || this.props.serviceTypeName == 212)) , this.state.PerformanceData.isFirstInspection)
-            // 合同承诺备机备件清单
-           this.state.ContractFileList = this.state.PerformanceData.sparePartsFileList;
-            // 上传外包合同设备清单附件
-           this.state.fileList = this.state.PerformanceData.equipmentFileList;
-
-            // 处理集成/备件销售项目（101、102）售后服务约定日期
-            var obj = null ;
-            if (this.state.PerformanceData.afterSaleAgreement == '1' && this.state.PerformanceData.projectCycleType == '1' ) {
-                //  原厂服务--部分项目周期
-               obj = Object.assign({}, this.state.dateTime, { originalServiceParts_start: this.state.PerformanceData.cycleStart ,originalServiceParts_end:this.state.PerformanceData.cycleEnd});
-            } else if(this.state.PerformanceData.afterSaleAgreement == '1' && this.state.PerformanceData.projectCycleType == '2'){ 
-                //原厂服务--全部项目周期
-                obj = Object.assign({}, this.state.dateTime, { originalServiceAll_start: this.state.PerformanceData.cycleStart ,originalServiceAll_end:this.state.PerformanceData.cycleEnd});
-            }else if(this.state.PerformanceData.afterSaleAgreement == '2' && this.state.PerformanceData.projectCycleType == '2'){
-                // 我司服务--部分项目周期
-                obj = Object.assign({}, this.state.dateTime, { ourDriverParts_start: this.state.PerformanceData.cycleStart ,ourDriverParts_end:this.state.PerformanceData.cycleEnd});
-            }else if(this.state.PerformanceData.afterSaleAgreement == '2' && this.state.PerformanceData.projectCycleType == '2'){
-                // 我司服务--全部项目周期
-                obj = Object.assign({}, this.state.dateTime, { ourDriverAll_start: this.state.PerformanceData.cycleStart ,ourDriverAll_end:this.state.PerformanceData.cycleEnd});
-            }
-            this.setState({
-                dateTime: obj
-            })
-
+            count: data.courseList ? data.courseList.length + 1 : 1,
         })
     }
     // 向父组件传递数据
@@ -440,7 +417,7 @@ class performance extends Component {
                 for (let index = 0; index < datas.length; index++) {
                     const element = datas[index];
                     slaLevelArray.push({
-                        id: index + 1,
+                        // id: index + 1,
                         level: element.itemCode,
                         respondTime: '',
                         engineerArriveTime: '',
@@ -453,7 +430,7 @@ class performance extends Component {
                 this.setState({
                     PerformanceData: obj
                 },()=>{
-                    console.log(this.state.PerformanceData)
+                    // console.log(this.state.PerformanceData)
                     this.updataToParent()
                 })
                 
@@ -546,12 +523,6 @@ class performance extends Component {
 
             },
             onMouseLeave: event => {
-                // // 将移出事件延迟一秒，避免侧边操作区域点击不到
-                // setTimeout(()=>{
-                //     this.setState({
-                //         currentState:0
-                //     })
-                // },1000)
                 this.setState({
                             currentState:0
                         })
@@ -583,30 +554,8 @@ addMouseLeave = (record) => {
         this.setState({
             PerformanceData: data
         },()=>{
-            this.updataToParent();
+            //this.updataToParent();
         })
-        
-        if (data.afterSaleAgreement == '1') {
-            return false;
-        }else {
-            // 现将所有时间清空格式化
-            let formatTime = {
-                originalServiceParts_start:'',  // 原厂服务--部分项目周期---起始日期
-                originalServiceParts_end:'', // 原厂服务--部分项目周期---结束日期
-                originalServiceAll_start:'',     // 原厂服务--全部项目周期---起始日期
-                originalServiceAll_end:'', // 原厂服务--全部项目周期---起始日期
-
-                ourDriverParts_start:'',  // 我司服务--部分项目周期---起始日期
-                ourDriverParts_end:'', // 我司服务--部分项目周期---结束日期
-                ourDriverAll_start:'',     // 我司服务--全部项目周期---起始日期
-                ourDriverAll_end:'', // 我司服务--全部项目周期---起始日期
-            }
-           
-            this.setState({
-                dateTime:formatTime,
-                
-            })
-        }
     }
     // 集成/备件销售项目（101、102）售后服务约定 ----【我司服务】单选框的点击事件
     changeRadioStatus = () => {
@@ -615,27 +564,8 @@ addMouseLeave = (record) => {
         this.setState({
             PerformanceData: data
         },()=>{
-            this.updataToParent();
+            //this.updataToParent();
         })
-        
-        if (data.afterSaleAgreement != '2') {
-            // 现将所有时间清空格式化
-            let formatTime = {
-                originalServiceParts_start: '',  // 原厂服务--部分项目周期---起始日期
-                originalServiceParts_end: '', // 原厂服务--部分项目周期---结束日期
-                originalServiceAll_start:'',     // 原厂服务--全部项目周期---起始日期
-                originalServiceAll_end:'', // 原厂服务--全部项目周期---起始日期
-
-                ourDriverParts_start:'',  // 我司服务--部分项目周期---起始日期
-                ourDriverParts_end:'', // 我司服务--部分项目周期---结束日期
-                ourDriverAll_start:'',     // 我司服务--全部项目周期---起始日期
-                ourDriverAll_end:'', // 我司服务--全部项目周期---起始日期
-            }
-          
-            this.setState({
-                dateTime: formatTime
-            })
-        }
        
     }
 
@@ -684,6 +614,8 @@ addMouseLeave = (record) => {
             this.updataToParent();
         })
         if (data.afterSaleAgreement != '1' && data.projectCycleType != '2') {
+            return false;
+        }else{
             // 现将所有时间清空格式化
             let formatTime = {
                 originalServiceParts_start: '',  // 原厂服务--部分项目周期---起始日期
@@ -710,8 +642,6 @@ addMouseLeave = (record) => {
         },()=>{
             this.updataToParent();
         })
-
-
         if(data.afterSaleAgreement!='2' && data.projectCycleType!='1'){
             return false;
         }else {
@@ -776,18 +706,19 @@ addMouseLeave = (record) => {
         // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
         fileList = fileList.slice(-3);
 
-        if (info.file.status === 'done') {
-            message.success(`${info.file.name} 文件上传成功`);
-        } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} 文件上传失败.`);
-        }
+        // if (info.file.status === 'done') {
+        //     message.success(`${info.file.name} 文件上传成功`);
+        // } else if (info.file.status === 'error') {
+        //     message.error(`${info.file.name} 文件上传失败.`);
+        // }
 
         // 2.读取响应并显示文件链接
         fileList = fileList.map(file => {
+            // console.log(file)
             if (file.response) {
                 if (file.response.success == 1) {
-                    let number = Math.random().toString().slice(-6);
-                    file.uid = number;
+                    // let number = Math.random().toString().slice(-6);
+                    // file.uid = number;
                     file.fileName = file.response.data.fileName,
                     file.fileUrl= file.response.data.fileUrl;
                 } else if (file.response.success == 0) {
@@ -796,8 +727,10 @@ addMouseLeave = (record) => {
             }
             return file;
         });
+        console.log(fileList);
         let data = Object.assign({}, this.state.PerformanceData, { equipmentFileList:fileList});
         this.setState({PerformanceData:data, fileList },()=>{this.updataToParent()});
+        //this.setState({PerformanceData:{...this.state.PerformanceData,equipmentFileList:fileList }});
     }
 
 
@@ -807,20 +740,12 @@ addMouseLeave = (record) => {
         let fileList = [...info.fileList];
         // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
         fileList = fileList.slice(-3);
-
-        if (info.file.status === 'done') {
-            message.success(`${info.file.name} 文件上传成功`);
-        } else if (info.file.status === 'error') {
-            message.error(`${info.file.name} 文件上传失败.`);
-        }
-
-
         // 2.读取响应并显示文件链接
         fileList = fileList.map(file => {
             if (file.response) {
                 if (file.response.success == 1) {
-                    let number = Math.random().toString().slice(-6);
-                    file.uid = number;
+                    // let number = Math.random().toString().slice(-6);
+                    // file.uid = number;
                     file.fileName = file.response.data.fileName,
                     file.fileUrl= file.response.data.fileUrl;
                 } else if (file.response.success == 0) {
@@ -830,8 +755,8 @@ addMouseLeave = (record) => {
             return file;
         });
         let data = Object.assign({}, this.state.PerformanceData, { sparePartsFileList:fileList});
-
         this.setState({ ContractFileList:fileList , PerformanceData:data},()=>{this.updataToParent()});
+       // this.setState({PerformanceData:{...this.state.PerformanceData,sparePartsFileList:fileList}})
     }
 
 
@@ -853,10 +778,8 @@ addMouseLeave = (record) => {
 
     // 所有【日期时间】的onchange事件
     timeChange=(el, date, dateString)=>{
-        console.log('----------------      所有【日期时间】的onchange事件         ---------------------')
+         //console.log('----------------      所有【日期时间】的onchange事件         ---------------------',this.state)
         // console.log( dateString);
-
-
         // 判断 是【合同承诺备机备件到库时间】还是 【集成/备件销售项目（101、102）售后服务约】 时间日期选择器
         if (el == 'sparePartsTime') {
             let {PerformanceData}= this.state;
@@ -870,21 +793,6 @@ addMouseLeave = (record) => {
                 this.updataToParent();
             })
         }else {
-            /***
-             *  说明: 因为此处是将每个时间日期选择器赋予不同的属性，避免填写混乱。而真正向父组件传递的是  PerformanceData对象下的cycleStart:'',
-             *        cycleEnd:'',
-            ***/
-            // 第一步：先将本页面定义中对应属性进行实时变化
-            let {dateTime}= this.state;
-            dateTime[el]=dateString;
-            //使用setsatte方法改变类中属性
-            let data = Object.assign({}, dateTime);
-
-            this.setState({
-                dateTime:data
-            })
-
-
             // 第二步 正式修改 PerformanceData对象下的cycleStart、cycleEnd数据并且传递到父组件
             if (el.indexOf('start') > 1) {
                 let data = Object.assign({}, this.state.PerformanceData,{cycleStart:dateString});
@@ -904,14 +812,6 @@ addMouseLeave = (record) => {
             }
         }
     }
-
-
-
-
-
-
-
-
     render = _ => {
         this.init();
         let {isEdit} = this.props;
@@ -961,8 +861,7 @@ addMouseLeave = (record) => {
                 }),
             };
         });
-
-        // console.log(this.state.PerformanceData,isEdit)
+        console.log(this.state.PerformanceData.sparePartsFileList,this.state.PerformanceData.equipmentFileList)
         return (
             <div className="performanceContent">
                 <div className="formContent">
@@ -976,7 +875,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="是否提交验收报告">
+                        <Descriptions.Item label={<div>是否提交验收报告<span>*</span></div>}>
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择是否提交验收报告" allowClear={true} showSearch value={this.state.PerformanceData.isReceiveReport} onChange={(value) => this.inputChange('isReceiveReport', value)}>
                                 {
                                     this.state.siteServiceArray.map((items, index) => {
@@ -1040,7 +939,7 @@ addMouseLeave = (record) => {
                 <div className="config">
                     <Descriptions bordered column={4} size={'small'}>
                         <Descriptions.Item label="是否需要提供首次巡检服务">
-                            <Select disabled={(this.props.node == 1 || this.props.node == 3) ? (this.props.serviceTypeName == '支持与维护服务' || this.props.serviceTypeName == '软件支持与维护服务') ? true : false :isEdit ? true : false} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
+                            <Select disabled={(!this.props.node || this.props.node == 1) ? (this.props.serviceType == '201' || this.props.serviceType == '212') ? false : true :isEdit ? true : false} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection +''} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
                                 <Option value="0">否</Option>
                                 <Option value="1">是</Option>
                             </Select>
@@ -1053,11 +952,11 @@ addMouseLeave = (record) => {
                             </Select>
                         </Descriptions.Item>
                         <Descriptions.Item label="人数">
-                            <InputNumber disabled={isEdit ? true : false} min={1} max={999999} value={this.state.PerformanceData.peopleNum}  onChange={({ target: { value } })=>this.inputChange('peopleNum',value)} />
+                            <InputNumber disabled={isEdit ? true : false} min={1} max={999999} value={this.state.PerformanceData.peopleNum}  onChange={(value )=>this.inputChange('peopleNum',value)} />
                         </Descriptions.Item>
                         <Descriptions.Item label="特殊说明"><Input disabled={isEdit ? true : false} value={this.state.PerformanceData.specialDesc} onChange={({ target: { value } })=>this.inputChange('specialDesc',value)} /></Descriptions.Item>
                         <Descriptions.Item label="是否收集相关配置信息" span={2}>
-                            <Select disabled={isEdit ? true : false} style={{ width: '100%' }} value={this.state.PerformanceData.isCollectConfig} showSearch onChange={(value)=>this.inputChange('isCollectConfig',value)}>
+                            <Select disabled={isEdit ? true : false} style={{ width: '100%' }} value={this.state.PerformanceData.isCollectConfig+''} showSearch onChange={(value)=>this.inputChange('isCollectConfig',value)}>
                                 <Option value="0">否</Option>
                                 <Option value="1">是</Option>
                             </Select>
@@ -1092,7 +991,7 @@ addMouseLeave = (record) => {
                         </Descriptions.Item>
                         <Descriptions.Item label="合同承诺备机备件清单" span={3}>
                             <div className="upload">
-                                <Upload disabled={isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ContractChange} fileList={this.state.ContractFileList}>
+                                <Upload disabled={isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ContractChange} fileList={this.state.PerformanceData.sparePartsFileList}>
                                     <Icon type="upload" />上传
                                 </Upload>
                             </div>
@@ -1101,7 +1000,7 @@ addMouseLeave = (record) => {
                             <DatePicker disabled={isEdit ? true : false} style={{width:'100%'}}  value={this.state.PerformanceData.sparePartsTime?moment(this.state.PerformanceData.sparePartsTime, dateFormat):null} onChange={(date, dateString)=>this.timeChange('sparePartsTime',date, dateString)} format={dateFormat}></DatePicker>
                         </Descriptions.Item>
                         <Descriptions.Item label="是否有外包情况">
-                            <Select disabled={isEdit ? true : false} value={this.state.PerformanceData.isOutsource} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
+                            <Select disabled={isEdit ? true : false} value={this.state.PerformanceData.isOutsource+''} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
                                 <Option value="1">是</Option>
                                 <Option value="0">否</Option>
                                 <Option value="2">部分</Option>
@@ -1110,7 +1009,7 @@ addMouseLeave = (record) => {
                         <Descriptions.Item label="外包商"><Input disabled={isEdit ? true : false} value={this.state.PerformanceData.outsourcer} onChange={({ target: { value } })=>this.inputChange('outsourcer',value)} /></Descriptions.Item>
                         <Descriptions.Item label="上传外包合同设备清单附件"  span={2}>
                             <div className="upload">
-                                <Upload disabled={isEdit ? true : false} {...this.state.uploadConf} action="/biSqtBase/upload" beforeUpload={this.beforeUpload} onChange={this.outiueChange} fileList={this.state.fileList}>
+                                <Upload disabled={isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.outiueChange} fileList={this.state.PerformanceData.equipmentFileList}>
                                     <Icon type="upload" />上传
                                 </Upload>
                             </div>
@@ -1184,13 +1083,13 @@ addMouseLeave = (record) => {
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='1'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={isEdit ? true : this.state.PerformanceData.afterSaleAgreement!='2'?true:this.state.PerformanceData.projectCycleType!='1'?true:false} 
-                                                            onChange={(date, dateString)=>this.timeChange('ourDriverParts_start',date, dateString)}
+                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.afterSaleAgreement == '2' ? this.state.PerformanceData.projectCycleType == '1' ? this.state.PerformanceData.cycleStart ? moment(this.state.PerformanceData.cycleStart, dateFormat) : null : null : null} disabled={isEdit ? true : this.state.PerformanceData.afterSaleAgreement != '2' ? true : this.state.PerformanceData.projectCycleType != '1' ? true : false}
+                                                            onChange={(date, dateString) => this.timeChange('originalServiceParts_start', date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='1'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={isEdit ? true : this.state.PerformanceData.afterSaleAgreement!='2'?true:this.state.PerformanceData.projectCycleType!='1'?true:false}
-                                                            onChange={(date, dateString)=>this.timeChange('ourDriverParts_end',date, dateString)}
+                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.afterSaleAgreement == '2' ? this.state.PerformanceData.projectCycleType == '1' ? this.state.PerformanceData.cycleEnd ? moment(this.state.PerformanceData.cycleEnd, dateFormat) : null : null : null} disabled={isEdit ? true : this.state.PerformanceData.afterSaleAgreement != '2' ? true : this.state.PerformanceData.projectCycleType != '1' ? true : false}
+                                                            onChange={(date, dateString) => this.timeChange('originalServiceParts_end', date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                 </Descriptions>

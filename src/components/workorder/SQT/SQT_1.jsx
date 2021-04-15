@@ -80,6 +80,9 @@ class Sqt extends Component {
     componentWillMount () {
         this.init()
 	}
+    // componentDidMount(){
+    //     //this.init()
+    // }
     /**
     *  自定义封装---用于一个对象给另一个对象赋值。
     * params: 第一个对象==赋值    第二个对象===取值 (意思就是：data给params赋值 返回的是params)
@@ -132,11 +135,12 @@ class Sqt extends Component {
         SqtBaseDetail(id).then(res=>{
             const {paramsObj} = this.state;
             if (res.success == '1') {
+                let newData = {...paramsObj,...res.data};
                 this.setState({
-                    paramsObj:{...paramsObj,...res.data},
-                    swich:false
+                    paramsObj:{...newData},
+                    swich:!this.state.swich
                 },()=>{
-                    // console.log(this.state)
+                    // console.log(this.state.paramsObj)
                 })
             }else if (res.success == '0') {
                 message.error(res.message)
@@ -148,7 +152,7 @@ class Sqt extends Component {
 
     // 定义方法,
     getChildrenData = (dat) => {
-        console.log(dat,!this.props.config.sign)
+        console.log(dat)
         if((this.props.config.sign == 1 && !this.state.swich) || !this.props.config.sign){
             const {paramsObj} = this.state;
             this.setState({
@@ -159,6 +163,9 @@ class Sqt extends Component {
 
 //服务需求表提交验证接口
 submission=async ()=>{
+        if(this.props.config.formRead == 2) {
+            this.props.submission(true)
+        }
         let {paramsObj} = this.state,AssistantPonse,MasterPonse;
         if(!this.vildteMasterList()){
             message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
@@ -173,6 +180,8 @@ submission=async ()=>{
             }
             AssistantPonse = await PostaddAssistant(this.state.datasources)
         }
+        // console.log(paramsObj)
+        // return
         MasterPonse = await SqtBase(paramsObj)
         // if((MasterPonse.success == 1 && !AssistantPonse) || (MasterPonse.success == 1 &&  AssistantPonse.success == 1)){
         //     message.error('数据提交成功，并且执行工作流提交')
@@ -187,6 +196,7 @@ submission=async ()=>{
             message.error(AssistantPonse.message)
             return false;
         }
+       if(this.props.submission) this.props.submission(true);
         return true;       
     }
     //接受附表验证信息函数
@@ -202,7 +212,7 @@ submission=async ()=>{
             if((i == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i == 'managerName' && paramsObj['managerType'] == 1) || ((i == 'renewalName' || i == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
                 continue;
             }
-            if(!paramsObj[i]){
+            if(!(paramsObj[i]+'')){
                 console.log(i,paramsObj[i])
                 return false;
             }
@@ -213,24 +223,24 @@ submission=async ()=>{
          return true;
     }
     render = _ => {
-        let {datasources} = this.state;
-        console.log(this.state.paramsObj)
+        let {datasources,paramsObj} = this.state;
+        console.log(paramsObj.serviceTypeName,datasources,this.props.config)
         return (
             <div className="SqtContent">
                 <Tabs defaultActiveKey="0" tabPosition={'top'} style={{ overflowY:'auto' }}>
                     {this.state.tabsList.map((item,index) => (
                         <TabPane tab={item.name} key={index}>
                             {/* 主表--组件  */}
-                           <ServicesMain paramsObj={this.state.paramsObj} onChangeData={this.getChildrenData} power={this.props.config ? this.props.config : {}} swich={this.state.swich} ></ServicesMain>
+                           <ServicesMain paramsObj={paramsObj} onChangeData={this.getChildrenData} power={this.props.config ? this.props.config : {}} swich={this.state.swich} ></ServicesMain>
                         </TabPane>
                     ))}
                     {
-                        datasources.map((item,index) => (
-                            <TabPane tab={item.name} key={index}>
-                                {/* 附表--组件  */}
-                               <ServiceArea dataSource={this.state.datasources[index]} onChange={(data) => this.getChildrenVildter(data,index)} type={this.state.paramsObj.serviceTypeName} power={this.props.config.formControl}></ServiceArea>
-                            </TabPane>
-                        ))
+                       (paramsObj.serviceType && datasources.length) ? datasources.map((item,index) => (
+                        <TabPane tab={item.area} key={index+1}>
+                            {/* 附表--组件  */}
+                           <ServiceArea dataSource={item} onChange={(data) => this.getChildrenVildter(data,index)} type={this.state.paramsObj.serviceTypeName} power={this.props.config}></ServiceArea>
+                        </TabPane>
+                    )) : null
                     }
                 </Tabs>
             </div>

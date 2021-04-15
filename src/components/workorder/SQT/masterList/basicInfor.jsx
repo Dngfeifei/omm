@@ -31,8 +31,6 @@ import {customerLevel } from '/api/customerInfor'
 class basicInfor extends Component {
     constructor(props) {
         super(props)
-        let {isEdit} = props;
-        console.log()
         this.state = {
             // 系统账号人员
             username: '',
@@ -61,7 +59,7 @@ class basicInfor extends Component {
             }, {
                 label: '项目类别',
                 key: 'projectType',
-                render: isEdit =>  <Select style={{width: '100%' }} disabled={isEdit ? true : false} placeholder="请选择项目类别" allowClear={true} value={this.state.basicInfor.projectType} onChange={(value)=>this.handleChange('projectType',value)}>
+                render: isEdit =>  <Select style={{width: '100%' }} disabled={isEdit ? true : false} placeholder="请选择项目类别" allowClear={true} value={this.state.basicInfor.projectType+''} onChange={(value)=>this.handleChange('projectType',value)}>
                     {
                         this.state.projectTypeArray.map((items, index) => {
                             return (<Option key={index} value={items.itemCode} disabled={this.state.basicInfor.projectType?true:false}>{items.itemValue}</Option>)
@@ -79,7 +77,14 @@ class basicInfor extends Component {
             }, {
                 label: '服务类别',
                 key: 'serviceTypeName',
-                render: isEdit => <Input disabled={isEdit ? true : false} value={this.state.basicInfor.serviceTypeName} onChange={({ target: { value } })=>this.handleChange('serviceTypeName',value)} placeholder='根据项目号进行带入' />
+                render: isEdit => <Select disabled={isEdit ? true : false} style={{width: '100%' }} placeholder="请选择" allowClear={true} value={this.state.basicInfor.serviceType+''} onChange={(value)=>this.handleChange('serviceType',value)}>
+                {
+                    this.state.ServiceTypeArray.map((items, index) => {
+                        return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
+                    })
+                }
+            </Select>
+                // render: isEdit => <Input disabled={isEdit ? true : false} value={this.state.basicInfor.serviceTypeName} onChange={({ target: { value } })=>this.handleChange('serviceTypeName',value)} placeholder='根据项目号进行带入' />
             }, {
                 label: '客户编码',
                 key: 'custNum',
@@ -130,7 +135,9 @@ class basicInfor extends Component {
             }, {
                 label: '项目经理联系方式',
                 key: 'managerPhone',
-                render: isEdit => <Input disabled={this.props.node != 2 ?isEdit ? this.state.basicInfor.managerType == '1' ? false : true : false : true} value={this.state.basicInfor.managerPhone} onChange={({ target: { value } })=>this.handleChange('managerPhone',value)} placeholder='根据项目经理所选进行带入' />
+                render: isEdit => {
+                    let a = this.props.node != 2 ? isEdit ? true : this.state.basicInfor.managerType == '1' ? false : true : false;
+                    return <Input disabled={this.props.node != 2 ? isEdit ? true : this.state.basicInfor.managerType == '1' ? true : false : false} value={this.state.basicInfor.managerPhone} onChange={({ target: { value } })=>this.handleChange('managerPhone',value)} placeholder='根据项目经理所选进行带入' />}
                
             }, {
                 label: '项目开始日期',
@@ -147,7 +154,7 @@ class basicInfor extends Component {
             }, {
                 label: '是否续签项目',
                 key: 'isRenewal',
-                render: isEdit => <Select style={{ width: '100%' }} disabled={isEdit ? true : false} placeholder="请选择是否续签项目" allowClear={true} value={this.state.basicInfor.isRenewal} onChange={(value)=>this.handleChange('isRenewal',value)}>
+                render: isEdit => <Select style={{ width: '100%' }} disabled={isEdit ? true : false} placeholder="请选择是否续签项目" allowClear={true} value={this.state.basicInfor.isRenewal+''} onChange={(value)=>this.handleChange('isRenewal',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>
@@ -163,7 +170,7 @@ class basicInfor extends Component {
                 label: '是否转包项目',
                 key: 'isSubcontract',
                 span: 2,
-                render: isEdit => <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择是否转包项目" allowClear={true} value={this.state.basicInfor.isSubcontract} onChange={(value)=>this.handleChange('isSubcontract',value)}>
+                render: isEdit => <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择是否转包项目" allowClear={true} value={this.state.basicInfor.isSubcontract+''} onChange={(value)=>this.handleChange('isSubcontract',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>
@@ -176,7 +183,7 @@ class basicInfor extends Component {
                 label: '是否有团建负责',
                 key: 'isLeagueBuild',
                 span: 2,
-                render: isEdit => <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择是否有团建负责" allowClear={true} value={this.state.basicInfor.isLeagueBuild} onChange={(value)=>this.handleChange('isLeagueBuild',value)}>
+                render: isEdit => <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择是否有团建负责" allowClear={true} value={this.state.basicInfor.isLeagueBuild+''} onChange={(value)=>this.handleChange('isLeagueBuild',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>
@@ -202,6 +209,8 @@ class basicInfor extends Component {
 
             // 项目类别--数据集合
             projectTypeArray:[],
+            // 服务类别--数据集合
+            ServiceTypeArray:[],
             // 客户级别--数据集合
             rankArray:[],
             // 项目经理类型--数据集合
@@ -210,7 +219,7 @@ class basicInfor extends Component {
             userSelector:'',
             // 所有数据集合
             basicInfor:null,
-
+            backBasicInfor:null,
             // 子组件选择器选中的数据集合
             info:null,
             
@@ -223,9 +232,10 @@ class basicInfor extends Component {
         
         this.setState({
             basicInfor: this.props.data,
+            backBasicInfor:{...this.props.data}
         }, () => {
             // 判断 如果是从【自行创建服务计划表】的情况下，则将填写人、填写人ID、填写时间 归于：当前系统账号人员、当前的系统日期时间；若不是【自行创建服务计划表】的情况下，则按照数据进行填写
-            if (isSelfCreation) {
+            if (!isSelfCreation) {
                 let name = 'realName', id = 'userid';
                 if (process.env.NODE_ENV == 'production') {
                     name = `${process.env.ENV_NAME}_realName`
@@ -234,15 +244,24 @@ class basicInfor extends Component {
                 
                 let userName = localStorage.getItem(name)
                 let userId = localStorage.getItem(id)
-                let data = Object.assign({}, this.state.basicInfor, { writeUserName: userName,writeTime:moment().format('YYYY-MM-DD HH:mm:ss')})
+                // let data = Object.assign({}, this.state.basicInfor)
 
-                // 在对象数据集合中新增【填写人ID-writeUserId】
-                data['writeUserId'] = userId;
-                
-                this.setState({ basicInfor: data },()=>{
-                   
-                    // 将修改的数据传递到父组件
-                    this.props.onChangeInfo(this.state.basicInfor)
+                // // 在对象数据集合中新增【填写人ID-writeUserId】
+                // data['writeUserId'] = userId;
+                serviceWorkOrder().then(res => {
+                    if (res.success == 1) {
+                        let {backBasicInfor} = this.state
+                        let data = Object.assign({},this.state.basicInfor, { orderNum:res.data},{writeUserId:userId, writeUserName: userName,writeTime:moment().format('YYYY-MM-DD HH:mm:ss')});
+                        this.setState({
+                            basicInfor:data,
+                            backBasicInfor:{...backBasicInfor,...data}
+                        },()=>{
+                            // 将修改的数据传递到父组件
+                            this.props.onChangeInfo(this.state.basicInfor)
+                        })
+                    } else if (res.success == 0) {
+                        message.error(res.message)
+                    }
                 })
 
             }
@@ -255,6 +274,14 @@ class basicInfor extends Component {
     }
      //@author  gl
      componentWillReceiveProps (nextprops) {
+        //  console.log(this.state.basicInfor.orderNum == nextprops.orderNum)
+        let {basicInfor} = this.state;
+        console.log(JSON.stringify(basicInfor) == JSON.stringify(nextprops.data))
+        if(JSON.stringify(basicInfor) == JSON.stringify(nextprops.data)) return;
+        // if(this.state.basicInfor.orderNum == nextprops.orderNum){
+        //     return false;
+        // }
+        // console.log(nextprops.data)
 		this.setState({
             basicInfor: nextprops.data,
         })
@@ -299,15 +326,11 @@ class basicInfor extends Component {
                 message.error(res.message)
             }
         })
-
-        serviceWorkOrder().then(res => {
+        // 项目类别--数据  
+        customerLevel({ dictCode: 'serviceType' }).then(res => {
             if (res.success == 1) {
-                let data = Object.assign({}, this.state.basicInfor, { orderNum:res.data});
                 this.setState({
-                    basicInfor:data
-                },()=>{
-                    // 将修改的数据传递到父组件
-                    this.props.onChangeInfo(this.state.basicInfor)
+                    ServiceTypeArray: res.data
                 })
             } else if (res.success == 0) {
                 message.error(res.message)
@@ -414,7 +437,8 @@ class basicInfor extends Component {
     }
     // 【项目选择器】点击确认之后，将对应的数据带入到基本信息中
     handleOk=(info)=>{
-        let newBasicInfor = this.setInfo(info,this.state.basicInfor);
+        // let newBasicInfor = this.setInfo(info,this.state.basicInfor);
+        let newBasicInfor = this.setInfo(info,this.state.backBasicInfor);//重置项目号之后所有值跟着重置 @gl 
         // 新增一项【项目id--projectId】
         newBasicInfor['projectId'] = info.id;
         // console.log(newBasicInfor)
@@ -441,7 +465,8 @@ class basicInfor extends Component {
     }
     // 点击【项目经理】旁边的icon，就弹出【人员选择器】对话框
     showUserManager=(title)=>{
-        if(this.props.isEdit){
+        // console.log(this.props.node !=2 ,this.props.isEdit)
+        if(this.props.node !=2 && this.props.isEdit){
             return false;
         }
         this.setState({
@@ -492,6 +517,7 @@ class basicInfor extends Component {
     
     
     render = _ => {
+        console.log('jiben')
         const { getFieldDecorator } = this.props.form;
         const { isEdit } = this.props;
         return (

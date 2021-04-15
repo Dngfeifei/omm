@@ -36,7 +36,6 @@ class EditableCell extends React.Component {
 
     // form[区域]下拉事件
     handleComputerRegionChange = (value) => {
-        // console.log(value)
         this.setState({
             computerRegionValue: value
         })
@@ -75,7 +74,6 @@ class EditableCell extends React.Component {
             ...restProps
         } = this.props;
 
-    
         return (
             <td {...restProps} className='my-cell-td'>
                 {editing ? (
@@ -86,7 +84,7 @@ class EditableCell extends React.Component {
                                     required: true,
                                     message: `请输入 ${title}!`
                                 }],
-                                initialValue: (record[dataIndex])
+                                initialValue: (record[dataIndex].split("/"))
                             })(
                                 // value={this.state.computerRegionValue}
                                 <Cascader options={this.state.computerRegion} onChange={this.handleComputerRegionChange} placeholder="请选择区域" />
@@ -163,16 +161,22 @@ class serviceArea extends React.Component {
     }
     //@author  gl
     componentWillReceiveProps (nextprops) {
+        let {data} = this.state;
+        console.log(JSON.stringify(data) == JSON.stringify(nextprops.data))
+        if(JSON.stringify(data) == JSON.stringify(nextprops.data)) return;
         if(!this.state.editingKey){
             this.initData(nextprops.data)
-            // console.log(nextprops,this.state.data)
         }
-		// this.initData(nextprops.data)
 	}
     initData = (data) => {
         let radioLock = false;//m初始化主责区域密钥
         data.forEach((item,index) => {
-            radioLock =  item.isMainDutyArea == 1 ? true : false
+            if(!radioLock){
+                radioLock =  item.isMainDutyArea == 1 ? true : false;//当已经有一个主责区域了就不再继续循环赋值了
+            }
+            if(!item.key){
+                data[index].key = index+1;
+            }
         })
         this.setState({
             data: data,
@@ -182,7 +186,6 @@ class serviceArea extends React.Component {
     }
     // 向父组件传递本页面数据集合
     updataToParent=()=>{
-        debugger
         this.props.onChange(this.state.data)
     }
     
@@ -231,6 +234,7 @@ class serviceArea extends React.Component {
                 count: count + 1,
                 editingKey: newData.key, //将当前新增的行放置到可编辑状态
                 selectedRowKeys:newSelectKey,   // 将当前新增的行进行选中
+                editLock: false
             });
             
         }else {
@@ -289,7 +293,7 @@ class serviceArea extends React.Component {
             // }else if (item.isMainDutyArea == '0'){
             //     item.area = item.area.join("/");
             // }
-            item.area = item.area.join("/");
+            //item.area = item.area.join("/");
             this.setState({
                 editingKey: '',
                 editLock: false
@@ -354,15 +358,7 @@ class serviceArea extends React.Component {
         // console.log(this.state.selectedRowKeys);
         if (this.state.selectedRowKeys) {
             // console.log(this.state.selectedRowKeys)
-            var ID = this.state.selectedRowKeys[0];
-            // console.log(ID)
-            // 将当前选中的【服务区域】的value(字符串)换成serviceAreaNew属性的数组形式
-            let newData = [...this.state.data];
-            let index = newData.findIndex((item) => ID === item.key);
-            let item = newData[index];
-            // console.log(item)
-            // 将【省市地区】的数据另外存储在serviceAreaNew数组变量中
-            item.area = item.serviceAreaNew;
+             var ID = this.state.selectedRowKeys[0];
 
             this.setState({
                 editingKey: ID,
@@ -421,7 +417,7 @@ class serviceArea extends React.Component {
             let {radioLock} = this.state;
 
             // 将【省市地区】的数据另外存储在serviceAreaNew数组变量中
-            item.serviceAreaNew = params.area;
+            //item.serviceAreaNew = params.area;
 
             // 判断当前选中的区域是否为主责区域,前提是当前数据里没有主责区域选项
             // if(!this.state.radioLock && params.isMainDutyArea == 1){
@@ -501,8 +497,6 @@ class serviceArea extends React.Component {
             onChange: this.selectChangeArea,
             type:'radio'
         };
-
-        console.log(isEdit)
         return (
             <div>
                 <Row gutter={24} style={{textAlign:'right',visibility: !isEdit ? 'visible' : 'hidden'}}>

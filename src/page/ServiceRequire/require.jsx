@@ -53,7 +53,7 @@ class RequireSqt extends Component {
          this.refs.getSwordButton.submission().then(res => {
              if(res){
                 message.success('操作成功！');
-                let resetwork = {key: backKey, switch: !this.props.resetwork.switch};
+                let resetwork = { switch: !this.props.resetwork.switch};
                 this.props.setWorklist(resetwork);
                 this.handleBack();
              }
