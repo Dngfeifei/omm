@@ -17,7 +17,7 @@ class SA extends Component {
         dataSource: {},  //副表数据
         type: "",  //服务类别
         power: {},  //编辑权限
-        onChange:()=>{} //数据变化后 外部接受最新数据的方法
+        onChange: () => { } //数据变化后 外部接受最新数据的方法
     }
     constructor(props) {
         super(props)
@@ -38,7 +38,7 @@ class SA extends Component {
             contactIsEdit: true,//客户技术联系人是否可编辑
             objectIsEdit: true,//服务对象是否可编辑
             memberIsEdit: true,//项目组成员是否可编辑
-            types: ["系统集成服务", "咨询服务", "设备搬迁服务", "培训服务", "灾备实施服务", "驻场运维服务"]//此服务分类下 服务对象模块不显示
+            types: ["101", "203", "205", "207", "208", "210"]//此服务分类下 服务对象模块不显示
         }
     }
 
@@ -48,7 +48,7 @@ class SA extends Component {
         let isMainDutyAreaStr = dataSource.isMainDutyArea ? '<span style="color:red">[主责区域]</span>' : ""
         let title = dataSource.area + isMainDutyAreaStr
         // 页面模块显示逻辑
-        if (types.indexOf(type) >= 0) {
+        if (types.indexOf(toString(type)) >= 0) {
             objIsShow = false
         }
         // 页面模块只读逻辑
