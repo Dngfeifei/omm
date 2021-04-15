@@ -165,12 +165,9 @@ class Sqt extends Component {
 submission=async ()=>{
         if(this.props.config.formRead == 2) {
             this.props.submission(true)
+            return false
         }
         let {paramsObj} = this.state,AssistantPonse,MasterPonse;
-        if(!this.vildteMasterList()){
-            message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
-            return false;
-        }
         if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1){//附表1提交接口
             for(let i = 0,len = this.state.datasources; i < len ; i++ ){
                 if(datasources[i].error.state) {
@@ -180,17 +177,18 @@ submission=async ()=>{
             }
             AssistantPonse = await PostaddAssistant(this.state.datasources)
         }
-        // console.log(paramsObj)
-        // return
-        MasterPonse = await SqtBase(paramsObj)
-        // if((MasterPonse.success == 1 && !AssistantPonse) || (MasterPonse.success == 1 &&  AssistantPonse.success == 1)){
-        //     message.error('数据提交成功，并且执行工作流提交')
-        // }else{
-        //     message.error('数据信息提交失败，请联系管理员！')
-        // }
-        if(MasterPonse.success != 1){
-            message.error(MasterPonse.message)
-            return false;
+        if (!this.props.config.formControl || ( this.props.config.formControl.masterList.nodes && this.props.config.formControl.masterList.isEdit)) {
+            if (!this.vildteMasterList()) {
+                message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
+                return false;
+            }
+            // console.log(JSON.stringify(paramsObj))
+            // return
+            MasterPonse = await SqtBase(paramsObj)
+            if (MasterPonse.success != 1) {
+                message.error(MasterPonse.message)
+                return false;
+            }
         }
         if(AssistantPonse && AssistantPonse.success != 1){
             message.error(AssistantPonse.message)
