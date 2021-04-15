@@ -54,9 +54,9 @@ class SA extends Component {
         // 页面模块只读逻辑
         if (power.formRead == 1) {
             // 若为1 所有页面可编辑
-            if (power.serviceArea.isEdit) {
+            if (power.formControl.serviceArea.isEdit) {
                 // 若power.serviceArea.isEdit为true 服务区域页面可编辑
-                contactIsEdit = power.formControl.formserviceArea.contactIsEdit
+                contactIsEdit = power.formControl.serviceArea.contactIsEdit
                 objectIsEdit = power.formControl.serviceArea.objectIsEdit
                 memberIsEdit = power.formControl.serviceArea.memberIsEdit
 

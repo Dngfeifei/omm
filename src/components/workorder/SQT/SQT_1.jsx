@@ -177,7 +177,7 @@ submission=async ()=>{
             }
             AssistantPonse = await PostaddAssistant(this.state.datasources)
         }
-        if (!this.props.config.formControl || ( this.props.config.formControl.masterList.nodes && this.props.config.formControl.masterList.isEdit)) {
+         if (!this.props.config.formControl || ( this.props.config.formControl.masterList.nodes && this.props.config.formControl.masterList.isEdit)) {
             if (!this.vildteMasterList()) {
                 message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
                 return false;
@@ -189,7 +189,7 @@ submission=async ()=>{
                 message.error(MasterPonse.message)
                 return false;
             }
-        }
+         }
         if(AssistantPonse && AssistantPonse.success != 1){
             message.error(AssistantPonse.message)
             return false;
