@@ -23,6 +23,7 @@ import moment from 'moment'
 // 引入页面CSS
 import '/assets/less/pages/performancePledge.less'
 import '@/assets/less/pages/logBookTable.css'
+import '@/assets/less/pages/pane.less'
 
 // 引入--数据字典统一接口
 import {customerLevel } from '/api/customerInfor'
@@ -812,9 +813,16 @@ addMouseLeave = (record) => {
             }
         }
     }
+    //处理个lable显示是否必填
+    setRequired = (node,key) => {
+        if(node == 0 && (key == '服务方式' || key == '远程巡检周期'|| key == '现场巡检周期'|| key == '是否需要提供首次巡检服务'|| key == '是否收集相关配置信息'|| key == '服务报告提交周期'|| key == '服务单要求'|| key == '其他重要承诺及要求')){
+            return <span className='required'>{key}</span>
+        }
+        return <span>{key}</span>
+    }
     render = _ => {
         this.init();
-        let {isEdit} = this.props;
+        let {isEdit,node} = this.props;
         const components = {
             body: {
                 row: EditableFormRow,
@@ -866,7 +874,7 @@ addMouseLeave = (record) => {
             <div className="performanceContent">
                 <div className="formContent">
                     <Descriptions bordered column={5} size={'small'}>
-                        <Descriptions.Item label="服务方式">
+                        <Descriptions.Item label={this.setRequired(node,'服务方式')}>
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择服务方式" allowClear={true} showSearch value={this.state.PerformanceData.serviceMode} onChange={(value) => this.inputChange('serviceMode', value)}>
                                 {
                                     this.state.serviceModeArray.map((items, index) => {
@@ -875,7 +883,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={<div>是否提交验收报告<span>*</span></div>}>
+                        <Descriptions.Item label={this.setRequired(node,'是否提交验收报告')}>
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择是否提交验收报告" allowClear={true} showSearch value={this.state.PerformanceData.isReceiveReport} onChange={(value) => this.inputChange('isReceiveReport', value)}>
                                 {
                                     this.state.siteServiceArray.map((items, index) => {
@@ -884,7 +892,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="远程巡检周期" span={1}>
+                        <Descriptions.Item label={this.setRequired(node,"远程巡检周期")} span={1}>
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.longInspectionCycle} onChange={(value)=>this.inputChange('longInspectionCycle',value)}>
                                 {
                                     this.state.inspectionCycleArray.map((items, index) => {
@@ -893,7 +901,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="现场巡检周期" span={1}>
+                        <Descriptions.Item label={this.setRequired(node,"现场巡检周期")} span={1}>
                         <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.sceneInspectionCycle} onChange={(value)=>this.inputChange('sceneInspectionCycle',value)}>
                                 {
                                     this.state.inspectionCycleArray.map((items, index) => {
@@ -902,7 +910,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="巡检特殊说明" span={2}>
+                        <Descriptions.Item label={this.setRequired(node,"巡检特殊说明")} span={2}>
                             <Input disabled={isEdit ? true : false} value={this.state.PerformanceData.inspectionDesc} onChange={({ target: { value } })=>this.inputChange('inspectionDesc',value)} />
                         </Descriptions.Item>
                     </Descriptions>
@@ -938,30 +946,30 @@ addMouseLeave = (record) => {
                 </div>
                 <div className="config">
                     <Descriptions bordered column={4} size={'small'}>
-                        <Descriptions.Item label="是否需要提供首次巡检服务">
+                        <Descriptions.Item label={this.setRequired(node,"是否需要提供首次巡检服务")}>
                             <Select disabled={(!this.props.node || this.props.node == 1) ? (this.props.serviceType == '201' || this.props.serviceType == '212') ? false : true :isEdit ? true : false} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection +''} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
                                 <Option value="0">否</Option>
                                 <Option value="1">是</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="项目是否约定驻场服务">
+                        <Descriptions.Item label={this.setRequired(node,"项目是否约定驻场服务")}>
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} showSearch value={this.state.PerformanceData.onsiteService} onChange={(value)=>this.inputChange('onsiteService',value)}>
                                 <Option value="长期驻场">长期驻场</Option>
                                 <Option value="临时驻场">临时驻场</Option>
                                 <Option value="无驻场">无驻场</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="人数">
+                        <Descriptions.Item label={this.setRequired(node,"人数")}>
                             <InputNumber disabled={isEdit ? true : false} min={1} max={999999} value={this.state.PerformanceData.peopleNum}  onChange={(value )=>this.inputChange('peopleNum',value)} />
                         </Descriptions.Item>
-                        <Descriptions.Item label="特殊说明"><Input disabled={isEdit ? true : false} value={this.state.PerformanceData.specialDesc} onChange={({ target: { value } })=>this.inputChange('specialDesc',value)} /></Descriptions.Item>
-                        <Descriptions.Item label="是否收集相关配置信息" span={2}>
+                        <Descriptions.Item label={this.setRequired(node,"特殊说明")}><Input disabled={isEdit ? true : false} value={this.state.PerformanceData.specialDesc} onChange={({ target: { value } })=>this.inputChange('specialDesc',value)} /></Descriptions.Item>
+                        <Descriptions.Item label={this.setRequired(node,"是否收集相关配置信息")} span={2}>
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} value={this.state.PerformanceData.isCollectConfig+''} showSearch onChange={(value)=>this.inputChange('isCollectConfig',value)}>
                                 <Option value="0">否</Option>
                                 <Option value="1">是</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="不收集配置信息原因说明" span={2} className="mustFill">
+                        <Descriptions.Item label={this.setRequired(node,"不收集配置信息原因说明")} span={2} className="mustFill">
                             
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择不收集配置信息原因说明" allowClear={true} showSearch value={this.state.PerformanceData.notCollectReason} onChange={(value)=>this.inputChange('notCollectReason',value)}>
                                 {
@@ -971,7 +979,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="服务报告提交周期" span={2}>
+                        <Descriptions.Item label={this.setRequired(node,"服务报告提交周期")} span={2}>
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择服务报告提交周期" allowClear={true} showSearch value={this.state.PerformanceData.serviceReportCycle} onChange={(value)=>this.inputChange('serviceReportCycle',value)}>
                                 {
                                     this.state.serviceReportCycleArray.map((items, index) => {
@@ -980,7 +988,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="服务单要求" span={2}>
+                        <Descriptions.Item label={this.setRequired(node,"服务单要求")} span={2}>
                             <Select disabled={isEdit ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceListRequire} onChange={(value) => this.inputChange('serviceListRequire', value)}>
                                 {
                                     this.state.serviceListRequireArray.map((items, index) => {
@@ -989,25 +997,25 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="合同承诺备机备件清单" span={3}>
+                        <Descriptions.Item label={this.setRequired(node,"合同承诺备机备件清单")} span={3}>
                             <div className="upload">
                                 <Upload disabled={isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ContractChange} fileList={this.state.PerformanceData.sparePartsFileList}>
                                     <Icon type="upload" />上传
                                 </Upload>
                             </div>
                         </Descriptions.Item>
-                        <Descriptions.Item label="合同承诺备机备件到库时间">
+                        <Descriptions.Item label={this.setRequired(node,"合同承诺备机备件到库时间")}>
                             <DatePicker disabled={isEdit ? true : false} style={{width:'100%'}}  value={this.state.PerformanceData.sparePartsTime?moment(this.state.PerformanceData.sparePartsTime, dateFormat):null} onChange={(date, dateString)=>this.timeChange('sparePartsTime',date, dateString)} format={dateFormat}></DatePicker>
                         </Descriptions.Item>
-                        <Descriptions.Item label="是否有外包情况">
+                        <Descriptions.Item label={this.setRequired(node,"是否有外包情况")}>
                             <Select disabled={isEdit ? true : false} value={this.state.PerformanceData.isOutsource+''} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
                                 <Option value="1">是</Option>
                                 <Option value="0">否</Option>
                                 <Option value="2">部分</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label="外包商"><Input disabled={isEdit ? true : false} value={this.state.PerformanceData.outsourcer} onChange={({ target: { value } })=>this.inputChange('outsourcer',value)} /></Descriptions.Item>
-                        <Descriptions.Item label="上传外包合同设备清单附件"  span={2}>
+                        <Descriptions.Item label={this.setRequired(node,"外包商")}><Input disabled={isEdit ? true : false} value={this.state.PerformanceData.outsourcer} onChange={({ target: { value } })=>this.inputChange('outsourcer',value)} /></Descriptions.Item>
+                        <Descriptions.Item label={this.setRequired(node,"上传外包合同设备清单附件")}  span={2}>
                             <div className="upload">
                                 <Upload disabled={isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.outiueChange} fileList={this.state.PerformanceData.equipmentFileList}>
                                     <Icon type="upload" />上传
@@ -1125,7 +1133,7 @@ addMouseLeave = (record) => {
                 <div className="desc">
                     <div className="row">
                         <div className="column">
-                            <div className="descKey">其他重要承诺及要求</div>
+                            <div className="descKey">{this.setRequired(node,"其他重要承诺及要求")}</div>
                             <div className="descValue">
                                 <TextArea disabled={isEdit ? true : false} value={this.state.PerformanceData.otherPromise} onChange={({ target: { value } })=>this.inputChange('otherPromise',value)}/>
                             </div>
