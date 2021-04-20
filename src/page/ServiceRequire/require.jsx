@@ -13,7 +13,8 @@ import { connect } from 'react-redux'
 import { REMOVE_PANE , ADD_PANE} from '/redux/action'
 
 // 引入服务需求表工单组件
-import SQT from '@/components/workorder/SQT/SQT_1.jsx'
+// import SQT from '@/components/workorder/SQT/SQT_1.jsx'
+import SQT from '@/components/workorder/microrisk/microrisk.jsx'
 
 
 @connect(state => ({
@@ -71,7 +72,7 @@ class RequireSqt extends Component {
         return (
             <div className="service" style={{height:'100%', padding: '0 15px',overflow:'hidden'}}>
                 
-                <SQT ref="getSwordButton" config={{}}></SQT>
+                <SQT ref="getSwordButton" config={{id:90}}></SQT>
                 {/* 提交按钮--区域 */}
                 <div className="btnContent" style={{textAlign:'right',marginTop:'0px'}}>
                     <Button type="primary" style={{ marginRight: '30px' }} onClick={this.handleSubmit}>提交</Button>

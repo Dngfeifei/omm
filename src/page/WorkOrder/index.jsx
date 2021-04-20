@@ -9,7 +9,7 @@ import '@/assets/less/pages/workorder.less'
 import {comObj} from "@/utils/workorder";
 
 //引入接口
-import { getOperation,getBackTask ,getTransfer,getEndorse,getUnpass,getSubmit,getProcessImg,getDeleteAttachment,getRetrieve,getFinish,getReview} from '/api/workspace'
+import { getOperation,getBackTask ,getTransfer,getEndorse,getUnpass,getSubmit,getProcessImg,getDeleteAttachment,getRetrieve,getFinish,getReview,getClaim} from '/api/workspace'
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -153,7 +153,9 @@ class workOrer extends Component {
             upload: 1, //附件上传区是否可操作0，不显示，1可上传删除，2仅显示不可上传删除
             circulation: 1,//流转记录
             formRead: 1,   //表单权限
-            opinionWarn: 0, //处理意见填写不正确提示显示否
+            opinionWarn: 0, //处理意见填写不正确提示显示否,
+            claim: 0, //"认领"
+            claimName: '认领'
         },
         formControl:{},  //工单内容操作权限
         fileList: [    //已伤上传附件信息数据
@@ -431,6 +433,13 @@ class workOrer extends Component {
             userId
         }
     }
+    //认领按钮事件
+    claim = () => {
+        let upData = this.processing()
+        getClaim(upData).then(res => {
+            this.resetState(res);
+        })
+    }
     render = () => {
         const { swit,workControl,listData,businessKey,formKey,spinning,ticketId} = this.state;
         const orderCompont = businessKey;
@@ -479,6 +488,10 @@ class workOrer extends Component {
                             {workControl.engReview ?<Button type="primary" style={{marginRight:8}} onClick={()=>this.openModal('提交',5)}>
                                 <MyIcon type="iconshenpi" />
                                 <span>提交复评</span>
+                            </Button>: null}
+                            {workControl.claim ?<Button type="primary" style={{marginRight:8}} onClick={()=>this.claim()}>
+                                <MyIcon type="iconshenpi" />
+                                <span>认领</span>
                             </Button>: null}
                             {workControl.engFinish ?<Button type="primary" style={{marginRight:8}} onClick={this.gameOver}>
                                 结束

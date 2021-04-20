@@ -75,6 +75,8 @@ module.exports = {
       '/assessProable':target,     // 工程师自评估新增专业技能
       '/assess':target,     // 工程师自评专业数据查询
       '/basedata':target,     // 工程师自评基础数据查询
+      '/sql':target,     // 工作流认领接口
+      '/microRisk':target,     // 微观风险接口
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

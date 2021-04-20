@@ -31,6 +31,7 @@ class Sqt extends Component {
                 name:'主表信息'
             }],   
             datasources:[],  //附表1数据存储
+            microRisk:{},  //微观风险附表数据存储
             tabsListF:[],
             swich:true,//主表密钥
             paramsObj:{
@@ -199,6 +200,11 @@ submission=async ()=>{
     }
     //接受附表验证信息函数
     getChildrenVildter = (data,index) => {
+        let {datasources} = this.state;
+        datasources[index] = {...datasources[index],...data.dataSource,...data.error};
+    }
+    //接收微观风险附表数据
+    getChildrenVildter = () => {
         let {datasources} = this.state;
         datasources[index] = {...datasources[index],...data.dataSource,...data.error};
     }
