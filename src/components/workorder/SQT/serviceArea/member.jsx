@@ -121,14 +121,6 @@ class Member extends Component {
         let checkResult = this.onCheck()
         this.props.onChange({ dataSource: this.state.dataSource, error: checkResult })
     }
-    // 获取客户技术联系人选中项
-    onChangeRadio = ({ target }) => {
-        this.setState({
-            current: target.value
-        }, () => {
-            this.updateToparent()
-        })
-    }
     // 获取项目角色
     onSelectContactRole = (val, { key }) => {
         let dataSource = this.state.dataSource;
@@ -218,7 +210,7 @@ class Member extends Component {
     }
     // 删除行
     delRow = (index) => {
-        let { current, dataSource } = this.state;
+        let { dataSource } = this.state;
         if (dataSource.length == 1) {
             message.destroy()
             message.warning("请最少填写一条数据！")
@@ -235,7 +227,6 @@ class Member extends Component {
                 dataSource.splice(index, 1)
                 _this.setState({
                     dataSource,
-                    current: null
                 }, () => {
                     _this.updateToparent()
                 })

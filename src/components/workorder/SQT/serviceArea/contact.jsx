@@ -89,8 +89,6 @@ class Contact extends Component {
                     },
                 },
             ],
-            // 表格当前选中项
-            current: null,
             // 表单状态 是否可编辑
             edit: true
         }
@@ -210,7 +208,6 @@ class Contact extends Component {
                 dataSource.splice(index, 1)
                 _this.setState({
                     dataSource,
-                    current: null
                 }, () => {
                     _this.updateToparent()
                 })

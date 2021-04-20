@@ -339,14 +339,6 @@ class ObjectEl extends Component {
         let checkResult = this.onCheck()
         this.props.onChange({ dataSource: this.state.dataSource, error: checkResult })
     }
-    // 获取列表选中项
-    onChangeRadio = ({ target }) => {
-        this.setState({
-            current: target.value
-        }, () => {
-            this.updateToparent()
-        })
-    }
     // 获取产品类别
     onSelectCategory = (newValue, { props }) => {
         let { dataSource } = this.state;
