@@ -80,6 +80,13 @@ class SA extends Component {
                         contactList: [],
                         objectList: [],
                         memberList: [],
+                    },{
+                        areaId: "",
+                        area: "河北",
+                        isMainDutyArea: 0,
+                        contactList: [],
+                        objectList: [],
+                        memberList: [],
                     }]
                 })
                 // message.error(res.message)
