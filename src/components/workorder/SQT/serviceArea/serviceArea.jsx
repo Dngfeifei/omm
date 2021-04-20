@@ -49,9 +49,6 @@ class SA extends Component {
                     memberList: [],
                 }
             ],
-            // contactError: [],//客户技术联系人报错信息
-            // objectError: [],//服务对象报错信息
-            // memberError: [],//项目组成员报错信息
             error: [],
             objIsShow: true, //服务对象是否显示
             contactIsEdit: true,//客户技术联系人是否可编辑
@@ -72,24 +69,7 @@ class SA extends Component {
                     datasources: res.data
                 })
             } else if (res.success == '0') {
-                this.setState({
-                    dataSource: [{
-                        areaId: "",
-                        area: "河南",
-                        isMainDutyArea: 1,
-                        contactList: [],
-                        objectList: [],
-                        memberList: [],
-                    },{
-                        areaId: "",
-                        area: "河北",
-                        isMainDutyArea: 0,
-                        contactList: [],
-                        objectList: [],
-                        memberList: [],
-                    }]
-                })
-                // message.error(res.message)
+                message.error(res.message)
             }
         })
     }
