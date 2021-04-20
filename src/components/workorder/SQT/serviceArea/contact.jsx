@@ -30,6 +30,7 @@ class Contact extends Component {
                 {
                     title: '序号',
                     width: "7%",
+                    key: "id",
                     align: 'center',
                     render: (value, row, index) => {
                         if (this.props.edit) {
@@ -295,7 +296,7 @@ class Contact extends Component {
                     <div style={{ flex: 1, border: "1px solid #e8e8e8", borderRight: "0", textAlign: "center", marginRight: "-1px", position: "relative" }}>
                         <span style={{ fontSize: "15px", position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)" }}>客户技术联系人</span>
                     </div>
-                    <Table bordered style={{ flex: 7 }} dataSource={dataSource} columns={columns} pagination={false} rowKey={(record, index) => index.toString()} />
+                    <Table bordered style={{ flex: 7 }} dataSource={dataSource} columns={columns} pagination={false} rowKey={(record, index) => index} />
                 </div>
             </div>
         )

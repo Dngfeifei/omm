@@ -32,6 +32,7 @@ class Member extends Component {
                 {
                     title: '序号',
                     width: "7%",
+                    key: "id",
                     align: 'center',
                     render: (value, row, index) => {
                         if (this.props.edit) {
