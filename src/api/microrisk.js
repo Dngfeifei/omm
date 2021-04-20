@@ -12,3 +12,9 @@ export const getMicroRisk = (params = {}) => {
 	params = Object.assign({}, params)
 	return http.fetchGet('/microRisk/getInfo', params)
 }
+
+//获取微观风险汇总数据
+export const getMicroRiskSum = (params = {}) => {
+	params = Object.assign({}, params)
+	return http.fetchGet('/microRiskSum/getInfo', params)
+}

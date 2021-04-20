@@ -69,7 +69,17 @@ class SA extends Component {
                     datasources: res.data
                 })
             } else if (res.success == '0') {
-                message.error(res.message)
+                this.setState({
+                    datasources: [  {
+                        areaId: "",
+                        area: "hebei",
+                        isMainDutyArea: 1,
+                        contactList: [],
+                        objectList: [],
+                        memberList: [],
+                    }]
+                })
+                // message.error(res.message)
             }
         })
     }

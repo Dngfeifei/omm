@@ -24,10 +24,13 @@ class Micro extends Component{
                 {detail:'否，新项目库存满足需求',value:4},
                 {detail:'其他',value:5}
             ],
+            firstInspectReportName:[],
+            configTemplateName:[],
+            venturnReportName:[],
             uploadConf: {
                 // 发到后台的文件参数名
                 name: 'file', 
-                action:"/biSqtBase/upload1",
+                action:"/biSqtBase/upload",
                 headers: header,
                 multiple: true,
             },
@@ -41,7 +44,6 @@ class Micro extends Component{
     }
     exportDom = (item) => {
         const {isApplySpare} = this.props.dataSource;
-        console.log(isApplySpare)
         if(item.value == 1 || item.value == 2){
             return (<div style={{width:'100%',position:'relative',display: 'flex',alignItems: 'center'}}><span style={{display:'inline-block',width:'60%',verticalAlign:'top'}}><Radio  checked={isApplySpare == item.value ? true : false} onChange={()=>this.handleClick(item.value)}>{item.detail}</Radio></span><span style={{width:1,display:'inline-block',backgroundColor:'#e8e8e8',position:'absolute',top:0,bottom:0,margin:'-8px 0',left: '60%'}}></span><span style={{display:'inline-block',width:'40%',textAlign:'center'}}>{item.detail2}</span></div>)
         }else{
@@ -62,6 +64,10 @@ class Micro extends Component{
         // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
         fileList = fileList.slice(-1);
         // 2.读取响应并显示文件链接
+        // if(info.file.status == 'uploading'){
+        //     debugger
+        //     this.props.changeCheck(fileList,typeName,typeUrl);
+        // }
         fileList = fileList.map(file => {
             if (file.response) {
                 if (file.response.success == 1) {
@@ -72,24 +78,47 @@ class Micro extends Component{
             }
             return file;
         });
-        if(this.props.changeCheck) this.props.changeCheck(fileList,typeName,typeUrl);
+        // if(typeName == 'firstInspectReportName'){
+        //     this.setState({
+        //         firstInspectReportName:fileList
+        //     },()=>{
+        //         let {firstInspectReportName} = this.state
+        //         if(this.props.changeCheck) this.props.changeCheck(firstInspectReportName,typeName,typeUrl);
+        //     })
+        // }else if(typeName == 'configTemplateName'){
+        //     this.setState({
+        //         configTemplateName:fileList
+        //     },()=>{
+        //         let {configTemplateName} = this.state
+        //         if(this.props.changeCheck) this.props.changeCheck(configTemplateName,typeName,typeUrl);
+        //     })
+        // }else{
+        //     this.setState({
+        //         venturnReportName:fileList
+        //     },()=>{
+        //         let {venturnReportName} = this.state
+        //         if(this.props.changeCheck) this.props.changeCheck(venturnReportName,typeName,typeUrl);
+        //     })
+        // }
+        if(this.props.changeCheck) this.props.changeCheck(venturnReportName,typeName,typeUrl);
+        
     }
     render () {
         const {data} = this.state;
-        let firstInspectReportList = [],configTemplateList = [],venturnReportList = [];
-        const {firstInspectReportName,firstInspectReport,firstInspectReportNamestatus,configTemplateName,configTemplate,configTemplateNamestatus,venturnReportName,venturnReport,venturnReportNamestatus} = this.props.dataSource;
-        if(firstInspectReportName){
-            let obj = { uid: Math.random().toString().slice(-6), name: firstInspectReportName, status: firstInspectReportNamestatus ? firstInspectReportNamestatus : 'done', url: firstInspectReport }
-            firstInspectReportList.push(obj)
-        }
-        if(firstInspectReportName){
-            let obj = { uid: Math.random().toString().slice(-6), name: configTemplateName, status: configTemplateNamestatus ? configTemplateNamestatus : 'done', url: configTemplate }
-            firstInspectReportList.push(obj)
-        }
-        if(firstInspectReportName){
-            let obj = { uid: Math.random().toString().slice(-6), name: venturnReportName, status: firstInspectReportNamestatus ? venturnReportNamestatus : 'done', url: venturnReport }
-            firstInspectReportList.push(obj)
-        }
+        // let firstInspectReportList = [],configTemplateList = [],venturnReportList = [];
+        // const {firstInspectReportName,firstInspectReport,firstInspectReportNamestatus,configTemplateName,configTemplate,configTemplateNamestatus,venturnReportName,venturnReport,venturnReportNamestatus} = this.props.dataSource;
+        // if(firstInspectReportName){
+        //     let obj = { uid: Math.random().toString().slice(-6), name: firstInspectReportName, status: firstInspectReportNamestatus ? firstInspectReportNamestatus : 'done', url: firstInspectReport }
+        //     firstInspectReportList.push(obj)
+        // }
+        // if(configTemplateName){
+        //     let obj = { uid: Math.random().toString().slice(-6), name: configTemplateName, status: configTemplateNamestatus ? configTemplateNamestatus : 'done', url: configTemplate }
+        //     configTemplateList.push(obj)
+        // }
+        // if(venturnReportName){
+        //     let obj = { uid: Math.random().toString().slice(-6), name: venturnReportName, status: firstInspectReportNamestatus ? venturnReportNamestatus : 'done', url: venturnReport }
+        //     venturnReportList.push(obj)
+        // }
         return (
             <div className="micro">
                 <p className="micro_title">微观风险</p>
@@ -105,21 +134,21 @@ class Micro extends Component{
                     </Descriptions.Item>
                     <Descriptions.Item label="首次巡检总结报告" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} defaultFileList={firstInspectReportList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.state.firstInspectReportName.length ? this.state.firstInspectReportName: firstInspectReportList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label="配置信息管理模板" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} defaultFileList={configTemplateList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.state.configTemplateName.length ? this.state.configTemplateName:configTemplateList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label="风险提示报告" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} defaultFileList={venturnReportList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.state.venturnReportName.length ? this.state.venturnReportName:venturnReportList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
@@ -195,7 +224,6 @@ class MicroDom extends Component{
                 areaMicroRisks[index][typeName+'status'] = value[0] ? value[0].status : '';
             }
         }
-        console.log(data)
         this.setState({data})
     }
     render () {
@@ -211,6 +239,20 @@ class MicroDom extends Component{
             <Collapse className="microDom_parent" defaultActiveKey={data.areaMicroRisks.map((item,index) => index)} bordered={false} style={{paddingTop:15,height: '100%',overflow: 'auto'}} expandIconPosition="right" expandIcon={({ isActive }) => <span style={{color:'#4876e7'}}> {isActive ? '收起' : '展开'} </span>}>
                 {
                     data.areaMicroRisks.map((Item,index) => {
+                        // let firstInspectReportList = [],configTemplateList = [],venturnReportList = [];
+                        // const {firstInspectReportName,firstInspectReport,firstInspectReportNamestatus,configTemplateName,configTemplate,configTemplateNamestatus,venturnReportName,venturnReport,venturnReportNamestatus} = this.props.dataSource;
+                        if(Item.firstInspectReportName){
+                            let obj = { uid: Math.random().toString().slice(-6), name: firstInspectReportName, status: firstInspectReportNamestatus ? firstInspectReportNamestatus : 'done', url: firstInspectReport }
+                            Item.firstInspectReportList = [obj]
+                        }
+                        if(Item.configTemplateName){
+                            let obj = { uid: Math.random().toString().slice(-6), name: configTemplateName, status: configTemplateNamestatus ? configTemplateNamestatus : 'done', url: configTemplate }
+                            configTemplateList = [obj]
+                        }
+                        if(Item.venturnReportName){
+                            let obj = { uid: Math.random().toString().slice(-6), name: venturnReportName, status: firstInspectReportNamestatus ? venturnReportNamestatus : 'done', url: venturnReport }
+                            Item.venturnReportList = [obj]
+                        }
                         return <Panel bordered={false} header={this.setPane(Item)} key={index} style={customPanelStyle}>
                             <Micro dataSource={Item} changeCheck={(value,typeName,typeUrl) => this.changeCheck(value,index,typeName,typeUrl)}></Micro>
                         </Panel>
