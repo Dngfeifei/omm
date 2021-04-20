@@ -193,11 +193,11 @@ class SA extends Component {
                         </div>
                         <div>
                             <Contact area={item.area} edit={contactIsEdit} dataSource={item.contactList} onChange={(info) => this.onChangeCTC(info, index)}></Contact>
-                            {/* {
+                            {
                                 objIsShow ? <ObjectEl area={item.area} edit={objectIsEdit} dataSource={item.objectList} onChange={(info) => { this.onChangeSO(info, index) }}></ObjectEl> : ""
                             }
                             <Member area={item.area} edit={memberIsEdit} dataSource={item.memberList} onChange={(info) => { this.onChangePT(info, index) }}></Member>
-                        */}
+
                         </div>
                     </div>
                 })
