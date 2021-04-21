@@ -8,10 +8,11 @@ import FooterD from '/components/footer.jsx'
 import WaterMark from '/components/watermark/WaterMark.jsx'
 import { connect } from 'react-redux'
 import { hashHistory } from 'react-router'
+import {RESET} from '/redux/action'
 @connect(state => ({
 	loginStatus: state.global.loginStatus,
 }), dispath => ({
-	// setLogin(data){dispath({ type: SET_LOGINSTATUS, data: data })},
+	reset() { dispath({ type: RESET }) }
 }))
 class Home extends Component{
 
@@ -24,8 +25,9 @@ class Home extends Component{
 	}
 	//监测pros的动太信息
 	static getDerivedStateFromProps(nextProps, prevState) {
-		console.log(nextProps)
-		if (nextProps.loginStatus) {
+		localStorage.getItem('loginStatus')
+		if (localStorage.getItem('loginStatus') == 1) {
+			this.props.reset();
 			hashHistory.push('/login')
 		}
 		return null;

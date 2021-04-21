@@ -75,9 +75,11 @@ class Login extends Component {
 							if (user.firstLogin) {
 								// 跳转到【首次修改密码】页面  
 								this.props.setLogin(true)
+								localStorage.setItem(`loginStatus`, 1)
 								hashHistory.push('/ChangePassForm')
 							}else {
 								this.props.setLogin(false)
+								localStorage.setItem(`loginStatus`, 2)
 								hashHistory.push('/')
 							}
 							

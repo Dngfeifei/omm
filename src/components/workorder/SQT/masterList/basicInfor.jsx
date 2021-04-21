@@ -69,7 +69,7 @@ class basicInfor extends Component {
             }, {
                 label: '项目号',
                 key: 'projectNumber',
-                render: isEdit_ => <span>{this.state.basicInfor.projectNumber}<Icon type="appstore" className="dateIcon" onClick={this.showProjectDailg} /></span>
+                render: isEdit => isEdit ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.projectNumber}</div> : <span>{this.state.basicInfor.projectNumber}<Icon type="appstore" className="dateIcon" onClick={this.showProjectDailg} /></span>
             }, {
                 label: '项目名称',
                 key: 'projectName',
@@ -110,7 +110,7 @@ class basicInfor extends Component {
             }, {
                 label: '项目销售',
                 key: 'salesmanName',
-                render: isEdit => isEdit ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.managerName}</div> : <span>{this.state.basicInfor.salesmanName}<Icon type="user" className="dateIcon" onClick={()=>this.showUser('项目销售')} /></span>
+                render: isEdit => isEdit ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.salesmanName}</div> : <span>{this.state.basicInfor.salesmanName}<Icon type="user" className="dateIcon" onClick={()=>this.showUser('项目销售')} /></span>
                 
             }, {
                 label: '销售联系方式',
@@ -129,7 +129,7 @@ class basicInfor extends Component {
             },{
                 label: '项目经理',
                 key: 'managerName',
-                render: isEdit => this.props.node != 2 ? this.state.basicInfor.managerType == '1' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.managerName}</div>
+                render: isEdit => this.props.node != 2 ? isEdit ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.managerName}</div> : this.state.basicInfor.managerType == '1' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.managerName}</div>
                 : <span>{this.state.basicInfor.managerName}<Icon type="user" className="dateIcon" onClick={()=>this.showUserManager('项目经理')} /></span>:<span>{this.state.basicInfor.managerName}<Icon type="user" className="dateIcon" onClick={()=>this.showUserManager('项目经理')} /></span>
                 
             }, {

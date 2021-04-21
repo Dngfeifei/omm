@@ -120,7 +120,7 @@ class workList extends Component {
                 align:'center',
                 width:'80px',
                 // 第一种：每一页都从1开始
-                render:(text,record,index)=> `${index+1}`
+                render:(text,record,index)=> <span style={{fontWeight: record.finished ? 500 : 600}}>{`${index+1}`}</span>
                 // }
             },  
             {
@@ -129,42 +129,49 @@ class workList extends Component {
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
             }, {
                 title: '工单类型',
                 dataIndex: 'ticketType',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
+            }, {
+                title: '当前任务',
+                dataIndex: 'taskName',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
             }, {
                 title: '当前待办人',
                 dataIndex: 'assigneeRealName',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
             }, {
                 title: '创建人',
                 dataIndex: 'startRealName',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
             }, {
                 title: '状态',
                 dataIndex: 'statusText',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
             }, {
                 title: '创建时间',
                 dataIndex: 'createDate',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
             },
             //  {
             //     title: '操作详情',

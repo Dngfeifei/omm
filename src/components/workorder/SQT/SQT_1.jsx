@@ -166,7 +166,7 @@ submission=async ()=>{
             }
             AssistantPonse = await PostaddAssistant(this.state.datasources)
         }
-         if (!this.props.config.formControl || ( this.props.config.formControl.masterList.nodes && this.props.config.formControl.masterList.isEdit)) {
+         if (!this.props.config.formControl || (this.props.config.formControl.masterList.isEdit)) {
             if (!this.vildteMasterList()) {
                 message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
                 return false;
@@ -234,7 +234,7 @@ submission=async ()=>{
                     ))}
                     {
                        (paramsObj.serviceType && Schedule) ? 
-                        <TabPane tab={item.area} key="1">
+                        <TabPane tab="服务区域" key="1">
                             {/* 附表--组件  */}
                            <ServiceArea onChange={(data) => this.getChildrenVildter(data,1)} type={this.state.paramsObj.serviceType} power={this.props.config}></ServiceArea>
                         </TabPane>
