@@ -24,9 +24,6 @@ class Micro extends Component{
                 {detail:'否，新项目库存满足需求',value:4},
                 {detail:'其他',value:5}
             ],
-            firstInspectReportName:[],
-            configTemplateName:[],
-            venturnReportName:[],
             uploadConf: {
                 // 发到后台的文件参数名
                 name: 'file', 
@@ -78,29 +75,7 @@ class Micro extends Component{
             }
             return file;
         });
-        // if(typeName == 'firstInspectReportName'){
-        //     this.setState({
-        //         firstInspectReportName:fileList
-        //     },()=>{
-        //         let {firstInspectReportName} = this.state
-        //         if(this.props.changeCheck) this.props.changeCheck(firstInspectReportName,typeName,typeUrl);
-        //     })
-        // }else if(typeName == 'configTemplateName'){
-        //     this.setState({
-        //         configTemplateName:fileList
-        //     },()=>{
-        //         let {configTemplateName} = this.state
-        //         if(this.props.changeCheck) this.props.changeCheck(configTemplateName,typeName,typeUrl);
-        //     })
-        // }else{
-        //     this.setState({
-        //         venturnReportName:fileList
-        //     },()=>{
-        //         let {venturnReportName} = this.state
-        //         if(this.props.changeCheck) this.props.changeCheck(venturnReportName,typeName,typeUrl);
-        //     })
-        // }
-        if(this.props.changeCheck) this.props.changeCheck(venturnReportName,typeName,typeUrl);
+        if(this.props.changeCheck) this.props.changeCheck(fileList,typeName,typeUrl);
         
     }
     render () {
@@ -134,21 +109,21 @@ class Micro extends Component{
                     </Descriptions.Item>
                     <Descriptions.Item label="首次巡检总结报告" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.state.firstInspectReportName.length ? this.state.firstInspectReportName: firstInspectReportList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.props.dataSource.firstInspectReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label="配置信息管理模板" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.state.configTemplateName.length ? this.state.configTemplateName:configTemplateList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.props.dataSource.configTemplateNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label="风险提示报告" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.state.venturnReportName.length ? this.state.venturnReportName:venturnReportList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.props.dataSource.venturnReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
@@ -174,7 +149,18 @@ class MicroDom extends Component{
                     configTemplateName:'',   //配置信息管理模板名称
                     configTemplate:'',     //配置信息管理模板地址
                     venturnReportName:'',   //风险提示报告名称
-                    venturnReport:''        //风险提示报告地址
+                    venturnReport:'',        //风险提示报告地址
+                    firstInspectReportNameList:[
+                        {
+                            uid:'23232',
+                            name:'xxx.txt',
+                            status:'done',
+                            url:'xxxxxx'
+                        }
+                    ],
+                    configTemplateNameList:[],
+                    venturnReportNameList:[],
+
                 },
                 {
                     isChecked: 2
@@ -186,16 +172,27 @@ class MicroDom extends Component{
     //获取渲染数据
         getMicroRisk({baseId:this.props.config.id}).then(res => {
             if (res.success == '1') {
+                const {data} = this.state;
+                let dataPlus = this.setData(res.data);
+                let dataMerge = {...data,...dataPlus};
                 this.setState({
-                    data:res.data
+                    data: dataMerge
                 })
+                if(this.props.onChange) this.props.onChange(dataMerge);
             }else if (res.success == '0') {
                 message.error(res.message)
             }
         })
     }
-    updata = () =>{
-
+    //处理数据
+    setData = (data) =>{
+        data.areaMicroRisks.map((item,index) => {
+            const {firstInspectReportName,firstInspectReport,firstInspectReportNamestatus,configTemplateName,configTemplate,configTemplateNamestatus,venturnReportName,venturnReport,venturnReportNamestatus} = item;
+            data.areaMicroRisks[index].firstInspectReportNameList = item.firstInspectReportName ? [{ uid: Math.random().toString().slice(-6), name: firstInspectReportName, status: firstInspectReportNamestatus ? firstInspectReportNamestatus : 'done', url: firstInspectReport }] : [];
+            data.areaMicroRisks[index].configTemplateNameList = item.configTemplateName ? [{ uid: Math.random().toString().slice(-6), name: configTemplateName, status: configTemplateNamestatus ? configTemplateNamestatus : 'done', url: configTemplate }] : [];
+            data.areaMicroRisks[index].venturnReportNameList = item.venturnReportName ? [{ uid: Math.random().toString().slice(-6), name: venturnReportName, status: venturnReportNamestatus ? venturnReportNamestatus : 'done', url: venturnReport }] : [];
+        })
+       return data;
     }
     setPane = (data) => {
         return (
@@ -222,9 +219,11 @@ class MicroDom extends Component{
                 areaMicroRisks[index][typeName] = value [0] ? value[0].name : '';
                 areaMicroRisks[index][typeUrl] = value[0] ? value[0].url : '';
                 areaMicroRisks[index][typeName+'status'] = value[0] ? value[0].status : '';
+                areaMicroRisks[index][typeName+'List'] = value;
             }
         }
-        this.setState({data})
+        this.setState({data});
+        if(this.props.onChange) this.props.onChange(data);
     }
     render () {
         const {data} = this.state;
@@ -239,20 +238,6 @@ class MicroDom extends Component{
             <Collapse className="microDom_parent" defaultActiveKey={data.areaMicroRisks.map((item,index) => index)} bordered={false} style={{paddingTop:15,height: '100%',overflow: 'auto'}} expandIconPosition="right" expandIcon={({ isActive }) => <span style={{color:'#4876e7'}}> {isActive ? '收起' : '展开'} </span>}>
                 {
                     data.areaMicroRisks.map((Item,index) => {
-                        // let firstInspectReportList = [],configTemplateList = [],venturnReportList = [];
-                        // const {firstInspectReportName,firstInspectReport,firstInspectReportNamestatus,configTemplateName,configTemplate,configTemplateNamestatus,venturnReportName,venturnReport,venturnReportNamestatus} = this.props.dataSource;
-                        if(Item.firstInspectReportName){
-                            let obj = { uid: Math.random().toString().slice(-6), name: firstInspectReportName, status: firstInspectReportNamestatus ? firstInspectReportNamestatus : 'done', url: firstInspectReport }
-                            Item.firstInspectReportList = [obj]
-                        }
-                        if(Item.configTemplateName){
-                            let obj = { uid: Math.random().toString().slice(-6), name: configTemplateName, status: configTemplateNamestatus ? configTemplateNamestatus : 'done', url: configTemplate }
-                            configTemplateList = [obj]
-                        }
-                        if(Item.venturnReportName){
-                            let obj = { uid: Math.random().toString().slice(-6), name: venturnReportName, status: firstInspectReportNamestatus ? venturnReportNamestatus : 'done', url: venturnReport }
-                            Item.venturnReportList = [obj]
-                        }
                         return <Panel bordered={false} header={this.setPane(Item)} key={index} style={customPanelStyle}>
                             <Micro dataSource={Item} changeCheck={(value,typeName,typeUrl) => this.changeCheck(value,index,typeName,typeUrl)}></Micro>
                         </Panel>

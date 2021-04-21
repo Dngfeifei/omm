@@ -33,7 +33,18 @@ class MicroSum extends Component{
                 configTemplateName:'',   //配置信息管理模板名称
                 configTemplate:'',     //配置信息管理模板地址
                 venturnReportName:'',   //风险提示报告名称
-                venturnReport:''        //风险提示报告地址
+                venturnReport:'',        //风险提示报告地址
+                firstInspectReportNameList:[
+                    {
+                        uid:'23232',
+                        name:'xxx.txt',
+                        status:'done',
+                        url:'xxxxxx'
+                    }
+                ],
+                configTemplateNameList:[],
+                venturnReportNameList:[],
+
                    
             },
             uploadConf: {
@@ -47,16 +58,29 @@ class MicroSum extends Component{
     }
     componentDidMount () {
         //获取渲染数据
-        // getMicroRiskSum({baseId:this.props.config.id}).then(res => {
-        //         if (res.success == '1') {
-        //             this.setState({
-        //                 dataSource:res.data
-        //             })
-        //         }else if (res.success == '0') {
-        //             message.error(res.message)
-        //         }
-        //     })
-        }
+        getMicroRiskSum({baseId:this.props.config.id}).then(res => {
+            if (res.success == '1') {
+                const {dataSource} = this.state;
+                if(!res.data) return;
+                let data = this.setData(res.data);
+                let dataMerge = {...dataSource,...data};
+                this.setState({
+                    dataSource: dataMerge
+                })
+                if(this.props.onChange) this.props.onChange(dataMerge)
+            }else if (res.success == '0') {
+                message.error(res.message)
+            }
+        })
+    }
+    //处理数据
+    setData = (data) =>{
+        const {firstInspectReportName,firstInspectReport,firstInspectReportNamestatus,configTemplateName,configTemplate,configTemplateNamestatus,venturnReportName,venturnReport,venturnReportNamestatus} = data;
+        data.firstInspectReportNameList = firstInspectReportName ? [{ uid: Math.random().toString().slice(-6), name: firstInspectReportName, status: firstInspectReportNamestatus ? firstInspectReportNamestatus : 'done', url: firstInspectReport }] : [];
+        data.configTemplateNameList = configTemplateName ? [{ uid: Math.random().toString().slice(-6), name: configTemplateName, status: configTemplateNamestatus ? configTemplateNamestatus : 'done', url: configTemplate }] : [];
+        data.venturnReportNameList = venturnReportName ? [{ uid: Math.random().toString().slice(-6), name: venturnReportName, status: venturnReportNamestatus ? venturnReportNamestatus : 'done', url: venturnReport }] : [];
+        return data;
+    }
     //回传数据使用
     handleClick = (e) => {
         let {isApplySpare} = this.state.dataSource;
@@ -81,8 +105,10 @@ class MicroSum extends Component{
             dataSource[typeName] = value [0] ? value[0].name : '';
             dataSource[typeUrl] = value[0] ? value[0].url : '';
             dataSource[typeName+'status'] = value[0] ? value[0].status : '';
+            dataSource[typeName+'List'] = value;
         }
         this.setState({dataSource})
+        if(this.props.onChange) this.props.onChange(dataSource);
     }
     exportDom = (item) => {
         let {isApplySpare} = this.state.dataSource;
@@ -116,21 +142,7 @@ class MicroSum extends Component{
          this.changeCheck(fileList,typeName,typeUrl);
     }
     render () {
-        const {data,dataSource} = this.state;
-        let firstInspectReportList = [],configTemplateList = [],venturnReportList = [];
-        const {firstInspectReportName,firstInspectReport,firstInspectReportNamestatus,configTemplateName,configTemplate,configTemplateNamestatus,venturnReportName,venturnReport,venturnReportNamestatus} = dataSource;
-        if(firstInspectReportName){
-            let obj = { uid: Math.random().toString().slice(-6), name: firstInspectReportName, status: firstInspectReportNamestatus ? firstInspectReportNamestatus : 'done', url: firstInspectReport }
-            firstInspectReportList.push(obj)
-        }
-        if(firstInspectReportName){
-            let obj = { uid: Math.random().toString().slice(-6), name: configTemplateName, status: configTemplateNamestatus ? configTemplateNamestatus : 'done', url: configTemplate }
-            firstInspectReportList.push(obj)
-        }
-        if(firstInspectReportName){
-            let obj = { uid: Math.random().toString().slice(-6), name: venturnReportName, status: firstInspectReportNamestatus ? venturnReportNamestatus : 'done', url: venturnReport }
-            firstInspectReportList.push(obj)
-        }
+        const {data} = this.state;
         return (
             <div className="micro">
                 <p className="micro_title">微观风险汇总表</p>
@@ -146,21 +158,21 @@ class MicroSum extends Component{
                     </Descriptions.Item>
                     <Descriptions.Item label="首次巡检总结报告" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={firstInspectReportList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.state.dataSource.firstInspectReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label="配置信息管理模板" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={configTemplateList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.state.dataSource.configTemplateNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label="风险提示报告" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={venturnReportList}>
+                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.state.dataSource.venturnReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>

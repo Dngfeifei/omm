@@ -14,8 +14,8 @@ import { REMOVE_PANE , ADD_PANE} from '/redux/action'
 
 // 引入服务需求表工单组件
 // import SQT from '@/components/workorder/SQT/SQT_1.jsx'
-import SQT from '@/components/workorder/microrisk/microrisk.jsx'
-// import SQT from '@/components/workorder/microrisk/microriskSummary.jsx'
+// import SQT from '@/components/workorder/microrisk/microrisk.jsx'
+import SQT from '@/components/workorder/microrisk/microriskSummary.jsx'
 
 
 @connect(state => ({
@@ -48,9 +48,8 @@ class RequireSqt extends Component {
     }
 
     // 服务需求表  ---- 提交按钮事件
-    handleSubmit = () => {
+    handleSubmit = (data) => {
         console.log('************       服务需求表  ---- 提交按钮事件        ***************')
-        
          //调用组件进行通信
          this.refs.getSwordButton.submission().then(res => {
              if(res){

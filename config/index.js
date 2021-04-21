@@ -77,6 +77,7 @@ module.exports = {
       '/basedata':target,     // 工程师自评基础数据查询
       '/sql':target,     // 工作流认领接口
       '/microRisk':target,     // 微观风险接口
+      '/microRiskSum':target,     // 微观风险汇总接口
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

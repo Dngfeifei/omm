@@ -30,8 +30,8 @@ class Sqt extends Component {
             tabsList:[{
                 name:'主表信息'
             }],   
-            datasources:[],  //附表1数据存储
-            microRisk:{},  //微观风险附表数据存储
+            datasources:[],  //附表1数据存储 type类型为1
+            microRisk:{},  //微观风险附表数据存储 type类型为3
             tabsListF:[],
             swich:true,//主表密钥
             paramsObj:{
@@ -116,18 +116,6 @@ class Sqt extends Component {
                 this.getSqtDetail(this.props.config.id)
             },0)
         }
-        if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1){//附表1查询接口
-            getAssistant({baseId:this.props.config.id}).then(res => {
-                if (res.success == '1') {
-                    this.setState({
-                        datasources:res.data
-                    })
-                }else if (res.success == '0') {
-                    message.error(res.message)
-                }
-            })
-        }
-        
     }
 
 
@@ -199,14 +187,19 @@ submission=async ()=>{
         return true;       
     }
     //接受附表验证信息函数
-    getChildrenVildter = (data,index) => {
-        let {datasources} = this.state;
-        datasources[index] = {...datasources[index],...data.dataSource,...data.error};
-    }
-    //接收微观风险附表数据
-    getChildrenVildter = () => {
-        let {datasources} = this.state;
-        datasources[index] = {...datasources[index],...data.dataSource,...data.error};
+    getChildrenVildter = (data,type) => {
+        if(type == 1){//附表1
+            let {datasources} = this.state;
+            // datasources[index] = {...datasources[index],...data.dataSource,...data.error};
+            datasources = [...data];
+            this.setState({datasources})
+        }
+        else if(type == 3){ //微观风险
+            let {microRisk} = this.state;
+            // datasources[index] = {...datasources[index],...data.dataSource,...data.error};
+            microRisk = {...data};
+            this.setState({microRisk})
+        }
     }
     //验证主表信息是否填写完整
     vildteMasterList = () => {
@@ -239,12 +232,12 @@ submission=async ()=>{
                         </TabPane>
                     ))}
                     {
-                       (paramsObj.serviceType && datasources.length) ? datasources.map((item,index) => (
-                        <TabPane tab={item.area} key={index+1}>
+                       (paramsObj.serviceType && this.props.config.formControl.action.indexOf('serviceArea') > -1) ? 
+                        <TabPane tab={item.area} key="1">
                             {/* 附表--组件  */}
-                           <ServiceArea dataSource={item} onChange={(data) => this.getChildrenVildter(data,index)} type={this.state.paramsObj.serviceTypeName} power={this.props.config}></ServiceArea>
+                           <ServiceArea onChange={(data) => this.getChildrenVildter(data,1)} type={this.state.paramsObj.serviceType} power={this.props.config}></ServiceArea>
                         </TabPane>
-                    )) : null
+                     : null
                     }
                 </Tabs>
             </div>
