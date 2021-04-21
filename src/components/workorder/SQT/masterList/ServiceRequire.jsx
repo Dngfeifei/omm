@@ -92,7 +92,8 @@ class servies extends Component {
         // 判断 是否是从【自行创建服务计划表】的情况下进入；
         isSelfCreation: true,
         swich:true,
-        isEdit:false //默认所有权限为可编辑
+        isEdit:false, //默认所有权限为可编辑
+        formRead:1
 
     }
     // componentWillMount() {
@@ -109,19 +110,14 @@ class servies extends Component {
 initData = (nextprops) => {
     
     let {power} = nextprops;
-    let {isEdit} = this.state;
-    // 判断 是否是从【自行创建服务计划表】的情况下进入；true代表是  
-    // this.setState({
-    //     isSelfCreation: this.props.params ? this.props.params.dataType.isSelfCreation : true
-    // })
-    //判断工作流
-    if (power.formRead == 1) {
-        // 若为1 所有页面可编辑
-        isEdit = !power.formControl.masterList.isEdit;
-    } else if(power.formRead == 2){
-        // 若为2 所有只读
-        isEdit = true;
-    }
+    //处理权限信息
+    // if (power.formRead == 1) {
+    //     // 若为1 所有页面可编辑
+    //     isEdit = !power.formControl.masterList.isEdit;
+    // } else if(power.formRead == 2){
+    //     // 若为2 所有只读
+    //     isEdit = true;
+    // }
     // 先判断paramsObj是否有数据
     var arr = Object.keys(nextprops.paramsObj);
     if (arr.length != 0) { //false
@@ -163,7 +159,8 @@ initData = (nextprops) => {
             basicInfor,
             areaList,
             performancePledge: data,
-            isEdit,
+            formRead: power.formRead,
+            isEdit:!power.formControl.masterList.isEdit,
             isSelfCreation: power.sign ? false : true
         })
 
@@ -277,19 +274,19 @@ setIsFirstInspection = (info,performancePledge)=>{
                 {/* 基本信息--区域 */}
                 <div className="infor commTop">
                     <div className="navTitle">基本信息</div>
-                    <BasicInfor isEdit={this.state.isEdit} node={power.formControl ? power.formControl.masterList.nodes : 0} data={this.state.basicInfor} onChangeInfo={this.getChildrenInfo} isSelfCreation={this.props.power.sign} onGetChange={this.onGetChangeSelect}></BasicInfor>
+                    <BasicInfor isEdit={this.state.isEdit} formRead={this.state.formRead} node={power.formControl ? power.formControl.masterList.nodes : 0} data={this.state.basicInfor} onChangeInfo={this.getChildrenInfo} isSelfCreation={this.props.power.sign} onGetChange={this.onGetChangeSelect}></BasicInfor>
                 </div>
 
                 {/* 服务区域--区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务区域</div>
-                    <EditTable isEdit={this.state.isEdit} data={this.state.areaList} onChange={this.getAreaChildren}></EditTable>
+                    <EditTable isEdit={this.state.isEdit} formRead={this.state.formRead} data={this.state.areaList} onChange={this.getAreaChildren} node={power.formControl ? power.formControl.masterList.nodes : 0}></EditTable>
                 </div>
 
                 {/* 服务承诺---区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务承诺</div>
-                    <PerformancePledge isEdit={this.state.isEdit} serviceType={this.state.basicInfor.serviceType} node={power.formControl ? power.formControl.masterList.nodes : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
+                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} serviceType={this.state.basicInfor.serviceType} node={power.formControl ? power.formControl.masterList.nodes : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
 
             </div>

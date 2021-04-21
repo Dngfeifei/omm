@@ -69,8 +69,9 @@ class EditableCell extends React.Component {
     }
 
     renderCell = ({ getFieldDecorator }) => {
+        console.log(this.props)
         const {
-            editing, dataIndex,initValue, title, Input, record, index, children,radioLock,
+            editing, dataIndex,initValue, title, Input, record, index, children,radioLock,parentedit,node,
             ...restProps
         } = this.props;
 
@@ -87,7 +88,7 @@ class EditableCell extends React.Component {
                                 initialValue: (record[dataIndex].split("/"))
                             })(
                                 // value={this.state.computerRegionValue}
-                                <Cascader options={this.state.computerRegion} onChange={this.handleComputerRegionChange} placeholder="请选择区域" />
+                                <Cascader disabled={parentedit ? false : true} options={this.state.computerRegion} onChange={this.handleComputerRegionChange} placeholder="请选择区域" />
                             )}
                         </Item> : dataIndex == 'isMainDutyArea' ?
                             <Item style={{ margin: 0 }}>
@@ -99,8 +100,8 @@ class EditableCell extends React.Component {
                                     initialValue: (record[dataIndex]).toString()
                                 })(
                                     <Radio.Group >
-                                        <Radio value='1' disabled={radioLock}>是</Radio>
-                                        <Radio value='0'>否</Radio>
+                                        <Radio value='1' disabled={parentedit ? radioLock : true}>是</Radio>
+                                        <Radio value='0' disabled={parentedit ? false : true}>否</Radio>
                                     </Radio.Group>
                                 )}
 
@@ -110,7 +111,7 @@ class EditableCell extends React.Component {
                                     rules: [{ required: true, message: `请输入 ${title}!` }],
                                     initialValue: record[dataIndex],
                                 })(
-                                    <Input />
+                                    <Input disabled={node == 3 ? false : true} />
                                 )}
                             </Item>
                 ) : children
@@ -460,20 +461,30 @@ class serviceArea extends React.Component {
             }
         }
     }
-
+    //处理是否可编辑权限
+    setJurisdiction = (isEdit,formRead,node,special) => {
+        if(formRead != 2){
+            if( node =! 3 && node != special){
+                return isEdit
+            }else{
+                return false;
+            }
+        }else{
+            return true;
+        }
+    }
 
     render() {
         this.init()
-        let { isEdit} = this.props;
+        let { isEdit,formRead,node} = this.props;
         const components = {
             body: {
                 cell: EditableCell,
             },
         };
-
         const columns = this.columns.map(col => {
 
-            if (isEdit && !col.editable) {
+            if (node != 3 && isEdit) {
                 return col;
             }
             if (!col.editable) {
@@ -487,11 +498,12 @@ class serviceArea extends React.Component {
                     dataIndex: col.dataIndex,
                     title: col.title,
                     editing: this.isEditing(record),
-                    radioLock:this.state.radioLock
+                    radioLock:this.state.radioLock,
+                    node,
+                    parentedit: isEdit ? 0 : 1
                 }),
             };
         });
-
         const rowSelectionArea = {
             selectedRowKeys:this.state.selectedRowKeys,
             onChange: this.selectChangeArea,
@@ -499,8 +511,8 @@ class serviceArea extends React.Component {
         };
         return (
             <div>
-                <Row gutter={24} style={{textAlign:'right',visibility: !isEdit ? 'visible' : 'hidden'}}>
-                    <Button style={{marginRight: '10px'}} onClick={this.handlerDelete}>删除</Button>
+                <Row gutter={24} style={{textAlign:'right',visibility:  this.setJurisdiction(isEdit,formRead,node) ? 'hidden' : 'visible'}}>
+                    <Button style={{marginRight: '10px'}} onClick={this.handlerDelete} disabled={isEdit ? true : false}>删除</Button>
                     {
                         !this.state.editingKey ? <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button> : (
                             <Button style={{marginRight: '10px'}} disabled>取消</Button>
@@ -519,7 +531,7 @@ class serviceArea extends React.Component {
 
                     {
                         this.state.editingKey ? <Button type="primary" style={{marginRight: '10px'}} disabled>新增</Button> : (
-                            <Button type="primary" style={{marginRight: '10px'}} onClick={this.handleAdd}>新增</Button>
+                            <Button type="primary" style={{marginRight: '10px'}} disabled={isEdit ? true : false} onClick={this.handleAdd}>新增</Button>
                         )
                     }
                 </Row>
@@ -531,7 +543,7 @@ class serviceArea extends React.Component {
                         components={components}   //覆盖默认的 table 元素
                         bordered
                         rowKey={'key'}
-                        rowSelection={!isEdit ? rowSelectionArea : null}  
+                        rowSelection={this.setJurisdiction(isEdit,formRead,node) ? null : rowSelectionArea}  
                         dataSource={this.state.data}
                         columns={columns}
                         scroll={this.props.scroll}

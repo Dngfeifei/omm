@@ -159,11 +159,11 @@ submission=async ()=>{
         let {paramsObj} = this.state,AssistantPonse,MasterPonse;
         if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1){//附表1提交接口
             const {datasources} = this.state;
-            if(!datasources.info || datasources.info.state) {
+            if(!datasources.info || !datasources.info.state) {
                 message.error(!datasources.info ? '请填写服务区域附表！': datasources.info.message)
                 return false;
             }
-            AssistantPonse = await PostaddAssistant(this.state.dataSource)
+            AssistantPonse = await PostaddAssistant(datasources.dataSource)
         }
          if (!this.props.config.formControl || (this.props.config.formControl.masterList.isEdit)) {
             if (!this.vildteMasterList()) {

@@ -15,19 +15,18 @@ import {RESET} from '/redux/action'
 	reset() { dispath({ type: RESET }) }
 }))
 class Home extends Component{
-
 	state = Object.assign({}, this.state, {
 		visible: false,
-		verData: {}
 	})
 	closeInitPassword = () => {
 		this.setState({visible: false})
 	}
 	//监测pros的动太信息
-	static getDerivedStateFromProps(nextProps, prevState) {
+	static getDerivedStateFromProps (nextProps, prevState) {
 		localStorage.getItem('loginStatus')
 		if (localStorage.getItem('loginStatus') == 1) {
-			this.props.reset();
+			localStorage.clear();
+			nextProps.reset();
 			hashHistory.push('/login')
 		}
 		return null;

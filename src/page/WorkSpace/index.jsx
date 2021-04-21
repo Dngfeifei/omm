@@ -120,7 +120,7 @@ class workList extends Component {
                 align:'center',
                 width:'80px',
                 // 第一种：每一页都从1开始
-                render:(text,record,index)=> <span style={{fontWeight: record.finished ? 500 : 600}}>{`${index+1}`}</span>
+                render:(text,record,index)=> this.setHtml(record.finished,index+1)
                 // }
             },  
             {
@@ -129,49 +129,49 @@ class workList extends Component {
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '工单类型',
                 dataIndex: 'ticketType',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '当前任务',
                 dataIndex: 'taskName',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '当前待办人',
                 dataIndex: 'assigneeRealName',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '创建人',
                 dataIndex: 'startRealName',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '状态',
                 dataIndex: 'statusText',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '创建时间',
                 dataIndex: 'createDate',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text,record) => <Tooltip placement="topLeft" title={text}><span style={{fontWeight: record.finished ? 500 : 600}}>{text}</span></Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             },
             //  {
             //     title: '操作详情',
@@ -184,7 +184,10 @@ class workList extends Component {
         ],
         tabledata: [],
     }
-
+    //处理是否加粗显示
+    setHtml = (finished,text) => {
+        return <span style={{fontWeight: finished ? 'normal' : 'bold'}}>{text}</span>
+    }
     // 获取表格高度
     SortTable = () => {
         setTimeout(() => {
