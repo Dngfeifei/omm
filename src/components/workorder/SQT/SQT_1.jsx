@@ -18,7 +18,7 @@ import '@/assets/less/pages/servies.less'
 import ServicesMain from '/components/workorder/SQT/masterList/ServiceRequire.jsx'
 // 引入 接口
 import { SqtBaseDetail,getAssistant,SqtBase,PostaddAssistant } from '/api/serviceMain.js'
-import  ServiceArea from './serviceArea/serviceArea'
+import  ServiceArea from '/components/workorder/SQT/serviceArea/serviceArea'
 
 
 class Sqt extends Component {
@@ -30,7 +30,7 @@ class Sqt extends Component {
             tabsList:[{
                 name:'主表信息'
             }],   
-            datasources:[],  //附表1数据存储 type类型为1
+            datasources:{},  //附表1数据存储 type类型为1
             microRisk:{},  //微观风险附表数据存储 type类型为3
             tabsListF:[],
             swich:true,//主表密钥
@@ -158,13 +158,12 @@ submission=async ()=>{
         }
         let {paramsObj} = this.state,AssistantPonse,MasterPonse;
         if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1){//附表1提交接口
-            for(let i = 0,len = this.state.datasources; i < len ; i++ ){
-                if(datasources[i].error.state) {
-                    message.error(res.message)
-                    return false;
-                }
+            const {datasources} = this.state;
+            if(!datasources.info || datasources.info.state) {
+                message.error(!datasources.info ? '请填写服务区域附表！': datasources.info.message)
+                return false;
             }
-            AssistantPonse = await PostaddAssistant(this.state.datasources)
+            AssistantPonse = await PostaddAssistant(this.state.dataSource)
         }
          if (!this.props.config.formControl || (this.props.config.formControl.masterList.isEdit)) {
             if (!this.vildteMasterList()) {
@@ -191,7 +190,7 @@ submission=async ()=>{
         if(type == 1){//附表1
             let {datasources} = this.state;
             // datasources[index] = {...datasources[index],...data.dataSource,...data.error};
-            datasources = [...data];
+            datasources = {...data};
             this.setState({datasources})
         }
         else if(type == 3){ //微观风险
@@ -221,8 +220,8 @@ submission=async ()=>{
     }
     render = _ => {
         let {datasources,paramsObj} = this.state;
-        console.log(paramsObj.serviceTypeName,datasources,this.props.config)
         const Schedule = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1) ? true : false;
+        console.log(paramsObj.serviceType,datasources,this.props.config,Schedule)
         return (
             <div className="SqtContent">
                 <Tabs defaultActiveKey="0" tabPosition={'top'} style={{ overflowY:'auto' }}>

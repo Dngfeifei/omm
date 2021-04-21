@@ -86,5 +86,5 @@ export const getFinish = (params = {}) => {
 //认领
 export const getClaim = (params = {}) => {
 	params = Object.assign({}, params)
-	return http.fetchGet(`/sql/claim`, params)
+	return http.fetchGet(`/process/claim`, params)
 }
