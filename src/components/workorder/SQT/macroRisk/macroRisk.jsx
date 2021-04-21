@@ -1,5 +1,5 @@
 /**
- * 服务计划表--副表---宏观风险
+ * 服务计划表--副表---宏观风险 子组件
  * @author yyp
 */
 import React, { Component } from 'react'
@@ -16,46 +16,41 @@ import { GetDictInfo } from '/api/dictionary'  //数据字典api
 class SA extends Component {
     // 设置默认props
     static defaultProps = {
-        dataSource: {
-            areaId: "", //区域ID
-            area: "福建厦门",  //区域名称
-            isMainDutyArea: 1,  //主责区域  1 是主责区域 0不是主责区域
-            isMeetContract: "",//满足合同 1满足  0不满足
-            isMeetSla: "",//满足SLA      1满足  0不满足
-            slaDesc: "",//不能满足sla原因说明
-            isTher: "",// 
-            therDesc: "",//其他描述
-            remark: "",//备注
-            isCompanySupportList: [//需公司资源支持的产品数据
-                // {
-                //     productCategory: "",//产品类别
-                //     productType: "",//技术方向
-                //     brand: "",//品牌
-                //     productLine: "",//产品线编码
-                //     productLineName: "",//产品线名称
-                //     deviceLevel: "",//产品等级（高端、中低端）
-                //     productModel: "",//产品型号
-                // }
-            ],
-            notCompanySupportList: [//无资源支持的产品数据
-                // {
-                //     productCategory: "",//产品类别
-                //     productType: "",//技术方向
-                //     brand: "",//品牌
-                //     productLine: "",//产品线编码
-                //     productLineName: "",//产品线名称
-                //     deviceLevel: "",//产品等级（高端、中低端）
-                //     productModel: "",//产品型号
-                // }
-            ],
-        },  //副表数据
-        power: {
-            formRead: 1,
-            formControl: {
-                macroRisk: { isEdit: true }
-            }
-        },  //编辑权限
-        onChange: (data) => { console.log(data) } //数据变化后 外部接受最新数据的方法
+        // dataSource: {
+        //     areaId: "", //区域ID
+        //     area: "福建厦门",  //区域名称
+        //     isMainDutyArea: 1,  //主责区域  1 是主责区域 0不是主责区域
+        //     isMeetContract: "",//满足合同 1满足  0不满足
+        //     isMeetSla: "",//满足SLA      1满足  0不满足
+        //     slaDesc: "",//不能满足sla原因说明
+        //     isTher: "",// 
+        //     therDesc: "",//其他描述
+        //     remark: "",//备注
+        //     isCompanySupportList: [//需公司资源支持的产品数据
+        //         // {
+        //         //     productCategory: "",//产品类别
+        //         //     productType: "",//技术方向
+        //         //     brand: "",//品牌
+        //         //     productLine: "",//产品线编码
+        //         //     productLineName: "",//产品线名称
+        //         //     deviceLevel: "",//产品等级（高端、中低端）
+        //         //     productModel: "",//产品型号
+        //         // }
+        //     ],
+        //     notCompanySupportList: [//无资源支持的产品数据
+        //         // {
+        //         //     productCategory: "",//产品类别
+        //         //     productType: "",//技术方向
+        //         //     brand: "",//品牌
+        //         //     productLine: "",//产品线编码
+        //         //     productLineName: "",//产品线名称
+        //         //     deviceLevel: "",//产品等级（高端、中低端）
+        //         //     productModel: "",//产品型号
+        //         // }
+        //     ],
+        // },  //副表数据
+        // isEdit: "",  //编辑权限
+        // onChange: (data) => { } //数据变化后 外部接受最新数据的方法
     }
     constructor(props) {
         super(props)
@@ -63,43 +58,43 @@ class SA extends Component {
             // 下拉框基础数据（技术方向,产品线,品牌，产品类别）
             baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [] },
             dataSource: {
-                areaId: "", //区域ID
-                area: "福建厦门",  //区域名称
-                isMainDutyArea: 1,  //主责区域  1 是主责区域 0不是主责区域
-                isMeetContract: "",//满足合同 1满足  0不满足
-                isMeetSla: "",//满足SLA      1满足  0不满足
-                slaDesc: "",//不能满足sla原因说明
-                isTher: "",//其他 
-                therDesc: "",//其他描述
-                remark: "",//备注
-                isCompanySupportList: [//需公司资源支持的产品数据
-                    {
-                        isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
-                        productCategory: "",//产品类别
-                        productType: "",//技术方向
-                        brand: "",//品牌
-                        productLine: "",//产品线编码
-                        productLineName: "",//产品线名称
-                        deviceLevel: "",//产品等级（高端、中低端）
-                        productModel: "",//产品型号
-                    }
-                ],
-                notCompanySupportList: [//无资源支持的产品数据
-                    {
-                        isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
-                        productCategory: "",//产品类别
-                        productType: "",//技术方向
-                        brand: "",//品牌
-                        productLine: "",//产品线编码
-                        productLineName: "",//产品线名称
-                        deviceLevel: "",//产品等级（高端、中低端）
-                        productModel: "",//产品型号
-                    }
-                ],
-                isCompanyChecked: false,//需公司资源支持
-                notCompanyChecked: false,//需公司资源支持
+                // areaId: "", //区域ID
+                // area: "福建厦门",  //区域名称
+                // isMainDutyArea: 1,  //主责区域  1 是主责区域 0不是主责区域
+                // isMeetContract: "",//满足合同 1满足  0不满足
+                // isMeetSla: "",//满足SLA      1满足  0不满足
+                // slaDesc: "",//不能满足sla原因说明
+                // isTher: "",//其他 
+                // therDesc: "",//其他描述
+                // remark: "",//备注
+                // isCompanySupportList: [//需公司资源支持的产品数据
+                //     {
+                //         isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
+                //         productCategory: "",//产品类别
+                //         productType: "",//技术方向
+                //         brand: "",//品牌
+                //         productLine: "",//产品线编码
+                //         productLineName: "",//产品线名称
+                //         deviceLevel: "",//产品等级（高端、中低端）
+                //         productModel: "",//产品型号
+                //     }
+                // ],
+                // notCompanySupportList: [//无资源支持的产品数据
+                //     {
+                //         isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
+                //         productCategory: "",//产品类别
+                //         productType: "",//技术方向
+                //         brand: "",//品牌
+                //         productLine: "",//产品线编码
+                //         productLineName: "",//产品线名称
+                //         deviceLevel: "",//产品等级（高端、中低端）
+                //         productModel: "",//产品型号
+                //     }
+                // ],
+                // isCompanyChecked: false,//需公司资源支持
+                // notCompanyChecked: false,//需公司资源支持
             },
-            isEdit: true,//页面是否可编辑
+            isEdit: props.isEdit,//页面是否可编辑
         }
     }
 
@@ -113,22 +108,17 @@ class SA extends Component {
     }
     // 组件传递数据初始化 基础下拉框数据请求获取之后调用此方法
     initData = () => {
-        let { dataSource, power } = this.props
+        let { dataSource } = this.props
         let { isEdit } = this.state
-        // 页面模块只读逻辑
-        if (power.formRead == 1) {
-            // 若为1 根据权限配置判断是否只读
-            isEdit = power.formControl.macroRisk.isEdit
-        } else {
-            // 若为2 所有只读
-            isEdit = false
-        }
+        isEdit = this.props.isEdit
         dataSource.isCompanyChecked = dataSource.isCompanySupportList.length ? true : false
         dataSource.notCompanyChecked = dataSource.notCompanySupportList.length ? true : false
         dataSource.isCompanySupportList = this.appendElement(dataSource.isCompanySupportList)
         dataSource.notCompanySupportList = this.appendElement(dataSource.notCompanySupportList)
         this.setState({
             dataSource, isEdit
+        }, () => {
+            this.updateToparent()
         })
     }
     // 列表数据追加属性productLineData、levels
@@ -590,6 +580,8 @@ class SA extends Component {
                 newData.therDesc = dataSource.therDesc
             }
         }
+        newData.area = dataSource.area
+        newData.isMainDutyArea = dataSource.isMainDutyArea
         newData.areaId = dataSource.areaId
         newData.remark = dataSource.remark
         return newData
@@ -640,20 +632,11 @@ class SA extends Component {
             <div className="worksheet">
                 <div className="row">
                     <div className="column">
-                        <div className="val">服务区域</div>
-                    </div>
-                    <div className="column column6">
                         <div className="val">宏观风险</div>
                     </div>
                 </div>
                 <div className="row">
                     <div className="column">
-                        <div className="val">
-                            {dataSource.area}
-                            {dataSource.isMainDutyArea ? (<p style={{ color: "red", lineHeight: "0" }}>[主责区域]</p>) : ""}
-                        </div>
-                    </div>
-                    <div className="column column6">
                         <div style={{ width: "100%" }}>
                             <div className="row">
                                 <div className="val alignLeft" style={{ padding: "0 10px" }}><Checkbox disabled={!isEdit || dataSource.isCompanyChecked || dataSource.notCompanyChecked || dataSource.isMeetSla || dataSource.isTher ? true : false} name="isMeetContract" checked={dataSource.isMeetContract ? true : false} onChange={this.onChangeEl}>区域内满足合同</Checkbox></div>
@@ -1003,11 +986,9 @@ class SA extends Component {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="column">
-                        <div className="val" style={{ padding: "0 10px" }}>备注：</div>
-                    </div>
-                    <div className="column column6" >
+                    <div className="column" >
                         <div className="val alignLeft" style={{ padding: "0 10px", display: "flex", alignItems: "center" }}>
+                            <div className={isEdit && dataSource.isTher ? "ant-form-item-required" : ""} style={{ minWidth: "88px" }}>备注：</div>
                             <TextArea disabled={!isEdit ? true : false} name="remark" value={dataSource.remark} autoSize onChange={this.onInputChange} />
                         </div>
                     </div>

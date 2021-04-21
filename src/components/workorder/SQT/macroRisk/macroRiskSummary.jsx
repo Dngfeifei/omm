@@ -19,151 +19,119 @@ import '@/assets/less/components/layout.less'
 // 引入 API接口
 import { GetBaseData } from '/api/selfEvaluation'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
+import { getMacroRiskSum } from '/api/serviceMain.js'
+
 
 class SA extends Component {
     // 设置默认props
     static defaultProps = {
-
-        dataSource: {
-            isMeetContract: "",//满足合同 1满足  0不满足
-            isMeetSla: "",//满足SLA      1满足  0不满足
-            slaDesc: [
-                {
-                    area: "河北/石家庄",
-                    info: "河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州"
-                },
-                {
-                    area: "新疆/乌鲁木齐",
-                    info: "庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家"
-                }
-            ],//不能满足sla原因说明
-            isTher: "",// 
-            therDesc: [
-                {
-                    area: "河北/石家庄",
-                    info: "河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州"
-                },
-                {
-                    area: "新疆/乌鲁木齐",
-                    info: "庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家"
-                }
-            ],//其他描述
-            remark: [
-                {
-                    area: "河北/石家庄",
-                    info: "河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州"
-                },
-                {
-                    area: "新疆/乌鲁木齐",
-                    info: "庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家庄石家"
-                }
-            ],//备注
-            isCompanySupportList: [//需公司资源支持的产品数据
-                // {
-                //     productCategory: "",//产品类别
-                //     productType: "",//技术方向
-                //     brand: "",//品牌
-                //     productLine: "",//产品线编码
-                //     productLineName: "",//产品线名称
-                //     deviceLevel: "",//产品等级（高端、中低端）
-                //     productModel: "",//产品型号
-                // }
-            ],
-            notCompanySupportList: [//无资源支持的产品数据
-                // {
-                //     productCategory: "",//产品类别
-                //     productType: "",//技术方向
-                //     brand: "",//品牌
-                //     productLine: "",//产品线编码
-                //     productLineName: "",//产品线名称
-                //     deviceLevel: "",//产品等级（高端、中低端）
-                //     productModel: "",//产品型号
-                // }
-            ],
-            "isCompanySupportList": [
-                {
-                    "productCategory": "2",
-                    "productType": "02",
-                    "brand": "060",
-                    "productLine": "",
-                    "productLineName": "",
-                    "deviceLevel": "",
-                    "productModel": "555",
-                    "productLineData": [],
-                    "levels": ""
-                }
-            ],
-            "notCompanySupportList": [
-                {
-                    "productCategory": "1",
-                    "productType": "12",
-                    "brand": "079",
-                    "productLine": "0514",
-                    "productLineName": "TSM",
-                    "deviceLevel": "",
-                    "productModel": "999",
-                    researchStartTime: "",
-                    researchEndTime: "",
-                    "productLineData": [
-                        {
-                            "basedataTypeCode": "productLine",
-                            "basedataTypeName": "产品线",
-                            "children": "",
-                            "code": "0514",
-                            "id": "893",
-                            "intValue1": "",
-                            "name": "TSM",
-                            "parentId": "885",
-                            "strValue1": "",
-                            "strValue2": "",
-                            "strValue3": "",
-                            "strValue4": ""
-                        }
-                    ],
-                    "levels": [
-                        ""
-                    ]
-                },
-                {
-                    "productCategory": "1",
-                    "productType": "12",
-                    "brand": "079",
-                    "productLine": "0514",
-                    "productLineName": "TSM",
-                    "deviceLevel": "",
-                    "productModel": "999",
-                    researchStartTime: "",
-                    researchEndTime: "",
-                    "productLineData": [
-                        {
-                            "basedataTypeCode": "productLine",
-                            "basedataTypeName": "产品线",
-                            "children": "",
-                            "code": "0514",
-                            "id": "893",
-                            "intValue1": "",
-                            "name": "TSM",
-                            "parentId": "885",
-                            "strValue1": "",
-                            "strValue2": "",
-                            "strValue3": "",
-                            "strValue4": ""
-                        }
-                    ],
-                    "levels": [
-                        ""
-                    ]
-                }
-            ],
-            "areaId": "",
-        },  //副表数据
-        power: {
-            formRead: 1,
-            formControl: {
-                macroRiskSummary: { isEdit: true }
-            }
-        },  //编辑权限
-        onChange: (data) => { console.log(data) } //数据变化后 外部接受最新数据的方法
+        // dataSource: {
+        //     isMeetContract: "",//满足合同 1满足  0不满足
+        //     isMeetSla: "",//满足SLA      1满足  0不满足
+        //     slaDesc: [
+        //         {
+        //             area: "河北/石家庄",
+        //             info: "河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州"
+        //         }
+        //     ],//不能满足sla原因说明
+        //     isTher: "",// 
+        //     therDesc: [
+        //         {
+        //             area: "河北/石家庄",
+        //             info: "河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州"
+        //         }
+        //     ],//其他描述
+        //     remark: [
+        //         {
+        //             area: "河北/石家庄",
+        //             info: "河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州河南郑州"
+        //         },
+        //     ],//备注
+        //     isCompanySupportList: [
+        //         {
+        //             "productCategory": "2",
+        //             "productType": "02",
+        //             "brand": "060",
+        //             "productLine": "",
+        //             "productLineName": "",
+        //             "deviceLevel": "",
+        //             "productModel": "555",
+        //             "productLineData": [],
+        //             "levels": ""
+        //         }
+        //     ],
+        //     notCompanySupportList: [
+        //         {
+        //             "productCategory": "1",
+        //             "productType": "12",
+        //             "brand": "079",
+        //             "productLine": "0514",
+        //             "productLineName": "TSM",
+        //             "deviceLevel": "",
+        //             "productModel": "999",
+        //             researchStartTime: "",
+        //             researchEndTime: "",
+        //             "productLineData": [
+        //                 {
+        //                     "basedataTypeCode": "productLine",
+        //                     "basedataTypeName": "产品线",
+        //                     "children": "",
+        //                     "code": "0514",
+        //                     "id": "893",
+        //                     "intValue1": "",
+        //                     "name": "TSM",
+        //                     "parentId": "885",
+        //                     "strValue1": "",
+        //                     "strValue2": "",
+        //                     "strValue3": "",
+        //                     "strValue4": ""
+        //                 }
+        //             ],
+        //             "levels": [
+        //                 ""
+        //             ]
+        //         },
+        //         {
+        //             "productCategory": "1",
+        //             "productType": "12",
+        //             "brand": "079",
+        //             "productLine": "0514",
+        //             "productLineName": "TSM",
+        //             "deviceLevel": "",
+        //             "productModel": "999",
+        //             researchStartTime: "",
+        //             researchEndTime: "",
+        //             "productLineData": [
+        //                 {
+        //                     "basedataTypeCode": "productLine",
+        //                     "basedataTypeName": "产品线",
+        //                     "children": "",
+        //                     "code": "0514",
+        //                     "id": "893",
+        //                     "intValue1": "",
+        //                     "name": "TSM",
+        //                     "parentId": "885",
+        //                     "strValue1": "",
+        //                     "strValue2": "",
+        //                     "strValue3": "",
+        //                     "strValue4": ""
+        //                 }
+        //             ],
+        //             "levels": [
+        //                 ""
+        //             ]
+        //         }
+        //     ],
+        //     "areaId": "",
+        // },  //副表数据
+        // power: {
+        //     id: "",
+        //     formRead: 1,
+        //     formControl: {
+        //         macroRiskSummary: { isEdit: true }
+        //     }
+        // },  //编辑权限
+        // onChange: (data) => { console.log(data) } //数据变化后 外部接受最新数据的方法
     }
     constructor(props) {
         super(props)
@@ -171,38 +139,38 @@ class SA extends Component {
             // 下拉框基础数据（技术方向,产品线,品牌，产品类别）
             baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [], researchStatus: [], researchLevel: [] },
             dataSource: {
-                isMeetContract: "",//满足合同 1满足  0不满足
-                isMeetSla: "",//满足SLA      1满足  0不满足
-                slaDesc: [],//不能满足sla原因说明
-                isTher: "",//其他 
-                therDesc: [],//其他描述
-                remark: [],//备注
-                isCompanySupportList: [//需公司资源支持的产品数据
-                    {
-                        isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
-                        productCategory: "",//产品类别
-                        productType: "",//技术方向
-                        brand: "",//品牌
-                        productLine: "",//产品线编码
-                        productLineName: "",//产品线名称
-                        deviceLevel: "",//产品等级（高端、中低端）
-                        productModel: "",//产品型号
-                    }
-                ],
-                notCompanySupportList: [//无资源支持的产品数据
-                    {
-                        isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
-                        productCategory: "",//产品类别
-                        productType: "",//技术方向
-                        brand: "",//品牌
-                        productLine: "",//产品线编码
-                        productLineName: "",//产品线名称
-                        deviceLevel: "",//产品等级（高端、中低端）
-                        productModel: "",//产品型号
-                    }
-                ],
-                isCompanyChecked: false,//需公司资源支持
-                notCompanyChecked: false,//需公司资源支持
+                // isMeetContract: "",//满足合同 1满足  0不满足
+                // isMeetSla: "",//满足SLA      1满足  0不满足
+                // slaDesc: [],//不能满足sla原因说明
+                // isTher: "",//其他 
+                // therDesc: [],//其他描述
+                // remark: [],//备注
+                // isCompanySupportList: [//需公司资源支持的产品数据
+                //     {
+                //         isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
+                //         productCategory: "",//产品类别
+                //         productType: "",//技术方向
+                //         brand: "",//品牌
+                //         productLine: "",//产品线编码
+                //         productLineName: "",//产品线名称
+                //         deviceLevel: "",//产品等级（高端、中低端）
+                //         productModel: "",//产品型号
+                //     }
+                // ],
+                // notCompanySupportList: [//无资源支持的产品数据
+                //     {
+                //         isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
+                //         productCategory: "",//产品类别
+                //         productType: "",//技术方向
+                //         brand: "",//品牌
+                //         productLine: "",//产品线编码
+                //         productLineName: "",//产品线名称
+                //         deviceLevel: "",//产品等级（高端、中低端）
+                //         productModel: "",//产品型号
+                //     }
+                // ],
+                // isCompanyChecked: false,//需公司资源支持
+                // notCompanyChecked: false,//需公司资源支持
             },
             isEdit: true,//页面是否可编辑
             // 工程师选择器配置
@@ -213,7 +181,6 @@ class SA extends Component {
             submitData: []
         }
     }
-
     componentWillMount() {
         this.init()
     }
@@ -221,6 +188,77 @@ class SA extends Component {
     init = () => {
         this.getBaseData()
         this.getDictInfo()
+    }
+
+    // 请求宏观风险数据
+    getMacroRiskData = () => {
+        // 请求下拉框基础数据
+        getMacroRiskSum({ baseId: this.props.power.id }).then((res) => {
+            if (res.success != 1) {
+                message.error(res.message)
+                return
+            } else {
+                this.setState({
+                    dataSource: res.data
+                }, () => {
+                    this.initData()
+                })
+            }
+        })
+    }
+    // 请求下拉框基础数据方法
+    getBaseData = () => {
+        // 请求下拉框基础数据
+        GetBaseData().then((res) => {
+            if (res.success != 1) {
+                message.error(res.message)
+                return
+            } else {
+                let { skillType, productLine, brand } = res.data
+                let baseData = Object.assign({}, this.state.baseData, { skillType, productLine, brand })
+                this.setState({
+                    baseData
+                }, () => {
+                    this.getMacroRiskData()
+                })
+            }
+        })
+    }
+    // 获取数据字典-产品类别数据
+    getDictInfo = () => {
+        GetDictInfo({ dictCode: "productCategory" }).then(res => {
+            if (res.success != 1) {
+                message.error("产品类别下拉框资源未获取，服务器错误！")
+            } else {
+                let productCategoryData = res.data;
+                let baseData = Object.assign({}, this.state.baseData, { productCategoryData })
+                this.setState({
+                    baseData
+                })
+            }
+        })
+        GetDictInfo({ dictCode: "researchStatus" }).then(res => {
+            if (res.success != 1) {
+                message.error("产品类别下拉框资源未获取，服务器错误！")
+            } else {
+                let researchStatus = res.data;
+                let baseData = Object.assign({}, this.state.baseData, { researchStatus })
+                this.setState({
+                    baseData
+                })
+            }
+        })
+        GetDictInfo({ dictCode: "researchLevel" }).then(res => {
+            if (res.success != 1) {
+                message.error("产品类别下拉框资源未获取，服务器错误！")
+            } else {
+                let researchLevel = res.data;
+                let baseData = Object.assign({}, this.state.baseData, { researchLevel })
+                this.setState({
+                    baseData
+                })
+            }
+        })
     }
     // 组件传递数据初始化 基础下拉框数据请求获取之后调用此方法
     initData = () => {
@@ -244,7 +282,6 @@ class SA extends Component {
         this.setState({
             dataSource, isEdit
         }, () => {
-            console.log(this.state.dataSource, "sgfdsg")
         })
     }
     // 列表数据追加属性productLineData、levels
@@ -307,61 +344,6 @@ class SA extends Component {
         }
         return arr
 
-    }
-    // 请求下拉框基础数据方法
-    getBaseData = () => {
-        // 请求下拉框基础数据
-        GetBaseData().then((res) => {
-            if (res.success != 1) {
-                message.error(res.message)
-                return
-            } else {
-                let { skillType, productLine, brand } = res.data
-                let baseData = Object.assign({}, this.state.baseData, { skillType, productLine, brand })
-                this.setState({
-                    baseData
-                }, () => {
-                    this.initData()
-
-                })
-            }
-        })
-    }
-    // 获取数据字典-产品类别数据
-    getDictInfo = () => {
-        GetDictInfo({ dictCode: "productCategory" }).then(res => {
-            if (res.success != 1) {
-                message.error("产品类别下拉框资源未获取，服务器错误！")
-            } else {
-                let productCategoryData = res.data;
-                let baseData = Object.assign({}, this.state.baseData, { productCategoryData })
-                this.setState({
-                    baseData
-                })
-            }
-        })
-        GetDictInfo({ dictCode: "researchStatus" }).then(res => {
-            if (res.success != 1) {
-                message.error("产品类别下拉框资源未获取，服务器错误！")
-            } else {
-                let researchStatus = res.data;
-                let baseData = Object.assign({}, this.state.baseData, { researchStatus })
-                this.setState({
-                    baseData
-                })
-            }
-        })
-        GetDictInfo({ dictCode: "researchLevel" }).then(res => {
-            if (res.success != 1) {
-                message.error("产品类别下拉框资源未获取，服务器错误！")
-            } else {
-                let researchLevel = res.data;
-                let baseData = Object.assign({}, this.state.baseData, { researchLevel })
-                this.setState({
-                    baseData
-                })
-            }
-        })
     }
     // 列表下拉框更新
     onSelectChange = (info, current) => {
