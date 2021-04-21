@@ -14,7 +14,7 @@ export const serviceWorkOrder = (params = {}) => {
 
 // 服务计划表---主表数据查询接口
 export const SqtBaseDetail = (id,params = {}) => {
-	return http.fetchGet(`biSqtBase/detail/${id}`, params)
+	return http.fetchGet(`/biSqtBase/detail/${id}`, params)
 }
 
 // 服务计划表主表数据提交接口
@@ -29,9 +29,14 @@ export const SqtBaseupload = (params = {}) => {
 
 // 服务计划表---附表数据查询接口
 export const getAssistant = (params = {}) => {
-	return http.fetchGet(`biSqtBase/getAssistant`, params)
+	return http.fetchGet(`/biSqtBase/getAssistant`, params)
 }
 // 服务计划表---附表数据提交接口
 export const PostaddAssistant = (params = {}) => {
-	return http.fetchPost(`biSqtBase/addAssistant`, params,true)
+	return http.fetchPost(`/biSqtBase/addAssistant`, params,true)
+}
+
+// 服务计划表---微观风险数据提交接口
+export const PostaddMicroRisk = (params = {}) => {
+	return http.fetchPost(`/microRisk/add`, params,true)
 }
