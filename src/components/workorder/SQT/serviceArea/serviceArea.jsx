@@ -28,7 +28,7 @@ class SA extends Component {
                 //服务区域副表
                 serviceArea: {
                     isEdit: true,
-                    contactIsEdit: false,
+                    contactIsEdit: true,
                     objectIsEdit: true,
                     memberIsEdit: true
                 }
@@ -40,14 +40,14 @@ class SA extends Component {
         super(props)
         this.state = {
             dataSource: [
-                {
-                    areaId: "",
-                    area: "",
-                    isMainDutyArea: 1,
-                    contactList: [],
-                    objectList: [],
-                    memberList: [],
-                }
+                // {
+                //     areaId: "",
+                //     area: "河南",
+                //     isMainDutyArea: 1,
+                //     contactList: [],
+                //     objectList: [],
+                //     memberList: [],
+                // }
             ],
             error: [],
             objIsShow: true, //服务对象是否显示
@@ -207,6 +207,7 @@ class SA extends Component {
                                 objIsShow ? <ObjectEl area={item.area} edit={objectIsEdit} dataSource={item.objectList} onChange={(info) => { this.onChangeSO(info, index) }}></ObjectEl> : ""
                             }
                             <Member area={item.area} edit={memberIsEdit} dataSource={item.memberList} onChange={(info) => { this.onChangePT(info, index) }}></Member>
+
                         </div>
                     </div>
                 })

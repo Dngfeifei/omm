@@ -43,30 +43,40 @@
             display: flex;
             border: 1px solid #e8e8e8;
             margin-top: -1px;
-
             .column {
                 flex: 1;
                 display: flex;
                 border-left: 1px solid #e8e8e8;
                 margin-left: -1px;
+                align-items: center;
+                .row {
+                    border-left: none;
+                    border-right: none;
+                }
+                .row:nth-last-child(1) {
+                    border: none;
+                }
             }
-
             .column2 {
                 flex: 2;
                 display: flex;
                 border-left: 1px solid #e8e8e8;
                 margin-left: -1px;
             }
-
             .column3 {
                 flex: 3;
                 display: flex;
                 border-left: 1px solid #e8e8e8;
                 margin-left: -1px;
             }
-
             .column4 {
                 flex: 4;
+                display: flex;
+                border-left: 1px solid #e8e8e8;
+                margin-left: -1px;
+            }
+            .column6 {
+                flex: 6;
                 display: flex;
                 border-left: 1px solid #e8e8e8;
                 margin-left: -1px;
@@ -83,7 +93,7 @@
 
         .val {
             flex: 2;
-            height: 48px;
+            min-height: 48px;
             line-height: 48px;
 
             .row,
@@ -138,12 +148,14 @@
             padding-right: 30px;
             line-height: 30px;
         }
+
         .formCol2 {
             flex: 2;
             display: flex;
             padding-right: 30px;
             line-height: 30px;
         }
+
         .formKey {
             text-align: left;
             font-weight: bold;

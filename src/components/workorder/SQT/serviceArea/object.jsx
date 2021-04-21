@@ -43,6 +43,7 @@ class ObjectEl extends Component {
                 {
                     title: '序号',
                     width: "7%",
+                    key: "id",
                     align: 'center',
                     render: (value, row, index) => {
                         if (this.props.edit) {
@@ -338,14 +339,6 @@ class ObjectEl extends Component {
     updateToparent = () => {
         let checkResult = this.onCheck()
         this.props.onChange({ dataSource: this.state.dataSource, error: checkResult })
-    }
-    // 获取列表选中项
-    onChangeRadio = ({ target }) => {
-        this.setState({
-            current: target.value
-        }, () => {
-            this.updateToparent()
-        })
     }
     // 获取产品类别
     onSelectCategory = (newValue, { props }) => {
