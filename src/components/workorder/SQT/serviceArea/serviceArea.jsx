@@ -66,20 +66,10 @@ class SA extends Component {
         getAssistant({ baseId: this.props.power.id }).then(res => {
             if (res.success == '1') {
                 this.setState({
-                    datasources: res.data
+                    dataSource: res.data
                 })
             } else if (res.success == '0') {
-                this.setState({
-                    datasources: [  {
-                        areaId: "",
-                        area: "hebei",
-                        isMainDutyArea: 1,
-                        contactList: [],
-                        objectList: [],
-                        memberList: [],
-                    }]
-                })
-                // message.error(res.message)
+                message.error(res.message)
             }
         })
     }
