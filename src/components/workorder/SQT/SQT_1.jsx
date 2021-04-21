@@ -222,6 +222,7 @@ submission=async ()=>{
     render = _ => {
         let {datasources,paramsObj} = this.state;
         console.log(paramsObj.serviceTypeName,datasources,this.props.config)
+        const Schedule = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1) ? true : false;
         return (
             <div className="SqtContent">
                 <Tabs defaultActiveKey="0" tabPosition={'top'} style={{ overflowY:'auto' }}>
@@ -232,7 +233,7 @@ submission=async ()=>{
                         </TabPane>
                     ))}
                     {
-                       (paramsObj.serviceType && this.props.config.formControl.action.indexOf('serviceArea') > -1) ? 
+                       (paramsObj.serviceType && Schedule) ? 
                         <TabPane tab={item.area} key="1">
                             {/* 附表--组件  */}
                            <ServiceArea onChange={(data) => this.getChildrenVildter(data,1)} type={this.state.paramsObj.serviceType} power={this.props.config}></ServiceArea>
