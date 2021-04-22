@@ -74,7 +74,7 @@ class EditableCell extends React.Component {
             editing, dataIndex,initValue, title, Input, record, index, children,radioLock,parentedit,node,
             ...restProps
         } = this.props;
-
+        // console.log(parentedit,radioLock)
         return (
             <td {...restProps} className='my-cell-td'>
                 {editing ? (
@@ -149,9 +149,6 @@ class serviceArea extends React.Component {
     }
     //@author  gl
     componentWillReceiveProps (nextprops) {
-        let {data} = this.state;
-       // console.log(JSON.stringify(data) == JSON.stringify(nextprops.data))
-        if(JSON.stringify(data) == JSON.stringify(nextprops.data)) return;
         if(!this.state.editingKey){
             this.initData(nextprops.data)
         }
