@@ -55,38 +55,38 @@ class servies extends Component {
         areaList: [],
         // 【服务承诺】组件的所有数据
         performancePledge: {
-            serviceMode: '1',  // 服务方式
-            isReceiveReport: '2',  // 是否提交验收报告1-是，0-否
-            longInspectionCycle: 'week',  //远程巡检周期
-            sceneInspectionCycle: 'week',      // 现场巡检周期
-            inspectionDesc: '无', //巡检特殊说明
+            serviceMode: '',  // 服务方式
+            isReceiveReport: '',  // 是否提交验收报告1-是，0-否
+            longInspectionCycle: '',  //远程巡检周期
+            sceneInspectionCycle: '',      // 现场巡检周期
+            inspectionDesc: '', //巡检特殊说明
             courseList: [{
                 id: 1,
                 trainMode: 'online',  // 默认字段是 1-线上 0-线下
                 trainTeachers: '1',    // 培训师资
-                courseDirection: "无",   // 课程方向
-                trainCourse: "无", // 培训课程
-                oursePersonTimes: "无",  // 培训人次
+                courseDirection: "",   // 课程方向
+                trainCourse: "", // 培训课程
+                oursePersonTimes: "",  // 培训人次
             }],
-            isFirstInspection: '0', // 是否需要提供首次巡检服务，1-是，0-否
-            onsiteService: '长期驻场',   // 项目是否约定驻场服务
+            isFirstInspection: '', // 是否需要提供首次巡检服务，1-是，0-否
+            onsiteService: '',   // 项目是否约定驻场服务
             peopleNum: '1', //人数
-            specialDesc: '无', //特殊说明
-            isCollectConfig: '0', // 是否收集相关配置信息，1-是，0-否
-            notCollectReason: '1',    // 不收集配置信息原因说明
-            serviceReportCycle: 'week', // 服务报告提交周期
-            serviceListRequire: '2', // 服务单要求
+            specialDesc: '', //特殊说明
+            isCollectConfig: '', // 是否收集相关配置信息，1-是，0-否
+            notCollectReason: '',    // 不收集配置信息原因说明
+            serviceReportCycle: '', // 服务报告提交周期
+            serviceListRequire: '', // 服务单要求
             partsList: '',//合同承诺备机备件清单
-            sparePartsTime: '2021-04-02',// 合同承诺备机备件到库时间
-            isOutsource: '0',// 是否有外包情况（1-是，0-否，2-部分）
-            outsourcer: '银信', //外包商
+            sparePartsTime: '',// 合同承诺备机备件到库时间
+            isOutsource: '',// 是否有外包情况（1-是，0-否，2-部分）
+            outsourcer: '', //外包商
             sparePartsFileList: [],// 合同承诺备机备件清单
             equipmentFileList: [], // 上传外包合同设备清单附件
             afterSaleAgreement: '1', // 集成/备件销售项目（101、102）售后服务约定 1-原厂服务，2-我司服务
             projectCycleType: '1',// 项目周期类型，1-部分项目周期，2-全部项目周期
-            cycleStart: '2021-04-02',  // 周期开始日期
-            cycleEnd: '2021-04-08', // 周期结束日期
-            otherPromise: '无', //其他重要承诺及要求
+            cycleStart: '',  // 周期开始日期
+            cycleEnd: '', // 周期结束日期
+            otherPromise: '', //其他重要承诺及要求
             slaList: []
         },
         // 判断 是否是从【自行创建服务计划表】的情况下进入；
@@ -155,6 +155,7 @@ initData = (nextprops) => {
             element.key = index + 1;
             element.serviceAreaNew = (element.area).split('/');
         }
+        // console.log()
         this.setState({
             basicInfor,
             areaList,
@@ -192,7 +193,7 @@ initData = (nextprops) => {
 //处理是否需要首次巡检
 setIsFirstInspection = (info,performancePledge)=>{
     // console.log(info.serviceType)
-        if((!this.props.power.formControl || this.props.power.formControl.masterList.nodes == 1)){
+        if((!this.props.power.formControl || this.props.power.formControl.masterList.nodes == 3)){
             if(info.serviceType == '201' || info.serviceType == '212'){
                performancePledge = {...performancePledge,isFirstInspection:'1'};
             }else{
@@ -203,11 +204,11 @@ setIsFirstInspection = (info,performancePledge)=>{
 }
     //  接收到【基本信息】子组件返回的数据  
     getChildrenInfo = (info) => {
-        console.log('基本信息')
+        // console.log('基本信息')
         //@author gl
         let {basicInfor,performancePledge,areaList}=this.state
         performancePledge = this.setIsFirstInspection(info,performancePledge);
-        console.log(performancePledge)
+        // console.log(performancePledge)
          //@author gl
         this.setState({
             basicInfor: info,
@@ -224,7 +225,7 @@ setIsFirstInspection = (info,performancePledge)=>{
 
     //  接收到【服务区域】子组件返回的数据  
     getAreaChildren = (info) => {
-        console.log('服务区域')
+        // console.log('服务区域')
         this.setState({
             areaList: info
         }, () => {
@@ -237,7 +238,7 @@ setIsFirstInspection = (info,performancePledge)=>{
 
     //  接收到【服务承诺】子组件返回的数据  
     getChildrenData = (info) => {
-        console.log('服务承诺')
+        // console.log('服务承诺')
         this.setState({
             performancePledge: info
         }, () => {
@@ -274,19 +275,19 @@ setIsFirstInspection = (info,performancePledge)=>{
                 {/* 基本信息--区域 */}
                 <div className="infor commTop">
                     <div className="navTitle">基本信息</div>
-                    <BasicInfor isEdit={this.state.isEdit} formRead={this.state.formRead} node={power.formControl ? power.formControl.masterList.nodes : 0} data={this.state.basicInfor} onChangeInfo={this.getChildrenInfo} isSelfCreation={this.props.power.sign} onGetChange={this.onGetChangeSelect}></BasicInfor>
+                    <BasicInfor isEdit={this.state.isEdit} formRead={this.state.formRead} node={(power.formControl && power.formControl.masterList.nodes) ? power.formControl.masterList.nodes : 0} data={this.state.basicInfor} onChangeInfo={this.getChildrenInfo} isSelfCreation={this.props.power.sign} onGetChange={this.onGetChangeSelect}></BasicInfor>
                 </div>
 
                 {/* 服务区域--区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务区域</div>
-                    <EditTable isEdit={this.state.isEdit} formRead={this.state.formRead} data={this.state.areaList} onChange={this.getAreaChildren} node={power.formControl ? power.formControl.masterList.nodes : 0}></EditTable>
+                    <EditTable isEdit={this.state.isEdit} formRead={this.state.formRead} data={this.state.areaList} onChange={this.getAreaChildren} node={(power.formControl && power.formControl.masterList.nodes) ? power.formControl.masterList.nodes : 0}></EditTable>
                 </div>
 
                 {/* 服务承诺---区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务承诺</div>
-                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} serviceType={this.state.basicInfor.serviceType} node={power.formControl ? power.formControl.masterList.nodes : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
+                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} serviceType={this.state.basicInfor.serviceType} node={(power.formControl && power.formControl.masterList.nodes) ? power.formControl.masterList.nodes : 0} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
 
             </div>

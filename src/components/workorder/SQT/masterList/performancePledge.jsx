@@ -104,7 +104,8 @@ class EditableCell extends React.Component {
                             }
                         </Select>
                     )}
-                </Form.Item> : <Form.Item style={{ margin: 0 }}>
+                </Form.Item> : dataIndex == 'engineerArriveTime'  || dataIndex == 'respondTime'|| dataIndex == 'solveTime'|| dataIndex == 'spareArriveTime' ?
+                <Form.Item style={{ margin: 0 }}>
                         {form.getFieldDecorator(dataIndex, {
                             rules: [
                                 {
@@ -114,7 +115,13 @@ class EditableCell extends React.Component {
                             ],
                             initialValue: record[dataIndex],
                         })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />)}
-                    </Form.Item>
+                    </Form.Item> : 
+                        <Form.Item style={{ margin: 0 }}>
+                            {form.getFieldDecorator(dataIndex, {
+                                rules: [],
+                                initialValue: record[dataIndex],
+                            })(<Input ref={node => (this.input = node)} onPressEnter={this.save} onBlur={this.save} />)}
+                        </Form.Item>
         ) : (
                 <div
                     className="editable-cell-value-wrap"
@@ -411,6 +418,7 @@ class performance extends Component {
         })
 
         // 等级---SLA等级列表
+        if(this.props.sign) return; 
         customerLevel({ dictCode: 'slaLevel' }).then(res => {
             if (res.success == 1) {
                 let slaLevelArray = [];
@@ -523,12 +531,12 @@ class performance extends Component {
                 })
 
             },
-            onMouseLeave: event => {
-                this.setState({
-                            currentState:0
-                        })
+            // onMouseLeave: event => {
+            //     this.setState({
+            //                 currentState:0
+            //             })
                 
-            }
+            // }
 		}
     }
 //鼠标移动到表格添加区域显示添加删除一行操作按钮
@@ -823,7 +831,7 @@ addMouseLeave = (record) => {
     //处理是否可编辑权限
     setJurisdiction = (isEdit,formRead,node,special) => {
         if(formRead != 2){
-            if( node =! 3 && node != special){
+            if( node != 3 && node != special){
                 return isEdit
             }else{
                 return false;
@@ -881,8 +889,8 @@ addMouseLeave = (record) => {
                 }),
             };
         });
-        // console.log(this.state.PerformanceData.sparePartsFileList,this.state.PerformanceData.equipmentFileList)
-        console.log(this.state.PerformanceData.slaList)
+        // console.log(isEdit,formRead,node)
+        // console.log(isEdit,this.setJurisdiction(isEdit,formRead,node),this.setJurisdiction(isEdit,formRead,node) ? true : false)
         return (
             <div className="performanceContent">
                 <div className="formContent">
@@ -960,7 +968,7 @@ addMouseLeave = (record) => {
                 <div className="config">
                     <Descriptions bordered column={4} size={'small'}>
                         <Descriptions.Item label={this.setRequired(node,"是否需要提供首次巡检服务")}>
-                            <Select disabled={(!this.props.node || this.props.node == 1) ? (this.props.serviceType == '201' || this.props.serviceType == '212') ? false : true :isEdit ? true : false} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection +''} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
+                            <Select disabled={ this.setJurisdiction(isEdit,formRead,node) ? true : (this.props.serviceType == '201' || this.props.serviceType == '212') ? false : true} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection +''} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
                                 <Option value="0">否</Option>
                                 <Option value="1">是</Option>
                             </Select>
@@ -1027,7 +1035,7 @@ addMouseLeave = (record) => {
                                 <Option value="2">部分</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"外包商")}><Input disabled={isEdit ? true : false} value={this.state.PerformanceData.outsourcer} onChange={({ target: { value } })=>this.inputChange('outsourcer',value)} /></Descriptions.Item>
+                        <Descriptions.Item label={this.setRequired(node,"外包商")}><Input disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} value={this.state.PerformanceData.outsourcer} onChange={({ target: { value } })=>this.inputChange('outsourcer',value)} /></Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(node,"上传外包合同设备清单附件")}  span={2}>
                             <div className="upload">
                                 <Upload disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.outiueChange} fileList={this.state.PerformanceData.equipmentFileList}>

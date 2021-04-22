@@ -54,8 +54,8 @@ class Contact extends Component {
                     align: 'center',
                     render: (value, row, index) => {
                         return <Select disabled={!props.edit} bordered={props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectContactType}>
-                            <Option key={index} value={1}>职级主管</Option>
-                            <Option key={index} value={2}>技术联系人</Option>
+                            <Option key={index} value={"1"}>职级主管</Option>
+                            <Option key={index} value={"2"}>技术联系人</Option>
                         </Select>;
                     },
                 },
@@ -117,6 +117,7 @@ class Contact extends Component {
     // 更新数据到父级
     updateToparent = () => {
         let checkResult = this.onCheck()
+        console.log("updateToparent1")
         this.props.onChange({ dataSource: this.state.dataSource, error: checkResult })
     }
 

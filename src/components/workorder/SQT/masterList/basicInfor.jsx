@@ -149,7 +149,6 @@ class basicInfor extends Component {
             }, {
                 label: '项目结束日期',
                 key: 'endDate',
-                span: 2,
                 //  this.state.basicInfor.endDate ? this.state.basicInfor.endDate : 
                 render: (isEdit,formRead,node) => <DatePicker disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} value={this.state.basicInfor.endDate?moment(this.state.basicInfor.endDate, dateFormat):null} format={dateFormat} onChange={(date, dateString)=>this.timeChange('endDate',date, dateString)} />
             }, {
@@ -178,7 +177,6 @@ class basicInfor extends Component {
             }, {
                 label: '最终客户名称',
                 key: 'finalCustName',
-                span: 2,
                 render: (isEdit,formRead,node) => this.state.basicInfor.isSubcontract=='0'?<div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div>:<Input disabled={isEdit ? true : false} value={this.state.basicInfor.finalCustName} onChange={({ target: { value } })=>this.handleChange('finalCustName',value)} />
             }, {
                 label: '是否有团建负责',
@@ -191,9 +189,9 @@ class basicInfor extends Component {
             }, {
                 label: '团建负责人',
                 key: 'leagueBuildName',
-                span: 2,
                 render: (isEdit,formRead,node) => this.state.basicInfor.isLeagueBuild=='0'?<div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div>:<Input disabled={isEdit ? true : false} value={this.state.basicInfor.leagueBuildName} onChange={({ target: { value } })=>this.handleChange('leagueBuildName',value)} />
-            }],
+            }
+        ],
 
 
             /*********************     项目选择器 projectSelector.jsx组件     ********************** */
@@ -296,7 +294,7 @@ class basicInfor extends Component {
     //处理是否可编辑权限
     setJurisdiction = (isEdit,formRead,node,special) => {
         if(formRead != 2){
-            if( node =! 3 && node != special){
+            if( node != 3 && node != special){
                 return isEdit
             }else{
                 return false;
@@ -529,7 +527,6 @@ class basicInfor extends Component {
     
     
     render = _ => {
-        console.log('jiben')
         const { getFieldDecorator } = this.props.form;
         const { isEdit,formRead,node } = this.props;
         return (
@@ -539,7 +536,7 @@ class basicInfor extends Component {
                     {
                         this.state.descList.map((item, index) => {
                             return (
-                                <Descriptions.Item label={item.label} span={item.span} key={index}>
+                                <Descriptions.Item label={item.label} span={item.span ? item.span : 1} key={index}>
                                     {item.render(isEdit,formRead,node)}
                                 </Descriptions.Item>
                             )

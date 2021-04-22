@@ -69,7 +69,7 @@ class EditableCell extends React.Component {
     }
 
     renderCell = ({ getFieldDecorator }) => {
-        console.log(this.props)
+        // console.log(this.props)
         const {
             editing, dataIndex,initValue, title, Input, record, index, children,radioLock,parentedit,node,
             ...restProps
@@ -111,7 +111,7 @@ class EditableCell extends React.Component {
                                     rules: [{ required: true, message: `请输入 ${title}!` }],
                                     initialValue: record[dataIndex],
                                 })(
-                                    <Input disabled={node == 3 ? false : true} />
+                                    <Input disabled={node} />
                                 )}
                             </Item>
                 ) : children
@@ -145,25 +145,12 @@ class serviceArea extends React.Component {
 
     // 数据更新完成时触发的函数
     componentWillMount() {
-        // let {radioLock} = this.state;
-        // this.props.data.forEach((itex,index) => {
-        //     radioLock =  this.props.data[index].isMainDutyArea ? true : false
-        //     if(this.props.data[index].isMainDutyArea){
-        //         radioLock = true;
-        //         this.props.data[index].area = this.props.data[index].area.join("/") + '<span style="color:red">【主责区域】</span>'
-        //     }
-        // })
-        // this.setState({
-        //     data: this.props.data,
-        //     count: this.props.data.length + 1,
-        //     radioLock
-        // })
         this.initData(this.props.data)
     }
     //@author  gl
     componentWillReceiveProps (nextprops) {
         let {data} = this.state;
-        console.log(JSON.stringify(data) == JSON.stringify(nextprops.data))
+       // console.log(JSON.stringify(data) == JSON.stringify(nextprops.data))
         if(JSON.stringify(data) == JSON.stringify(nextprops.data)) return;
         if(!this.state.editingKey){
             this.initData(nextprops.data)
@@ -464,7 +451,7 @@ class serviceArea extends React.Component {
     //处理是否可编辑权限
     setJurisdiction = (isEdit,formRead,node,special) => {
         if(formRead != 2){
-            if( node =! 3 && node != special){
+            if( node != 3 && node != special){
                 return isEdit
             }else{
                 return false;
@@ -484,7 +471,7 @@ class serviceArea extends React.Component {
         };
         const columns = this.columns.map(col => {
 
-            if (node != 3 && isEdit) {
+            if (this.setJurisdiction(isEdit,formRead,node)) {
                 return col;
             }
             if (!col.editable) {
@@ -499,7 +486,7 @@ class serviceArea extends React.Component {
                     title: col.title,
                     editing: this.isEditing(record),
                     radioLock:this.state.radioLock,
-                    node,
+                    node: this.setJurisdiction(isEdit,formRead,node),
                     parentedit: isEdit ? 0 : 1
                 }),
             };

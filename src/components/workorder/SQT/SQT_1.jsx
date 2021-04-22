@@ -37,44 +37,115 @@ class Sqt extends Component {
             paramsObj:{
                 
             },
-            masterVildter:['orderNum',  //记录单号
-            'companyName', //公司名称
-            'writeTime', //填写时间
-            'writeUserName',//填写人
-            'writeDept', //填写部门
-            'projectType', //项目类别
-            'projectNumber',//项目号
-            'projectName',//项目名称
-            'serviceTypeName',//服务类别
-            'custNum',//客户编码
-            'custName',//客户名称
-            'industry',//所属行业
-            'custLevel',//客户级别
-            'salesmanName',//项目销售
-            'salesmanPhone',//销售联系方式
-            'managerType',//项目经理类型
-            'managerName',//项目经理
-            'managerPhone',//项目经理联系方式
-            'startDate',//项目开始日期
-            'endDate',//项目结束日期
-            'isRenewal',// 是否续签项目,1是，0-否
-            'renewalNumber',//续签项目号
-            'renewalName',//续签项目名称
-            'isSubcontract',// 是否转包项目,1是，0-否
-            'finalCustName',//最终客户名称
-            'isLeagueBuild',//是否有团建负责，1是，0否
-            'leagueBuildName',//团建负责人
-
-            'serviceMode',  // 服务方式
-            'longInspectionCycle',  //远程巡检周期
-            'sceneInspectionCycle',      // 现场巡检周期
-            'isFirstInspection', // 是否需要提供首次巡检服务，1-是，0-否
-            'isCollectConfig', // 是否收集相关配置信息，1-是，0-否
-            'notCollectReason',    // 不收集配置信息原因说明
-            'serviceReportCycle', // 服务报告提交周期
-            'serviceListRequire', // 服务单要求
-            'otherPromise', //其他重要承诺及要求
-            'slaList'
+            masterVildter:[{
+                attribute:'orderNum', //记录单号
+                errorMeassge:'主表记录单号不能为空！'
+            },{
+                attribute:'companyName', //公司名称
+                errorMeassge:'主表公司名称不能为空！'
+            },{
+                attribute: 'writeTime', //填写时间
+                errorMeassge:'主表填单时间不能为空！'
+            },{
+                attribute: 'writeUserName',//填写人
+                errorMeassge:'主表填写人不能为空！'
+            },{
+                attribute: 'writeDept', //填写部门
+                errorMeassge:'主表填写部门不能为空！'
+            },{
+                attribute: 'projectType', //项目类别
+                errorMeassge:'主表项目类别不能为空！'
+            },{
+                attribute: 'projectNumber',//项目号
+                errorMeassge:'主表项目号不能为空！'
+            },{
+                attribute: 'projectName',//项目名称
+                errorMeassge:'主表项目名称不能为空！'
+            },{
+                attribute: 'serviceType',//服务类别
+                errorMeassge:'主表服务类别不能为空！'
+            },{
+                attribute: 'custNum',//客户编码
+                errorMeassge:'主表客户编码不能为空！'
+            },{
+                attribute: 'custName',//客户名称
+                errorMeassge:'主表客户名称不能为空！'
+            },{
+                attribute: 'industry',//所属行业
+                errorMeassge:'主表所属行业不能为空！'
+            },{
+                attribute: 'custLevel',//客户级别
+                errorMeassge:'主表客户级别不能为空！'
+            },{
+                attribute: 'salesmanName',//项目销售
+                errorMeassge:'主表项目销售不能为空！'
+            },{
+                attribute: 'salesmanPhone',//销售联系方式
+                errorMeassge:'主表销售联系方式不能为空！'
+            },{
+                attribute: 'managerType',//项目经理类型
+                errorMeassge:'主表项目经理类型不能为空！'
+            },{
+                attribute: 'managerName',//项目经理
+                errorMeassge:'主表项目经理不能为空！'
+            },{
+                attribute: 'managerPhone',//项目经理联系方式
+                errorMeassge:'主表项目经理联系方式不能为空！'
+            },{
+                attribute: 'startDate',//项目开始日期
+                errorMeassge:'主表项目开始日期不能为空！'
+            },{
+                attribute: 'endDate',//项目结束日期
+                errorMeassge:'主表项目结束日期不能为空！'
+            },{
+                attribute: 'isRenewal',// 是否续签项目,1是，0-否
+                errorMeassge:'主表是否续签项目不能为空！'
+            },{
+                attribute: 'renewalNumber',//续签项目号
+                errorMeassge:'主表续签项目号不能为空！'
+            },{
+                attribute: 'renewalName',//续签项目名称
+                errorMeassge:'主表续签项目名称不能为空！'
+            },{
+                attribute: 'isSubcontract',// 是否转包项目,1是，0-否
+                errorMeassge:'主表是否转包项目不能为空！'
+            },{
+                attribute: 'finalCustName',//最终客户名称
+                errorMeassge:'主表最终客户名称不能为空！'
+            },{
+                attribute: 'isLeagueBuild',//是否有团建负责，1是，0否
+                errorMeassge:'主表是否有团建负责不能为空！'
+            },{
+                attribute: 'leagueBuildName',//团建负责人
+                errorMeassge:'主表团建负责人不能为空！'
+            },{
+                attribute: 'serviceMode',  // 服务方式
+                errorMeassge:'主表服务方式不能为空！'
+            },{
+                attribute: 'longInspectionCycle',  //远程巡检周期
+                errorMeassge:'主表远程巡检周期不能为空！'
+            },{
+                attribute: 'sceneInspectionCycle',      // 现场巡检周期
+                errorMeassge:'主表现场巡检周期不能为空！'
+            },{
+                attribute: 'isFirstInspection', // 是否需要提供首次巡检服务，1-是，0-否
+                errorMeassge:'主表是否需要提供首次巡检服务不能为空！'
+            },{
+                attribute: 'isCollectConfig', // 是否收集相关配置信息，1-是，0-否
+                errorMeassge:'主表是否是否收集相关配置信息不能为空！'
+            },{
+                attribute:  'notCollectReason',    // 不收集配置信息原因说明
+                errorMeassge:'主表不收集配置信息原因说明不能为空！'
+            },{
+                attribute:  'serviceReportCycle', // 服务报告提交周期
+                errorMeassge:'主表服务报告提交周期不能为空！'
+            },{
+                attribute:  'serviceListRequire', // 服务单要求
+                errorMeassge:'主表服务单要求不能为空！'
+            },{
+                attribute:  'otherPromise', //其他重要承诺及要求
+                errorMeassge:'主表其他重要承诺及要求不能为空！'
+            }
             ]
         }
     }
@@ -151,13 +222,14 @@ class Sqt extends Component {
     }
 
 //服务需求表提交验证接口
-submission=async ()=>{
+submission= async ()=>{
         if(this.props.config.formRead == 2) {
             this.props.submission(true)
             return false
         }
         let {paramsObj} = this.state,AssistantPonse,MasterPonse;
-        if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1){//附表1提交接口
+        //服务区域附表提交接口
+        if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1 && this.props.config.formControl.serviceArea.isEdit){
             const {datasources} = this.state;
             if(!datasources.info || !datasources.info.state) {
                 message.error(!datasources.info ? '请填写服务区域附表！': datasources.info.message)
@@ -165,9 +237,10 @@ submission=async ()=>{
             }
             AssistantPonse = await PostaddAssistant(datasources.dataSource)
         }
+        //服务区域附表提交接口
          if (!this.props.config.formControl || (this.props.config.formControl.masterList.isEdit)) {
             if (!this.vildteMasterList()) {
-                message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
+                // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
                 return false;
             }
             // console.log(JSON.stringify(paramsObj))
@@ -189,34 +262,41 @@ submission=async ()=>{
     getChildrenVildter = (data,type) => {
         if(type == 1){//附表1
             let {datasources} = this.state;
-            // datasources[index] = {...datasources[index],...data.dataSource,...data.error};
             datasources = {...data};
             this.setState({datasources})
         }
         else if(type == 3){ //微观风险
             let {microRisk} = this.state;
-            // datasources[index] = {...datasources[index],...data.dataSource,...data.error};
             microRisk = {...data};
             this.setState({microRisk})
         }
     }
     //验证主表信息是否填写完整
     vildteMasterList = () => {
-        let vilde = true,{paramsObj,masterVildter} = this.state;
+        //主表基本填写信息验证
+        let slaNum = 0,{paramsObj,masterVildter} = this.state;
         for(var i of masterVildter){
             console.log(i,paramsObj)
-            if((i == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i == 'managerName' && paramsObj['managerType'] == 1) || ((i == 'renewalName' || i == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
+            if((i.attribute == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i.attribute == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i.attribute == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i.attribute == 'managerName' && paramsObj['managerType'] == 1) || ((i.attribute == 'renewalName' || i.attribute == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
                 continue;
             }
-            if(!(paramsObj[i]+'')){
-                console.log(i,paramsObj[i])
+            if(!(paramsObj[i.attribute]+'')){
+                console.log(i.attribute,paramsObj[i.attribute])
+                message.error(i.errorMeassge);
                 return false;
             }
         }
-        // if(!paramsObj.orderNum){  //记录单号不能为空
-        //     vilde = false;
-        // }
-         return true;
+        //主表SLA等级信息验证
+        for(var j of paramsObj['slaList']){
+            if((j.engineerArriveTime +'') && (j.respondTime +'') && (j.solveTime +'') && (j.spareArriveTime +'')){
+                slaNum++;
+            }
+        }
+        if(slaNum < 1){
+            message.error('请保证主表服务承诺有一条数据填写完整再进行提交！');
+            return false;
+        }
+        return true;
     }
     render = _ => {
         let {datasources,paramsObj} = this.state;
