@@ -46,7 +46,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		rsl(res.json())
 	})
 	.then(res => {
-		if (res.status == '2006' || res.status == '2007') {
+		if (res.status == '2006' || res.status == '2007'|| res.status == '2008') {
 			if (countNum) {
 				message.error(res.message);
 			}

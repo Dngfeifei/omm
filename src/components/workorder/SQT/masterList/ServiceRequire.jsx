@@ -269,25 +269,26 @@ setIsFirstInspection = (info,performancePledge)=>{
 
     render = _ => {
         let {power} = this.props;
+        const node = power.formControl ? power.formControl.masterList.nodes ? power.formControl.masterList.nodes : 100 : 0;
         return (
             <div className="ServiesContent">
 
                 {/* 基本信息--区域 */}
                 <div className="infor commTop">
                     <div className="navTitle">基本信息</div>
-                    <BasicInfor isEdit={this.state.isEdit} formRead={this.state.formRead} node={(power.formControl && power.formControl.masterList.nodes) ? power.formControl.masterList.nodes : 0} data={this.state.basicInfor} onChangeInfo={this.getChildrenInfo} isSelfCreation={this.props.power.sign} onGetChange={this.onGetChangeSelect}></BasicInfor>
+                    <BasicInfor isEdit={this.state.isEdit} formRead={this.state.formRead} node={node} data={this.state.basicInfor} onChangeInfo={this.getChildrenInfo} isSelfCreation={this.props.power.sign} onGetChange={this.onGetChangeSelect}></BasicInfor>
                 </div>
 
                 {/* 服务区域--区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务区域</div>
-                    <EditTable isEdit={this.state.isEdit} formRead={this.state.formRead} data={this.state.areaList} onChange={this.getAreaChildren} node={(power.formControl && power.formControl.masterList.nodes) ? power.formControl.masterList.nodes : 0}></EditTable>
+                    <EditTable isEdit={this.state.isEdit} formRead={this.state.formRead} data={this.state.areaList} onChange={this.getAreaChildren} node={node}></EditTable>
                 </div>
 
                 {/* 服务承诺---区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务承诺</div>
-                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} serviceType={this.state.basicInfor.serviceType} node={(power.formControl && power.formControl.masterList.nodes) ? power.formControl.masterList.nodes : 0} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
+                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} serviceType={this.state.basicInfor.serviceType} node={node} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
 
             </div>

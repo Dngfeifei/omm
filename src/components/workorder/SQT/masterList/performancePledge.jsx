@@ -465,7 +465,7 @@ class performance extends Component {
         };
         courseList.splice(Index+1,0,newData);
         this.setState({
-            courseList: courseList,
+            PerformanceData:{...PerformanceData,courseList},
             count: count + 1,
         },()=>{
             this.updataToParent()
@@ -474,9 +474,11 @@ class performance extends Component {
     };
     //  table表格删除一行--事件按钮
     handleDelete=(ID,Index)=>{
+        const {PerformanceData} = this.state;
         let courseList = [...this.state.PerformanceData.courseList];
         this.setState({
             PerformanceData:{
+                ...PerformanceData,
                 courseList: courseList.filter(item => item.id != ID)
             }
         },()=>{
@@ -824,7 +826,7 @@ addMouseLeave = (record) => {
     //处理个lable显示是否必填
     setRequired = (node,key) => {
         if(node == 0 && (key == '服务方式' || key == '远程巡检周期'|| key == '现场巡检周期'|| key == '是否需要提供首次巡检服务'|| key == '是否收集相关配置信息'|| key == '服务报告提交周期'|| key == '服务单要求'|| key == '其他重要承诺及要求')){
-            return <span className='required'>{key}</span>
+            return <span>{key}<span className='required'></span></span>
         }
         return <span>{key}</span>
     }

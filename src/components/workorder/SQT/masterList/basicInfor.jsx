@@ -24,8 +24,8 @@ import '/assets/less/pages/servies.less'
 import { serviceWorkOrder , } from '/api/serviceMain.js'
 // 引入--数据字典统一接口
 import {customerLevel } from '/api/customerInfor'
-import { node } from '../../../../../config/dev.env';
-
+//引入字段必填样式
+import '@/assets/less/pages/pane.less'
 
 
 
@@ -277,10 +277,6 @@ class basicInfor extends Component {
         let {basicInfor} = this.state;
         console.log(JSON.stringify(basicInfor) == JSON.stringify(nextprops.data))
         if(JSON.stringify(basicInfor) == JSON.stringify(nextprops.data)) return;
-        // if(this.state.basicInfor.orderNum == nextprops.orderNum){
-        //     return false;
-        // }
-        // console.log(nextprops.data)
 		this.setState({
             basicInfor: nextprops.data,
         })
@@ -288,8 +284,6 @@ class basicInfor extends Component {
     // 挂载完成
     componentDidMount = () => {
         this.init();
-
-
     }
     //处理是否可编辑权限
     setJurisdiction = (isEdit,formRead,node,special) => {
@@ -432,7 +426,8 @@ class basicInfor extends Component {
 
     // 点击【项目号】旁边的icon，就弹出【项目选择器】对话框
     showProjectDailg=()=>{
-        if(this.props.isEdit){
+        const {isEdit,formRead,node} = this.props;
+        if(this.setJurisdiction(isEdit,formRead,node)){
             return false;
         }
         this.setState({
@@ -524,7 +519,13 @@ class basicInfor extends Component {
         
     }
 
-    
+    //处理个lable显示是否必填
+    setRequired = (node,key) => {
+        if(node == 0){
+            return <span>{key}<span className='required'></span></span>
+        }
+        return <span>{key}</span>
+    }
     
     render = _ => {
         const { getFieldDecorator } = this.props.form;
@@ -536,7 +537,7 @@ class basicInfor extends Component {
                     {
                         this.state.descList.map((item, index) => {
                             return (
-                                <Descriptions.Item label={item.label} span={item.span ? item.span : 1} key={index}>
+                                <Descriptions.Item label={this.setRequired(node,item.label)} span={item.span ? item.span : 1} key={index}>
                                     {item.render(isEdit,formRead,node)}
                                 </Descriptions.Item>
                             )

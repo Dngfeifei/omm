@@ -23,8 +23,8 @@ class Home extends Component{
 	}
 	//监测pros的动太信息
 	static getDerivedStateFromProps (nextProps, prevState) {
-		localStorage.getItem('loginStatus')
 		if (localStorage.getItem('loginStatus') == 1) {
+			console.log('home组件拦截')
 			localStorage.clear();
 			nextProps.reset();
 			hashHistory.push('/login')

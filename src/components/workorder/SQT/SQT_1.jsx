@@ -15,10 +15,10 @@ const { TabPane } = Tabs;
 // 引入less
 import '@/assets/less/pages/servies.less'
 // 引入主表信息组件
-import ServicesMain from '/components/workorder/SQT/masterList/ServiceRequire.jsx'
+import ServicesMain from '@/components/workorder/SQT/masterList/ServiceRequire.jsx'
 // 引入 接口
 import { SqtBaseDetail,getAssistant,SqtBase,PostaddAssistant } from '/api/serviceMain.js'
-import  ServiceArea from '/components/workorder/SQT/serviceArea/serviceArea'
+import  ServiceArea from '@/components/workorder/SQT/serviceArea/serviceArea'
 
 
 class Sqt extends Component {
@@ -238,7 +238,7 @@ submission= async ()=>{
             AssistantPonse = await PostaddAssistant(datasources.dataSource)
         }
         //服务区域附表提交接口
-         if (!this.props.config.formControl || (this.props.config.formControl.masterList.isEdit)) {
+         if (!this.props.config.formControl || (this.props.config.formControl.masterList.nodes && [2,3].indexOf(this.props.config.formControl.masterList.nodes)) || (this.props.config.formControl.masterList.isEdit)) {
             if (!this.vildteMasterList()) {
                 // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
                 return false;
