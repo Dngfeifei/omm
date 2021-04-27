@@ -56,6 +56,11 @@ class MicroSum extends Component{
             }
         };
     }
+    //默认静态属性
+    static defaultProps = {
+        power:{formControl:{microRiskSummary:{isEdit:true}}},
+        onChange : null
+    }
     componentDidMount () {
         //获取渲染数据
         getMicroRiskSum({baseId:this.props.config.id}).then(res => {
@@ -67,7 +72,10 @@ class MicroSum extends Component{
                 this.setState({
                     dataSource: dataMerge
                 })
-                if(this.props.onChange) this.props.onChange(dataMerge)
+                if(this.props.onChange){
+                    let dataSource = this.vildteMicro(dataMerge);
+                    this.props.onChange(dataSource);
+                }
             }else if (res.success == '0') {
                 message.error(res.message)
             }
@@ -92,6 +100,41 @@ class MicroSum extends Component{
         }
         this.changeCheck(isApplySpare.toString(),'isApplySpare')
     }
+//验证最终提交数据是否正确
+    vildteMicro = (data) => {
+        let obj = {dataSource: data,info:{state:true,message:''}};
+        if(data.baseId && data.areaMicroRisks){
+            let {areaMicroRisks} = data;
+            for(var i of areaMicroRisks){
+                if(i.isApplySpare && i.firstInspectReportNameList && i.configTemplateNameList && i.venturnReportNameList){
+                    if(i.isApplySpare === ''){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域是否申请备机备件未选择`;
+                        return obj;
+                    }
+                    else if(i.firstInspectReportNameList.length && i.firstInspectReportNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域首次巡检总结报告附件上传有误`;
+                        return obj;
+                    }else if(i.configTemplateNameList.length && i.configTemplateNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域配置信息管理模板附件上传有误`;
+                        return obj;
+                    }else if(i.venturnReportNameList.length && i.venturnReportNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域风险提示报告附件上传有误`;
+                        return obj;
+                    }else if(!i.firstInspectReportNameList.length || !i.venturnReportNameList.length || !i.configTemplateNameList.length){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域附件上传有误`;
+                        return obj
+                    }
+                }else{
+                    obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域填写有误`;
+                    return obj;
+                }
+            }
+        }else{
+            obj.info.state = false,obj.info.message = `微观风险附表区域填写有误，请联系管理员！`;
+            return obj;
+        }
+        return obj;
+    }
     //修改数据
     changeCheck = (value,typeName,typeUrl) => {
         const {dataSource} = this.state;
@@ -108,12 +151,15 @@ class MicroSum extends Component{
             dataSource[typeName+'List'] = value;
         }
         this.setState({dataSource})
-        if(this.props.onChange) this.props.onChange(dataSource);
+        if(this.props.onChange){
+            let data = this.vildteMicro(dataSource);
+            this.props.onChange(data);
+        }
     }
     exportDom = (item) => {
         let {isApplySpare} = this.state.dataSource;
         isApplySpare = isApplySpare.split(',');
-        return (<Checkbox value={item.value} checked={isApplySpare.indexOf(item.value) > -1 ? true : false} onChange={this.handleClick}>{item.detail}</Checkbox>)
+        return (<Checkbox disabled={!this.props.power.formControl.microRiskSummary.isEdit ? true : false} value={item.value} checked={isApplySpare.indexOf(item.value) > -1 ? true : false} onChange={this.handleClick}>{item.detail}</Checkbox>)
     }
     // 附件上传-----上传前做限制判断
     beforeUpload = (file) => {
@@ -158,21 +204,21 @@ class MicroSum extends Component{
                     </Descriptions.Item>
                     <Descriptions.Item label="首次巡检总结报告" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.state.dataSource.firstInspectReportNameList}>
+                            <Upload disabled={!this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.state.dataSource.firstInspectReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label="配置信息管理模板" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.state.dataSource.configTemplateNameList}>
+                            <Upload disabled={!this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.state.dataSource.configTemplateNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
                     <Descriptions.Item label="风险提示报告" span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.state.dataSource.venturnReportNameList}>
+                            <Upload disabled={!this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.state.dataSource.venturnReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>

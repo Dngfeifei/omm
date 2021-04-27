@@ -31,7 +31,7 @@ class servies extends Component {
             projectType: '1', //项目类别
             projectNumber: '',//项目号
             projectName: '',//项目名称
-            serviceType: '201',//服务类别
+            serviceType: '',//服务类别
             custNum: '',//客户编码
             custName: '',//客户名称
             industry: '广发',//所属行业
@@ -192,14 +192,11 @@ initData = (nextprops) => {
     };
 //处理是否需要首次巡检
 setIsFirstInspection = (info,performancePledge)=>{
-    // console.log(info.serviceType)
-        if((!this.props.power.formControl || this.props.power.formControl.masterList.nodes == 3)){
-            if(info.serviceType == '201' || info.serviceType == '212'){
-               performancePledge = {...performancePledge,isFirstInspection:'1'};
-            }else{
-               performancePledge = {...performancePledge,isFirstInspection:'0'};
-            }
-       }
+    if(info.serviceType == '201' || info.serviceType == '212'){
+        performancePledge = {...performancePledge,isFirstInspection:'1'};
+    }else{
+        performancePledge = {...performancePledge,isFirstInspection:'0'};
+    }
     return performancePledge
 }
     //  接收到【基本信息】子组件返回的数据  

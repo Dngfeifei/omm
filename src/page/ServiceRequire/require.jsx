@@ -42,7 +42,7 @@ class RequireSqt extends Component {
     constructor(props) {
         super(props)
         this.state = {
-
+            disabled:false
 
         }
     }
@@ -59,13 +59,22 @@ class RequireSqt extends Component {
         //         this.handleBack();
         //      }
         //  })
+        const {disabled} = this.state;
+        this.setState({
+            disabled: !disabled
+        })
          let res = await this.refs.getSwordButton.submission();
          if(res){
             message.success('操作成功！');
             let resetwork = { switch: !this.props.resetwork.switch};
             this.props.setWorklist(resetwork);
             this.handleBack();
+        }else{
+            this.setState({
+                disabled: false
+            })
         }
+        
     }
 
     handleBack = () => {
@@ -81,7 +90,7 @@ class RequireSqt extends Component {
                 <SQT ref="getSwordButton" config={{id:90}}></SQT>
                 {/* 提交按钮--区域 */}
                 <div className="btnContent" style={{textAlign:'right',marginTop:'0px'}}>
-                    <Button type="primary" style={{ marginRight: '30px' }} onClick={this.handleSubmit}>提交</Button>
+                    <Button disabled={this.state.disabled} type="primary" style={{ marginRight: '30px' }} onClick={this.handleSubmit}>提交</Button>
                     <Button onClick={this.handleBack}>返回</Button>
                 </div>
             </div>

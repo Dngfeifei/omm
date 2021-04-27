@@ -825,7 +825,7 @@ addMouseLeave = (record) => {
     }
     //处理个lable显示是否必填
     setRequired = (node,key) => {
-        if(node == 0 && (key == '服务方式' || key == '远程巡检周期'|| key == '现场巡检周期'|| key == '是否需要提供首次巡检服务'|| key == '是否收集相关配置信息'|| key == '服务报告提交周期'|| key == '服务单要求'|| key == '其他重要承诺及要求')){
+        if(!node && (key == '服务方式' || key == '远程巡检周期'|| key == '现场巡检周期'|| key == '是否需要提供首次巡检服务'|| key == '是否收集相关配置信息'|| key == '服务报告提交周期'|| key == '服务单要求'|| key == '其他重要承诺及要求')){
             return <span>{key}<span className='required'></span></span>
         }
         return <span>{key}</span>
@@ -853,7 +853,7 @@ addMouseLeave = (record) => {
         };
         // 【培训方式、培训师资、课程方向、培训课程、培训人次】----表格数据
         const columns = this.columns.map(col => {
-            if(this.setJurisdiction(isEdit,formRead,node)){
+            if(disaBled){
                 return col;
             }
             if (!col.editable) {  //判断权限为不可编辑时不能对服务承诺区域进行操作
@@ -874,7 +874,7 @@ addMouseLeave = (record) => {
         });
         // 【等级、响应时限（小时）、工程师到场时限（小时）、备件到场时限（小时）、解决时限（小时）、备注】----表格数据
         const columnsLeavel = this.columnsLeavel.map(col => {
-            if(this.setJurisdiction(isEdit,formRead,node)){
+            if(disaBled){
                 return col;
             }
             if (!col.editable) {
@@ -892,13 +892,14 @@ addMouseLeave = (record) => {
             };
         });
         // console.log(isEdit,formRead,node)
-        // console.log(isEdit,this.setJurisdiction(isEdit,formRead,node),this.setJurisdiction(isEdit,formRead,node) ? true : false)
+        // console.log(isEdit,disaBled,disaBled ? true : false)
+        const disaBled = this.setJurisdiction(isEdit,formRead,node);
         return (
             <div className="performanceContent">
                 <div className="formContent">
                     <Descriptions bordered column={5} size={'small'}>
-                        <Descriptions.Item label={this.setRequired(node,'服务方式')}>
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} placeholder="请选择服务方式" allowClear={true} showSearch value={this.state.PerformanceData.serviceMode} onChange={(value) => this.inputChange('serviceMode', value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,'服务方式')}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务方式" allowClear={true} showSearch value={this.state.PerformanceData.serviceMode} onChange={(value) => this.inputChange('serviceMode', value)}>
                                 {
                                     this.state.serviceModeArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -906,8 +907,8 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,'是否提交验收报告')}>
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} placeholder="请选择是否提交验收报告" allowClear={true} showSearch value={this.state.PerformanceData.isReceiveReport+''} onChange={(value) => this.inputChange('isReceiveReport', value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,'是否提交验收报告')}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否提交验收报告" allowClear={true} showSearch value={this.state.PerformanceData.isReceiveReport+''} onChange={(value) => this.inputChange('isReceiveReport', value)}>
                                 {
                                     this.state.siteServiceArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
@@ -915,8 +916,8 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"远程巡检周期")} span={1}>
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.longInspectionCycle} onChange={(value)=>this.inputChange('longInspectionCycle',value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"远程巡检周期")} span={1}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.longInspectionCycle} onChange={(value)=>this.inputChange('longInspectionCycle',value)}>
                                 {
                                     this.state.inspectionCycleArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -924,8 +925,8 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"现场巡检周期")} span={1}>
-                        <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.sceneInspectionCycle} onChange={(value)=>this.inputChange('sceneInspectionCycle',value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"现场巡检周期")} span={1}>
+                        <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择远程巡检周期" allowClear={true} showSearch value={this.state.PerformanceData.sceneInspectionCycle} onChange={(value)=>this.inputChange('sceneInspectionCycle',value)}>
                                 {
                                     this.state.inspectionCycleArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -933,8 +934,8 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"巡检特殊说明")} span={2}>
-                            <Input disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} value={this.state.PerformanceData.inspectionDesc} onChange={({ target: { value } })=>this.inputChange('inspectionDesc',value)} />
+                        <Descriptions.Item label={this.setRequired(disaBled,"巡检特殊说明")} span={2}>
+                            <Input disabled={disaBled ? true : false} value={this.state.PerformanceData.inspectionDesc} onChange={({ target: { value } })=>this.inputChange('inspectionDesc',value)} />
                         </Descriptions.Item>
                     </Descriptions>
                 </div>
@@ -969,32 +970,32 @@ addMouseLeave = (record) => {
                 </div>
                 <div className="config">
                     <Descriptions bordered column={4} size={'small'}>
-                        <Descriptions.Item label={this.setRequired(node,"是否需要提供首次巡检服务")}>
-                            <Select disabled={ this.setJurisdiction(isEdit,formRead,node) ? true : (this.props.serviceType == '201' || this.props.serviceType == '212') ? false : true} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection +''} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"是否需要提供首次巡检服务")}>
+                            <Select disabled={ disaBled ? true : (this.props.serviceType == '201' || this.props.serviceType == '212') ? false : true} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection +''} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
                                 <Option value="0">否</Option>
                                 <Option value="1">是</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"项目是否约定驻场服务")}>
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} showSearch value={this.state.PerformanceData.onsiteService} onChange={(value)=>this.inputChange('onsiteService',value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"项目是否约定驻场服务")}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} showSearch value={this.state.PerformanceData.onsiteService} onChange={(value)=>this.inputChange('onsiteService',value)}>
                                 <Option value="长期驻场">长期驻场</Option>
                                 <Option value="临时驻场">临时驻场</Option>
                                 <Option value="无驻场">无驻场</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"人数")}>
-                            <InputNumber disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} min={1} max={999999} value={this.state.PerformanceData.peopleNum}  onChange={(value )=>this.inputChange('peopleNum',value)} />
+                        <Descriptions.Item label={this.setRequired(disaBled,"人数")}>
+                            <InputNumber disabled={disaBled ? true : false} min={1} max={999999} value={this.state.PerformanceData.peopleNum}  onChange={(value )=>this.inputChange('peopleNum',value)} />
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"特殊说明")}><Input disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} value={this.state.PerformanceData.specialDesc} onChange={({ target: { value } })=>this.inputChange('specialDesc',value)} /></Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"是否收集相关配置信息")} span={2}>
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} value={this.state.PerformanceData.isCollectConfig+''} showSearch onChange={(value)=>this.inputChange('isCollectConfig',value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"特殊说明")}><Input disabled={disaBled ? true : false} value={this.state.PerformanceData.specialDesc} onChange={({ target: { value } })=>this.inputChange('specialDesc',value)} /></Descriptions.Item>
+                        <Descriptions.Item label={this.setRequired(disaBled,"是否收集相关配置信息")} span={2}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} value={this.state.PerformanceData.isCollectConfig+''} showSearch onChange={(value)=>this.inputChange('isCollectConfig',value)}>
                                 <Option value="0">否</Option>
                                 <Option value="1">是</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"不收集配置信息原因说明")} span={2} className="mustFill">
+                        <Descriptions.Item label={this.setRequired(disaBled,"不收集配置信息原因说明")} span={2} className="mustFill">
                             
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} placeholder="请选择不收集配置信息原因说明" allowClear={true} showSearch value={this.state.PerformanceData.notCollectReason} onChange={(value)=>this.inputChange('notCollectReason',value)}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择不收集配置信息原因说明" allowClear={true} showSearch value={this.state.PerformanceData.notCollectReason} onChange={(value)=>this.inputChange('notCollectReason',value)}>
                                 {
                                     this.state.notCollectReasonArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -1002,8 +1003,8 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"服务报告提交周期")} span={2}>
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} placeholder="请选择服务报告提交周期" allowClear={true} showSearch value={this.state.PerformanceData.serviceReportCycle} onChange={(value)=>this.inputChange('serviceReportCycle',value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"服务报告提交周期")} span={2}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务报告提交周期" allowClear={true} showSearch value={this.state.PerformanceData.serviceReportCycle} onChange={(value)=>this.inputChange('serviceReportCycle',value)}>
                                 {
                                     this.state.serviceReportCycleArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -1011,8 +1012,8 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"服务单要求")} span={2}>
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceListRequire} onChange={(value) => this.inputChange('serviceListRequire', value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"服务单要求")} span={2}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceListRequire} onChange={(value) => this.inputChange('serviceListRequire', value)}>
                                 {
                                     this.state.serviceListRequireArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -1020,27 +1021,27 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"合同承诺备机备件清单")} span={3}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"合同承诺备机备件清单")} span={3}>
                             <div className="upload">
-                                <Upload disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ContractChange} fileList={this.state.PerformanceData.sparePartsFileList}>
+                                <Upload disabled={disaBled ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ContractChange} fileList={this.state.PerformanceData.sparePartsFileList}>
                                     <Icon type="upload" />上传
                                 </Upload>
                             </div>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"合同承诺备机备件到库时间")}>
-                            <DatePicker disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} style={{width:'100%'}}  value={this.state.PerformanceData.sparePartsTime?moment(this.state.PerformanceData.sparePartsTime, dateFormat):null} onChange={(date, dateString)=>this.timeChange('sparePartsTime',date, dateString)} format={dateFormat}></DatePicker>
+                        <Descriptions.Item label={this.setRequired(disaBled,"合同承诺备机备件到库时间")}>
+                            <DatePicker disabled={disaBled ? true : false} style={{width:'100%'}}  value={this.state.PerformanceData.sparePartsTime?moment(this.state.PerformanceData.sparePartsTime, dateFormat):null} onChange={(date, dateString)=>this.timeChange('sparePartsTime',date, dateString)} format={dateFormat}></DatePicker>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"是否有外包情况")}>
-                            <Select disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} value={this.state.PerformanceData.isOutsource+''} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"是否有外包情况")}>
+                            <Select disabled={disaBled ? true : false} value={this.state.PerformanceData.isOutsource+''} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
                                 <Option value="1">是</Option>
                                 <Option value="0">否</Option>
                                 <Option value="2">部分</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"外包商")}><Input disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} value={this.state.PerformanceData.outsourcer} onChange={({ target: { value } })=>this.inputChange('outsourcer',value)} /></Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(node,"上传外包合同设备清单附件")}  span={2}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"外包商")}><Input disabled={disaBled ? true : false} value={this.state.PerformanceData.outsourcer} onChange={({ target: { value } })=>this.inputChange('outsourcer',value)} /></Descriptions.Item>
+                        <Descriptions.Item label={this.setRequired(disaBled,"上传外包合同设备清单附件")}  span={2}>
                             <div className="upload">
-                                <Upload disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.outiueChange} fileList={this.state.PerformanceData.equipmentFileList}>
+                                <Upload disabled={disaBled ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.outiueChange} fileList={this.state.PerformanceData.equipmentFileList}>
                                     <Icon type="upload" />上传
                                 </Upload>
                             </div>
@@ -1056,7 +1057,7 @@ addMouseLeave = (record) => {
                             <div className="bigVal4">
                                 <div className="radioContent">
                                     <div className="title">
-                                        <Radio disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='1'?true:false} onClick={this.changeRadioOriginal}>原厂服务</Radio>
+                                        <Radio disabled={disaBled ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='1'?true:false} onClick={this.changeRadioOriginal}>原厂服务</Radio>
                                     </div>
                                     <div className="timeRight">
                                         <div className="partsProject">
@@ -1066,12 +1067,12 @@ addMouseLeave = (record) => {
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'? this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null :null:null} disabled={this.setJurisdiction(isEdit,formRead,node) ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='1'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'? this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null :null:null} disabled={disaBled ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='1'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceParts_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'?this.state.PerformanceData.cycleEnd? moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={this.setJurisdiction(isEdit,formRead,node) ? true :this.state.PerformanceData.afterSaleAgreement!='1'?true:this.state.PerformanceData.projectCycleType !='1'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'?this.state.PerformanceData.cycleEnd? moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={disaBled ? true :this.state.PerformanceData.afterSaleAgreement!='1'?true:this.state.PerformanceData.projectCycleType !='1'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceParts_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1080,19 +1081,19 @@ addMouseLeave = (record) => {
                                         </div>
                                         <div className="allProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?true:false : false} onClick={this.changeOriginaAllRadio} disabled={this.setJurisdiction(isEdit,formRead,node) ? true :(this.state.PerformanceData.afterSaleAgreement != '1' || !this.state.PerformanceData.afterSaleAgreement)?true:false}>全部项目周期</Radio> 
+                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?true:false : false} onClick={this.changeOriginaAllRadio} disabled={disaBled ? true :(this.state.PerformanceData.afterSaleAgreement != '1' || !this.state.PerformanceData.afterSaleAgreement)?true:false}>全部项目周期</Radio> 
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={this.setJurisdiction(isEdit,formRead,node) ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='2'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={disaBled ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='2'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceAll_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={this.setJurisdiction(isEdit,formRead,node) ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='2'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={disaBled ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='2'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceAll_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1104,22 +1105,22 @@ addMouseLeave = (record) => {
                                 </div>
                                 <div className="radioContent">
                                     <div className="title">
-                                        <Radio disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='2'?true:false} onClick={this.changeRadioStatus}>我司服务</Radio>
+                                        <Radio disabled={disaBled ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='2'?true:false} onClick={this.changeRadioStatus}>我司服务</Radio>
                                     </div>
                                     <div className="timeRight">
                                     <div className="partsProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='2'? this.state.PerformanceData.projectCycleType=='1'?true:false :false} disabled={this.setJurisdiction(isEdit,formRead,node) ? true : (this.state.PerformanceData.afterSaleAgreement != '2' || !this.state.PerformanceData.afterSaleAgreement) ? true:false} onClick={this.changeOurPartsRadio}>部分项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='2'? this.state.PerformanceData.projectCycleType=='1'?true:false :false} disabled={disaBled ? true : (this.state.PerformanceData.afterSaleAgreement != '2' || !this.state.PerformanceData.afterSaleAgreement) ? true:false} onClick={this.changeOurPartsRadio}>部分项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.afterSaleAgreement == '2' ? this.state.PerformanceData.projectCycleType == '1' ? this.state.PerformanceData.cycleStart ? moment(this.state.PerformanceData.cycleStart, dateFormat) : null : null : null} disabled={this.setJurisdiction(isEdit,formRead,node) ? true : this.state.PerformanceData.afterSaleAgreement != '2' ? true : this.state.PerformanceData.projectCycleType != '1' ? true : false}
+                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.afterSaleAgreement == '2' ? this.state.PerformanceData.projectCycleType == '1' ? this.state.PerformanceData.cycleStart ? moment(this.state.PerformanceData.cycleStart, dateFormat) : null : null : null} disabled={disaBled ? true : this.state.PerformanceData.afterSaleAgreement != '2' ? true : this.state.PerformanceData.projectCycleType != '1' ? true : false}
                                                             onChange={(date, dateString) => this.timeChange('originalServiceParts_start', date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
-                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.afterSaleAgreement == '2' ? this.state.PerformanceData.projectCycleType == '1' ? this.state.PerformanceData.cycleEnd ? moment(this.state.PerformanceData.cycleEnd, dateFormat) : null : null : null} disabled={this.setJurisdiction(isEdit,formRead,node) ? true : this.state.PerformanceData.afterSaleAgreement != '2' ? true : this.state.PerformanceData.projectCycleType != '1' ? true : false}
+                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.afterSaleAgreement == '2' ? this.state.PerformanceData.projectCycleType == '1' ? this.state.PerformanceData.cycleEnd ? moment(this.state.PerformanceData.cycleEnd, dateFormat) : null : null : null} disabled={disaBled ? true : this.state.PerformanceData.afterSaleAgreement != '2' ? true : this.state.PerformanceData.projectCycleType != '1' ? true : false}
                                                             onChange={(date, dateString) => this.timeChange('originalServiceParts_end', date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1128,18 +1129,18 @@ addMouseLeave = (record) => {
                                         </div>
                                         <div className="allProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='2'? this.state.PerformanceData.projectCycleType=='2'?true:false : false} disabled={this.setJurisdiction(isEdit,formRead,node) ? true : (this.state.PerformanceData.afterSaleAgreement != '2' || !this.state.PerformanceData.afterSaleAgreement) ? true:false} onClick={this.changeOurAllRadio}>全部项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='2'? this.state.PerformanceData.projectCycleType=='2'?true:false : false} disabled={disaBled ? true : (this.state.PerformanceData.afterSaleAgreement != '2' || !this.state.PerformanceData.afterSaleAgreement) ? true:false} onClick={this.changeOurAllRadio}>全部项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={this.setJurisdiction(isEdit,formRead,node) ? true : this.state.PerformanceData.afterSaleAgreement!='2'? true:this.state.PerformanceData.projectCycleType!='2'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={disaBled ? true : this.state.PerformanceData.afterSaleAgreement!='2'? true:this.state.PerformanceData.projectCycleType!='2'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('ourDriverAll_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={this.setJurisdiction(isEdit,formRead,node) ? true : this.state.PerformanceData.afterSaleAgreement!='2'? true:this.state.PerformanceData.projectCycleType!='2'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={disaBled ? true : this.state.PerformanceData.afterSaleAgreement!='2'? true:this.state.PerformanceData.projectCycleType!='2'?true:false}
                                                             onChange={(date, dateString)=>this.timeChange('ourDriverAll_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1156,9 +1157,9 @@ addMouseLeave = (record) => {
                 <div className="desc">
                     <div className="row">
                         <div className="column">
-                            <div className="descKey">{this.setRequired(node,"其他重要承诺及要求")}</div>
+                            <div className="descKey">{this.setRequired(disaBled,"其他重要承诺及要求")}</div>
                             <div className="descValue">
-                                <TextArea disabled={this.setJurisdiction(isEdit,formRead,node) ? true : false} value={this.state.PerformanceData.otherPromise} onChange={({ target: { value } })=>this.inputChange('otherPromise',value)}/>
+                                <TextArea disabled={disaBled ? true : false} value={this.state.PerformanceData.otherPromise} onChange={({ target: { value } })=>this.inputChange('otherPromise',value)}/>
                             </div>
                         </div>
                     </div>

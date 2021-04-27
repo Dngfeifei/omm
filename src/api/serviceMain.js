@@ -61,4 +61,8 @@ export const PostMacroRiskSum = (params = {}) => {
 export const PostaddMicroRisk = (params = {}) => {
 	return http.fetchPost(`/microRisk/add`, params,true)
 }
+// 服务计划表---微观风险汇总数据提交接口
+export const PostaddMicroRiskSum = (params = {}) => {
+	return http.fetchPost(`/microRiskSum/add`, params,true)
+}
 

@@ -17,8 +17,18 @@ import '@/assets/less/pages/servies.less'
 // 引入主表信息组件
 import ServicesMain from '@/components/workorder/SQT/masterList/ServiceRequire.jsx'
 // 引入 接口
-import { SqtBaseDetail,getAssistant,SqtBase,PostaddAssistant } from '/api/serviceMain.js'
+import { SqtBaseDetail,SqtBase,PostaddAssistant, PostMacroRisk,PostMacroRiskSum,PostaddMicroRisk,PostaddMicroRiskSum} from '/api/serviceMain.js'
+//引入服务区域附表组件
 import  ServiceArea from '@/components/workorder/SQT/serviceArea/serviceArea'
+//引入宏观风险附表组件
+import  MacroRiskList from '@/components/workorder/SQT/macroRisk/macroRiskList'
+//引入宏观风险汇总附表组件
+import  MacroRiskSummary from '@/components/workorder/SQT/macroRisk/macroRiskSummary'
+
+//引入微观风险附表组件
+import  MicroRisk from '@/components/workorder/SQT/microrisk/microrisk'
+//引入微观风险汇总附表组件
+import  MicroRiskSummary from '@/components/workorder/SQT/microrisk/microriskSummary'
 
 
 class Sqt extends Component {
@@ -30,8 +40,13 @@ class Sqt extends Component {
             tabsList:[{
                 name:'主表信息'
             }],   
-            datasources:{},  //附表1数据存储 type类型为1
-            microRisk:{},  //微观风险附表数据存储 type类型为3
+            schedule:{
+                serviceArea: {post:PostaddAssistant,area: '服务区域'}, //服务区域附表数据 + 验证
+                macroRisk: {post:PostaddMicroRisk,area: '宏观风险'},//宏观风险附表数据 + 验证
+                macroRiskSummary: {post:PostaddMicroRisk,area: '宏观风险汇总'},//宏观风险汇总附表数据 + 验证
+                microRisk: {post:PostaddMicroRisk,area: '微观风险'},//微观风险附表数据 + 验证
+                microRiskSummary: {post:PostaddMicroRisk,area: '微观风险汇总'},//微观风险汇总附表数据 + 验证
+            },//附表数据存储
             tabsListF:[],
             swich:true,//主表密钥
             paramsObj:{
@@ -221,23 +236,40 @@ class Sqt extends Component {
         }
     }
 
-//服务需求表提交验证接口
-submission= async ()=>{
+    //服务需求表提交验证接口
+    submission= async ()=>{
         if(this.props.config.formRead == 2) {
             this.props.submission(true)
             return false
         }
-        let {paramsObj} = this.state,AssistantPonse,MasterPonse;
+        let {paramsObj,schedule} = this.state,AssistantPonse,MasterPonse;
         //服务区域附表提交接口
-        if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1 && this.props.config.formControl.serviceArea.isEdit){
-            const {datasources} = this.state;
-            if(!datasources.info || !datasources.info.state) {
-                message.error(!datasources.info ? '请填写服务区域附表！': datasources.info.message)
-                return false;
-            }
-            AssistantPonse = await PostaddAssistant(datasources.dataSource)
+        // if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1 && this.props.config.formControl.serviceArea.isEdit){
+        //     const {datasources} = this.state;
+        //     if(!datasources.info || !datasources.info.state) {
+        //         message.error(!datasources.info ? '请填写服务区域附表！': datasources.info.message)
+        //         return false;
+        //     }
+        //     AssistantPonse = await PostaddAssistant(datasources.dataSource)
+        // }
+
+        //所有附表数据验证提交
+        for(var i in schedule){
+            // console.log(schedule)
+             if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf(i) > -1 && this.props.config.formControl[i].isEdit){
+                // console.log(i)
+                if(!schedule[i].info || !schedule[i].info.state) {
+                    message.error(!schedule[i].info ? `请填写${schedule[i].area}附表！`: schedule[i].info.message)
+                    return false;
+                }
+                let schedulePost = await schedule[i].post(schedule[i].dataSource)
+                if(schedulePost.success != 1){
+                    message.error(schedulePost.message)
+                    return false;
+                }
+              }
         }
-        //服务区域附表提交接口
+        //主表提交接口
          if (!this.props.config.formControl || (this.props.config.formControl.masterList.nodes && [2,3].indexOf(this.props.config.formControl.masterList.nodes)) || (this.props.config.formControl.masterList.isEdit)) {
             if (!this.vildteMasterList()) {
                 // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
@@ -251,25 +283,13 @@ submission= async ()=>{
                 return false;
             }
          }
-        if(AssistantPonse && AssistantPonse.success != 1){
-            message.error(AssistantPonse.message)
-            return false;
-        }
-       if(this.props.submission) this.props.submission(true);
+        if(this.props.submission) this.props.submission(true);
         return true;       
     }
     //接受附表验证信息函数
     getChildrenVildter = (data,type) => {
-        if(type == 1){//附表1
-            let {datasources} = this.state;
-            datasources = {...data};
-            this.setState({datasources})
-        }
-        else if(type == 3){ //微观风险
-            let {microRisk} = this.state;
-            microRisk = {...data};
-            this.setState({microRisk})
-        }
+        const {schedule} = this.state;
+        schedule[type] = {...schedule[type],...data}
     }
     //验证主表信息是否填写完整
     vildteMasterList = () => {
@@ -293,15 +313,19 @@ submission= async ()=>{
             }
         }
         if(slaNum < 1){
-            message.error('请保证主表服务承诺有一条数据填写完整再进行提交！');
+            message.error('请保证主表服务承诺SLA等级有一条数据填写完整再进行提交！');
             return false;
         }
         return true;
     }
     render = _ => {
         let {datasources,paramsObj} = this.state;
-        const Schedule = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1) ? true : false;
-        console.log(paramsObj.serviceType,datasources,this.props.config,Schedule)
+        const schedule = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1) ? true : false;
+        const macroRiskList = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('macroRisk') > -1) ? true : false;
+        const macroRiskSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('macroRiskSummary') > -1) ? true : false;
+        const microRisk = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('microRisk') > -1) ? true : false;
+        const microRiskSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('microRiskSummary') > -1) ? true : false;
+        console.log(this.props.config);
         return (
             <div className="SqtContent">
                 <Tabs defaultActiveKey="0" tabPosition={'top'} style={{ overflowY:'auto' }}>
@@ -312,10 +336,42 @@ submission= async ()=>{
                         </TabPane>
                     ))}
                     {
-                       (paramsObj.serviceType && Schedule) ? 
+                       (paramsObj.serviceType && schedule) ? 
                         <TabPane tab="服务区域" key="1">
                             {/* 附表--组件  */}
-                           <ServiceArea onChange={(data) => this.getChildrenVildter(data,1)} type={this.state.paramsObj.serviceType} power={this.props.config}></ServiceArea>
+                           <ServiceArea onChange={(data) => this.getChildrenVildter(data,'serviceArea')} type={this.state.paramsObj.serviceType} power={this.props.config}></ServiceArea>
+                        </TabPane>
+                     : null
+                    }
+                    {
+                       macroRiskList ? 
+                        <TabPane tab="宏观风险" key="2">
+                            {/* 附表--组件  */}
+                           <MacroRiskList onChange={(data) => this.getChildrenVildter(data,'macroRisk')} power={this.props.config}></MacroRiskList>
+                        </TabPane>
+                     : null
+                    }
+                    {
+                       macroRiskSummary ? 
+                        <TabPane tab="宏观风险汇总" key="3">
+                            {/* 附表--组件  */}
+                           <MacroRiskSummary onChange={(data) => this.getChildrenVildter(data,3)} power={this.props.config}></MacroRiskSummary>
+                        </TabPane>
+                     : null
+                    }
+                    {
+                       microRisk ? 
+                        <TabPane tab="微观风险" key="4">
+                            {/* 附表--组件  */}
+                           <MicroRisk onChange={(data) => this.getChildrenVildter(data,'microRisk')} power={this.props.config}></MicroRisk>
+                        </TabPane>
+                     : null
+                    }
+                    {
+                       microRiskSummary ? 
+                        <TabPane tab="微观风险汇总" key="5">
+                            {/* 附表--组件  */}
+                           <microRiskSummary onChange={(data) => this.getChildrenVildter(data,'microRiskSummary')} power={this.props.config}></microRiskSummary>
                         </TabPane>
                      : null
                     }

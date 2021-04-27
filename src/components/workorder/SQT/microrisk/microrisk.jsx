@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Descriptions, Collapse  , Radio , Icon , InputNumber , Upload , message, List} from 'antd'
 import '@/assets/less/pages/Micro.less'
+import '@/assets/less/pages/pane.less'
 
 // 引入--数据字典统一接口
 import {getMicroRisk } from '/api/microrisk'
@@ -33,7 +34,7 @@ class Micro extends Component{
             },
         };
     }
-    
+
     //回传数据使用
     handleClick = (value) => {
         console.log(value)
@@ -42,9 +43,9 @@ class Micro extends Component{
     exportDom = (item) => {
         const {isApplySpare} = this.props.dataSource;
         if(item.value == 1 || item.value == 2){
-            return (<div style={{width:'100%',position:'relative',display: 'flex',alignItems: 'center'}}><span style={{display:'inline-block',width:'60%',verticalAlign:'top'}}><Radio  checked={isApplySpare == item.value ? true : false} onChange={()=>this.handleClick(item.value)}>{item.detail}</Radio></span><span style={{width:1,display:'inline-block',backgroundColor:'#e8e8e8',position:'absolute',top:0,bottom:0,margin:'-8px 0',left: '60%'}}></span><span style={{display:'inline-block',width:'40%',textAlign:'center'}}>{item.detail2}</span></div>)
+            return (<div style={{width:'100%',position:'relative',display: 'flex',alignItems: 'center'}}><span style={{display:'inline-block',width:'60%',verticalAlign:'top'}}><Radio disabled={!this.props.isEdit ? true : false}  checked={isApplySpare == item.value ? true : false} onChange={()=>this.handleClick(item.value)}>{item.detail}</Radio></span><span style={{width:1,display:'inline-block',backgroundColor:'#e8e8e8',position:'absolute',top:0,bottom:0,margin:'-8px 0',left: '60%'}}></span><span style={{display:'inline-block',width:'40%',textAlign:'center'}}>{item.detail2}</span></div>)
         }else{
-            return (<Radio checked={isApplySpare == item.value ? true : false} onChange={()=>this.handleClick(item.value)}>{item.detail}</Radio>)
+            return (<Radio disabled={!this.props.isEdit ? true : false} checked={isApplySpare == item.value ? true : false} onChange={()=>this.handleClick(item.value)}>{item.detail}</Radio>)
         }
     }
     // 附件上传-----上传前做限制判断
@@ -76,29 +77,21 @@ class Micro extends Component{
             return file;
         });
         if(this.props.changeCheck) this.props.changeCheck(fileList,typeName,typeUrl);
-        
+    }
+    //处理个lable显示是否必填
+    setRequired = (key) => {
+        if(!this.props.isEdit){
+            return <span>{key}<span className='required'></span></span>
+        }
+        return <span>{key}</span>
     }
     render () {
         const {data} = this.state;
-        // let firstInspectReportList = [],configTemplateList = [],venturnReportList = [];
-        // const {firstInspectReportName,firstInspectReport,firstInspectReportNamestatus,configTemplateName,configTemplate,configTemplateNamestatus,venturnReportName,venturnReport,venturnReportNamestatus} = this.props.dataSource;
-        // if(firstInspectReportName){
-        //     let obj = { uid: Math.random().toString().slice(-6), name: firstInspectReportName, status: firstInspectReportNamestatus ? firstInspectReportNamestatus : 'done', url: firstInspectReport }
-        //     firstInspectReportList.push(obj)
-        // }
-        // if(configTemplateName){
-        //     let obj = { uid: Math.random().toString().slice(-6), name: configTemplateName, status: configTemplateNamestatus ? configTemplateNamestatus : 'done', url: configTemplate }
-        //     configTemplateList.push(obj)
-        // }
-        // if(venturnReportName){
-        //     let obj = { uid: Math.random().toString().slice(-6), name: venturnReportName, status: firstInspectReportNamestatus ? venturnReportNamestatus : 'done', url: venturnReport }
-        //     venturnReportList.push(obj)
-        // }
         return (
             <div className="micro">
                 <p className="micro_title">微观风险</p>
                 <Descriptions className="micro_dom" bordered column={1} size={'small'}>
-                    <Descriptions.Item label="是否申请备机备件" span={1}>
+                    <Descriptions.Item label={this.setRequired("是否申请备机备件")} span={1}>
                         <List
                             size="small"
                             bordered={false}
@@ -107,23 +100,23 @@ class Micro extends Component{
                             renderItem={item => <List.Item style={{paddingLeft:10}}>{this.exportDom(item)}</List.Item>}>
                         </List>
                     </Descriptions.Item>
-                    <Descriptions.Item label="首次巡检总结报告" span={1}>
+                    <Descriptions.Item label={this.setRequired("首次巡检总结报告")} span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.props.dataSource.firstInspectReportNameList}>
+                            <Upload disabled={!this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.props.dataSource.firstInspectReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
-                    <Descriptions.Item label="配置信息管理模板" span={1}>
+                    <Descriptions.Item label={this.setRequired("配置信息管理模板")} span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.props.dataSource.configTemplateNameList}>
+                            <Upload disabled={!this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.props.dataSource.configTemplateNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
-                    <Descriptions.Item label="风险提示报告" span={1}>
+                    <Descriptions.Item label={this.setRequired("风险提示报告")} span={1}>
                         <div className="upload">
-                            <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.props.dataSource.venturnReportNameList}>
+                            <Upload disabled={!this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.props.dataSource.venturnReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
@@ -137,7 +130,7 @@ class Micro extends Component{
 class MicroDom extends Component{
     state = {
         data:{
-            baseId:90, //记录单号
+            baseId:12, //记录单号
             areaMicroRisks:[{
                     areaId: 45,              //区域id
                     area:'山东/济南',          //区域
@@ -161,24 +154,29 @@ class MicroDom extends Component{
                     configTemplateNameList:[],
                     venturnReportNameList:[],
 
-                },
-                {
-                    isChecked: 2
                 }
             ]
         }
     };
+    //默认静态属性
+    static defaultProps = {
+        power:{formControl:{microRisk:{isEdit:true}}},
+        onChange : null
+    }
     componentDidMount () {
     //获取渲染数据
-        getMicroRisk({baseId:this.props.config.id}).then(res => {
+        getMicroRisk({baseId:this.props.power.id}).then(res => {
             if (res.success == '1') {
                 const {data} = this.state;
                 let dataPlus = this.setData(res.data);
                 let dataMerge = {...data,...dataPlus};
                 this.setState({
-                    data: dataMerge
+                    data: dataPlus.areaMicroRisks.length ? dataMerge : data
                 })
-                if(this.props.onChange) this.props.onChange(dataMerge);
+                if(this.props.onChange){
+                    let dataSource = this.vildteMicro(dataMerge);
+                    this.props.onChange(dataSource);
+                }
             }else if (res.success == '0') {
                 message.error(res.message)
             }
@@ -204,6 +202,41 @@ class MicroDom extends Component{
             </div>
         )
     }
+    //验证最终提交数据是否正确
+    vildteMicro = (data) => {
+        let obj = {dataSource: data,info:{state:true,message:''}};
+        if(data.baseId && data.areaMicroRisks.length){
+            let {areaMicroRisks} = data;
+            for(var i of areaMicroRisks){
+                if(i.isApplySpare && i.firstInspectReportNameList && i.configTemplateNameList && i.venturnReportNameList){
+                    if(i.isApplySpare === ''){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域是否申请备机备件未选择`;
+                        return obj;
+                    }
+                    else if(i.firstInspectReportNameList.length && i.firstInspectReportNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域首次巡检总结报告附件上传有误`;
+                        return obj;
+                    }else if(i.configTemplateNameList.length && i.configTemplateNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域配置信息管理模板附件上传有误`;
+                        return obj;
+                    }else if(i.venturnReportNameList.length && i.venturnReportNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域风险提示报告附件上传有误`;
+                        return obj;
+                    }else if(!i.firstInspectReportNameList.length || !i.venturnReportNameList.length || !i.configTemplateNameList.length){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域附件上传有误`;
+                        return obj
+                    }
+                }else{
+                    obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域填写有误`;
+                    return obj;
+                }
+            }
+        }else{
+            obj.info.state = false,obj.info.message = `微观风险附表区域填写有误，请联系管理员！`;
+            return obj;
+        }
+        return obj;
+    }
     //修改数据函数
     changeCheck = (value,index,typeName,typeUrl) => {
         const {data} = this.state;
@@ -223,7 +256,11 @@ class MicroDom extends Component{
             }
         }
         this.setState({data});
-        if(this.props.onChange) this.props.onChange(data);
+        //判断是否需要项工作流提交数据验证
+        if(this.props.onChange) {
+            let dataSource = this.vildteMicro(data);
+            this.props.onChange(dataSource);
+        }
     }
     render () {
         const {data} = this.state;
@@ -234,12 +271,13 @@ class MicroDom extends Component{
             border: 0,
             overflow: 'hidden',
           };
+          console.log(this.props)
         return (
             <Collapse className="microDom_parent" defaultActiveKey={data.areaMicroRisks.map((item,index) => index)} bordered={false} style={{paddingTop:15,height: '100%',overflow: 'auto'}} expandIconPosition="right" expandIcon={({ isActive }) => <span style={{color:'#4876e7'}}> {isActive ? '收起' : '展开'} </span>}>
                 {
                     data.areaMicroRisks.map((Item,index) => {
                         return <Panel bordered={false} header={this.setPane(Item)} key={index} style={customPanelStyle}>
-                            <Micro dataSource={Item} changeCheck={(value,typeName,typeUrl) => this.changeCheck(value,index,typeName,typeUrl)}></Micro>
+                            <Micro isEdit={this.props.power.formControl.microRisk.isEdit} dataSource={Item}  changeCheck={(value,typeName,typeUrl) => this.changeCheck(value,index,typeName,typeUrl)}></Micro>
                         </Panel>
                     })
                 }
