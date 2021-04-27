@@ -39,7 +39,16 @@ class Sqt extends Component {
         this.state = {
             tabsList:[{
                 name:'主表信息'
-            }],   
+            }],
+            formControl:{
+                action:['masterList','serviceArea','macroRisk','macroRiskSummary','microRisk','microRiskSummary'],
+                masterList:{isEdit:false},
+                serviceArea:{isEdit:false},
+                macroRisk:{isEdit:false},
+                macroRiskSummary:{isEdit:false},
+                microRisk:{isEdit:false},
+                microRiskSummary:{isEdit:false},
+            },
             schedule:{
                 serviceArea: {post:PostaddAssistant,area: '服务区域'}, //服务区域附表数据 + 验证
                 macroRisk: {post:PostaddMicroRisk,area: '宏观风险'},//宏观风险附表数据 + 验证
