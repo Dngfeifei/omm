@@ -16,7 +16,7 @@ import { GetBaseData } from '/api/selfEvaluation'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
 // 下拉框基础数据（产品类型-skillType,产品线- productLine）
-let baseData = { skillType: [], productLine: [], brand: [] }
+let baseData = { skillType: [], productLine: [], brand: [], productLineLevel: [] }
 
 // 产品类别下拉框数据
 let productCategoryData = [];
@@ -24,7 +24,7 @@ let productCategoryData = [];
 class ObjectEl extends Component {
     // 设置默认props
     static defaultProps = {
-        area:"",
+        area: "",
         edit: true,  // 状态 是否可编辑
         dataSource: [],  //服务对象数据数据
         onChange: () => { } //数据变化后 外部接受最新数据的方法
@@ -33,7 +33,8 @@ class ObjectEl extends Component {
         super(props)
         this.state = {
             // 基础下拉数据
-            baseData: { skillType: [], productLine: [], brand: [] },
+            baseData: { skillType: [], productLine: [], brand: [], productLineLevel: [] },
+            productCategoryData: [],
             // 当前表格数据
             dataSource: [],
             // 最新过滤后的产品线数组
@@ -168,8 +169,13 @@ class ObjectEl extends Component {
                         if (row.levels.length == 2) {
                             return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
                                 <Option value={""} index={index} >请选择</Option>
-                                <Option value={"1"} index={index} >高端</Option>
-                                <Option value={"0"} index={index} >中低端</Option>
+                                {
+                                    baseData.productLineLevel.map((item) => {
+                                        return <Option key={item.id} value={item.code}>{item.name}</Option>
+                                    })
+                                }
+                                {/* <Option value={"1"} index={index} >高端</Option>
+                                <Option value={"0"} index={index} >中低端</Option> */}
                             </Select>;
                         }
                         if (row.brand && !row.productLineData.length) {
@@ -241,8 +247,8 @@ class ObjectEl extends Component {
                 message.error(res.message)
                 return
             } else {
-                let { skillType, productLine, brand } = res.data
-                baseData = { skillType, productLine, brand }
+                let { skillType, productLine, brand, productLineLevel } = res.data
+                baseData = { skillType, productLine, brand, productLineLevel }
                 this.setState({
                     baseData
                 }, () => {
@@ -255,9 +261,10 @@ class ObjectEl extends Component {
     getDictInfo = () => {
         GetDictInfo({ dictCode: "productCategory" }).then(res => {
             if (res.success != 1) {
-                message.error("性别下拉框资源未获取，服务器错误！")
+                message.error(res.message)
             } else {
                 productCategoryData = res.data;
+                this.setState({ productCategoryData })
             }
         })
     }

@@ -137,7 +137,7 @@ class SA extends Component {
         super(props)
         this.state = {
             // 下拉框基础数据（技术方向,产品线,品牌，产品类别）
-            baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [], researchStatus: [], researchLevel: [] },
+            baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [],productLineLevel:[], researchStatus: [], researchLevel: [] },
             dataSource: {
                 // isMeetContract: "",//满足合同 1满足  0不满足
                 // isMeetSla: "",//满足SLA      1满足  0不满足
@@ -617,9 +617,11 @@ class SA extends Component {
                                                     el.levels.length == 2 ?
                                                         <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel}>
                                                             <Option value={""}  >请选择</Option>
-                                                            <Option value={"1"}  >高端</Option>
-
-                                                            <Option value={"0"}  >中低端</Option>
+                                                            {
+                                                                baseData.productLineLevel.map((item) => {
+                                                                    return <Option key={item.id} value={item.code}>{item.name}</Option>
+                                                                })
+                                                            }
                                                         </Select>
                                                         : ""
                                                 }

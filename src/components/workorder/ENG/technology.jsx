@@ -109,7 +109,7 @@ class People extends Component {
         // 获取数据字典-产品类别数据
         GetDictInfo({ dictCode: "productCategory" }).then(res => {
             if (res.success != 1) {
-                message.error("性别下拉框资源未获取，服务器错误！")
+                message.error(res.message)
             } else {
                 this.setState({
                     productCategoryData: res.data
@@ -313,7 +313,6 @@ class People extends Component {
     //获取富文本数据
     getContent = (content, key) => {
         let cases = this.state.cases;
-        console.log(cases, key, cases[key], cases[key])
         cases[key].caseDesc = content;
         this.setState({
             cases
@@ -356,7 +355,6 @@ class People extends Component {
         let newCase = []
         for (var i = 0; i < cases.length; i++) {
             let { custName, productLineCode, serviceItemCode, caseDesc } = cases[i];
-            console.log(nullCheck(custName), "null")
             if (nullCheck(custName) && nullCheck(productLineCode) && nullCheck(serviceItemCode) && nullCheck(caseDesc)) {
                 // cases.splice(i, 1)
             } else {
@@ -471,7 +469,6 @@ class People extends Component {
             })
         } else if (this.state.brandId && this.state.productCategory == 1) {
             productLineDatas = productLine.filter((item) => {
-                console.log(this.state.brandId, "this.state.brandId")
                 return item.parentId == this.state.brandId
             })
         }
@@ -555,8 +552,13 @@ class People extends Component {
                                     <span className="formKey ant-form-item-required">产品线级别：&nbsp;&nbsp;&nbsp;</span>
                                     <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.productLineLevelCode} onSelect={this.onSelect3}>
                                         <Option value="">请选择</Option>
-                                        <Option value="1">高端</Option>
-                                        <Option value="0">中低端</Option>
+                                        {
+                                            this.props.baseData.productLineLevel.map((item)=>{
+                                                return <Option key={item.id} value={item.code}>{item.name}</Option>
+                                            })
+                                        }
+                                        {/* <Option value="1">高端</Option>
+                                        <Option value="0">中低端</Option> */}
                                     </Select>
                                 </div>
                                 <div className="formCol"></div>

@@ -56,7 +56,7 @@ class SA extends Component {
         super(props)
         this.state = {
             // 下拉框基础数据（技术方向,产品线,品牌，产品类别）
-            baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [] },
+            baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [], productLineLevel: [] },
             dataSource: {
                 // areaId: "", //区域ID
                 // area: "福建厦门",  //区域名称
@@ -190,8 +190,8 @@ class SA extends Component {
                 message.error(res.message)
                 return
             } else {
-                let { skillType, productLine, brand } = res.data
-                let baseData = Object.assign({}, this.state.baseData, { skillType, productLine, brand })
+                let { skillType, productLine, brand, productLineLevel } = res.data
+                let baseData = Object.assign({}, this.state.baseData, { skillType, productLine, brand, productLineLevel })
                 this.setState({
                     baseData
                 }, () => {
@@ -760,9 +760,11 @@ class SA extends Component {
                                                     el.levels.length == 2 ?
                                                         <Select disabled={!isEdit} style={{ width: "100%" }} value={el.deviceLevel} onSelect={(e, info) => this.onSelectChange1(info, i)}>
                                                             <Option value={""} name="deviceLevel" >请选择</Option>
-                                                            <Option value={"1"} name="deviceLevel" >高端</Option>
-
-                                                            <Option value={"0"} name="deviceLevel" >中低端</Option>
+                                                            {
+                                                                baseData.productLineLevel.map((item) => {
+                                                                    return <Option key={item.id} name="deviceLevel" value={item.code}>{item.name}</Option>
+                                                                })
+                                                            }
                                                         </Select>
                                                         : ""
                                                 }

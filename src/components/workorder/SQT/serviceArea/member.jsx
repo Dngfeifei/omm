@@ -16,6 +16,9 @@ import Selector from '/components/selector/engineerSelector.jsx'
 // 引入页面CSS
 // import '@/assets/less/pages/servies.less'
 
+import { GetDictInfo } from '/api/dictionary'  //数据字典api
+let projectMemberRoles = []
+
 class Member extends Component {
     // 设置默认props
     static defaultProps = {
@@ -27,6 +30,7 @@ class Member extends Component {
         super(props)
         this.state = {
             dataSource: [],
+            projectMemberRoles: [],
             // 表格配置项-可编辑
             columns: [
                 {
@@ -56,8 +60,11 @@ class Member extends Component {
                     align: 'center',
                     render: (value, row, index) => {
                         return <Select disabled={!props.edit} width="100%" style={{ width: "100%" }} value={value} onSelect={this.onSelectContactRole}>
-                            <Option key={index} value={"leader"}>项目组长</Option>
-                            <Option key={index} value={"member"}>项目组成员</Option>
+                            {
+                                projectMemberRoles.map((item) => {
+                                    return <Option key={item.itemCode} index={index} value={item.itemCode}>{item.itemValue}</Option>
+                                })
+                            }
                         </Select>;
                     },
                 },
@@ -111,10 +118,24 @@ class Member extends Component {
                 email: '',
             })
         }
+        this.getDictInfo()
         this.setState({
             dataSource, edit
         }, () => {
             this.updateToparent()
+        })
+    }
+    // 获取项目角色下拉框数据
+    getDictInfo = () => {
+        GetDictInfo({ dictCode: "projectMemberRole" }).then(res => {
+            if (res.success != 1) {
+                message.error(res.message)
+            } else {
+                projectMemberRoles = res.data;
+                this.setState({
+                    projectMemberRoles
+                })
+            }
         })
     }
     // 更新数据到父级
@@ -123,9 +144,9 @@ class Member extends Component {
         this.props.onChange({ dataSource: this.state.dataSource, error: checkResult })
     }
     // 获取项目角色
-    onSelectContactRole = (val, { key }) => {
+    onSelectContactRole = (val, { index }) => {
         let dataSource = this.state.dataSource;
-        dataSource[key].type = val;
+        dataSource[index].type = val;
         this.setState({
             dataSource
         }, () => {
@@ -238,7 +259,7 @@ class Member extends Component {
     onCheck = (type = null) => {
         let result = { state: true, message: "" }
         let data = this.state.dataSource;
-        // 职级主管和技术联系人数量最少为1 
+        // 项目组长数量最少为1 
         let count = 0;
         data.forEach((el) => {
             Object.keys(el).forEach(item => {
