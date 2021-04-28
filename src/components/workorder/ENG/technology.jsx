@@ -313,7 +313,6 @@ class People extends Component {
     //获取富文本数据
     getContent = (content, key) => {
         let cases = this.state.cases;
-        console.log(cases, key, cases[key], cases[key])
         cases[key].caseDesc = content;
         this.setState({
             cases
@@ -356,7 +355,6 @@ class People extends Component {
         let newCase = []
         for (var i = 0; i < cases.length; i++) {
             let { custName, productLineCode, serviceItemCode, caseDesc } = cases[i];
-            console.log(nullCheck(custName), "null")
             if (nullCheck(custName) && nullCheck(productLineCode) && nullCheck(serviceItemCode) && nullCheck(caseDesc)) {
                 // cases.splice(i, 1)
             } else {
@@ -471,7 +469,6 @@ class People extends Component {
             })
         } else if (this.state.brandId && this.state.productCategory == 1) {
             productLineDatas = productLine.filter((item) => {
-                console.log(this.state.brandId, "this.state.brandId")
                 return item.parentId == this.state.brandId
             })
         }
