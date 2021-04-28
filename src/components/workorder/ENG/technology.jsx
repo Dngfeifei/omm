@@ -109,7 +109,7 @@ class People extends Component {
         // 获取数据字典-产品类别数据
         GetDictInfo({ dictCode: "productCategory" }).then(res => {
             if (res.success != 1) {
-                message.error("性别下拉框资源未获取，服务器错误！")
+                message.error(res.message)
             } else {
                 this.setState({
                     productCategoryData: res.data
@@ -555,8 +555,13 @@ class People extends Component {
                                     <span className="formKey ant-form-item-required">产品线级别：&nbsp;&nbsp;&nbsp;</span>
                                     <Select disabled={type == "see" ? true : false} className="formVal" value={this.state.productLineLevelCode} onSelect={this.onSelect3}>
                                         <Option value="">请选择</Option>
-                                        <Option value="1">高端</Option>
-                                        <Option value="0">中低端</Option>
+                                        {
+                                            this.props.baseData.productLineLevel.map((item)=>{
+                                                return <Option key={item.id} value={item.code}>{item.name}</Option>
+                                            })
+                                        }
+                                        {/* <Option value="1">高端</Option>
+                                        <Option value="0">中低端</Option> */}
                                     </Select>
                                 </div>
                                 <div className="formCol"></div>
