@@ -13,22 +13,22 @@ export const serviceWorkOrder = (params = {}) => {
 
 
 // 服务计划表---主表数据查询接口
-export const SqtBaseDetail = (id,params = {}) => {
+export const SqtBaseDetail = (id, params = {}) => {
 	return http.fetchGet(`/biSqtBase/detail/${id}`, params)
 }
 
 // 服务计划表主表数据提交接口
 export const SqtBase = (params = {}) => {
-	return http.fetchPost(`/biSqtBase/add`, params , true)
+	return http.fetchPost(`/biSqtBase/add`, params, true)
 }
 // 服务计划表主表数据保存接口
 export const SqtSave = (params = {}) => {
-	return http.fetchPost(`/biSqtBase/addNotCommit`, params , true)
+	return http.fetchPost(`/biSqtBase/addNotCommit`, params, true)
 }
 
 // 上传附件
 export const SqtBaseupload = (params = {}) => {
-	return http.fetchPost(`/biSqtBase/upload`, params,true)
+	return http.fetchPost(`/biSqtBase/upload`, params, true)
 }
 
 // 服务计划表---服务区域附表数据查询接口
@@ -63,10 +63,18 @@ export const PostMacroRiskSum = (params = {}) => {
 
 // 服务计划表---微观风险数据提交接口
 export const PostaddMicroRisk = (params = {}) => {
-	return http.fetchPost(`/microRisk/add`, params,true)
+	return http.fetchPost(`/microRisk/add`, params, true)
 }
 // 服务计划表---微观风险汇总数据提交接口
 export const PostaddMicroRiskSum = (params = {}) => {
-	return http.fetchPost(`/microRiskSum/add`, params,true)
+	return http.fetchPost(`/microRiskSum/add`, params, true)
 }
 
+// 服务计划表---预约服务附表数据查询接口
+export const GetAppointment = (params = {}) => {
+	return http.fetchGet(`biSqtAppointment`, params)
+}
+// 服务计划表---预约服务附表数据提交接口
+export const PostAppointment = (params = {}) => {
+	return http.fetchPost(`biSqtAppointment`, params, true)
+}
