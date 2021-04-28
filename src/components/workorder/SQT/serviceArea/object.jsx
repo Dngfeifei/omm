@@ -171,7 +171,7 @@ class ObjectEl extends Component {
                                 <Option value={""} index={index} >请选择</Option>
                                 {
                                     baseData.productLineLevel.map((item) => {
-                                        return <Option key={item.id} value={item.code}>{item.name}</Option>
+                                        return <Option key={item.id} index={index}  value={item.code}>{item.name}</Option>
                                     })
                                 }
                                 {/* <Option value={"1"} index={index} >高端</Option>

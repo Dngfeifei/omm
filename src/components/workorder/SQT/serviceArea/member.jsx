@@ -144,9 +144,9 @@ class Member extends Component {
         this.props.onChange({ dataSource: this.state.dataSource, error: checkResult })
     }
     // 获取项目角色
-    onSelectContactRole = (val, { index }) => {
+    onSelectContactRole = (val, { props }) => {
         let dataSource = this.state.dataSource;
-        dataSource[index].type = val;
+        dataSource[props.index].type = val;
         this.setState({
             dataSource
         }, () => {
