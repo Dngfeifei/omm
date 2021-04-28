@@ -142,9 +142,9 @@ class Contact extends Component {
     }
 
     // 获取联系人类型
-    onSelectContactType = (val, { index }) => {
+    onSelectContactType = (val, {props}) => {
         let dataSource = this.state.dataSource;
-        dataSource[index].type = val;
+        dataSource[props.index].type = val;
         this.setState({
             dataSource
         }, () => {
