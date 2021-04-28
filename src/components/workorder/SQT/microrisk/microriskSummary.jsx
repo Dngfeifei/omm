@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { Descriptions, Collapse  , Radio , Icon , Checkbox , Upload , message, List} from 'antd'
 import '@/assets/less/pages/Micro.less'
-
 // 引入--数据字典统一接口
 import {getMicroRiskSum } from '/api/microrisk'
 
@@ -18,8 +17,8 @@ class MicroSum extends Component{
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         this.state = {
             data: [
-                {detail:'是，新项目增加',value:'1',detail2:'设备需求表名称设备需求表名称设备需求表名称设备需求表名称设备需求表名称'},
-                {detail:'是，续签项目新增设备',value:'2',detail2:'关联设备需求表设备需求表名称设备需求表名称设备需求表名称设备需求表名称设备需求表名称'},
+                {detail:'是，新项目增加',value:'1',detail2:'设备需求表名称'},
+                {detail:'是，续签项目新增设备',value:'2',detail2:'关联设备需求表'},
                 {detail:'否，续签项目不需要申请',value:'3'},
                 {detail:'否，新项目库存满足需求',value:'4'},
                 {detail:'其他',value:5}
@@ -63,7 +62,7 @@ class MicroSum extends Component{
     }
     componentDidMount () {
         //获取渲染数据
-        getMicroRiskSum({baseId:this.props.config.id}).then(res => {
+        getMicroRiskSum({baseId:this.props.power.id}).then(res => {
             if (res.success == '1') {
                 const {dataSource} = this.state;
                 if(!res.data) return;
@@ -103,34 +102,32 @@ class MicroSum extends Component{
 //验证最终提交数据是否正确
     vildteMicro = (data) => {
         let obj = {dataSource: data,info:{state:true,message:''}};
-        if(data.baseId && data.areaMicroRisks){
-            let {areaMicroRisks} = data;
-            for(var i of areaMicroRisks){
-                if(i.isApplySpare && i.firstInspectReportNameList && i.configTemplateNameList && i.venturnReportNameList){
-                    if(i.isApplySpare === ''){
-                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域是否申请备机备件未选择`;
-                        return obj;
-                    }
-                    else if(i.firstInspectReportNameList.length && i.firstInspectReportNameList[0].status != 'done'){
-                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域首次巡检总结报告附件上传有误`;
-                        return obj;
-                    }else if(i.configTemplateNameList.length && i.configTemplateNameList[0].status != 'done'){
-                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域配置信息管理模板附件上传有误`;
-                        return obj;
-                    }else if(i.venturnReportNameList.length && i.venturnReportNameList[0].status != 'done'){
-                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域风险提示报告附件上传有误`;
-                        return obj;
-                    }else if(!i.firstInspectReportNameList.length || !i.venturnReportNameList.length || !i.configTemplateNameList.length){
-                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域附件上传有误`;
-                        return obj
-                    }
-                }else{
-                    obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域填写有误`;
+        if(data.baseId){
+            let {isApplySpare,firstInspectReportNameList,configTemplateNameList,venturnReportNameList} = data;
+            if(isApplySpare && firstInspectReportNameList && configTemplateNameList && venturnReportNameList){
+                if(isApplySpare === ''){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域是否申请备机备件未选择`;
                     return obj;
                 }
+                else if(firstInspectReportNameList.length && firstInspectReportNameList[0].status != 'done'){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域首次巡检总结报告附件上传有误`;
+                    return obj;
+                }else if(configTemplateNameList.length && configTemplateNameList[0].status != 'done'){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域配置信息管理模板附件上传有误`;
+                    return obj;
+                }else if(venturnReportNameList.length && venturnReportNameList[0].status != 'done'){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域风险提示报告附件上传有误`;
+                    return obj;
+                }else if(!firstInspectReportNameList.length || !venturnReportNameList.length || !configTemplateNameList.length){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域附件上传有误`;
+                    return obj
+                }
+            }else{
+                obj.info.state = false,obj.info.message = `微观风险汇总附表区域填写有误`;
+                return obj;
             }
         }else{
-            obj.info.state = false,obj.info.message = `微观风险附表区域填写有误，请联系管理员！`;
+            obj.info.state = false,obj.info.message = `微观风险汇总附表区域填写有误，请联系管理员！`;
             return obj;
         }
         return obj;
@@ -159,7 +156,7 @@ class MicroSum extends Component{
     exportDom = (item) => {
         let {isApplySpare} = this.state.dataSource;
         isApplySpare = isApplySpare.split(',');
-        return (<Checkbox disabled={!this.props.power.formControl.microRiskSummary.isEdit ? true : false} value={item.value} checked={isApplySpare.indexOf(item.value) > -1 ? true : false} onChange={this.handleClick}>{item.detail}</Checkbox>)
+        return (<Checkbox disabled={this.props.power.formRead == 2 ? true : !this.props.power.formControl.microRiskSummary.isEdit ? true : false} value={item.value} checked={isApplySpare.indexOf(item.value) > -1 ? true : false} onChange={this.handleClick}>{item.detail}</Checkbox>)
     }
     // 附件上传-----上传前做限制判断
     beforeUpload = (file) => {
@@ -187,13 +184,25 @@ class MicroSum extends Component{
         });
          this.changeCheck(fileList,typeName,typeUrl);
     }
+    //处理个lable显示是否必填
+    setRequired = (key) => {
+        if(this.props.power.formRead == 2){
+            return <span>{key}</span>
+        }else{
+            if(this.props.power.formControl.microRiskSummary.isEdit){
+                return <span>{key}<span className='required'></span></span>
+            }else{
+                return <span>{key}</span>
+            }
+        }
+    }
     render () {
         const {data} = this.state;
         return (
             <div className="micro">
                 <p className="micro_title">微观风险汇总表</p>
                 <Descriptions className="micro_dom" bordered column={1} size={'small'}>
-                    <Descriptions.Item label="是否申请备机备件" span={1}>
+                    <Descriptions.Item label={this.setRequired("是否申请备机备件")} span={1}>
                         <List
                             size="small"
                             bordered={false}
@@ -202,23 +211,23 @@ class MicroSum extends Component{
                             renderItem={item => <List.Item style={{paddingLeft:10}}>{this.exportDom(item)}</List.Item>}>
                         </List>
                     </Descriptions.Item>
-                    <Descriptions.Item label="首次巡检总结报告" span={1}>
+                    <Descriptions.Item label={this.setRequired("首次巡检总结报告")} span={1}>
                         <div className="upload">
-                            <Upload disabled={!this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.state.dataSource.firstInspectReportNameList}>
+                            <Upload disabled={this.props.power.formRead == 2 ? true : !this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'firstInspectReportName','firstInspectReport')} fileList={this.state.dataSource.firstInspectReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
-                    <Descriptions.Item label="配置信息管理模板" span={1}>
+                    <Descriptions.Item label={this.setRequired("配置信息管理模板")} span={1}>
                         <div className="upload">
-                            <Upload disabled={!this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.state.dataSource.configTemplateNameList}>
+                            <Upload disabled={this.props.power.formRead == 2 ? true : !this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')} fileList={this.state.dataSource.configTemplateNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>
                     </Descriptions.Item>
-                    <Descriptions.Item label="风险提示报告" span={1}>
+                    <Descriptions.Item label={this.setRequired("风险提示报告")} span={1}>
                         <div className="upload">
-                            <Upload disabled={!this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.state.dataSource.venturnReportNameList}>
+                            <Upload disabled={this.props.power.formRead == 2 ? true : !this.props.power.formControl.microRiskSummary.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'venturnReportName','venturnReport')} fileList={this.state.dataSource.venturnReportNameList}>
                                 <Icon type="upload" />上传
                             </Upload>
                         </div>

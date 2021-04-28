@@ -19,8 +19,8 @@ class Micro extends Component{
         header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         this.state = {
             data: [
-                {detail:'是，新项目增加',value:1,detail2:'设备需求表名称设备需求表名称设备需求表名称设备需求表名称设备需求表名称'},
-                {detail:'是，续签项目新增设备',value:2,detail2:'关联设备需求表设备需求表名称设备需求表名称设备需求表名称设备需求表名称设备需求表名称'},
+                {detail:'是，新项目增加',value:1,detail2:'设备需求表名称'},
+                {detail:'是，续签项目新增设备',value:2,detail2:'关联设备需求表'},
                 {detail:'否，续签项目不需要申请',value:3},
                 {detail:'否，新项目库存满足需求',value:4},
                 {detail:'其他',value:5}
@@ -80,7 +80,7 @@ class Micro extends Component{
     }
     //处理个lable显示是否必填
     setRequired = (key) => {
-        if(!this.props.isEdit){
+        if(this.props.isEdit){
             return <span>{key}<span className='required'></span></span>
         }
         return <span>{key}</span>
@@ -204,6 +204,8 @@ class MicroDom extends Component{
     }
     //验证最终提交数据是否正确
     vildteMicro = (data) => {
+        //赋值microRisks字段为数据后续提交使用
+        data['microRisks'] = data.areaMicroRisks ? [...data.areaMicroRisks] : [];
         let obj = {dataSource: data,info:{state:true,message:''}};
         if(data.baseId && data.areaMicroRisks.length){
             let {areaMicroRisks} = data;
@@ -277,7 +279,7 @@ class MicroDom extends Component{
                 {
                     data.areaMicroRisks.map((Item,index) => {
                         return <Panel bordered={false} header={this.setPane(Item)} key={index} style={customPanelStyle}>
-                            <Micro isEdit={this.props.power.formControl.microRisk.isEdit} dataSource={Item}  changeCheck={(value,typeName,typeUrl) => this.changeCheck(value,index,typeName,typeUrl)}></Micro>
+                            <Micro isEdit={ this.props.power.formRead == 2 ? false : this.props.power.formControl.microRisk.isEdit} dataSource={Item} type="Radio" changeCheck={(value,typeName,typeUrl) => this.changeCheck(value,index,typeName,typeUrl)}></Micro>
                         </Panel>
                     })
                 }

@@ -56,8 +56,8 @@ class Member extends Component {
                     align: 'center',
                     render: (value, row, index) => {
                         return <Select disabled={!props.edit} width="100%" style={{ width: "100%" }} value={value} onSelect={this.onSelectContactRole}>
-                            <Option key={index} value={"1"}>项目组长</Option>
-                            <Option key={index} value={"2"}>项目组成员</Option>
+                            <Option key={index} value={"leader"}>项目组长</Option>
+                            <Option key={index} value={"member"}>项目组成员</Option>
                         </Select>;
                     },
                 },
@@ -243,7 +243,7 @@ class Member extends Component {
         data.forEach((el) => {
             Object.keys(el).forEach(item => {
                 if (item == "type") {
-                    if (el[item] == "1") {
+                    if (el[item] == "leader") {
                         count++
                     }
                 }

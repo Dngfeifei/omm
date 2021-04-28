@@ -51,10 +51,10 @@ class Sqt extends Component {
             },
             schedule:{
                 serviceArea: {post:PostaddAssistant,area: '服务区域'}, //服务区域附表数据 + 验证
-                macroRisk: {post:PostaddMicroRisk,area: '宏观风险'},//宏观风险附表数据 + 验证
-                macroRiskSummary: {post:PostaddMicroRisk,area: '宏观风险汇总'},//宏观风险汇总附表数据 + 验证
+                macroRisk: {post:PostMacroRisk,area: '宏观风险'},//宏观风险附表数据 + 验证
+                macroRiskSummary: {post:PostMacroRiskSum,area: '宏观风险汇总'},//宏观风险汇总附表数据 + 验证
                 microRisk: {post:PostaddMicroRisk,area: '微观风险'},//微观风险附表数据 + 验证
-                microRiskSummary: {post:PostaddMicroRisk,area: '微观风险汇总'},//微观风险汇总附表数据 + 验证
+                microRiskSummary: {post:PostaddMicroRiskSum,area: '微观风险汇总'},//微观风险汇总附表数据 + 验证
             },//附表数据存储
             tabsListF:[],
             swich:true,//主表密钥
@@ -252,21 +252,12 @@ class Sqt extends Component {
             return false
         }
         let {paramsObj,schedule} = this.state,AssistantPonse,MasterPonse;
-        //服务区域附表提交接口
-        // if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1 && this.props.config.formControl.serviceArea.isEdit){
-        //     const {datasources} = this.state;
-        //     if(!datasources.info || !datasources.info.state) {
-        //         message.error(!datasources.info ? '请填写服务区域附表！': datasources.info.message)
-        //         return false;
-        //     }
-        //     AssistantPonse = await PostaddAssistant(datasources.dataSource)
-        // }
 
         //所有附表数据验证提交
         for(var i in schedule){
-            // console.log(schedule)
+             console.log(schedule)
              if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf(i) > -1 && this.props.config.formControl[i].isEdit){
-                // console.log(i)
+                 console.log(i)
                 if(!schedule[i].info || !schedule[i].info.state) {
                     message.error(!schedule[i].info ? `请填写${schedule[i].area}附表！`: schedule[i].info.message)
                     return false;
@@ -380,7 +371,7 @@ class Sqt extends Component {
                        microRiskSummary ? 
                         <TabPane tab="微观风险汇总" key="5">
                             {/* 附表--组件  */}
-                           <microRiskSummary onChange={(data) => this.getChildrenVildter(data,'microRiskSummary')} power={this.props.config}></microRiskSummary>
+                           <MicroRiskSummary onChange={(data) => this.getChildrenVildter(data,'microRiskSummary')} power={this.props.config}></MicroRiskSummary>
                         </TabPane>
                      : null
                     }

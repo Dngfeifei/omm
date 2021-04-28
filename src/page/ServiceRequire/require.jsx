@@ -76,7 +76,10 @@ class RequireSqt extends Component {
         }
         
     }
+    //保存数据
+    save = () =>{
 
+    }
     handleBack = () => {
         this.props.remove(this.props.activeKey)
     }
@@ -91,6 +94,7 @@ class RequireSqt extends Component {
                 {/* 提交按钮--区域 */}
                 <div className="btnContent" style={{textAlign:'right',marginTop:'0px'}}>
                     <Button disabled={this.state.disabled} type="primary" style={{ marginRight: '30px' }} onClick={this.handleSubmit}>提交</Button>
+                    <Button disabled={this.state.disabled} type="primary" style={{ marginRight: '30px' }} onClick={this.save}>提交</Button>
                     <Button onClick={this.handleBack}>返回</Button>
                 </div>
             </div>
