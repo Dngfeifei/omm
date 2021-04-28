@@ -11,7 +11,9 @@ const { confirm } = Modal;
 
 // 引入页面CSS
 // import '@/assets/less/pages/servies.less'
+import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
+let custContactTypes = []
 
 class Contact extends Component {
     // 设置默认props
@@ -23,6 +25,7 @@ class Contact extends Component {
     constructor(props) {
         super(props)
         this.state = {
+            custContactTypes:[],
             // 表格数据
             dataSource: [],
             // 表格配置项-可编辑
@@ -54,8 +57,13 @@ class Contact extends Component {
                     align: 'center',
                     render: (value, row, index) => {
                         return <Select disabled={!props.edit} bordered={props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectContactType}>
-                            <Option key={index} value={"1"}>职级主管</Option>
-                            <Option key={index} value={"2"}>技术联系人</Option>
+                            {/* <Option key={index} value={"1"}>职级主管</Option>
+                            <Option key={index} value={"2"}>技术联系人</Option> */}
+                            {
+                                custContactTypes.map((item) => {
+                                    return <Option key={item.itemCode} index={index} value={item.itemCode}>{item.itemValue}</Option>
+                                })
+                            }
                         </Select>;
                     },
                 },
@@ -106,6 +114,7 @@ class Contact extends Component {
                 email: '',
             })
         }
+        this.getDictInfo()
         this.setState({
             dataSource, edit
         }, () => {
@@ -113,18 +122,29 @@ class Contact extends Component {
         })
     }
 
-
+    // 获取联系人类型下拉框数据
+    getDictInfo = () => {
+        GetDictInfo({ dictCode: "custContactType" }).then(res => {
+            if (res.success != 1) {
+                message.error(res.message)
+            } else {
+                custContactTypes = res.data;
+                this.setState({
+                    custContactTypes
+                })
+            }
+        })
+    }
     // 更新数据到父级
     updateToparent = () => {
         let checkResult = this.onCheck()
-        console.log("updateToparent1")
         this.props.onChange({ dataSource: this.state.dataSource, error: checkResult })
     }
 
     // 获取联系人类型
-    onSelectContactType = (val, { key }) => {
+    onSelectContactType = (val, { index }) => {
         let dataSource = this.state.dataSource;
-        dataSource[key].type = val;
+        dataSource[index].type = val;
         this.setState({
             dataSource
         }, () => {
@@ -226,9 +246,9 @@ class Contact extends Component {
         data.forEach((el) => {
             Object.keys(el).forEach(item => {
                 if (item == "type") {
-                    if (el[item] == 1) {
+                    if (el[item] == "manager") {
                         count1++
-                    } else if (el[item] == 2) {
+                    } else if (el[item] == "artContact") {
                         count2++
                     }
                 }
