@@ -17,7 +17,7 @@ import '@/assets/less/pages/servies.less'
 // 引入主表信息组件
 import ServicesMain from '@/components/workorder/SQT/masterList/ServiceRequire.jsx'
 // 引入 接口
-import { SqtBaseDetail,SqtBase,PostaddAssistant, PostMacroRisk,PostMacroRiskSum,PostaddMicroRisk,PostaddMicroRiskSum} from '/api/serviceMain.js'
+import { SqtBaseDetail,SqtBase,SqtSave,PostaddAssistant, PostMacroRisk,PostMacroRiskSum,PostaddMicroRisk,PostaddMicroRiskSum} from '/api/serviceMain.js'
 //引入服务区域附表组件
 import  ServiceArea from '@/components/workorder/SQT/serviceArea/serviceArea'
 //引入宏观风险附表组件
@@ -317,6 +317,24 @@ class Sqt extends Component {
             return false;
         }
         return true;
+    }
+    //服务需求表主表保存接口
+    save= async ()=>{
+        
+        let {paramsObj} = this.state,AssistantPonse,MasterPonse;
+        //主表提交接口
+         if (!this.props.config.formControl || (this.props.config.formControl.masterList.nodes && [2,3].indexOf(this.props.config.formControl.masterList.nodes)) || (this.props.config.formControl.masterList.isEdit)) {
+            // if (!this.vildteMasterList()) {
+            //     // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
+            //     return false;
+            // }保存不需要验证
+            MasterPonse = await SqtSave(paramsObj)
+            if (MasterPonse.success != 1) {
+                message.error(MasterPonse.message)
+                return false;
+            }
+         }
+        return true;       
     }
     render = _ => {
         let {datasources,paramsObj} = this.state;

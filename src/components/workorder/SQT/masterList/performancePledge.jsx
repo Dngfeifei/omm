@@ -892,7 +892,7 @@ addMouseLeave = (record) => {
             };
         });
         // console.log(isEdit,formRead,node)
-        // console.log(isEdit,disaBled,disaBled ? true : false)
+         console.log(this.state.PerformanceData.afterSaleAgreement,this.state.PerformanceData.projectCycleType,this.state.PerformanceData.cycleEnd)
         const disaBled = this.setJurisdiction(isEdit,formRead,node);
         return (
             <div className="performanceContent">

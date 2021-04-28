@@ -139,38 +139,38 @@ class SA extends Component {
             // 下拉框基础数据（技术方向,产品线,品牌，产品类别）
             baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [],productLineLevel:[], researchStatus: [], researchLevel: [] },
             dataSource: {
-                // isMeetContract: "",//满足合同 1满足  0不满足
-                // isMeetSla: "",//满足SLA      1满足  0不满足
-                // slaDesc: [],//不能满足sla原因说明
-                // isTher: "",//其他 
-                // therDesc: [],//其他描述
-                // remark: [],//备注
-                // isCompanySupportList: [//需公司资源支持的产品数据
-                //     {
-                //         isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
-                //         productCategory: "",//产品类别
-                //         productType: "",//技术方向
-                //         brand: "",//品牌
-                //         productLine: "",//产品线编码
-                //         productLineName: "",//产品线名称
-                //         deviceLevel: "",//产品等级（高端、中低端）
-                //         productModel: "",//产品型号
-                //     }
-                // ],
-                // notCompanySupportList: [//无资源支持的产品数据
-                //     {
-                //         isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
-                //         productCategory: "",//产品类别
-                //         productType: "",//技术方向
-                //         brand: "",//品牌
-                //         productLine: "",//产品线编码
-                //         productLineName: "",//产品线名称
-                //         deviceLevel: "",//产品等级（高端、中低端）
-                //         productModel: "",//产品型号
-                //     }
-                // ],
-                // isCompanyChecked: false,//需公司资源支持
-                // notCompanyChecked: false,//需公司资源支持
+                isMeetContract: "",//满足合同 1满足  0不满足
+                isMeetSla: "",//满足SLA      1满足  0不满足
+                slaDesc: [],//不能满足sla原因说明
+                isTher: "",//其他 
+                therDesc: [],//其他描述
+                remark: [],//备注
+                isCompanySupportList: [//需公司资源支持的产品数据
+                    // {
+                    //     isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
+                    //     productCategory: "",//产品类别
+                    //     productType: "",//技术方向
+                    //     brand: "",//品牌
+                    //     productLine: "",//产品线编码
+                    //     productLineName: "",//产品线名称
+                    //     deviceLevel: "",//产品等级（高端、中低端）
+                    //     productModel: "",//产品型号
+                    // }
+                ],
+                notCompanySupportList: [//无资源支持的产品数据
+                    // {
+                    //     isCompanySupport: "",//1:需要公司支持/0公司暂无资源支持能力
+                    //     productCategory: "",//产品类别
+                    //     productType: "",//技术方向
+                    //     brand: "",//品牌
+                    //     productLine: "",//产品线编码
+                    //     productLineName: "",//产品线名称
+                    //     deviceLevel: "",//产品等级（高端、中低端）
+                    //     productModel: "",//产品型号
+                    // }
+                ],
+                isCompanyChecked: false,//需公司资源支持
+                notCompanyChecked: false,//需公司资源支持
             },
             isEdit: true,//页面是否可编辑
             // 工程师选择器配置

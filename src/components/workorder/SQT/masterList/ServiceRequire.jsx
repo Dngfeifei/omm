@@ -178,7 +178,7 @@ initData = (nextprops) => {
         Object.keys(params).forEach(key => {
             if (data[key] != undefined) {
                 obj[key] = data[key];
-                if((!data[key] && key == 'projectCycleType' || key == 'afterSaleAgreement')) obj[key] = '1'
+                if(!data[key] && (key == 'projectCycleType' || key == 'afterSaleAgreement')) obj[key] = '1'
             }
         });
         for (var key in obj) {
