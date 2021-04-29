@@ -346,6 +346,13 @@ class workList extends Component {
                             record
                         }
                     }
+                    //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
+                    if(this.props.params.pathParam.split('?')[2] && !record.finished){
+                        setTimeout(_ => {
+                            this.init();
+                        },1000)
+                    }
+                    //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
                     this.props.add(pane)
                 },
             };

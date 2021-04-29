@@ -55,6 +55,8 @@ class Sqt extends Component {
                 macroRiskSummary: {post:PostMacroRiskSum,area: '宏观风险汇总'},//宏观风险汇总附表数据 + 验证
                 microRisk: {post:PostaddMicroRisk,area: '微观风险'},//微观风险附表数据 + 验证
                 microRiskSummary: {post:PostaddMicroRiskSum,area: '微观风险汇总'},//微观风险汇总附表数据 + 验证
+                reservationService: {post:PostaddMicroRisk,area: '预约服务'},//预约服务附表数据 + 验证
+                reservationServiceSummary: {post:PostaddMicroRiskSum,area: '预约服务汇总汇总'},//预约服务汇总汇总附表数据 + 验证
             },//附表数据存储
             tabsListF:[],
             swich:true,//主表密钥
