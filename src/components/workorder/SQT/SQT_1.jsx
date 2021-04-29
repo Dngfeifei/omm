@@ -375,7 +375,7 @@ class Sqt extends Component {
                        macroRiskSummary ? 
                         <TabPane tab="宏观风险汇总" key="3">
                             {/* 附表--组件  */}
-                           <MacroRiskSummary onChange={(data) => this.getChildrenVildter(data,3)} power={this.props.config}></MacroRiskSummary>
+                           <MacroRiskSummary onChange={(data) => this.getChildrenVildter(data,'macroRiskSummary')} power={this.props.config}></MacroRiskSummary>
                         </TabPane>
                      : null
                     }

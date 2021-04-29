@@ -262,8 +262,8 @@ class SA extends Component {
     }
     // 组件传递数据初始化 基础下拉框数据请求获取之后调用此方法
     initData = () => {
-        let { dataSource, power } = this.props
-        let { isEdit } = this.state
+        let {  power } = this.props
+        let { isEdit,dataSource } = this.state
         // 页面模块只读逻辑
         if (power.formRead == 1) {
             // 若为1 根据权限配置判断是否只读
@@ -516,7 +516,7 @@ class SA extends Component {
                                     <div className="column">
                                         <div className="val"><span>品牌</span></div>
                                     </div>
-                                    <div className="column">
+                                    <div className="column2">
                                         <div className="val"><span>产品线</span></div>
                                     </div>
                                     <div className="column">
@@ -532,8 +532,8 @@ class SA extends Component {
                                     return <div className="row" key={i}>
                                         {/* 产品类别 */}
                                         <div className="column" style={{ position: "relative" }}>
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <Select disabled={true} style={{ width: "100%" }} value={el.productCategory}>
+                                            <div className="val" >
+                                                <Select disabled={true} style={{ width: "86%" }} value={el.productCategory}>
                                                     <Option value={""} >请选择</Option>
                                                     {
                                                         baseData.productCategoryData.map((item) => {
@@ -545,8 +545,8 @@ class SA extends Component {
                                         </div>
                                         {/* 技术方向 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <Select disabled={true} style={{ width: "100%" }} value={el.productType}>
+                                            <div className="val" >
+                                                <Select disabled={true} style={{ width: "86%" }} value={el.productType}>
                                                     <Option value={""} >请选择</Option>
                                                     {
                                                         baseData.skillType.filter((item) => {
@@ -560,8 +560,8 @@ class SA extends Component {
                                         </div>
                                         {/* 品牌 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <Select disabled={true} style={{ width: "100%" }} value={el.brand}>
+                                            <div className="val" >
+                                                <Select disabled={true} style={{ width: "86%" }} value={el.brand}>
                                                     <Option value={""} >请选择</Option>
                                                     {
                                                         baseData.brand.filter((item) => {
@@ -580,10 +580,10 @@ class SA extends Component {
                                             </div>
                                         </div>
                                         {/* 产品线 */}
-                                        <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}>
+                                        <div className="column2">
+                                            <div className="val" >
                                                 {
-                                                    el.brand && el.productLineData.length ? <Select disabled={true} style={{ width: "100%" }} value={el.productLine}>
+                                                    el.brand && el.productLineData.length ? <Select disabled={true} style={{ width: "86%" }} value={el.productLine}>
                                                         <Option value={""} >请选择</Option>
                                                         {
                                                             el.productLineData.map((item) => {
@@ -593,12 +593,12 @@ class SA extends Component {
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    !el.brand ? <Select disabled={true} style={{ width: "100%" }} value={el.productLine}>
+                                                    !el.brand ? <Select disabled={true} style={{ width: "86%" }} value={el.productLine}>
                                                         <Option value={""} >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    el.brand && !el.productLineData.length ? <Select disabled={true} style={{ width: "100%" }} value={el.productLine}>
+                                                    el.brand && !el.productLineData.length ? <Select disabled={true} style={{ width: "86%" }} value={el.productLine}>
                                                         <Option value={""} >请选择</Option>
                                                     </Select> : ""
                                                 }
@@ -606,7 +606,7 @@ class SA extends Component {
                                         </div>
                                         {/* 设备等级 */}
                                         <div className="column" style={{ justifyContent: "center" }}>
-                                            <div className="val" style={{ padding: "10px" }}>
+                                            <div className="val" >
                                                 {
                                                     el.levels.length == 1 && el.levels[0].toString() === "1" ? <span>高端</span> : ""
                                                 }
@@ -615,7 +615,7 @@ class SA extends Component {
                                                 }
                                                 {
                                                     el.levels.length == 2 ?
-                                                        <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel}>
+                                                        <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel}>
                                                             <Option value={""}  >请选择</Option>
                                                             {
                                                                 baseData.productLineLevel.map((item) => {
@@ -626,27 +626,27 @@ class SA extends Component {
                                                         : ""
                                                 }
                                                 {
-                                                    el.brand && !el.productLineData.length ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    el.brand && !el.productLineData.length ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    el.brand && el.productLineData.length && !el.productLine && el.productCategory != 1 ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    el.brand && el.productLineData.length && !el.productLine && el.productCategory != 1 ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    el.productLine && el.levels.length == 0 ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    el.productLine && el.levels.length == 0 ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    !el.brand && el.productCategory != 1 ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    !el.brand && el.productCategory != 1 ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    el.productCategory == 1 ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    el.productCategory == 1 ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
@@ -654,7 +654,7 @@ class SA extends Component {
                                         </div>
                                         {/* 型号 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}><Input disabled={true} value={el.productModel} /></div>
+                                            <div className="val" ><Input style={{ width: "86%" }} disabled={true} value={el.productModel} /></div>
                                         </div>
                                     </div>
                                 }) : ""
@@ -674,7 +674,7 @@ class SA extends Component {
                                     <div className="column">
                                         <div className="val"><span>品牌</span></div>
                                     </div>
-                                    <div className="column">
+                                    <div className="column2">
                                         <div className="val"><span>产品线</span></div>
                                     </div>
                                     <div className="column">
@@ -702,8 +702,8 @@ class SA extends Component {
                                     return <div className="row" key={i}>
                                         {/* 产品类别 */}
                                         <div className="column" style={{ position: "relative" }}>
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <Select disabled={true} style={{ width: "100%" }} value={el.productCategory}>
+                                            <div className="val" >
+                                                <Select disabled={true} style={{ width: "86%" }} value={el.productCategory}>
                                                     <Option value={""} >请选择</Option>
                                                     {
                                                         baseData.productCategoryData.map((item) => {
@@ -715,8 +715,8 @@ class SA extends Component {
                                         </div>
                                         {/* 技术方向 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <Select disabled={true} style={{ width: "100%" }} value={el.productType}>
+                                            <div className="val" >
+                                                <Select disabled={true} style={{ width: "86%" }} value={el.productType}>
                                                     <Option value={""} >请选择</Option>
                                                     {
                                                         baseData.skillType.filter((item) => {
@@ -730,8 +730,8 @@ class SA extends Component {
                                         </div>
                                         {/* 品牌 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <Select disabled={true} style={{ width: "100%" }} value={el.brand}>
+                                            <div className="val" >
+                                                <Select disabled={true} style={{ width: "86%" }} value={el.brand}>
                                                     <Option value={""} >请选择</Option>
                                                     {
                                                         baseData.brand.filter((item) => {
@@ -750,10 +750,10 @@ class SA extends Component {
                                             </div>
                                         </div>
                                         {/* 产品线 */}
-                                        <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}>
+                                        <div className="column2">
+                                            <div className="val" >
                                                 {
-                                                    el.brand && el.productLineData.length ? <Select disabled={true} style={{ width: "100%" }} value={el.productLine}>
+                                                    el.brand && el.productLineData.length ? <Select disabled={true} style={{ width: "86%" }} value={el.productLine}>
                                                         <Option value={""} >请选择</Option>
                                                         {
                                                             el.productLineData.map((item) => {
@@ -763,12 +763,12 @@ class SA extends Component {
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    !el.brand ? <Select disabled={true} style={{ width: "100%" }} value={el.productLine}>
+                                                    !el.brand ? <Select disabled={true} style={{ width: "86%" }} value={el.productLine}>
                                                         <Option value={""} >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    el.brand && !el.productLineData.length ? <Select disabled={true} style={{ width: "100%" }} value={el.productLine}>
+                                                    el.brand && !el.productLineData.length ? <Select disabled={true} style={{ width: "86%" }} value={el.productLine}>
                                                         <Option value={""} >请选择</Option>
                                                     </Select> : ""
                                                 }
@@ -776,7 +776,7 @@ class SA extends Component {
                                         </div>
                                         {/* 设备等级 */}
                                         <div className="column" style={{ justifyContent: "center" }}>
-                                            <div className="val" style={{ padding: "10px" }}>
+                                            <div className="val" >
                                                 {
                                                     el.levels.length == 1 && el.levels[0].toString() === "1" ? <span>高端</span> : ""
                                                 }
@@ -785,7 +785,7 @@ class SA extends Component {
                                                 }
                                                 {
                                                     el.levels.length == 2 ?
-                                                        <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel}>
+                                                        <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel}>
                                                             <Option value={""}  >请选择</Option>
                                                             <Option value={"1"}  >高端</Option>
 
@@ -794,27 +794,27 @@ class SA extends Component {
                                                         : ""
                                                 }
                                                 {
-                                                    el.brand && !el.productLineData.length ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    el.brand && !el.productLineData.length ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    el.brand && el.productLineData.length && !el.productLine && el.productCategory != 1 ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    el.brand && el.productLineData.length && !el.productLine && el.productCategory != 1 ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    el.productLine && el.levels.length == 0 ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    el.productLine && el.levels.length == 0 ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    !el.brand && el.productCategory != 1 ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    !el.brand && el.productCategory != 1 ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
                                                 {
-                                                    el.productCategory == 1 ? <Select disabled={true} style={{ width: "100%" }} value={el.deviceLevel} >
+                                                    el.productCategory == 1 ? <Select disabled={true} style={{ width: "86%" }} value={el.deviceLevel} >
                                                         <Option value={""}  >请选择</Option>
                                                     </Select> : ""
                                                 }
@@ -822,12 +822,12 @@ class SA extends Component {
                                         </div>
                                         {/* 型号 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}><Input disabled={true} value={el.productModel} /></div>
+                                            <div className="val" ><Input style={{ width: "86%" }} disabled={true} value={el.productModel} /></div>
                                         </div>
                                         {/* 状态 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <Select disabled={!isEdit ? true : false} style={{ width: "100%" }} value={el.researchStatus} onSelect={(keys, info) => this.onSelectChange(info, i)}>
+                                            <div className="val" >
+                                                <Select disabled={!isEdit ? true : false} style={{ width: "86%" }} value={el.researchStatus} onSelect={(keys, info) => this.onSelectChange(info, i)}>
                                                     <Option name="researchStatus" value={""} >请选择</Option>
                                                     {
                                                         baseData.researchStatus.map((item) => {
@@ -839,8 +839,8 @@ class SA extends Component {
                                         </div>
                                         {/* 研发程度 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <Select disabled={!isEdit || el.researchStatus == 2 ? true : false} style={{ width: "100%" }} value={el.researchStatus == 2 ? "" : el.researchLevel} onSelect={(keys, info) => this.onSelectChange(info, i)}>
+                                            <div className="val" >
+                                                <Select disabled={!isEdit || el.researchStatus == 2 ? true : false} style={{ width: "86%" }} value={el.researchStatus == 2 ? "" : el.researchLevel} onSelect={(keys, info) => this.onSelectChange(info, i)}>
                                                     <Option name="researchLevel" value={""} >请选择</Option>
                                                     {
                                                         baseData.researchLevel.map((item) => {
@@ -852,15 +852,15 @@ class SA extends Component {
                                         </div>
                                         {/* 研发人员 */}
                                         <div className="column">
-                                            <div className="val" style={{ padding: "10px", lineHeight: "0" }} >
-                                                <div onClick={_ => { isEdit && el.researchStatus != 2 ? this.getUserInfo(i) : "" }}><Input disabled placeholder="" value={el.researchStatus == 2 ? "" : el.researchPerson} addonAfter={isEdit && el.researchStatus != 2 ? <UserOutlined /> : ""} /></div>
+                                            <div className="val"   style={{minHeight:"auto"}}>
+                                                <div onClick={_ => { isEdit && el.researchStatus != 2 ? this.getUserInfo(i) : "" }} style={{display:"flex"}}><Input style={{ flex:"1",margin:"0 6px"}} disabled placeholder="" value={el.researchStatus == 2 ? "" : el.researchPerson} addonAfter={isEdit && el.researchStatus != 2 ? <UserOutlined /> : ""} /></div>
                                             </div>
                                         </div>
                                         {/* 研发时间 */}
                                         <div className="column2">
-                                            {/* <div className="val" style={{ padding: "10px" }}><Input disabled={!isEdit ? true : false} value={el.productModel} /></div> */}
-                                            <div className="val" style={{ padding: "10px" }}>
-                                                <RangePicker disabled={!isEdit || el.researchStatus == 2 ? true : false} style={{ padding: "10px", textAlign: "left" }} value={el.researchStartTime && el.researchEndTime && el.researchStatus != 2 ? [moment(el.researchStartTime, 'YYYY-MM-DD'), moment(el.researchEndTime, 'YYYY-MM-DD')] : ""} onChange={(date, dateStr) => { this.onGetDate(dateStr, i) }} />
+                                            {/* <div className="val" ><Input disabled={!isEdit ? true : false} value={el.productModel} /></div> */}
+                                            <div className="val">
+                                                <RangePicker disabled={!isEdit || el.researchStatus == 2 ? true : false} style={{  textAlign: "left"}} value={el.researchStartTime && el.researchEndTime && el.researchStatus != 2 ? [moment(el.researchStartTime, 'YYYY-MM-DD'), moment(el.researchEndTime, 'YYYY-MM-DD')] : ""} onChange={(date, dateStr) => { this.onGetDate(dateStr, i) }} />
                                             </div>
                                         </div>
                                     </div>

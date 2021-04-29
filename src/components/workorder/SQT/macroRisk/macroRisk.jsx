@@ -544,8 +544,8 @@ class SA extends Component {
                             default:
                                 field = ""
                         }
-                        error = { state: false, field: field }
                         if (field) {
+                            error = { state: false, field: field }
                             throw new Error('End Loop')
                         }
                     }
