@@ -17,7 +17,7 @@ import '@/assets/less/pages/servies.less'
 // 引入主表信息组件
 import ServicesMain from '@/components/workorder/SQT/masterList/ServiceRequire.jsx'
 // 引入 接口
-import { SqtBaseDetail,SqtBase,SqtSave,PostaddAssistant, PostMacroRisk,PostMacroRiskSum,PostaddMicroRisk,PostaddMicroRiskSum} from '/api/serviceMain.js'
+import { SqtBaseDetail,SqtBase,SqtSave,PostaddAssistant, PostMacroRisk,PostMacroRiskSum,PostaddMicroRisk,PostaddMicroRiskSum,PostAppointment} from '/api/serviceMain.js'
 //引入服务区域附表组件
 import  ServiceArea from '@/components/workorder/SQT/serviceArea/serviceArea'
 //引入宏观风险附表组件
@@ -55,8 +55,8 @@ class Sqt extends Component {
                 macroRiskSummary: {post:PostMacroRiskSum,area: '宏观风险汇总'},//宏观风险汇总附表数据 + 验证
                 microRisk: {post:PostaddMicroRisk,area: '微观风险'},//微观风险附表数据 + 验证
                 microRiskSummary: {post:PostaddMicroRiskSum,area: '微观风险汇总'},//微观风险汇总附表数据 + 验证
-                reservationService: {post:PostaddMicroRisk,area: '预约服务'},//预约服务附表数据 + 验证
-                reservationServiceSummary: {post:PostaddMicroRiskSum,area: '预约服务汇总汇总'},//预约服务汇总汇总附表数据 + 验证
+                reservationService: {post:PostAppointment,area: '预约服务'},//预约服务附表数据 + 验证
+                reservationServiceSummary: {post:PostAppointment,area: '预约服务汇总汇总'},//预约服务汇总汇总附表数据 + 验证
             },//附表数据存储
             tabsListF:[],
             swich:true,//主表密钥
