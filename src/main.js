@@ -8,7 +8,6 @@ import moment from 'moment'
 
 import '/assets/less/main.less' //加载全局样式
 
-
 // 推荐在入口文件全局设置 locale
 // import 'moment/locale/zh-cn'
 moment.locale('zh-cn')
@@ -39,7 +38,7 @@ const Login = Load(() => import('/page/login.jsx'))
 const initPassForm = Load(() => import('/page/ChangePassword/initializingPassword.jsx'))
 // 首次登陆重置密码
 const ChangePassForm = Load(() => import('/page/ChangePassword/changePassword.jsx'))
-const RequirePage= Load(() => import('/page/ServiceRequire/require.jsx'))
+
 
 
 //配置路由信息
@@ -53,7 +52,6 @@ const routeConfig = (
 		<Route path = {'login'} component = {Login}/>
 		<Route path = {'initPassForm'} component = {initPassForm}/>
 		<Route path = {'ChangePassForm'} component = {ChangePassForm}/>
-		<Route path = {'RequirePage'} component = {RequirePage}/>
 	</Route>
 )
 
