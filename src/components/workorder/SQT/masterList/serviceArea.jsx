@@ -62,18 +62,19 @@ class EditableCell extends React.Component {
     }
 
     onChange=(e)=>{
+        // console.log(e)
         this.setState({
             value: e.target.value,
           });
     }
 
     renderCell = ({ getFieldDecorator }) => {
+        // console.log(this.props)
         const {
-            editing, dataIndex,initValue, title, Input, record, index, children,radioLock,
+            editing, dataIndex,initValue, title, Input, record, index, children,radioLock,parentedit,node,
             ...restProps
         } = this.props;
-
-
+        // console.log(parentedit,radioLock)
         return (
             <td {...restProps} className='my-cell-td'>
                 {editing ? (
@@ -84,10 +85,10 @@ class EditableCell extends React.Component {
                                     required: true,
                                     message: `请输入 ${title}!`
                                 }],
-                                initialValue: (record[dataIndex])
+                                initialValue: (record[dataIndex].split("/"))
                             })(
                                 // value={this.state.computerRegionValue}
-                                <Cascader options={this.state.computerRegion} onChange={this.handleComputerRegionChange} placeholder="请选择区域" />
+                                <Cascader disabled={parentedit ? false : true} options={this.state.computerRegion} onChange={this.handleComputerRegionChange} placeholder="请选择区域" />
                             )}
                         </Item> : dataIndex == 'isMainDutyArea' ?
                             <Item style={{ margin: 0 }}>
@@ -99,8 +100,8 @@ class EditableCell extends React.Component {
                                     initialValue: (record[dataIndex]).toString()
                                 })(
                                     <Radio.Group >
-                                        <Radio value='1' disabled={radioLock}>是</Radio>
-                                        <Radio value='0'>否</Radio>
+                                        <Radio value='1' disabled={parentedit ? radioLock : true}>是</Radio>
+                                        <Radio value='0' disabled={parentedit ? false : true}>否</Radio>
                                     </Radio.Group>
                                 )}
 
@@ -110,7 +111,7 @@ class EditableCell extends React.Component {
                                     rules: [{ required: true, message: `请输入 ${title}!` }],
                                     initialValue: record[dataIndex],
                                 })(
-                                    <Input />
+                                    <Input disabled={node} />
                                 )}
                             </Item>
                 ) : children
@@ -144,12 +145,30 @@ class serviceArea extends React.Component {
 
     // 数据更新完成时触发的函数
     componentWillMount() {
+        this.initData(this.props.data)
+    }
+    //@author  gl
+    componentWillReceiveProps (nextprops) {
+        if(!this.state.editingKey){
+            this.initData(nextprops.data)
+        }
+	}
+    initData = (data) => {
+        let radioLock = false;//m初始化主责区域密钥
+        data.forEach((item,index) => {
+            if(!radioLock){
+                radioLock =  item.isMainDutyArea == 1 ? true : false;//当已经有一个主责区域了就不再继续循环赋值了
+            }
+            if(!item.key){
+                data[index].key = index+1;
+            }
+        })
         this.setState({
-            data: this.props.data,
-            count: this.props.data.length + 1,
+            data: data,
+            count: data.length + 1,
+            radioLock
         })
     }
-
     // 向父组件传递本页面数据集合
     updataToParent=()=>{
         this.props.onChange(this.state.data)
@@ -200,6 +219,7 @@ class serviceArea extends React.Component {
                 count: count + 1,
                 editingKey: newData.key, //将当前新增的行放置到可编辑状态
                 selectedRowKeys:newSelectKey,   // 将当前新增的行进行选中
+                editLock: false
             });
             
         }else {
@@ -244,28 +264,32 @@ class serviceArea extends React.Component {
     //取消
     cancel = () => {
         var id = this.state.selectedRowKeys[0];
+        const data = [...this.state.data];
         // 判断  若是【新增】的取消功能，则刚刚新增数据删除；若是【修改】的取消功能 则是取消修改
         if (this.state.editLock) {   // 修改
-            const data = [...this.state.data];
+            
             let index = data.findIndex((item) => id === item.key);
             let item = data[index];
             
            
             // 首先通过判断【是否是主责区域】，再去修改area属性(将数组修改为字符串)
-            if (item.isMainDutyArea == '1') {
-                item.area = item.area.join("/") + '<span style="color:red">【主责区域】</span>'
-            }else if (item.isMainDutyArea == '0'){
-                item.area = item.area.join("/");
-            }
-
+            // if (item.isMainDutyArea == '1') {
+            //     item.area = item.area.join("/") + '<span style="color:red">【主责区域】</span>'
+            // }else if (item.isMainDutyArea == '0'){
+            //     item.area = item.area.join("/");
+            // }
+            //item.area = item.area.join("/");
             this.setState({
                 editingKey: '',
+                editLock: false
             })
         }else {  // 新增
-            
+            let newData = data.filter(item => item.key !== id);
             this.setState({ 
-                data: data.filter(item => item.key !== id) ,
+                data: newData ,
                 editingKey: '',
+                count: newData.length + 1,
+                selectedRowKeys:null
             },()=>{
                 this.updataToParent();
             });
@@ -289,8 +313,14 @@ class serviceArea extends React.Component {
                 title: '服务区域',
                 dataIndex: 'area',
                 editable: true,
-                render:(record)=>{
-                   return  <span dangerouslySetInnerHTML={{ __html:record }}></span>
+                render:(record,row)=>{
+                 if(row.isMainDutyArea == 1){
+                    record = record + '<span style="color:red">【主责区域】</span>'
+                    return  <span dangerouslySetInnerHTML={{ __html: record }}></span>
+                 }else{
+                    return  <span dangerouslySetInnerHTML={{ __html: record }}></span>
+                 }
+                   
                 }
             },
             {
@@ -310,22 +340,16 @@ class serviceArea extends React.Component {
 
     // 修改行内表格
     handleEdit=()=>{
+        // console.log(this.state.selectedRowKeys);
         if (this.state.selectedRowKeys) {
-            console.log(this.state.selectedRowKeys)
-            var ID = this.state.selectedRowKeys[0];
-            console.log(ID)
-            // 将当前选中的【服务区域】的value(字符串)换成serviceAreaNew属性的数组形式
-            let newData = [...this.state.data];
-            let index = newData.findIndex((item) => ID === item.key);
-            let item = newData[index];
-            console.log(item)
-            // 将【省市地区】的数据另外存储在serviceAreaNew数组变量中
-            item.area = item.serviceAreaNew;
+            // console.log(this.state.selectedRowKeys)
+             var ID = this.state.selectedRowKeys[0];
 
             this.setState({
                 editingKey: ID,
                 editLock:true,
-                
+            },()=>{
+                // console.log(this.state)
             })
         }else {
             message.warning('请先选择一行服务区域数据！')
@@ -345,7 +369,8 @@ class serviceArea extends React.Component {
                 onOk() {
                     var ID = _this.state.selectedRowKeys[0]
                     const dataSource = [..._this.state.data];
-                    _this.setState({ data: dataSource.filter(item => item.key !== ID) },()=>{
+                    _this.setState({ data: dataSource.filter(item => item.key !== ID), editingKey: '',selectedRowKeys:null },()=>{
+                        // console.log(_this.state)
                         _this.updataToParent();
                     });
                 },
@@ -374,30 +399,25 @@ class serviceArea extends React.Component {
 
             let index = newData.findIndex((item) => id === item.key);
             let item = newData[index];
+            let {radioLock} = this.state;
 
             // 将【省市地区】的数据另外存储在serviceAreaNew数组变量中
-            item.serviceAreaNew = params.area;
+            //item.serviceAreaNew = params.area;
 
-            // 判断当前选中的区域是否为主责区域
-            if (params.isMainDutyArea == 0) {  //否
-                params.area = params.area.join("/");
-                this.setState({
-                    radioLock:false
-                })
-            }else if(params.isMainDutyArea == 1){  //是
-                // params.area = params.area.join("/")+ '【主责区域】'
-                params.area = params.area.join("/") + '<span style="color:red">【主责区域】</span>'
-                this.setState({
-                    radioLock:true
-                })
-            }
-
+            // 判断当前选中的区域是否为主责区域,前提是当前数据里没有主责区域选项
+            // if(!this.state.radioLock && params.isMainDutyArea == 1){
+            //         params.area = params.area.join("/") + '<span style="color:red">【主责区域】</span>';
+            // }else{
+            //     params.area = params.area.join("/");
+            // }
+            
+             params.area = params.area.join("/");
             // 修改数据，进行赋值
             newData.splice(index, 1, {
                 ...item,
                 ...params
             });
-            
+            // console.log(this.state.radioLock,item,params,newData)
             this.setState({ data: newData, editingKey: '',selectedRowKeys:null},()=>{
                 this.updataToParent();
             });
@@ -408,9 +428,9 @@ class serviceArea extends React.Component {
 
     // 单选框按钮---选中事件
     selectChangeArea = (selectedRowKeys, selectedRows) => {
-        console.log('selectedRowKeys changed: ',selectedRowKeys, selectedRows);
+        // console.log('selectedRowKeys changed: ',selectedRowKeys, selectedRows);
         this.setState({ 
-            selectedRowKeys:selectedRowKeys
+            selectedRowKeys:selectedRowKeys,
         });
     }
     // 选中行时就选中单选框按钮
@@ -425,18 +445,32 @@ class serviceArea extends React.Component {
             }
         }
     }
-
+    //处理是否可编辑权限
+    setJurisdiction = (isEdit,formRead,node,special) => {
+        if(formRead != 2){
+            if( node != 3 && node != special){
+                return isEdit
+            }else{
+                return false;
+            }
+        }else{
+            return true;
+        }
+    }
 
     render() {
         this.init()
+        let { isEdit,formRead,node} = this.props;
         const components = {
             body: {
                 cell: EditableCell,
             },
         };
-
         const columns = this.columns.map(col => {
 
+            if (this.setJurisdiction(isEdit,formRead,node)) {
+                return col;
+            }
             if (!col.editable) {
                 return col;
             }
@@ -448,23 +482,26 @@ class serviceArea extends React.Component {
                     dataIndex: col.dataIndex,
                     title: col.title,
                     editing: this.isEditing(record),
-                    radioLock:this.state.radioLock
+                    radioLock:this.state.radioLock,
+                    node: this.setJurisdiction(isEdit,formRead,node),
+                    parentedit: isEdit ? 0 : 1
                 }),
             };
         });
-
         const rowSelectionArea = {
             selectedRowKeys:this.state.selectedRowKeys,
             onChange: this.selectChangeArea,
             type:'radio'
         };
-
-        
         return (
             <div>
-                <Row gutter={24} style={{textAlign:'right'}}>
-                    <Button style={{marginRight: '10px'}} onClick={this.handlerDelete}>删除</Button>
-                    <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button>
+                <Row gutter={24} style={{textAlign:'right',visibility:  this.setJurisdiction(isEdit,formRead,node) ? 'hidden' : 'visible'}}>
+                    <Button style={{marginRight: '10px'}} onClick={this.handlerDelete} disabled={isEdit ? true : false}>删除</Button>
+                    {
+                        !this.state.editingKey ? <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button> : (
+                            <Button style={{marginRight: '10px'}} disabled>取消</Button>
+                        )
+                    }
                     {
                         this.state.editingKey ? <Button style={{marginRight: '10px'}} onClick={this.cancel}>取消</Button> : (
                             <Button style={{marginRight: '10px'}} disabled>取消</Button>
@@ -478,7 +515,7 @@ class serviceArea extends React.Component {
 
                     {
                         this.state.editingKey ? <Button type="primary" style={{marginRight: '10px'}} disabled>新增</Button> : (
-                            <Button type="primary" style={{marginRight: '10px'}} onClick={this.handleAdd}>新增</Button>
+                            <Button type="primary" style={{marginRight: '10px'}} disabled={isEdit ? true : false} onClick={this.handleAdd}>新增</Button>
                         )
                     }
                 </Row>
@@ -490,7 +527,7 @@ class serviceArea extends React.Component {
                         components={components}   //覆盖默认的 table 元素
                         bordered
                         rowKey={'key'}
-                        rowSelection={rowSelectionArea}  
+                        rowSelection={this.setJurisdiction(isEdit,formRead,node) ? null : rowSelectionArea}  
                         dataSource={this.state.data}
                         columns={columns}
                         scroll={this.props.scroll}

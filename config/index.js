@@ -22,7 +22,10 @@ var buildconfig = {
 }
 
 var target = {target: 'http://172.16.100.81/api/dat'}
+// var target = {target: 'http://10.0.17.214:8111'}
 // var target = {target: 'http://10.0.11.109:8111'}
+// var target = {target: 'http://10.0.16.132:8111'}
+
 
 module.exports = {
   build: buildconfig,
@@ -73,6 +76,12 @@ module.exports = {
       '/assessProable':target,     // 工程师自评估新增专业技能
       '/assess':target,     // 工程师自评专业数据查询
       '/basedata':target,     // 工程师自评基础数据查询
+      '/sql':target,     // 工作流认领接口
+      '/microRisk':target,     // 微观风险接口
+      '/microRiskSum':target,     // 微观风险汇总接口
+      '/biSqtMacroRiskSum':target,     // 宏观风险汇总查询
+      '/biSqtMacroResourceSum':target,     // 宏观风险汇总提交
+      '/biSqtMacroRisk':target,     // 宏观风险
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

@@ -46,6 +46,7 @@ const routeConfig = (
 	<Route path = {'/'} component = {Page}>
 		<IndexRedirect to="/home/container"/>
 		<Route path = {'home'} component = {Home}>
+			<IndexRedirect to="/home/container"/>
 			<Route path = {'container'} component = {Container} />
 		</Route>
 		<Route path = {'login'} component = {Login}/>

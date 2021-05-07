@@ -9,7 +9,7 @@ import '@/assets/less/pages/workorder.less'
 import {comObj} from "@/utils/workorder";
 
 //引入接口
-import { getOperation,getBackTask ,getTransfer,getEndorse,getUnpass,getSubmit,getProcessImg,getDeleteAttachment,getRetrieve,getFinish,getReview} from '/api/workspace'
+import { getOperation,getBackTask ,getTransfer,getEndorse,getUnpass,getSubmit,getProcessImg,getDeleteAttachment,getRetrieve,getFinish,getReview,getClaim} from '/api/workspace'
 
 const { TextArea } = Input;
 const { Dragger } = Upload;
@@ -63,7 +63,7 @@ class workOrer extends Component {
     init = async () => {
         let {workControl,fileList,formControl,businessKey,formKey,listData,ticketId} = this.state;
         let data = await getOperation({procInstId: this.props.params.dataType.record.procInstId,taskId:this.props.params.dataType.record.taskId}) //调用接口获取页面初始化必须数据
-       console.log(data)
+    //    console.log(data)
 
         if(data.success != 1) {
              message.error(data.message);
@@ -91,7 +91,7 @@ class workOrer extends Component {
         //获取token值，为后续上传附件设置请求头使用
 
        this.setState({workControl,header,actionUrl,fileList,formControl,listData,businessKey,spinning:false,ticketId},()=>{  //重置状态数据
-            console.log(this.state)
+            // console.log(this.state)
        })
     }
     //刷新工单列表数据
@@ -153,7 +153,9 @@ class workOrer extends Component {
             upload: 1, //附件上传区是否可操作0，不显示，1可上传删除，2仅显示不可上传删除
             circulation: 1,//流转记录
             formRead: 1,   //表单权限
-            opinionWarn: 0, //处理意见填写不正确提示显示否
+            opinionWarn: 0, //处理意见填写不正确提示显示否,
+            claim: 0, //"认领"
+            claimName: '认领'
         },
         formControl:{},  //工单内容操作权限
         fileList: [    //已伤上传附件信息数据
@@ -217,7 +219,7 @@ class workOrer extends Component {
     }
     //绑定工单子组件
     bindRef = (ref)=>{
-      console.log(ref)
+    //   console.log(ref)
       this.child = ref;
     }
     //点击展开右侧处理意见区域
@@ -227,14 +229,14 @@ class workOrer extends Component {
      
     //处理意见区内容绑定
     areaChange=(e)=>{
-        console.log(e.target.value)
+        // console.log(e.target.value)
         let {opinion} = this.state;
         opinion = e.target.value;
         this.setState({opinion});
     }
     //文件上传
     upload = (info) => {
-        console.log(info)
+        // console.log(info)
         let fileList = [...info.fileList];
 
         // 1. 限制上载文件的数量
@@ -256,11 +258,11 @@ class workOrer extends Component {
         this.setState({ fileList: fileList.reverse()});
     }
     reMove = async (file) => {
-        console.log(file)
+        // console.log(file)
         if(file.status == 'error') return true;
         let param = {attachId:file.uid}
         let data = await getDeleteAttachment(param);
-        console.log(data)
+        // console.log(data)
         if(data.success == 1){
             return true
         }else if (data.success == 0){
@@ -282,7 +284,7 @@ class workOrer extends Component {
     resetFn = () => {
         const {businessKey,formKey,workControl,formControl,swit,spinning,listData,actionUrl,header} = this.state;
         this.setState({...this.stateReset,formKey,businessKey,workControl,formControl,swit,spinning,listData,actionUrl,header},()=>{
-            console.log(this.state)
+            // console.log(this.state)
         })
     }
     //点击关闭弹出框
@@ -300,7 +302,7 @@ class workOrer extends Component {
         let selecteds = [],img = '',modalWidth = 700;
         if(identification == 3){ //判断点击为驳回按钮时获取历史流程节点数据
             let data = await getBackTask({taskId: this.props.params.dataType.record.taskId})
-            console.log(data)
+            // console.log(data)
             selecteds = data.data;
         }else if(identification == 4){ //获取流程图
             //  let data = {key: this.props.params.type,data:{key:'100000',title:"我是更新后的标签",url:this.props.params.pathParam}};
@@ -350,11 +352,11 @@ class workOrer extends Component {
     
     //弹出框选择器改变操作
     handleChange = (selected,num) => {
-        console.log('onChange ', selected);
+        // console.log('onChange ', selected);
         const {modal} = this.state;
         num == 3 ? modal.selected = selected : modal.selectedItems = selected;
         this.setState({modal:{...modal}},()=>{
-            console.log(this.state.modal)
+            // console.log(this.state.modal)
         });
     }
     //打开工程师选择器
@@ -367,18 +369,18 @@ class workOrer extends Component {
         let explain = e.target.value;
         const {modal} = this.state;
         this.setState({modal:{...modal,explain}},()=>{
-            console.log(this.state.modal)
+            // console.log(this.state.modal)
         });
     } 
     //工程师选择保存
     postSave = (resultID,result) => {
-        console.log(resultID,result)
+        // console.log(resultID,result)
         const {modal,engineer} = this.state;
         let selectedItems = result.map((item,index)=>{
             return {key:item.id,label:item.realName}
         })
         this.setState({modal:{...modal,selectedItems},engineer:{...engineer, modalVisible:false}},()=>{
-            console.log(this.state.modal)
+            // console.log(this.state.modal)
         });
     }
     //工程师选择器关闭方法
@@ -431,6 +433,13 @@ class workOrer extends Component {
             userId
         }
     }
+    //认领按钮事件
+    claim = () => {
+        let upData = this.processing()
+        getClaim(upData).then(res => {
+            this.resetState(res);
+        })
+    }
     render = () => {
         const { swit,workControl,listData,businessKey,formKey,spinning,ticketId} = this.state;
         const orderCompont = businessKey;
@@ -438,6 +447,8 @@ class workOrer extends Component {
         let style = swit ? {height:'100%',paddingBottom:5} : {width:10,flex:'auto',height:'100%',paddingBottom:5},
         modalStyle = this.state.modal.identification == 4 ? {height: 500,overflowX:'auto' }:{height: 'auto'},
         params = {formRead:this.state.workControl.formRead,id: ticketId,formControl:this.state.formControl,sign:1};
+        //params = {formRead:2,id: ticketId,formControl:this.state.formControl,sign:1};
+        // console.log(params)
         return (
             <div className='work_order' style={{height: '100%',display:'flex',flexDirection:'column'}}>
                 <Spin spinning={spinning} size="large">
@@ -477,6 +488,10 @@ class workOrer extends Component {
                             {workControl.engReview ?<Button type="primary" style={{marginRight:8}} onClick={()=>this.openModal('提交',5)}>
                                 <MyIcon type="iconshenpi" />
                                 <span>提交复评</span>
+                            </Button>: null}
+                            {workControl.claim ?<Button type="primary" style={{marginRight:8}} onClick={()=>this.claim()}>
+                                <MyIcon type="iconshenpi" />
+                                <span>认领</span>
                             </Button>: null}
                             {workControl.engFinish ?<Button type="primary" style={{marginRight:8}} onClick={this.gameOver}>
                                 结束

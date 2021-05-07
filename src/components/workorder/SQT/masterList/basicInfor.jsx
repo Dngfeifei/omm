@@ -24,26 +24,26 @@ import '/assets/less/pages/servies.less'
 import { serviceWorkOrder , } from '/api/serviceMain.js'
 // 引入--数据字典统一接口
 import {customerLevel } from '/api/customerInfor'
-
+//引入字段必填样式
+import '@/assets/less/pages/pane.less'
 
 
 
 class basicInfor extends Component {
     constructor(props) {
         super(props)
-
         this.state = {
             // 系统账号人员
             username: '',
             // 描述列表数据
             descList: [{
                 label: '记录单号',
-                key: 'workOrder',
-                render: _ => this.state.basicInfor.workOrder
+                key: 'orderNum',
+                render: _ => this.state.basicInfor.orderNum
             }, {
                 label: '公司名称',
                 key: 'companyName',
-                render: _ => <Input value={this.state.basicInfor.companyName} onChange={({ target: { value } })=>this.handleChange('companyName',value)} placeholder='根据项目号进行带入'  />
+                render: (isEdit,formRead,node,disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.companyName} onChange={({ target: { value } })=>this.handleChange('companyName',value)} placeholder='根据项目号进行带入'  />
             }, {
                 label: '填写时间',
                 key: 'writeTime',
@@ -56,45 +56,52 @@ class basicInfor extends Component {
             }, {
                 label: '填写部门',
                 key: 'writeDept',
-                render: _ => <Input value={this.state.basicInfor.writeDept} onChange={({ target: { value } })=>this.handleChange('writeDept',value)} />
+                render: (isEdit,formRead,node,disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.writeDept} onChange={({ target: { value } })=>this.handleChange('writeDept',value)} />
             }, {
                 label: '项目类别',
                 key: 'projectType',
-                render: _ =>  <Select style={{width: '100%' }} placeholder="请选择项目类别" allowClear={true} value={this.state.basicInfor.projectType} onChange={(value)=>this.handleChange('projectType',value)}>
+                render: (isEdit,formRead,node,disaBled) =>  <Select style={{width: '100%' }} disabled={disaBled ? true : false} placeholder="请选择项目类别" allowClear={true} value={this.state.basicInfor.projectType+''} onChange={(value)=>this.handleChange('projectType',value)}>
                     {
                         this.state.projectTypeArray.map((items, index) => {
-                            return (<Option key={index} value={items.itemCode} disabled={this.state.basicInfor.projectType?true:false}>{items.itemValue}</Option>)
+                            return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
                         })
                     }
                 </Select>
             }, {
                 label: '项目号',
                 key: 'projectNumber',
-                render: _ => <span>{this.state.basicInfor.projectNumber}<Icon type="appstore" className="dateIcon" onClick={this.showProjectDailg} /></span>
+                render: (isEdit,formRead,node,disaBled) => disaBled ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.projectNumber}</div> : <span>{this.state.basicInfor.projectNumber}<Icon type="appstore" className="dateIcon" onClick={this.showProjectDailg} /></span>
             }, {
                 label: '项目名称',
                 key: 'projectName',
-                render: _ => <Input value={this.state.basicInfor.projectName} onChange={({ target: { value } })=>this.handleChange('projectName',value)} placeholder='根据项目号进行带入'/>,
+                render: (isEdit,formRead,node,disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.projectName} onChange={({ target: { value } })=>this.handleChange('projectName',value)} placeholder='根据项目号进行带入'/>,
             }, {
                 label: '服务类别',
                 key: 'serviceTypeName',
-                render: _ => <Input value={this.state.basicInfor.serviceTypeName} onChange={({ target: { value } })=>this.handleChange('serviceTypeName',value)} placeholder='根据项目号进行带入' />
+                render: (isEdit,formRead,node,disaBled) => <Select disabled={true}  placeholder='根据项目号进行带入' style={{width: '100%' }} placeholder="请选择" allowClear={true} value={this.state.basicInfor.serviceType+''} onChange={(value)=>this.handleChange('serviceType',value)}>
+                {
+                    this.state.ServiceTypeArray.map((items, index) => {
+                        return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
+                    })
+                }
+            </Select>
+                // render: isEdit => <Input disabled={isEdit ? true : false} value={this.state.basicInfor.serviceTypeName} onChange={({ target: { value } })=>this.handleChange('serviceTypeName',value)} placeholder='根据项目号进行带入' />
             }, {
                 label: '客户编码',
                 key: 'custNum',
-                render: _ => <Input value={this.state.basicInfor.custNum} onChange={({ target: { value } })=>this.handleChange('custNum',value)} placeholder='根据项目号进行带入' />,
+                render: (isEdit,formRead,node,disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.custNum} onChange={({ target: { value } })=>this.handleChange('custNum',value)} placeholder='根据项目号进行带入' />,
             }, {
                 label: '客户名称',
                 key: 'custName',
-                render: _ => <Input value={this.state.basicInfor.custName} onChange={({ target: { value } })=>this.handleChange('custName',value)} placeholder='根据项目号进行带入' />,
+                render: (isEdit,formRead,node,disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.custName} onChange={({ target: { value } })=>this.handleChange('custName',value)} placeholder='根据项目号进行带入' />,
             }, {
                 label: '所属行业',
                 key: 'industry',
-                render: _ => <Input value={this.state.basicInfor.industry} onChange={({ target: { value } })=>this.handleChange('industry',value)} placeholder='根据项目号进行带入' />,
+                render: (isEdit,formRead,node,disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.industry} onChange={({ target: { value } })=>this.handleChange('industry',value)} placeholder='根据项目号进行带入' />,
             }, {
                 label: '客户级别',
                 key: 'custLevel',
-                render: _ => <Select style={{width: '100%' }} placeholder="请选择客户级别" allowClear={true} value={this.state.basicInfor.custLevel} onChange={(value)=>this.handleChange('custLevel',value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select disabled={disaBled ? true : false} style={{width: '100%' }} placeholder="请选择客户级别" allowClear={true} value={this.state.basicInfor.custLevel} onChange={(value)=>this.handleChange('custLevel',value)}>
                 {
                     this.state.rankArray.map((items, index) => {
                         return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
@@ -104,16 +111,16 @@ class basicInfor extends Component {
             }, {
                 label: '项目销售',
                 key: 'salesmanName',
-                render: _ => <span>{this.state.basicInfor.salesmanName}<Icon type="user" className="dateIcon" onClick={()=>this.showUser('项目销售')} /></span>
+                render: (isEdit,formRead,node,disaBled) => disaBled ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.salesmanName}</div> : <span>{this.state.basicInfor.salesmanName}<Icon type="user" className="dateIcon" onClick={()=>this.showUser('项目销售')} /></span>
                 
             }, {
                 label: '销售联系方式',
                 key:'salesmanPhone',
-                render: _ => <Input value={this.state.basicInfor.salesmanPhone} onChange={({ target: { value } })=>this.handleChange('salesmanPhone',value)} placeholder='根据项目销售进行带入' />
+                render: (isEdit,formRead,node,disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.salesmanPhone} onChange={({ target: { value } })=>this.handleChange('salesmanPhone',value)} placeholder='根据项目销售进行带入' />
             }, {
                 label: '项目经理类型',
                 key:'managerType',
-                render: _ => <Select style={{ width: '100%' }} placeholder="请选择项目经理类型" allowClear={true} value={this.state.basicInfor.managerType} onChange={(value) => this.handleChange('managerType', value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择项目经理类型" allowClear={true} value={this.state.basicInfor.managerType} onChange={(value) => this.handleChange('managerType', value)}>
                         {
                             this.state.managerTypeList.map((items, index) => {
                                 return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
@@ -123,69 +130,68 @@ class basicInfor extends Component {
             },{
                 label: '项目经理',
                 key: 'managerName',
-                render: _ => this.state.basicInfor.managerType == '1' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div>
+                render: (isEdit,formRead,node,disaBled) => this.setJurisdiction(isEdit,formRead,node,2) ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.managerName}</div> : this.state.basicInfor.managerType == '1' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px',color:'#c4c4c4',display:'flex',justifyContent:'start',alignItems:'center',padding:'8px 16px'}}>{this.state.basicInfor.managerName}</div>
                 : <span>{this.state.basicInfor.managerName}<Icon type="user" className="dateIcon" onClick={()=>this.showUserManager('项目经理')} /></span>
                 
             }, {
                 label: '项目经理联系方式',
                 key: 'managerPhone',
-                render: _ =>  this.state.basicInfor.managerType == '1' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div>
-                :<Input value={this.state.basicInfor.managerPhone} onChange={({ target: { value } })=>this.handleChange('managerPhone',value)} placeholder='根据项目经理所选进行带入' />
+                render: (isEdit,formRead,node,disaBled) => {
+                    // let a = this.props.node != 2 ? disaBled ? true : this.state.basicInfor.managerType == '1' ? false : true : false;
+                    return <Input disabled={ this.setJurisdiction(isEdit,formRead,node,2) ? true : this.state.basicInfor.managerType == '1' ? true : false } value={this.state.basicInfor.managerPhone} onChange={({ target: { value } })=>this.handleChange('managerPhone',value)} placeholder='根据项目经理所选进行带入' />}
                
             }, {
                 label: '项目开始日期',
                 key: 'startDate',
                 span: 2,
                 //  this.state.basicInfor.startDate ? this.state.basicInfor.startDate : 
-                render: _ =><DatePicker style={{ width: '100%' }} value={this.state.basicInfor.startDate?moment(this.state.basicInfor.startDate, dateFormat):null} format={dateFormat} onChange={(date, dateString)=>this.timeChange('startDate',date, dateString)} />
+                render: (isEdit,formRead,node,disaBled) =><DatePicker disabled={disaBled ? true : false} style={{ width: '100%' }} value={this.state.basicInfor.startDate?moment(this.state.basicInfor.startDate, dateFormat):null} format={dateFormat} onChange={(date, dateString)=>this.timeChange('startDate',date, dateString)} />
             }, {
                 label: '项目结束日期',
                 key: 'endDate',
-                span: 2,
                 //  this.state.basicInfor.endDate ? this.state.basicInfor.endDate : 
-                render: _ => <DatePicker style={{ width: '100%' }} value={this.state.basicInfor.endDate?moment(this.state.basicInfor.endDate, dateFormat):null} format={dateFormat} onChange={(date, dateString)=>this.timeChange('endDate',date, dateString)} />
+                render: (isEdit,formRead,node,disaBled) => <DatePicker disabled={disaBled ? true : false} style={{ width: '100%' }} value={this.state.basicInfor.endDate?moment(this.state.basicInfor.endDate, dateFormat):null} format={dateFormat} onChange={(date, dateString)=>this.timeChange('endDate',date, dateString)} />
             }, {
                 label: '是否续签项目',
                 key: 'isRenewal',
-                render: _ => <Select style={{ width: '100%' }} placeholder="请选择是否续签项目" allowClear={true} value={this.state.basicInfor.isRenewal} onChange={(value)=>this.handleChange('isRenewal',value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select style={{ width: '100%' }} disabled={disaBled ? true : false} placeholder="请选择是否续签项目" allowClear={true} value={this.state.basicInfor.isRenewal+''} onChange={(value)=>this.handleChange('isRenewal',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>
             }, {
                 label: '续签项目号',
                 key: 'renewalNumber',
-                render: _ => this.state.basicInfor.isRenewal== '0' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div> : <Input value={this.state.basicInfor.renewalNumber} onChange={({ target: { value } })=>this.handleChange('renewalNumber',value)} />
+                render: (isEdit,formRead,node,disaBled) => this.state.basicInfor.isRenewal== '0' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div> : <Input disabled={isEdit ? true : false} value={this.state.basicInfor.renewalNumber} onChange={({ target: { value } })=>this.handleChange('renewalNumber',value)} />
             }, {
                 label: '续签项目名称',
                 key: 'renewalName',
-                render: _ => this.state.basicInfor.isRenewal== '0' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div> : <Input value={this.state.basicInfor.renewalName} onChange={({ target: { value } })=>this.handleChange('renewalName',value)} />
+                render: (isEdit,formRead,node,disaBled) => this.state.basicInfor.isRenewal== '0' ? <div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div> : <Input disabled={isEdit ? true : false} value={this.state.basicInfor.renewalName} onChange={({ target: { value } })=>this.handleChange('renewalName',value)} />
             }, {
                 label: '是否转包项目',
                 key: 'isSubcontract',
                 span: 2,
-                render: _ => <Select style={{ width: '100%' }} placeholder="请选择是否转包项目" allowClear={true} value={this.state.basicInfor.isSubcontract} onChange={(value)=>this.handleChange('isSubcontract',value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否转包项目" allowClear={true} value={this.state.basicInfor.isSubcontract+''} onChange={(value)=>this.handleChange('isSubcontract',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>
             }, {
                 label: '最终客户名称',
                 key: 'finalCustName',
-                span: 2,
-                render: _ => this.state.basicInfor.isSubcontract=='0'?<div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div>:<Input value={this.state.basicInfor.finalCustName} onChange={({ target: { value } })=>this.handleChange('finalCustName',value)} />
+                render: (isEdit,formRead,node,disaBled) => this.state.basicInfor.isSubcontract=='0'?<div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div>:<Input disabled={isEdit ? true : false} value={this.state.basicInfor.finalCustName} onChange={({ target: { value } })=>this.handleChange('finalCustName',value)} />
             }, {
                 label: '是否有团建负责',
                 key: 'isLeagueBuild',
                 span: 2,
-                render: _ => <Select style={{ width: '100%' }} placeholder="请选择是否有团建负责" allowClear={true} value={this.state.basicInfor.isLeagueBuild} onChange={(value)=>this.handleChange('isLeagueBuild',value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否有团建负责" allowClear={true} value={this.state.basicInfor.isLeagueBuild+''} onChange={(value)=>this.handleChange('isLeagueBuild',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>
             }, {
                 label: '团建负责人',
                 key: 'leagueBuildName',
-                span: 2,
-                render: _ => this.state.basicInfor.isLeagueBuild=='0'?<div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div>:<Input value={this.state.basicInfor.leagueBuildName} onChange={({ target: { value } })=>this.handleChange('leagueBuildName',value)} />
-            }],
+                render: (isEdit,formRead,node,disaBled) => this.state.basicInfor.isLeagueBuild=='0'?<div style={{position:'absolute',backgroundColor: '#fafafa',cursor:' no-drop',top:'0',left:'0',width:'100%',height:'48px'}}></div>:<Input disabled={isEdit ? true : false} value={this.state.basicInfor.leagueBuildName} onChange={({ target: { value } })=>this.handleChange('leagueBuildName',value)} />
+            }
+        ],
 
 
             /*********************     项目选择器 projectSelector.jsx组件     ********************** */
@@ -202,6 +208,8 @@ class basicInfor extends Component {
 
             // 项目类别--数据集合
             projectTypeArray:[],
+            // 服务类别--数据集合
+            ServiceTypeArray:[],
             // 客户级别--数据集合
             rankArray:[],
             // 项目经理类型--数据集合
@@ -210,7 +218,7 @@ class basicInfor extends Component {
             userSelector:'',
             // 所有数据集合
             basicInfor:null,
-
+            backBasicInfor:null,
             // 子组件选择器选中的数据集合
             info:null,
             
@@ -220,13 +228,12 @@ class basicInfor extends Component {
     componentWillMount() {
         // 这里判断父组件传过来的【isSelfCreation】属性。
         var isSelfCreation = this.props.isSelfCreation;
-        
         this.setState({
-            basicInfor: this.props.data,
+            basicInfor: {...this.props.data},
+            backBasicInfor: {...this.props.data},
         }, () => {
-           
             // 判断 如果是从【自行创建服务计划表】的情况下，则将填写人、填写人ID、填写时间 归于：当前系统账号人员、当前的系统日期时间；若不是【自行创建服务计划表】的情况下，则按照数据进行填写
-            if (isSelfCreation) {
+            if (!isSelfCreation) {
                 let name = 'realName', id = 'userid';
                 if (process.env.NODE_ENV == 'production') {
                     name = `${process.env.ENV_NAME}_realName`
@@ -235,15 +242,24 @@ class basicInfor extends Component {
                 
                 let userName = localStorage.getItem(name)
                 let userId = localStorage.getItem(id)
-                let data = Object.assign({}, this.state.basicInfor, { writeUserName: userName,writeTime:moment().format('YYYY-MM-DD HH:mm:ss')})
+                // let data = Object.assign({}, this.state.basicInfor)
 
-                // 在对象数据集合中新增【填写人ID-writeUserId】
-                data['writeUserId'] = userId;
-                
-                this.setState({ basicInfor: data },()=>{
-                   
-                    // 将修改的数据传递到父组件
-                    this.props.onChangeInfo(this.state.basicInfor)
+                // // 在对象数据集合中新增【填写人ID-writeUserId】
+                // data['writeUserId'] = userId;
+                serviceWorkOrder().then(res => {
+                    if (res.success == 1) {
+                        let {backBasicInfor} = this.state
+                        let data = Object.assign({},this.state.basicInfor, { orderNum:res.data},{writeUserId:userId, writeUserName: userName,writeTime:moment().format('YYYY-MM-DD HH:mm:ss')});
+                        this.setState({
+                            basicInfor:data,
+                            backBasicInfor:{...backBasicInfor,...data}
+                        },()=>{
+                            // 将修改的数据传递到父组件
+                            this.props.onChangeInfo(this.state.basicInfor)
+                        })
+                    } else if (res.success == 0) {
+                        message.error(res.message)
+                    }
                 })
 
             }
@@ -254,14 +270,33 @@ class basicInfor extends Component {
 
        
     }
-    
+     //@author  gl
+     componentWillReceiveProps (nextprops) {
+        //  console.log(this.state.basicInfor.orderNum == nextprops.orderNum)
+        let {basicInfor,backBasicInfor} = this.state;
+        // console.log(basicInfor,backBasicInfor,JSON.stringify(basicInfor) == JSON.stringify(nextprops.data))
+        if(JSON.stringify(basicInfor) == JSON.stringify(nextprops.data)) return;
+		this.setState({
+            basicInfor:{...nextprops.data},
+            backBasicInfor:{...nextprops.data}
+        })
+	}
     // 挂载完成
     componentDidMount = () => {
         this.init();
-
-
     }
-
+    //处理是否可编辑权限
+    setJurisdiction = (isEdit,formRead,node,special) => {
+        if(formRead != 2){
+            if( node != 3 && node != special){
+                return isEdit
+            }else{
+                return false;
+            }
+        }else{
+            return true;
+        }
+    }
     // 初始化接口
     init = () => {
         // 客户级别--数据
@@ -295,15 +330,11 @@ class basicInfor extends Component {
                 message.error(res.message)
             }
         })
-
-        serviceWorkOrder().then(res => {
+        // 项目类别--数据  
+        customerLevel({ dictCode: 'serviceType' }).then(res => {
             if (res.success == 1) {
-                let data = Object.assign({}, this.state.basicInfor, { workOrder:res.data});
                 this.setState({
-                    basicInfor:data
-                },()=>{
-                    // 将修改的数据传递到父组件
-                    this.props.onChangeInfo(this.state.basicInfor)
+                    ServiceTypeArray: res.data
                 })
             } else if (res.success == 0) {
                 message.error(res.message)
@@ -343,8 +374,9 @@ class basicInfor extends Component {
 
         // 判断是否是【手机号验证】
         if (element == 'salesmanPhone' ||　element == 'managerPhone') {
+            // console.log(value,basicInfor)
             var regex = /^1(3|4|5|6|7|8|9)\d{9}$/;
-            if (value) {
+            // if (value) {
                 //react使用正则表达式变量的test方法进行校验，若是填写不正确就不将数据返回给父组件；否则 反之
                 if (!regex.test(value)) {
                     message.error('请输入正确的手机号码！');
@@ -362,7 +394,7 @@ class basicInfor extends Component {
                     })
                 }
                 
-            }    
+            // }    
         }else {
             this.setState({
                 basicInfor:data
@@ -394,6 +426,10 @@ class basicInfor extends Component {
 
     // 点击【项目号】旁边的icon，就弹出【项目选择器】对话框
     showProjectDailg=()=>{
+        const {isEdit,formRead,node} = this.props;
+        if(this.setJurisdiction(isEdit,formRead,node)){
+            return false;
+        }
         this.setState({
             visibleModule:true
         })
@@ -406,10 +442,10 @@ class basicInfor extends Component {
     }
     // 【项目选择器】点击确认之后，将对应的数据带入到基本信息中
     handleOk=(info)=>{
-        let newBasicInfor = this.setInfo(info,this.state.basicInfor);
+        // // let newBasicInfor = this.setInfo(info,this.state.basicInfor);
+        let newBasicInfor = this.setInfo(info,this.state.backBasicInfor);//重置项目号之后所有值跟着重置 @gl 
         // 新增一项【项目id--projectId】
         newBasicInfor['projectId'] = info.id;
-        
         this.setState({
             basicInfor:newBasicInfor
         },()=>{
@@ -475,11 +511,18 @@ class basicInfor extends Component {
         
     }
 
-    
+    //处理个lable显示是否必填
+    setRequired = (node,key) => {
+        if(!node){
+            return <span>{key}<span className='required'></span></span>
+        }
+        return <span>{key}</span>
+    }
     
     render = _ => {
         const { getFieldDecorator } = this.props.form;
-
+        const { isEdit,formRead,node } = this.props;
+        const disaBled = this.setJurisdiction(isEdit,formRead,node);
         return (
             <div className="BasicInfor">
                 {/* 基本信息--区域 */}
@@ -487,8 +530,8 @@ class basicInfor extends Component {
                     {
                         this.state.descList.map((item, index) => {
                             return (
-                                <Descriptions.Item label={item.label} span={item.span} key={index}>
-                                    {item.render()}
+                                <Descriptions.Item label={this.setRequired(disaBled,item.label)} span={item.span ? item.span : 1} key={index}>
+                                    {item.render(isEdit,formRead,node,disaBled)}
                                 </Descriptions.Item>
                             )
                         })

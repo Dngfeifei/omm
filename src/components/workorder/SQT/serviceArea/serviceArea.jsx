@@ -3,6 +3,7 @@
  * @author yyp
 */
 import React, { Component } from 'react'
+import { message } from 'antd'
 
 //引入客户技术联系人组件
 import Contact from '/components/workorder/SQT/serviceArea/contact.jsx'
@@ -11,54 +12,83 @@ import ObjectEl from '/components/workorder/SQT/serviceArea/object.jsx'
 //引入项目组成员组件
 import Member from '/components/workorder/SQT/serviceArea/member.jsx'
 
+// 引入页面CSS
+import '@/assets/less/pages/servies.less'
+// 引入 接口
+import { getAssistant } from '/api/serviceMain.js'
+
 class SA extends Component {
     // 设置默认props
     static defaultProps = {
-        dataSource: {},  //副表数据
         type: "",  //服务类别
-        power: {},  //编辑权限
-        onChange:()=>{} //数据变化后 外部接受最新数据的方法
+        power: {
+            id: "",
+            formRead: 1,
+            formControl: {
+                //服务区域副表
+                serviceArea: {
+                    isEdit: true,
+                    contactIsEdit: true,
+                    objectIsEdit: true,
+                    memberIsEdit: true
+                }
+            }
+        },  //编辑权限
+        onChange: () => { } //数据变化后 外部接受最新数据的方法
     }
     constructor(props) {
         super(props)
         this.state = {
-            title: "",
-            dataSource: {
-                areaId: "",
-                area: "",
-                isMainDutyArea: 1,
-                contactList: [],
-                objectList: [],
-                memberList: [],
-            },
-            contactError: {},//客户技术联系人报错信息
-            objectError: {},//服务对象报错信息
-            memberError: {},//项目组成员报错信息
+            dataSource: [
+                // {
+                //     areaId: "",
+                //     area: "河南",
+                //     isMainDutyArea: 1,
+                //     contactList: [],
+                //     objectList: [],
+                //     memberList: [],
+                // }
+            ],
+            error: [],
             objIsShow: true, //服务对象是否显示
             contactIsEdit: true,//客户技术联系人是否可编辑
             objectIsEdit: true,//服务对象是否可编辑
             memberIsEdit: true,//项目组成员是否可编辑
-            types: ["系统集成服务", "咨询服务", "设备搬迁服务", "培训服务", "灾备实施服务", "驻场运维服务"]//此服务分类下 服务对象模块不显示
+            types: ["101", "203", "205", "207", "208", "210"]//此服务分类下 服务对象模块不显示
         }
     }
-
     componentWillMount() {
-        let { dataSource, type, power } = this.props
+        this.initData()
+        this.getPower()
+    }
+    // 请求表单数据
+    initData = () => {
+        getAssistant({ baseId: this.props.power.id }).then(res => {
+            if (res.success == '1') {
+                this.setState({
+                    dataSource: res.data
+                })
+            } else if (res.success == '0') {
+                message.error(res.message)
+            }
+        })
+    }
+    // 获取界面权限
+    getPower = () => {
+        let { type, power } = this.props
         let { objIsShow, contactIsEdit, objectIsEdit, memberIsEdit, types } = this.state
-        let isMainDutyAreaStr = dataSource.isMainDutyArea ? '<span style="color:red">[主责区域]</span>' : ""
-        let title = dataSource.area + isMainDutyAreaStr
         // 页面模块显示逻辑
-        if (types.indexOf(type) >= 0) {
+        if (types.indexOf(toString(type)) >= 0) {
             objIsShow = false
         }
         // 页面模块只读逻辑
         if (power.formRead == 1) {
             // 若为1 所有页面可编辑
-            if (power.serviceArea.isEdit) {
+            if (power.formControl.serviceArea.isEdit) {
                 // 若power.serviceArea.isEdit为true 服务区域页面可编辑
-                contactIsEdit = power.serviceArea.contactIsEdit
-                objectIsEdit = power.serviceArea.objectIsEdit
-                memberIsEdit = power.serviceArea.memberIsEdit
+                contactIsEdit = power.formControl.serviceArea.contactIsEdit
+                objectIsEdit = power.formControl.serviceArea.objectIsEdit
+                memberIsEdit = power.formControl.serviceArea.memberIsEdit
 
             } else {
                 // 若power.serviceArea.isEdit为true 服务区域页面只读
@@ -73,44 +103,45 @@ class SA extends Component {
             memberIsEdit = false
         }
         this.setState({
-            dataSource, title, objIsShow, contactIsEdit, objectIsEdit, memberIsEdit,
+            objIsShow, contactIsEdit, objectIsEdit, memberIsEdit,
         })
     }
-
-    // 挂载完成
-    componentDidMount = () => {
-
-    }
     // 客户技术联系人数据更新   
-    onChangeCTC = (info) => {
-        let { dataSource, contactError } = this.state
-        dataSource = Object.assign({}, dataSource, { contactList: info.dataSource })
-        contactError = info.error
+    onChangeCTC = (info, index) => {
+        let { dataSource, error, contactIsEdit } = this.state
+        if (!contactIsEdit) { return }
+        dataSource[index].contactList = info.dataSource
+        error[index] ? "" : error[index] = {}
+        error[index]["contactError"] = info.error
         this.setState({
             dataSource,
-            contactError
+            error
         }, () => {
             this.updateToparent()
         })
     }
     // 服务对象数据更新   
-    onChangeSO = (info) => {
-        let { dataSource, objectError } = this.state
-        dataSource = Object.assign({}, dataSource, { objectList: info.dataSource })
-        objectError = info.error
+    onChangeSO = (info, index) => {
+        let { dataSource, error, objectIsEdit } = this.state
+        if (!objectIsEdit) { return }
+        dataSource[index].objectList = info.dataSource
+        error[index] ? "" : error[index] = {}
+        error[index]["objectError"] = info.error
         this.setState({
-            dataSource, objectError
+            dataSource, error
         }, () => {
             this.updateToparent()
         })
     }
     // 项目组成员数据更新   
-    onChangePT = (info) => {
-        let { dataSource, memberError } = this.state
-        dataSource = Object.assign({}, dataSource, { memberList: info.dataSource })
-        memberError = info.error
+    onChangePT = (info, index) => {
+        let { dataSource, error, memberIsEdit } = this.state
+        if (!memberIsEdit) { return }
+        dataSource[index].memberList = info.dataSource
+        error[index] ? "" : error[index] = {}
+        error[index]["memberError"] = info.error
         this.setState({
-            dataSource, memberError
+            dataSource, error
         }, () => {
             this.updateToparent()
         })
@@ -121,58 +152,57 @@ class SA extends Component {
         this.props.onChange({ dataSource: this.state.dataSource, info: checkResult })
     }
     // 数据校验
-    onCheck = (type = null) => {
+    onCheck = () => {
         // 0 判断模块是否可编辑 实现对应逻辑
         // 1 各组件数组均至少存在一条数据
         // 2 报错信息包含服务区域名称
         // 3 报错信息由页面从上到下执行
         // 4 同时返回数据和报错信息
-        let { dataSource, contactError, objectError, memberError, objIsShow, contactIsEdit, objectIsEdit, memberIsEdit } = this.state;
-        let { contactList, objectList, memberList, area } = dataSource;
-        let error = { state: true, message: "" }
+        let { dataSource, error, objIsShow, contactIsEdit, objectIsEdit, memberIsEdit } = this.state;
+        let newError = { state: true, message: "" }
         if (contactIsEdit) {
-            if (contactList.length < 1) {
-                error = { state: false, message: area + ",表单信息填写不全，请填写完整后再进行其它操作" }
-                return error
-            }
-
-            if (!contactError.state) {
-                error = contactError
-            }
+            error.forEach(({ contactError }) => {
+                if (!newError.state) { return }
+                newError = { state: contactError.state, message: contactError.message }
+            })
         } else if (objectIsEdit && memberIsEdit) {
             if (objIsShow) {
-                if (objectList.length < 1 || memberList.length < 1) {
-                    error = { state: false, message: area + ",表单信息填写不全，请填写完整后再进行其它操作" }
-                    return error
-                }
-                if (!memberList.state) {
-                    error = memberError
-                }
-                if (!objectError.state) {
-                    error = objectError
-                }
-            } else {
-                if (memberList.length < 1) {
-                    error = { state: false, message: area + ",表单信息填写不全，请填写完整后再进行其它操作" }
-                    return error
-                }
-                if (!memberList.state) {
-                    error = memberError
-                }
+                error.forEach(({ objectError }) => {
+                    if (!newError.state || !objectError) { return }
+                    newError = { state: objectError.state, message: objectError.message }
+                })
             }
+            if (!newError.state) { return newError }
+            error.forEach(({ memberError }) => {
+                if (!newError.state || !memberError) { return }
+                newError = { state: memberError.state, message: memberError.message }
+            })
         }
-        let newErroor = Object.assign({}, error, { message: area + "," + error.message })
-        return newErroor
+        return newError
     }
     render = _ => {
-        let { dataSource, title, objIsShow, contactIsEdit, memberIsEdit, objectIsEdit } = this.state
-        return <div>
-
-            <Contact title={title} edit={contactIsEdit} dataSource={dataSource.contactList} onChange={this.onChangeCTC}></Contact>
+        let { dataSource, objIsShow, contactIsEdit, memberIsEdit, objectIsEdit } = this.state
+        return <div className="ServiesContent">
             {
-                objIsShow ? <ObjectEl title={title} edit={objectIsEdit} dataSource={dataSource.objectList} onChange={this.onChangeSO}></ObjectEl> : ""
+                dataSource.map((item, index) => {
+                    return <div className="commTop" key={index}>
+                        <div className="navTitle" style={{ float: "none" }}>
+                            {item.area}
+                            {item.isMainDutyArea ? <span style={{ color: "red" }}>【主责区域】</span> : ""}
+
+                        </div>
+                        <div>
+                            <Contact area={item.area} edit={contactIsEdit} dataSource={item.contactList} onChange={(info) => this.onChangeCTC(info, index)}></Contact>
+                            {
+                                objIsShow ? <ObjectEl area={item.area} edit={objectIsEdit} dataSource={item.objectList} onChange={(info) => { this.onChangeSO(info, index) }}></ObjectEl> : ""
+                            }
+                            <Member area={item.area} edit={memberIsEdit} dataSource={item.memberList} onChange={(info) => { this.onChangePT(info, index) }}></Member>
+
+                        </div>
+                    </div>
+                })
             }
-            <Member title={title} edit={memberIsEdit} dataSource={dataSource.memberList} onChange={this.onChangePT}></Member>
+
         </div>
     }
 }

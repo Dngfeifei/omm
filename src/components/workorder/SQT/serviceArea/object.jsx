@@ -5,33 +5,36 @@
 
 
 import React, { Component } from 'react'
-import { Input, Select, Table, Button, Radio, message, Row, Modal } from 'antd'
+import { Input, Select, Table, Icon, message, Modal } from 'antd'
 const { Option } = Select;
 const { confirm } = Modal;
 
 // 引入页面CSS
-import '@/assets/less/pages/servies.less'
+// import '@/assets/less/pages/servies.less'
 // 引入 API接口
 import { GetBaseData } from '/api/selfEvaluation'
+import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
-// 当前表格条数 默认为0条
-let rowCount = 0;
 // 下拉框基础数据（产品类型-skillType,产品线- productLine）
-let baseData = { skillType: [], productLine: [], brand: [] }
+let baseData = { skillType: [], productLine: [], brand: [], productLineLevel: [] }
+
+// 产品类别下拉框数据
+let productCategoryData = [];
 
 class ObjectEl extends Component {
     // 设置默认props
     static defaultProps = {
-        title: {},   // 当前服务区域名称
+        area: "",
         edit: true,  // 状态 是否可编辑
-        dataSource: {},  //服务对象数据数据
+        dataSource: [],  //服务对象数据数据
         onChange: () => { } //数据变化后 外部接受最新数据的方法
     }
     constructor(props) {
         super(props)
         this.state = {
             // 基础下拉数据
-            baseData: { skillType: [], productLine: [], brand: [] },
+            baseData: { skillType: [], productLine: [], brand: [], productLineLevel: [] },
+            productCategoryData: [],
             // 当前表格数据
             dataSource: [],
             // 最新过滤后的产品线数组
@@ -39,218 +42,71 @@ class ObjectEl extends Component {
             // 当前表格配置-可编辑
             columns: [
                 {
-                    title: '服务区域',
-                    dataIndex: 'area',
-                    key: 'area',
-                    width: "15%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        let content = <div dangerouslySetInnerHTML={{ __html: props.title }} ></div>
-                        const obj = {
-                            children: content,
-                            props: {},
-                        };
-                        if (index === 0) {
-                            obj.props.rowSpan = rowCount;
-                        }
-                        if (index > 0) {
-                            obj.props.rowSpan = 0;
-                        }
-                        return obj;
-                    },
-                },
-                {
-                    title: '',
-                    width: "7%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        return <Radio value={index}></Radio>
-                    },
-                },
-                {
                     title: '序号',
                     width: "7%",
+                    key: "id",
                     align: 'center',
                     render: (value, row, index) => {
-                        return index + 1
+                        if (this.props.edit) {
+                            return <div style={{ position: "relative" }}>
+                                <div style={{ position: "absolute", left: "-36px", top: "-12px", display: "flex", flexDirection: "column" }}>
+                                    <div><Icon type="plus-square" theme="twoTone" onClick={() => this.addRow(index)} /></div>
+                                    <div><Icon type="minus-circle" theme="twoTone" onClick={() => this.delRow(index)} /></div>
+                                </div>
+                                <div>{index + 1}</div>
+                            </div>
+                        } else {
+                            return index + 1
+                        }
                     },
                 },
                 {
-                    title: '产品类型',
+                    title: '产品类别',
+                    dataIndex: 'productCategory',
+                    key: 'productCategory',
+                    width: "8%",
+                    align: 'center',
+                    render: (value, row, index) => {
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectCategory}>
+                            <Option value={""} index={index}>请选择</Option>
+                            {
+                                productCategoryData.map((item) => {
+                                    return <Option key={item.itemCode} index={index} value={item.itemCode}>{item.itemValue}</Option>
+                                })
+                            }
+                        </Select>;
+                    },
+                },
+                {
+                    title: '技术方向',
                     dataIndex: 'productType',
                     key: 'productType',
-                    width: "15%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectType}>
-                            <Option value={""} index={index}>请选择</Option>
-                            {
-                                baseData.skillType.length ? baseData.skillType.map((item) => {
-                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
-                                }) : ""
-                            }
-                        </Select>;
-                    },
-                },
-                {
-                    title: '品牌',
-                    dataIndex: 'brand',
-                    key: 'brand',
-                    width: "11%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        let brandData = [];
-                        if (!row.productType == "") {
-                            let skillTypeID = ""
-                            baseData.skillType.map((item) => {
-                                if (item.code == row.productType) {
-                                    skillTypeID = item.id
-                                }
-                            });
-                            brandData = baseData.brand.filter((item) => {
-                                return item.parentId == skillTypeID
-                            })
-                        }
-                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectBrand}>
-                            <Option value={""} index={index}>请选择</Option>
-                            {
-                                brandData.length ? brandData.map((item) => {
-                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
-                                }) : ""
-                            }
-                        </Select>;
-                    },
-                },
-                {
-                    title: '产品线',
-                    dataIndex: 'productLine',
-                    width: "15%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
-                            <Option value={""} index={index} >请选择</Option>
-                            {this.state.filterArr[index] != undefined ? this.state.filterArr[index].map((item) => {
-                                return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
-                            }) : ""
-                            }
-                        </Select>;
-                    },
-                },
-                {
-                    title: '设备等级',
-                    dataIndex: 'deviceLevel',
-                    width: "10%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        // row.name==""?""
-                        let brandId = ""
-                        baseData.brand.map((item) => {
-                            if (item.code == row.brand) {
-                                brandId = item.id
-                            }
-                        });
-
-                        let levels = []
-                        baseData.productLine.map((item) => {
-                            if (item.name == row.productLineName && item.parentId == brandId) {
-                                levels.push(item.strValue1)
-                            }
-                        })
-                        if (levels.length == 0) {
-                            return ""
-                        } else if (levels.length == 1) {
-                            if (levels[0].toString() === "1") {
-                                return "高端"
-                            } else if (levels[0].toString() === "0") {
-                                return "中低端"
-                            }
-                        } else if (levels.length >= 2) {
-                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
-                                <Option value={""} index={index} >请选择</Option>
-                                <Option value={"1"} index={index} >高端</Option>
-                                <Option value={"0"} index={index} >中低端</Option>
-                            </Select>;
-                        }
-                    },
-                },
-                {
-                    title: '设备数量 ',
-                    dataIndex: 'deviceCount',
-                    key: 'deviceCount',
-                    width: "10%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangedeviceCount}></Input>;
-                    },
-                },
-                {
-                    title: '外包数量',
-                    dataIndex: 'outsourceCount',
-                    key: 'outsourceCount',
-                    width: "10%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeoutsourceCount}></Input>;
-                    },
-                },
-            ],
-            // 当前表格配置-不可编辑
-            columns2: [
-                {
-                    title: '服务区域',
-                    dataIndex: 'area',
-                    key: 'area',
-                    width: "15%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        let content = <div dangerouslySetInnerHTML={{ __html: props.title }} ></div>
-                        const obj = {
-                            children: content,
-                            props: {},
-                        };
-                        if (index === 0) {
-                            obj.props.rowSpan = rowCount;
-                        }
-                        if (index > 0) {
-                            obj.props.rowSpan = 0;
-                        }
-                        return obj;
-                    },
-                },
-                {
-                    title: '序号',
-                    width: "7%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        return index + 1
-                    },
-                },
-                {
-                    title: '产品类型',
-                    dataIndex: 'productType',
-                    key: 'productType',
-                    width: "16%",
-                    align: 'center',
-                    render: (value, row, index) => {
-                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectType}>
-                            <Option value={""} index={index}>请选择</Option>
-                            {
-                                baseData.skillType.length ? baseData.skillType.map((item) => {
-                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
-                                }) : ""
-                            }
-                        </Select>;
-                    },
-                },
-                {
-                    title: '品牌',
-                    dataIndex: 'brand',
-                    key: 'brand',
                     width: "13%",
                     align: 'center',
                     render: (value, row, index) => {
+                        let skillTypeData = [];
+                        skillTypeData = baseData.skillType.filter((item) => {
+                            return item.strValue4 == row.productCategory;
+                        })
+                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectType}>
+                            <Option value={""} index={index}>请选择</Option>
+                            {
+                                baseData.skillType.length ? skillTypeData.map((item) => {
+                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
+                                }) : ""
+                            }
+                        </Select>;
+                    },
+                },
+                {
+                    title: '品牌',
+                    dataIndex: 'brand',
+                    key: 'brand',
+                    width: "10%",
+                    align: 'center',
+                    render: (value, row, index) => {
                         let brandData = [];
-                        if (!row.productType == "") {
+                        if (row.productType != "") {
                             let skillTypeID = ""
                             baseData.skillType.map((item) => {
                                 if (item.code == row.productType) {
@@ -274,51 +130,77 @@ class ObjectEl extends Component {
                 {
                     title: '产品线',
                     dataIndex: 'productLine',
-                    width: "16%",
+                    width: "14%",
                     align: 'center',
                     render: (value, row, index) => {
-                        return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
-                            <Option value={""} index={index} >请选择</Option>
-                            {this.state.filterArr[index] != undefined ? this.state.filterArr[index].map((item) => {
-                                return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
-                            }) : ""
-                            }
-                        </Select>;
+                        if (row.brand && row.productLineData.length) {
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
+                                <Option value={""} index={index} >请选择</Option>
+                                {row.productLineData.map((item) => {
+                                    return <Option key={item.id} index={index} value={item.code}>{item.name}</Option>
+                                })}
+                            </Select>
+                        }
+                        if (row.brand && !row.productLineData.length) {
+                            return <Select disabled={true} style={{ width: "100%" }} value={value}>
+                                <Option value={""} index={index} >请选择</Option>
+
+                            </Select>
+                        }
+                        if (!row.brand) {
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectProduct}>
+                                <Option value={""} index={index} >请选择</Option>
+                            </Select>
+                        }
                     },
                 },
                 {
                     title: '设备等级',
                     dataIndex: 'deviceLevel',
-                    width: "11%",
+                    width: "9%",
                     align: 'center',
                     render: (value, row, index) => {
-                        // row.name==""?""
-                        let brandId = ""
-                        baseData.brand.map((item) => {
-                            if (item.code == row.brand) {
-                                brandId = item.id
-                            }
-                        });
-
-                        let levels = []
-                        baseData.productLine.map((item) => {
-                            if (item.name == row.productLineName && item.parentId == brandId) {
-                                levels.push(item.strValue1)
-                            }
-                        })
-                        if (levels.length == 0) {
-                            return ""
-                        } else if (levels.length == 1) {
-                            if (levels[0].toString() === "1") {
-                                return "高端"
-                            } else if (levels[0].toString() === "0") {
-                                return "中低端"
-                            }
-                        } else if (levels.length >= 2) {
+                        if (row.levels.length == 1 && row.levels[0].toString() === "1") {
+                            return <span>高端</span>
+                        }
+                        if (row.levels.length == 1 && row.levels[0].toString() === "0") {
+                            return <span>中低端</span>
+                        }
+                        if (row.levels.length == 2) {
                             return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
                                 <Option value={""} index={index} >请选择</Option>
-                                <Option value={"1"} index={index} >高端</Option>
-                                <Option value={"0"} index={index} >中低端</Option>
+                                {
+                                    baseData.productLineLevel.map((item) => {
+                                        return <Option key={item.id} index={index}  value={item.code}>{item.name}</Option>
+                                    })
+                                }
+                                {/* <Option value={"1"} index={index} >高端</Option>
+                                <Option value={"0"} index={index} >中低端</Option> */}
+                            </Select>;
+                        }
+                        if (row.brand && !row.productLineData.length) {
+                            return <Select disabled={true} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
+                                <Option value={""} index={index} >请选择</Option>
+                            </Select>;
+                        }
+                        if (row.productCategory == 1) {
+                            return <Select disabled={true} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
+                                <Option value={""} index={index} >请选择</Option>
+                            </Select>;
+                        }
+                        if (row.brand && row.productLineData.length && !row.productLine && row.productCategory != 1) {
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
+                                <Option value={""} index={index} >请选择</Option>
+                            </Select>;
+                        }
+                        if (row.productLine && row.levels.length == 0) {
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
+                                <Option value={""} index={index} >请选择</Option>
+                            </Select>;
+                        }
+                        if (!row.brand && row.productCategory != 1) {
+                            return <Select disabled={!props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectLevels}>
+                                <Option value={""} index={index} >请选择</Option>
                             </Select>;
                         }
                     },
@@ -327,7 +209,7 @@ class ObjectEl extends Component {
                     title: '设备数量 ',
                     dataIndex: 'deviceCount',
                     key: 'deviceCount',
-                    width: "11%",
+                    width: "9%",
                     align: 'center',
                     render: (value, row, index) => {
                         return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangedeviceCount}></Input>;
@@ -337,27 +219,26 @@ class ObjectEl extends Component {
                     title: '外包数量',
                     dataIndex: 'outsourceCount',
                     key: 'outsourceCount',
-                    width: "11%",
+                    width: "9%",
                     align: 'center',
                     render: (value, row, index) => {
                         return <Input disabled={!props.edit} name={index} value={value} onChange={this.onChangeoutsourceCount}></Input>;
                     },
                 },
             ],
-            // 当前表格选中项
-            current: null,
         }
     }
     // 数据即将挂载
     componentWillMount() {
-        let dataSource = Array.from(this.props.dataSource)
-        let { edit } = this.props
-        rowCount = dataSource.length;
-        this.setState({
-            dataSource, edit
-        })
+        //    页面数据初始化
+        this.init()
     }
-
+    init = () => {
+        // 调用下拉框基础数据接口
+        this.getBaseData()
+        // 获取数据字典-产品类别数据
+        this.getDictInfo()
+    }
     // 获取下拉框基础数据方法
     getBaseData = () => {
         // 请求下拉框基础数据
@@ -366,60 +247,168 @@ class ObjectEl extends Component {
                 message.error(res.message)
                 return
             } else {
-                let { skillType, productLine, brand } = res.data
-                baseData = { skillType, productLine, brand }
+                let { skillType, productLine, brand, productLineLevel } = res.data
+                baseData = { skillType, productLine, brand, productLineLevel }
                 this.setState({
                     baseData
+                }, () => {
+                    this.initData()
                 })
             }
         })
+    }
+    // 获取产品类别下拉框数据
+    getDictInfo = () => {
+        GetDictInfo({ dictCode: "productCategory" }).then(res => {
+            if (res.success != 1) {
+                message.error(res.message)
+            } else {
+                productCategoryData = res.data;
+                this.setState({ productCategoryData })
+            }
+        })
+    }
+    // 组件传递数据初始化
+    initData = () => {
+        // 获取列表数据和是否可编辑权限
+        let dataSource = Array.from(this.props.dataSource)
+        let { edit } = this.props
+        dataSource = this.appendElement(dataSource)
+        this.setState({
+            dataSource, edit
+        }, () => {
+            this.updateToparent()
+        })
+    }
+    // 列表数据追加属性productLineData、levels
+    appendElement = (arr = []) => {
+        let { baseData } = this.state
+        if (arr.length) {
+            arr.map((arrItem, i) => {
+                // 1 判断产品类别 软件无设备等级
+                //                硬件产品线可能不存在 设备等级随产品线有无
+
+                // 当前类别下产品线数组
+                let productLineData = [];
+                // 当前产品级别数据
+                let levels = []
+                // 数据更新追加
+                if (arrItem.brand != "") {
+                    let brandId = ""
+                    baseData.brand.map((item) => {
+                        if (item.code == arrItem.brand) {
+                            brandId = item.id
+                        }
+                    });
+                    let allProductLineData = baseData.productLine.filter((item) => {
+                        return item.parentId == brandId
+                    })
+                    if (allProductLineData.length) {
+                        let obj = {};
+                        productLineData = allProductLineData.reduce((cur, next) => {
+                            if (next.name == arrItem.productLineName && next.code != arrItem.productLine) {
+                                return cur
+                            }
+                            obj[next.name] ? "" : obj[next.name] = true && cur.push(next);
+                            return cur;
+                        }, [])
+                    }
+                    baseData.productLine.map((item) => {
+                        if (item.name == arrItem.productLineName && item.parentId == brandId) {
+                            levels.push(item.strValue1)
+                        }
+                    })
+
+                }
+                arrItem.productLineData = productLineData
+                arrItem.levels = levels
+            })
+        } else {
+            // 列表数据为0条时  默认增加一条空数据
+            let newRow = {
+                productCategory: "",//产品类别
+                productType: "",//技术方向
+                brand: "",//品牌
+                productLine: "",//产品线编码
+                productLineName: "",//产品线名称
+                deviceLevel: "",//产品等级（高端、中低端）
+                deviceCount: '',
+                outsourceCount: '',
+                productLineData: [],
+                levels: []
+            }
+            arr.push(newRow)
+        }
+        return arr
+
     }
     // 更新数据到父级
     updateToparent = () => {
         let checkResult = this.onCheck()
         this.props.onChange({ dataSource: this.state.dataSource, error: checkResult })
     }
-    // 获取列表选中项
-    onChangeRadio = ({ target }) => {
-        this.setState({
-            current: target.value
-        }, () => {
-            this.updateToparent()
-        })
-    }
-    // 获取产品类型
-    onSelectType = (val, { props }) => {
-        let { dataSource, filterArr } = this.state;
-        if (val == "" || dataSource[props.index].productType != val) {
-            dataSource[props.index].productLine = ""
+    // 获取产品类别
+    onSelectCategory = (newValue, { props }) => {
+        let { dataSource } = this.state;
+        let oldValue = dataSource[props.index].productCategory;
+        if (newValue != oldValue) {
+            dataSource[props.index].productType = ""
             dataSource[props.index].brand = ""
+            dataSource[props.index].productLineData = ""
+            dataSource[props.index].productLine = ""
             dataSource[props.index].productLineName = ""
+            dataSource[props.index].levels = ""
             dataSource[props.index].deviceLevel = ""
-            filterArr[props.index] = []
+        } else {
+            return
         }
-        dataSource[props.index].productType = val;
+        dataSource[props.index].productCategory = newValue;
         this.setState({
             dataSource
         }, () => {
             this.updateToparent()
         })
-
+    }
+    // 获取技术方向
+    onSelectType = (newValue, { props }) => {
+        let { dataSource } = this.state;
+        let oldValue = dataSource[props.index].productType;
+        if (newValue != oldValue) {
+            dataSource[props.index].brand = ""
+            dataSource[props.index].productLineData = ""
+            dataSource[props.index].productLine = ""
+            dataSource[props.index].productLineName = ""
+            dataSource[props.index].levels = ""
+            dataSource[props.index].deviceLevel = ""
+        } else {
+            return
+        }
+        dataSource[props.index].productType = newValue;
+        this.setState({
+            dataSource
+        }, () => {
+            this.updateToparent()
+        })
     }
     // 获取品牌
-    onSelectBrand = (val, { props }) => {
+    onSelectBrand = (newValue, { props }) => {
         // 最新品牌数据更新
-        let { dataSource, filterArr } = this.state;
+        let { dataSource } = this.state;
         let row = dataSource[props.index];
-        if (val == "" || row.brand != val) {
-            row.productLine = ""
-            row.productLineName = ""
-            row.deviceLevel = ""
+        let oldValue = dataSource[props.index].brand;
+        if (newValue != oldValue) {
+            dataSource[props.index].productLine = ""
+            dataSource[props.index].productLineName = ""
+            dataSource[props.index].levels = ""
+            dataSource[props.index].deviceLevel = ""
+        } else {
+            return
         }
-        row.brand = val;
+        dataSource[props.index].brand = newValue;
         // 获取最新产品线数组
         let productLineData = [];
         // 最新产品线数据更新
-        if (val != "") {
+        if (newValue != "") {
             let brandId = ""
             baseData.brand.map((item) => {
                 if (item.code == row.brand) {
@@ -434,51 +423,7 @@ class ObjectEl extends Component {
                 obj[next.name] ? "" : obj[next.name] = true && cur.push(next);
                 return cur;
             }, [])
-            filterArr[props.index] = productLineData;
-        } else {
-            filterArr[props.index] = [];
-        }
-        this.setState({
-            dataSource,
-            filterArr
-        }, () => {
-            this.updateToparent()
-        })
-
-
-    }
-    // 获取产品线
-    onSelectProduct = (val, { props }) => {
-        let { dataSource, baseData } = this.state;
-        if (dataSource[props.index].productLine == val) {
-            return
-        }
-        if (val == "" || dataSource[props.index].productLine != val) {
-            dataSource[props.index].deviceLevel = ""
-        }
-        if (val == "") {
-            dataSource[props.index].productLineName = ""
-        } else {
-            dataSource[props.index].productLineName = props.children;
-        }
-        dataSource[props.index].productLine = val;
-
-
-
-        let brandId = ""
-        baseData.brand.map((item) => {
-            if (item.code == dataSource[props.index].brand) {
-                brandId = item.id
-            }
-        });
-        let levels = []
-        baseData.productLine.map((item) => {
-            if (item.name == props.children && item.parentId == brandId) {
-                levels.push(item.strValue1)
-            }
-        })
-        if (levels.length == 1) {
-            dataSource[props.index].deviceLevel = levels[0]
+            dataSource[props.index].productLineData = productLineData;
         }
         this.setState({
             dataSource
@@ -486,33 +431,66 @@ class ObjectEl extends Component {
             this.updateToparent()
         })
 
-    }
 
-    // 获取产品级别
-    onSelectLevels = (val, { props }) => {
-        // 产品级别数据更新
-        let { dataSource, baseData, filterArr } = this.state;
-        dataSource[props.index].deviceLevel = val;
-        let productLineName = dataSource[props.index].productLineName;
-        if (val != "") {
-            let current = baseData.productLine.filter((item) => {
-                return item.name == productLineName && item.strValue1 == val
-            })
-            dataSource[props.index].productLine = current[0].code;
-            // 产品线数据数组更新  
-            filterArr[props.index].forEach((item, i) => {
-                if (item.name == productLineName) {
-                    filterArr[props.index][i] = current[0]
+    }
+    // 获取产品线
+    onSelectProduct = (newValue, { props }) => {
+        let { dataSource, baseData } = this.state;
+        let oldValue = dataSource[props.index].productLine
+        if (newValue != oldValue) {
+            dataSource[props.index].productLineName = props.children
+            dataSource[props.index].deviceLevel = ""
+
+            let levels = []
+            let brandId = ""
+            baseData.brand.map((item) => {
+                if (item.code == dataSource[props.index].brand) {
+                    brandId = item.id
+                }
+            });
+            baseData.productLine.map((item) => {
+                if (item.name == props.children && item.parentId == brandId) {
+                    levels.push(item.strValue1)
                 }
             })
+            dataSource[props.index].levels = levels
+            if (levels.length == 1) {
+                dataSource[props.index].deviceLevel = levels[0]
+            }
+        } else {
+            return
         }
-
+        dataSource[props.index].productLine = newValue;
         this.setState({
-            dataSource, filterArr
+            dataSource
         }, () => {
             this.updateToparent()
         })
+    }
 
+    // 获取产品级别
+    onSelectLevels = (newValue, { props }) => {
+        // 产品级别数据更新
+        let { dataSource, baseData } = this.state;
+        if (newValue != "") {
+            let productLineName = dataSource[props.index].productLineName;
+            let current = baseData.productLine.filter((item) => {
+                return item.name == productLineName && item.strValue1 == newValue
+            })[0]
+            dataSource[props.index].productLine = current.code;
+            // 产品线数据数组更新  
+            dataSource[props.index].productLineData.forEach((item, i) => {
+                if (item.name == productLineName) {
+                    dataSource[props.index].productLineData[i] = current
+                }
+            })
+        }
+        dataSource[props.index].deviceLevel = newValue;
+        this.setState({
+            dataSource
+        }, () => {
+            this.updateToparent()
+        })
     }
     // 设备数量
     onChangedeviceCount = ({ target }) => {
@@ -539,7 +517,7 @@ class ObjectEl extends Component {
         })
     }
     // 新增一行
-    addRow = () => {
+    addRow = (index) => {
         if (this.state.dataSource.length) {
             let checkResult = this.onCheck()
             if (!checkResult.state) {
@@ -549,16 +527,19 @@ class ObjectEl extends Component {
             }
         }
         let newRow = {
-            area: '福建/厦门【主责区域】',
-            productType: "",
-            brand: "",
-            productLine: '',
+            productCategory: "",//产品类别
+            productType: "",//技术方向
+            brand: "",//品牌
+            productLine: "",//产品线编码
+            productLineName: "",//产品线名称
+            deviceLevel: "",//产品等级（高端、中低端）
             deviceCount: '',
             outsourceCount: '',
+            productLineData: [],
+            levels: []
         }
         let dataSource = this.state.dataSource
-        dataSource.push(newRow)
-        rowCount = dataSource.length
+        dataSource.splice(index + 1, 0, newRow)
         this.setState({
             dataSource
         }, () => {
@@ -566,11 +547,11 @@ class ObjectEl extends Component {
         })
     }
     // 删除行
-    delRow = () => {
-        let { current, dataSource } = this.state;
-        if (current == null) {
+    delRow = (index) => {
+        let { dataSource } = this.state;
+        if (dataSource.length == 1) {
             message.destroy()
-            message.warning("请选中后再进行删除操作！")
+            message.warning("请最少填写一条数据！")
             return
         }
         let _this = this
@@ -581,10 +562,9 @@ class ObjectEl extends Component {
             okType: 'danger',
             cancelText: '取消',
             onOk() {
-                dataSource.splice(current, 1)
+                dataSource.splice(index, 1)
                 _this.setState({
                     dataSource,
-                    current: null
                 }, () => {
                     _this.updateToparent()
                 })
@@ -595,14 +575,71 @@ class ObjectEl extends Component {
     // 数据校验 字段为空返回false
     onCheck = () => {
         let result = { state: true, message: "" }
+        let field = ""
         let data = this.state.dataSource;
-        data.forEach((el) => {
-            Object.keys(el).forEach(item => {
-                if (el[item] == "") {
-                    result = { state: false, message: "请将服务对象信息填写完整再进行其它操作" }
-                }
+        try {
+            data.forEach((el, index) => {
+                Object.keys(el).forEach(item => {
+                    // 若此条数据产品类别为软件时 设备等级字段不校验
+                    if (el.productCategory == 1 && item == "deviceLevel") {
+                        return
+                    }
+                    if (el.productCategory == 1 && item == "levels") {
+                        return
+                    }
+                    // 若此条数据产品线数据数组为空时 产品线和设备等级字段不校验
+                    if (!el.productLineData.length && item == "productLine") {
+                        return
+                    }
+                    if (!el.productLineData.length && item == "productLineName") {
+                        return
+                    }
+                    if (!el.productLineData.length && item == "productLineData") {
+                        return
+                    }
+                    if (!el.productLineData.length && item == "deviceLevel") {
+                        return
+                    }
+                    if (!el.productLineData.length && item == "levels") {
+                        return
+                    }
+                    if (el[item] == "") {
+                        switch (item) {
+                            case "productCategory":
+                                field = "产品类别"
+                                break;
+                            case "productType":
+                                field = "技术方向"
+                                break;
+                            case "brand":
+                                field = "品牌"
+                                break;
+                            case "productLine":
+                                field = "产品线"
+                                break;
+                            case "deviceLevel":
+                                field = "设备等级"
+                                break;
+                            case "deviceCount":
+                                field = "设备数量"
+                                break;
+                            case "outsourceCount":
+                                field = "外包数量"
+                                break;
+                            default:
+                                field = ""
+                        }
+                        result.state = false
+                        if (field) {
+                            throw new Error('End Loop')
+                        }
+                    }
+                })
             })
-        })
+        } catch (e) { }
+        if (!result.state) {
+            result.message = "表单服务区域-" + this.props.area + "的" + field + "不能为空！"
+        }
         return result
     }
     // 姓名框失去焦点
@@ -634,19 +671,15 @@ class ObjectEl extends Component {
         }
     }
     render = _ => {
-        let { dataSource, columns, columns2, current, edit } = this.state
+        let { dataSource, columns } = this.state
         return (
             <div className="commTop">
-                <div className="navTitle">服务对象</div>
-                {
-                    edit ? <Row gutter={24} style={{ textAlign: "right" }}>
-                        <Button style={{ marginRight: "10px" }} type="primary" onClick={this.addRow}>新增一行</Button>
-                        <Button style={{ marginRight: "10px" }} type="primary" onClick={this.delRow}>删除</Button>
-                    </Row> : ""
-                }
-                <Radio.Group onChange={this.onChangeRadio} value={current} style={{ width: "100%" }}>
-                    <Table bordered dataSource={dataSource} columns={edit ? columns : columns2} pagination={false} rowKey={(record, i) => i} />
-                </Radio.Group>
+                <div style={{ display: "flex", alignItems: "stretch" }}>
+                    <div style={{ flex: 1, border: "1px solid #e8e8e8", borderRight: "0", textAlign: "center", marginRight: "-1px", position: "relative" }}>
+                        <span style={{ fontSize: "15px", position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)" }}>服务对象</span>
+                    </div>
+                    <Table bordered style={{ flex: 7 }} dataSource={dataSource} columns={columns} pagination={false} rowKey={(record, i) => i} />
+                </div>
             </div>
         )
     }

@@ -120,7 +120,7 @@ class workList extends Component {
                 align:'center',
                 width:'80px',
                 // 第一种：每一页都从1开始
-                render:(text,record,index)=> `${index+1}`
+                render:(text,record,index)=> this.setHtml(record.finished,index+1)
                 // }
             },  
             {
@@ -129,42 +129,49 @@ class workList extends Component {
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '工单类型',
                 dataIndex: 'ticketType',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
+            }, {
+                title: '当前任务',
+                dataIndex: 'taskName',
+                ellipsis: {
+                    showTitle: false,
+                },
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '当前待办人',
                 dataIndex: 'assigneeRealName',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '创建人',
                 dataIndex: 'startRealName',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '状态',
                 dataIndex: 'statusText',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
                 title: '创建时间',
                 dataIndex: 'createDate',
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             },
             //  {
             //     title: '操作详情',
@@ -177,7 +184,10 @@ class workList extends Component {
         ],
         tabledata: [],
     }
-
+    //处理是否加粗显示
+    setHtml = (finished,text) => {
+        return <span style={{fontWeight: finished ? 'normal' : 'bold'}}>{text}</span>
+    }
     // 获取表格高度
     SortTable = () => {
         setTimeout(() => {
@@ -336,6 +346,13 @@ class workList extends Component {
                             record
                         }
                     }
+                    //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
+                    if(this.props.params.pathParam.split('?')[2] && !record.finished){
+                        setTimeout(_ => {
+                            this.init();
+                        },1000)
+                    }
+                    //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
                     this.props.add(pane)
                 },
             };
@@ -372,7 +389,7 @@ class workList extends Component {
                         columns={this.state.columns}
                         pagination={false}
                         scroll={h}
-                        rowKey={ "ticketId"}
+                        rowKey={ (record, index) => `complete${record.id}${index}`}
                         size={'small'}
                         style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}}
                         loading={this.state.loading}  //设置loading属性

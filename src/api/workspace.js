@@ -82,3 +82,9 @@ export const getFinish = (params = {}) => {
 	params = Object.assign({}, params)
 	return http.fetchPost(`/eng/finish`, params,true)
 }
+
+//认领
+export const getClaim = (params = {}) => {
+	params = Object.assign({}, params)
+	return http.fetchGet(`/process/claim`, params)
+}

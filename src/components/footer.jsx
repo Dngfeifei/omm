@@ -3,9 +3,7 @@ import { Layout} from 'antd'
 import {getMenu} from '@/api/global.js'
 const {Footer} = Layout
 class FooterD extends Component{
-    async componentWillMount(){
-        let massage = await getMenu();
-        console.log(massage);
+    componentWillMount(){
         this.setState({msg:'北京银信长远科技股份有限公司'})
     }
 	state = {
