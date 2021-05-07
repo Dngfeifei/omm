@@ -20,6 +20,9 @@ import PerformancePledge from "./performancePledge.jsx"
 import EditTable from "./serviceArea.jsx"
 import { configConsumerProps } from 'antd/lib/config-provider'
 
+// 引入--附件上传表格组件
+import AttachmentTable from "./attachment.jsx"
+
 class servies extends Component {
     state = {
         basicInfor: {
@@ -286,6 +289,11 @@ setIsFirstInspection = (info,performancePledge)=>{
                 <div className="commTop">
                     <div className="navTitle">服务承诺</div>
                     <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} serviceType={this.state.basicInfor.serviceType} node={node} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
+                </div>
+                {/* 附件上传---区域 */}
+                <div className="commTop">
+                    <div className="navTitle">附件上传</div>
+                    <AttachmentTable isEdit={this.state.isEdit} formRead={this.state.formRead} node={node} sign={power.sign ? power.sign : 0} onChange={this.getChildrenDataUpload}></AttachmentTable>
                 </div>
 
             </div>
