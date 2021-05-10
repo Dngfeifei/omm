@@ -9,29 +9,37 @@ html,body{
     width: 100%;
     height: 100%;  
 }
-.Input{
-    background: darkblue;
-}
+
 /* 控制按钮图片 */
 .schedule_price{
     position: absolute;
     top:72px;
-    right:3px;
+    right:0;
     float: right; 
+    
 }
 .ArrowsAltOutlined{
     font-size: 26px;
     position: relative;
     top:6px;
-    left:6px;
+    left:66px;
+ 
 }
 .newchange{
-    float: right;
+   margin-top: 10px;
 }
 
+/* 表格 */
+.ant-table-thead tr th{
+    text-align: center;
+}
 
-
-
+.ant-input{
+    border: 0;
+}
+.ant-select-selection{
+    border: 0;
+}
 
 
 

@@ -70,11 +70,6 @@ class workList extends Component {
             limit:10,
             offset:1,
         },
-
-
-
-
-
         loading:true,  //表格加载太
         rules: [
             {

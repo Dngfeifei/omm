@@ -1,11 +1,10 @@
 // /*
 //  * @Author: mikey.wangxinyue
 //  */
-
 import React, { Component } from "react";
+import { connect } from "react-redux";
 import { ArrowsAltOutlined, FullscreenOutlined } from "@ant-design/icons";
 import { hashHistory } from "react-router";
-
 import moment from "moment";
 
 import {
@@ -36,6 +35,16 @@ import Pagination from "@/components/pagination/index";
 
 // 引入 API接口
 import { GetbiSqtBase, GetDictInfo, GetCompanyList } from "/api/Schedule";
+//202158点击新增按钮页面
+import { ADD_PANE } from "/redux/action";
+@connect(
+  (state) => ({}),
+  (dispath) => ({
+    add(pane) {
+      dispath({ type: ADD_PANE, data: pane });
+    },
+  })
+)
 
 //引入组件弹框****
 class Schedule extends Component {
@@ -54,7 +63,7 @@ class Schedule extends Component {
           key: "orderNum",
           node: 1,
           render: (_) => (
-            <Input style={{ width: 200 }} placeholder="请输入单号" />
+            <Input style={{ width: 200, border: 0 }} placeholder="请输入单号" />
           ),
         },
         {
@@ -62,7 +71,10 @@ class Schedule extends Component {
           key: "projectNumber",
           node: 1,
           render: (_) => (
-            <Input style={{ width: 200 }} placeholder="请输入项目号" />
+            <Input
+              style={{ width: 200, border: 0 }}
+              placeholder="请输入项目号"
+            />
           ),
         },
         {
@@ -70,7 +82,10 @@ class Schedule extends Component {
           key: "projectName",
           node: 1,
           render: (_) => (
-            <Input style={{ width: 200 }} placeholder="请输入项目名称" />
+            <Input
+              style={{ width: 200, border: 0 }}
+              placeholder="请输入项目名称"
+            />
           ),
         },
         {
@@ -85,7 +100,11 @@ class Schedule extends Component {
             >
               {this.state.projectTypeList.map((items, index) => {
                 return (
-                  <Option key={items.itemCode} value={items.itemCode}>
+                  <Option
+                    style={{ border: 0 }}
+                    key={items.itemCode}
+                    value={items.itemCode}
+                  >
                     {items.itemValue}
                   </Option>
                 );
@@ -99,7 +118,7 @@ class Schedule extends Component {
           node: 1,
           render: (_) => (
             <Select
-              style={{ width: 200 }}
+              style={{ width: 200, border: 0 }}
               placeholder="请选择"
               allowClear={true}
             >
@@ -119,7 +138,7 @@ class Schedule extends Component {
           node: 1,
           render: (_) => (
             <Select
-              style={{ width: 200 }}
+              style={{ width: 200, border: 0 }}
               placeholder="请选择"
               allowClear={true}
             >
@@ -137,7 +156,9 @@ class Schedule extends Component {
           label: "所属行业",
           key: "industry",
           node: 1,
-          render: (_) => <Input style={{ width: 200 }} placeholder="请输入" />,
+          render: (_) => (
+            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+          ),
         },
         {
           label: "公司名称",
@@ -145,7 +166,7 @@ class Schedule extends Component {
           node: 2,
           render: (_) => (
             <Select
-              style={{ width: 200 }}
+              style={{ width: 200, border: 0 }}
               placeholder="请选择"
               allowClear={true}
             >
@@ -164,7 +185,10 @@ class Schedule extends Component {
           key: "custNum",
           node: 2,
           render: (_) => (
-            <Input style={{ width: 200 }} placeholder="请输入客户编码" />
+            <Input
+              style={{ width: 200, border: 0 }}
+              placeholder="请输入客户编码"
+            />
           ),
         },
         {
@@ -172,7 +196,10 @@ class Schedule extends Component {
           key: "custName",
           node: 2,
           render: (_) => (
-            <Input style={{ width: 200 }} placeholder="请输入客户名称" />
+            <Input
+              style={{ width: 200, border: 0 }}
+              placeholder="请输入客户名称"
+            />
           ),
         },
         {
@@ -181,7 +208,7 @@ class Schedule extends Component {
           node: 2,
           render: (_) => (
             <Select
-              style={{ width: 200 }}
+              style={{ width: 200, border: 0 }}
               placeholder="请选择"
               allowClear={true}
             >
@@ -199,43 +226,60 @@ class Schedule extends Component {
           label: "项目销售",
           key: "salesmanName",
           node: 2,
-          render: (_) => <Input style={{ width: 200 }} placeholder="请输入" />,
+          render: (_) => (
+            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+          ),
         },
         {
           label: "项目开始日期",
           key: "startDate",
           node: 2,
-          render: (_) => <DatePicker />,
+          render: (_) => (
+            <DatePicker style={{ width: 200, border: 0, padding: "0 45px" }} />
+          ),
         },
         {
           label: "项目结束日期",
           key: "endDate",
           node: 2,
-          render: (_) => <DatePicker />,
+          render: (_) => (
+            <DatePicker style={{ width: 200, border: 0, padding: "0 45px" }} />
+          ),
         },
         {
           label: "项目经理",
           key: "managerName",
           node: 2,
-          render: (_) => <Input style={{ width: 200 }} placeholder="请输入" />,
+          render: (_) => (
+            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+          ),
         },
         {
           label: "最终客户名称",
           key: "finalCustName",
           node: 2,
-          render: (_) => <Input style={{ width: 200 }} placeholder="请输入" />,
+          render: (_) => (
+            <Input
+              style={{ width: 200, border: 0, padding: "0 45px" }}
+              placeholder="请输入"
+            />
+          ),
         },
         {
           label: "续签项目号",
           key: "renewalNumber",
           node: 2,
-          render: (_) => <Input style={{ width: 200 }} placeholder="请输入" />,
+          render: (_) => (
+            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+          ),
         },
         {
           label: "续签项目名称",
           key: "renewalName",
           node: 2,
-          render: (_) => <Input style={{ width: 200 }} placeholder="请输入" />,
+          render: (_) => (
+            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+          ),
         },
       ],
       // 项目类别---数据集合
@@ -745,16 +789,6 @@ class Schedule extends Component {
   clearSearchprops = () => {
     this.props.form.resetFields();
   };
-  // addRequire = () => {
-  //     hashHistory.push('/RequirePage')
-  // }
-  //点击按钮跳转路由RequirePage页面
-  changeType(state) {
-    hashHistory.push({
-      pathname: "/RequirePage",
-      query: { type: state },
-    });
-  }
 
   // 点击表格中某客户编码进行客户信息页面
   previewing = (record) => {
@@ -909,6 +943,21 @@ class Schedule extends Component {
       });
     }
   };
+  //点击新增跳转到详情页面
+  newObtn = () => {
+    //随机生成4位小数
+    var str = Math.floor(Math.random() * (99999 - 1000)) + 1000;
+    let pane = {
+      title: "服务需求表",
+      key: "str",
+      url: "ServiceRequire/require.jsx",
+    };
+    this.props.add(pane);
+  };
+  //点击变更跳转到详情页并有弹出框
+  changeType = () => {
+    alert("1234");
+  };
 
   render = (_) => {
     const { getFieldDecorator } = this.props.form;
@@ -934,7 +983,7 @@ class Schedule extends Component {
       >
         <Form
           layout="inline"
-          style={{ width: "100%", marginTop: "45px", textAlign: "center" }}
+          style={{ width: "100%", marginTop: "45px" }}
           id="logbookForm"
         >
           {this.state.rules.map((val, index) => {
@@ -945,8 +994,6 @@ class Schedule extends Component {
               <FormItem
                 label={val.label}
                 style={{
-                  marginBottom: "8px",
-                  background: "#fafafa",
                   padding: "0 50px",
                   margin: "15px",
                 }}
@@ -970,7 +1017,7 @@ class Schedule extends Component {
             >
               重置
             </Button>
-
+            <br />
             {/* //icon图标开关 */}
             {this.state.showMore ? (
               <ArrowsAltOutlined
@@ -983,31 +1030,28 @@ class Schedule extends Component {
                 onClick={this.showMoreData}
               />
             )}
+            <div className="newchange">
+              {/* 新增 变更按钮 */}
+              <Button onClick={this.newObtn} style={{ marginLeft: "10px" }}>
+                新增
+              </Button>
+              <Button
+                onClick={this.changeType}
+                type="primary"
+                style={{ marginLeft: "10px" }}
+              >
+                变更
+              </Button>
+            </div>
           </FormItem>
         </Form>
         {/* //第二个块元素 */}
 
         <div
           className="tableParson"
-          style={{ flex: "auto", margin: " 0 auto" }}
+          style={{ flex: "1 1 auto " }}
           ref={(el) => (this.tableDom = el)}
         >
-          <div className="newchange">
-            {/* 新增 变更按钮 */}
-            <Button
-              onClick={() => this.changeType(0)}
-              style={{ marginLeft: "10px" }}
-            >
-              新增
-            </Button>
-            <Button
-              onClick={() => this.changeType(1)}
-              type="primary"
-              style={{ marginLeft: "10px" }}
-            >
-              变更
-            </Button>
-          </div>
           <Table
             className="Table"
             bordered
@@ -1020,14 +1064,14 @@ class Schedule extends Component {
             size={"small"}
             style={{
               marginTop: "16px",
-              padding: "0px 15px",
-              width: "1650px",
-              height: h,
+              padding: "0 15px",
               overflowY: "auto",
+              height: h,
+              overflowX: "hidden",
             }}
             loading={this.state.loading} //设置loading属性
           />
-          
+
           <Pagination
             total={this.state.total}
             pageSize={this.state.pagination.limit}
