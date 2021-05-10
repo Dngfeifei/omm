@@ -994,7 +994,7 @@ class Schedule extends Component {
               <FormItem
                 label={val.label}
                 style={{
-                 padding:"10px 10px"
+                 padding:"10px 15px"
                 }}
                 key={index}
               >
