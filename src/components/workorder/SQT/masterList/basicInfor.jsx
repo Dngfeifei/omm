@@ -27,7 +27,8 @@ import {customerLevel } from '/api/customerInfor'
 //引入字段必填样式
 import '@/assets/less/pages/pane.less'
 
-
+// 引入--时间日期格式化函数
+import {getTimeStamp } from '/assets/js/publicMethod'
 
 class basicInfor extends Component {
     constructor(props) {
@@ -414,7 +415,9 @@ class basicInfor extends Component {
         basicInfor[el] = dateString
         //使用setsatte方法改变类中属性
         let data = Object.assign({}, basicInfor);
-
+        if(!this.judgeTime(data.startDate,data.endDate)){
+            return false;
+        }
         this.setState({
             basicInfor:data
         },()=>{
@@ -423,7 +426,14 @@ class basicInfor extends Component {
         })
 
     }
-
+    //判断时间选择正确与否
+    judgeTime = (start,end) => {
+        if (getTimeStamp(start) >= getTimeStamp(end)) {
+            message.warning('项目开始日期不能大于项目结束日期');
+            return false;
+        }
+        return true;
+    }
     // 点击【项目号】旁边的icon，就弹出【项目选择器】对话框
     showProjectDailg=()=>{
         const {isEdit,formRead,node} = this.props;

@@ -86,9 +86,15 @@ class servies extends Component {
             sparePartsFileList: [],// 合同承诺备机备件清单
             equipmentFileList: [], // 上传外包合同设备清单附件
             afterSaleAgreement: '1', // 集成/备件销售项目（101、102）售后服务约定 1-原厂服务，2-我司服务
-            projectCycleType: '1',// 项目周期类型，1-部分项目周期，2-全部项目周期
-            cycleStart: '',  // 周期开始日期
-            cycleEnd: '', // 周期结束日期
+            projectCycleType: '',// 项目周期类型，1-部分项目周期，2-全部项目周期，原厂服务周期类型
+
+            originalSeriveType:'',//原厂服务周期类型,1-部分项目周期，2-全部项目周期
+            ourcompServieType:'',//我司服务周期类型,1-部分项目周期，2-全部项目周期
+            originalCycleStart: '',  // 原厂服务开始时间
+            originalCycleEnd: '', // 原厂服务结束时间
+            ourcompCycleStart: '',  // 我司服务服务开始时间
+            ourcompCycleEnd: '', // 我司服务结束时间
+
             otherPromise: '', //其他重要承诺及要求
             slaList: []
         },
@@ -288,13 +294,13 @@ setIsFirstInspection = (info,performancePledge)=>{
                 {/* 服务承诺---区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务承诺</div>
-                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} serviceType={this.state.basicInfor.serviceType} node={node} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
+                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} basicInfor={this.state.basicInfor} node={node} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
                 {/* 附件上传---区域 */}
-                <div className="commTop">
+                {/* <div className="commTop">
                     <div className="navTitle">附件上传</div>
                     <AttachmentTable isEdit={this.state.isEdit} formRead={this.state.formRead} node={node} sign={power.sign ? power.sign : 0} onChange={this.getChildrenDataUpload}></AttachmentTable>
-                </div>
+                </div> */}
 
             </div>
         )
