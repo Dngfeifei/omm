@@ -63,7 +63,7 @@ class Schedule extends Component {
           key: "orderNum",
           node: 1,
           render: (_) => (
-            <Input style={{ width: 200, border: 0 }} placeholder="请输入单号" />
+            <Input style={{ width: 200 }} placeholder="请输入单号" />
           ),
         },
         {
@@ -72,7 +72,7 @@ class Schedule extends Component {
           node: 1,
           render: (_) => (
             <Input
-              style={{ width: 200, border: 0 }}
+              style={{ width: 200 }}
               placeholder="请输入项目号"
             />
           ),
@@ -83,7 +83,7 @@ class Schedule extends Component {
           node: 1,
           render: (_) => (
             <Input
-              style={{ width: 200, border: 0 }}
+              style={{ width: 200}}
               placeholder="请输入项目名称"
             />
           ),
@@ -118,7 +118,7 @@ class Schedule extends Component {
           node: 1,
           render: (_) => (
             <Select
-              style={{ width: 200, border: 0 }}
+              style={{ width: 200 }}
               placeholder="请选择"
               allowClear={true}
             >
@@ -138,7 +138,7 @@ class Schedule extends Component {
           node: 1,
           render: (_) => (
             <Select
-              style={{ width: 200, border: 0 }}
+              style={{ width: 200 }}
               placeholder="请选择"
               allowClear={true}
             >
@@ -157,7 +157,7 @@ class Schedule extends Component {
           key: "industry",
           node: 1,
           render: (_) => (
-            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+            <Input style={{ width: 200 }} placeholder="请输入" />
           ),
         },
         {
@@ -166,7 +166,7 @@ class Schedule extends Component {
           node: 2,
           render: (_) => (
             <Select
-              style={{ width: 200, border: 0 }}
+              style={{ width: 200 }}
               placeholder="请选择"
               allowClear={true}
             >
@@ -186,7 +186,7 @@ class Schedule extends Component {
           node: 2,
           render: (_) => (
             <Input
-              style={{ width: 200, border: 0 }}
+              style={{ width: 200 }}
               placeholder="请输入客户编码"
             />
           ),
@@ -197,7 +197,7 @@ class Schedule extends Component {
           node: 2,
           render: (_) => (
             <Input
-              style={{ width: 200, border: 0 }}
+              style={{ width: 200 }}
               placeholder="请输入客户名称"
             />
           ),
@@ -208,7 +208,7 @@ class Schedule extends Component {
           node: 2,
           render: (_) => (
             <Select
-              style={{ width: 200, border: 0 }}
+              style={{ width: 200 }}
               placeholder="请选择"
               allowClear={true}
             >
@@ -227,7 +227,7 @@ class Schedule extends Component {
           key: "salesmanName",
           node: 2,
           render: (_) => (
-            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+            <Input style={{ width: 200 }} placeholder="请输入" />
           ),
         },
         {
@@ -235,7 +235,7 @@ class Schedule extends Component {
           key: "startDate",
           node: 2,
           render: (_) => (
-            <DatePicker style={{ width: 200, border: 0, padding: "0 45px" }} />
+            <DatePicker style={{ width: 200, padding: "0 45px" }} />
           ),
         },
         {
@@ -243,7 +243,7 @@ class Schedule extends Component {
           key: "endDate",
           node: 2,
           render: (_) => (
-            <DatePicker style={{ width: 200, border: 0, padding: "0 45px" }} />
+            <DatePicker style={{ width: 200, padding: "0 45px" }} />
           ),
         },
         {
@@ -251,7 +251,7 @@ class Schedule extends Component {
           key: "managerName",
           node: 2,
           render: (_) => (
-            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+            <Input style={{ width: 200 }} placeholder="请输入" />
           ),
         },
         {
@@ -260,7 +260,7 @@ class Schedule extends Component {
           node: 2,
           render: (_) => (
             <Input
-              style={{ width: 200, border: 0, padding: "0 45px" }}
+              style={{ width: 200, padding: "0 45px" }}
               placeholder="请输入"
             />
           ),
@@ -270,7 +270,7 @@ class Schedule extends Component {
           key: "renewalNumber",
           node: 2,
           render: (_) => (
-            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+            <Input style={{ width: 200, }} placeholder="请输入" />
           ),
         },
         {
@@ -278,7 +278,7 @@ class Schedule extends Component {
           key: "renewalName",
           node: 2,
           render: (_) => (
-            <Input style={{ width: 200, border: 0 }} placeholder="请输入" />
+            <Input style={{ width: 200, }} placeholder="请输入" />
           ),
         },
       ],
@@ -994,8 +994,7 @@ class Schedule extends Component {
               <FormItem
                 label={val.label}
                 style={{
-                  padding: "0 50px",
-                  margin: "15px",
+                 padding:"10px 10px"
                 }}
                 key={index}
               >
@@ -1030,7 +1029,17 @@ class Schedule extends Component {
                 onClick={this.showMoreData}
               />
             )}
-            <div className="newchange">
+           
+          </FormItem>
+        </Form>
+        {/* //第二个块元素 */}
+        
+        <div
+          className="tableParson"
+          style={{ flex: "1 1 auto " }}
+          ref={(el) => (this.tableDom = el)}
+        >
+           <div className="newchange">
               {/* 新增 变更按钮 */}
               <Button onClick={this.newObtn} style={{ marginLeft: "10px" }}>
                 新增
@@ -1043,15 +1052,6 @@ class Schedule extends Component {
                 变更
               </Button>
             </div>
-          </FormItem>
-        </Form>
-        {/* //第二个块元素 */}
-
-        <div
-          className="tableParson"
-          style={{ flex: "1 1 auto " }}
-          ref={(el) => (this.tableDom = el)}
-        >
           <Table
             className="Table"
             bordered
@@ -1063,7 +1063,7 @@ class Schedule extends Component {
             pagination={false}
             size={"small"}
             style={{
-              marginTop: "16px",
+              marginTop: "50px",
               padding: "0 15px",
               overflowY: "auto",
               height: h,

@@ -26,7 +26,8 @@ html,body{
  
 }
 .newchange{
-   margin-top: 10px;
+    margin-right: 10px;
+   float: right;
 }
 
 /* 表格 */
