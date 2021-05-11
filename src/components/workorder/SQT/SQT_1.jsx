@@ -343,7 +343,7 @@ class Sqt extends Component {
         return true;       
     }
     render = _ => {
-        let {datasources,paramsObj} = this.state;
+        let {paramsObj} = this.state;
         const schedule = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1) ? true : false;
         const macroRiskList = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('macroRisk') > -1) ? true : false;
         const macroRiskSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('macroRiskSummary') > -1) ? true : false;
