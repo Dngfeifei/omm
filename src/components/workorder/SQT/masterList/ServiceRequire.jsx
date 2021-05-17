@@ -42,7 +42,7 @@ class servies extends Component {
             salesmanName: '张懿哲',//项目销售
             salesmanPhone: '13701202583',//销售联系方式
             managerType: '2',//项目经理类型
-            managerName: '张懿哲',//项目经理
+            managerName: '',//项目经理
             managerPhone: '13701202583',//项目经理联系方式
             startDate: '',//项目开始日期
             endDate: '',//项目结束日期
