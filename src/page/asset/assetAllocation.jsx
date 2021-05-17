@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Card } from 'antd'
+import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, DatePicker } from 'antd'
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
@@ -7,6 +7,10 @@ import TreeParant from "@/components/tree/index.jsx"
 import { GetRoleTree, AddRoleGroup, EditRoleGroup, DelRoleGroup, GetRole, AddRole, EditRole, DelRole, GetResourceTree } from '/api/role.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'
+// import AssetsList from './assetsList.js'
+// import '@/assets/less/pages/assets.less'
+// 引入时间选择器
+const { MonthPicker, RangePicker } = DatePicker;
 const { confirm } = Modal;
 const { TreeNode } = Tree;
 const { Option } = Select;
@@ -138,8 +142,47 @@ class assetsAllocation extends Component {
             ],
             //右侧角色表格数据
             rolesData: [],
+           
 
         },
+        rules1: [
+            {
+                label: '工单号',
+                key: 'ticketId',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+            },
+            {
+                label: '工单类型',
+                key: 'ticketType',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                    {
+                        [].map((items, index) => {
+                            return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                        })
+                    }
+                </Select>
+               
+            },{
+                label: '创建人',
+                key: 'applyName',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入人员名称"/>
+            },{
+                label: '状态',
+                key: 'status',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                    {
+                        [].map((items, index) => {
+                            return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                        })
+                    }
+                </Select>
+               
+            }, {
+                label: '创建时间',
+                key: 'dataTime',
+                render:_=>  <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            }
+        ],
         //新增修改角色组弹窗配置
         roleGroupWindow: {
             roleGroupModal: false, //弹窗是否显示可见
@@ -173,7 +216,106 @@ class assetsAllocation extends Component {
         tableSelecteds: [],
         tableSelectedInfo: [],
         //资源树数据
-        resourceData: null
+        resourceData: null,
+        serviceRegionList:[],
+        assetsList: [
+            {
+                dataIndex:'a',
+                label:'客户编号',
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                initialValue: (dataIndex) => this.state.assetsPostData[dataIndex].toString(),
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                dataIndex:'b',
+                label:'客户名称',
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                initialValue: (dataIndex) => this.state.assetsPostData[dataIndex].toString(),
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                dataIndex:'c',
+                label:'项目编号',
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                initialValue: (dataIndex) => this.state.assetsPostData[dataIndex].toString(),
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                dataIndex:'d',
+                label:'项目名称',
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                initialValue: (dataIndex) => this.state.assetsPostData[dataIndex].toString(),
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                dataIndex:'e',
+                label:'服务大区',
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                initialValue: (dataIndex) => this.state.assetsPostData[dataIndex].toString(),
+                render: () =>{
+                    return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
+                                {
+                                    this.state.serviceRegionList.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>;
+                }
+            },
+        ],
+        assetsPostData:{
+            a:'',
+            b:'',
+            c:'',
+            d:'',
+            e:'',
+            f:'',
+            g:'',
+            h:'',
+            i:'',
+            j:'',
+            k:'',
+            l:'',
+            m:'',
+            n:'',
+            o:'',
+            p:'',
+            q:'',
+            r:'',
+        }
     }
 
     //角色组树数据查询
@@ -839,20 +981,30 @@ class assetsAllocation extends Component {
 			}
         }
     }
+    //生成新增、修改弹框内容
+    getFields = (assetsList) => {
+        // const {assetsList} = this.state;
+        const {assetsPostData} = this.state;
+        const { getFieldDecorator } = this.props.form;
+        const children = [];
+        for (let i = 0; i < assetsList.length; i++) {
+          children.push(
+            <Col span={8} key={i}>
+              <Form.Item label={assetsList[i].label}>
+                {getFieldDecorator(`field-${i}`, {
+                  rules: assetsList[i].rules,
+                  initialValue: assetsPostData[assetsList[i].dataIndex],
+                })(assetsList[i].render())}
+              </Form.Item>
+            </Col>,
+          );
+        }
+        return children;
+      }
     render = _ => {
         const { h } = this.state;
-        return <div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
-            <Row style={{height: 60,display:flex,alignItems:'center'}}>
-                <Col span={12}>
-                    <Input placeholder="模糊搜索" value={this.state.searchRoleName} onChange={this.getSearchRoleName} />
-                </Col>
-                <Col span={12} style={{ textAlign: 'right' }}>
-                    <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
-                    <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>
-                    <Button type="info" style={{ marginRight: '10px' }} onClick={this.editRoleItem}>导入</Button>
-                    <Button type="primary" onClick={this.addRoleItem}>高级查询</Button>
-                </Col>
-            </Row>
+        const { getFieldDecorator } = this.props.form;
+        return <div style={{ border: '0px solid red', background: ' #fff', height: '100%'}} >
             <Row gutter={24} className="main_height">
                 <Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
                     <TreeParant treeData={this.state.tree.treeData} selectedKeys={[this.state.searchListID]}
@@ -860,19 +1012,46 @@ class assetsAllocation extends Component {
                         onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
                     ></TreeParant>
                 </Col>
-                <Col span={19} className="gutter-row main_height" style={{ padding: '30px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
+                <Col span={19} className="gutter-row main_height" style={{ padding: '16px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
                     <Form style={{ width: '100%' }}>
+                        <Row style={{height: 50}}>
+                        {this.state.rules1.map((val, index) =>
+                            <FormItem
+                                label={val.label} style={{ marginBottom: '8px' }} key={index}>
+                                {getFieldDecorator(val.key, val.option)(val.render())}
+                            </FormItem>)}
+                            <FormItem>
+                                <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
+                                <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
+                            </FormItem>
+                            {/* <Col span={8}>
+                                <Input placeholder="模糊搜索" value={this.state.searchRoleName} onChange={this.getSearchRoleName} />
+                            </Col>
+                            <Col span={16} style={{ textAlign: 'right' }}>
+                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.addRoleItem}>查询</Button>
+                                <Button type="info" style={{ marginRight: '10px' }} onClick={this.editRoleItem}>重置</Button>
+                                <span>展开</span>
+                            </Col> */}
+                        </Row>
                         <Row>
-                            <Col span={24} style={{ textAlign: 'right' }}>
+                            <Col span={12} style={{ textAlign: 'left'}}>
+                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
+                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>
+                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.editRoleItem}>导入</Button>
+                            </Col>
+                            <Col span={12} style={{ textAlign: 'right' }}>
+                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>查看</Button>
                                 <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
-                                <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>作废</Button>
                                 <Button type="info" style={{ marginRight: '10px' }} onClick={this.editRoleItem}>修改</Button>
                                 <Button type="primary" onClick={this.addRoleItem}>新增</Button>
                             </Col>
                         </Row>
                     </Form>
-                    <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
+                    <div className="tableParson" style={{ flex: 'auto',height: 10 }} ref={(el) => this.tableDom = el}>
                         <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h} size="small" />
+                        {/* <div style={{maxHeight:'90%',overflowY:'auto',paddingTop:15}}>
+                            <AssetsList dataSource={this.state.assetsListData}/>
+                        </div> */}
                         <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                     </div>
                 </Col>
@@ -901,35 +1080,14 @@ class assetsAllocation extends Component {
                     }
                 })}
                 onOk={_ => this.editRoleSave()}
-                width={650}
+                width={1000}
                 style={{ top: 50, marginBottom: 100 }}
                 okText="保存"
                 cancelText="取消"
             >
-                <FormItem
-                    label={"角色名称"} labelCol={{ span: 4 }} >
-                    <Input placeholder="请输入" value={this.state.currentRole.roleName} onChange={this.getroleName} style={{ width: '300px' }} />
-                </FormItem>
-                <FormItem
-                    label={"角色状态"} labelCol={{ span: 4 }}>
-                    <Select style={{ width: "300px" }} value={this.state.currentRole.status} onChange={this.getstatus} >
-                        {this.state.comboBox.status.map(t => <Option key={t.itemCode.toString()} value={t.itemCode.toString()}>{t.itemValue}</Option>)}
-                    </Select>
-                </FormItem>
-                <FormItem style={{ margin: 0 }}
-                    label={"关联资源"} labelCol={{ span: 4 }}>
-                </FormItem>
-                <Card style={{ width: "500px", overflowY: "auto", marginLeft: "30px" }}>
-                    <Tree
-                        checkable
-                        onCheck={this.onCheck}
-                        autoExpandParent={true}
-                        checkedKeys={this.state.currentRole.resources}
-                        style={{ height: '200px' }}
-                        treeData={this.state.resourceData}
-                    />
-                </Card>
-
+                {
+                   <Row gutter={24}>{ this.getFields(this.state.assetsList)}</Row>
+                }
             </Modal>
         </div>
     }
