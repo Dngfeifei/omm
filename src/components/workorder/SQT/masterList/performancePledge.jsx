@@ -182,7 +182,7 @@ class performance extends Component {
             uploadConf: {
                 // 发到后台的文件参数名
                 name: 'file', 
-                action:"/biSqtBase/upload",
+                action:`${actionUrl}/biSqtBase/upload`,
                 // 接受的文件类型
                 // accept: '.xls,.xlsx,.doc,.txt,.PPT,.DOCS,.XLSX,.PPTX',
                 headers: header,
@@ -635,6 +635,7 @@ addMouseLeave = (record) => {
 
     // 附件上传-----上传外包合同设备清单附件
     beforeUpload = (file) => {
+        console.log(file.size,file.size / 1024 / 1024)
         const isLt2M = file.size / 1024 / 1024 < 30;
         if (!isLt2M) {
             message.error('上传文件大小不能超过30MB!');

@@ -215,22 +215,22 @@ class MicroDom extends Component{
                         obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域是否申请备机备件未选择`;
                         return obj;
                     }
-                    // else if(i.firstInspectReportNameList.length && i.firstInspectReportNameList[0].status != 'done'){
-                    //     obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域首次巡检总结报告附件上传有误`;
-                    //     return obj;
-                    // }else if(i.configTemplateNameList.length && i.configTemplateNameList[0].status != 'done'){
-                    //     obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域配置信息管理模板附件上传有误`;
-                    //     return obj;
-                    // }else if(i.venturnReportNameList.length && i.venturnReportNameList[0].status != 'done'){
-                    //     obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域风险提示报告附件上传有误`;
-                    //     return obj;
-                    // }else if(!i.firstInspectReportNameList.length || !i.venturnReportNameList.length || !i.configTemplateNameList.length){
-                    //     obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域附件上传有误`;
-                    //     return obj
-                    // }
+                    else if(i.firstInspectReportNameList.length && i.firstInspectReportNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域首次巡检总结报告附件上传有误`;
+                        return obj;
+                    }else if(i.configTemplateNameList.length && i.configTemplateNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域配置信息管理模板附件上传有误`;
+                        return obj;
+                    }else if(i.venturnReportNameList.length && i.venturnReportNameList[0].status != 'done'){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域风险提示报告附件上传有误`;
+                        return obj;
+                    }else if(!i.firstInspectReportNameList.length || !i.venturnReportNameList.length || !i.configTemplateNameList.length){
+                        obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域附件上传有误`;
+                        return obj
+                    }
                 }else{
-                    // obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域填写有误`;
-                    // return obj;
+                    obj.info.state = false,obj.info.message = `微观风险附表${i.area}区域填写有误`;
+                    return obj;
                 }
             }
         }else{

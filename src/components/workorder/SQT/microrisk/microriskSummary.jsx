@@ -49,7 +49,7 @@ class MicroSum extends Component{
             uploadConf: {
                 // 发到后台的文件参数名
                 name: 'file', 
-                action:"/biSqtBase/upload",
+                action:`${actionUrl}/biSqtBase/upload`,
                 headers: header,
                 multiple: true,
             }
@@ -109,19 +109,19 @@ class MicroSum extends Component{
                     obj.info.state = false,obj.info.message = `微观风险汇总附表区域是否申请备机备件未选择`;
                     return obj;
                 }
-                // else if(firstInspectReportNameList.length && firstInspectReportNameList[0].status != 'done'){
-                //     obj.info.state = false,obj.info.message = `微观风险汇总附表区域首次巡检总结报告附件上传有误`;
-                //     return obj;
-                // }else if(configTemplateNameList.length && configTemplateNameList[0].status != 'done'){
-                //     obj.info.state = false,obj.info.message = `微观风险汇总附表区域配置信息管理模板附件上传有误`;
-                //     return obj;
-                // }else if(venturnReportNameList.length && venturnReportNameList[0].status != 'done'){
-                //     obj.info.state = false,obj.info.message = `微观风险汇总附表区域风险提示报告附件上传有误`;
-                //     return obj;
-                // }else if(!firstInspectReportNameList.length || !venturnReportNameList.length || !configTemplateNameList.length){
-                //     obj.info.state = false,obj.info.message = `微观风险汇总附表区域附件上传有误`;
-                //     return obj
-                // }
+                else if(firstInspectReportNameList.length && firstInspectReportNameList[0].status != 'done'){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域首次巡检总结报告附件上传有误`;
+                    return obj;
+                }else if(configTemplateNameList.length && configTemplateNameList[0].status != 'done'){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域配置信息管理模板附件上传有误`;
+                    return obj;
+                }else if(venturnReportNameList.length && venturnReportNameList[0].status != 'done'){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域风险提示报告附件上传有误`;
+                    return obj;
+                }else if(!firstInspectReportNameList.length || !venturnReportNameList.length || !configTemplateNameList.length){
+                    obj.info.state = false,obj.info.message = `微观风险汇总附表区域附件上传有误`;
+                    return obj
+                }
             }else{
                 obj.info.state = false,obj.info.message = `微观风险汇总附表区域填写有误`;
                 return obj;
