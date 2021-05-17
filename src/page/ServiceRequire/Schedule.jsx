@@ -235,7 +235,7 @@ class Schedule extends Component {
           key: "startDate",
           node: 2,
           render: (_) => (
-            <DatePicker style={{ width: 200, padding: "0 45px" }} />
+            <DatePicker style={{ width: 200 }} />
           ),
         },
         {
@@ -243,7 +243,7 @@ class Schedule extends Component {
           key: "endDate",
           node: 2,
           render: (_) => (
-            <DatePicker style={{ width: 200, padding: "0 45px" }} />
+            <DatePicker style={{ width: 200 }} />
           ),
         },
         {
