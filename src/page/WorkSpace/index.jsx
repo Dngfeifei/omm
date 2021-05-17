@@ -133,7 +133,7 @@ class workList extends Component {
                 },
                 render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
-                title: '当前任务',
+                title: '工单任务',
                 dataIndex: 'taskName',
                 ellipsis: {
                     showTitle: false,

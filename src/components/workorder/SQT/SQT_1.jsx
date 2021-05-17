@@ -29,6 +29,10 @@ import  MacroRiskSummary from '@/components/workorder/SQT/macroRisk/macroRiskSum
 import  MicroRisk from '@/components/workorder/SQT/microrisk/microrisk'
 //引入微观风险汇总附表组件
 import  MicroRiskSummary from '@/components/workorder/SQT/microrisk/microriskSummary'
+//引入预约服务附表组件
+import  ReservationService from '@/components/workorder/SQT/reservationService/reservationServiceList'
+//引入预约服务汇总附表组件
+import  ReservationServiceSummary from '@/components/workorder/SQT/reservationService/reservationServiceSummary'
 
 
 class Sqt extends Component {
@@ -339,12 +343,14 @@ class Sqt extends Component {
         return true;       
     }
     render = _ => {
-        let {datasources,paramsObj} = this.state;
+        let {paramsObj} = this.state;
         const schedule = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1) ? true : false;
         const macroRiskList = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('macroRisk') > -1) ? true : false;
         const macroRiskSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('macroRiskSummary') > -1) ? true : false;
         const microRisk = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('microRisk') > -1) ? true : false;
         const microRiskSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('microRiskSummary') > -1) ? true : false;
+        const reservationService = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('reservationService') > -1) ? true : false;
+        const reservationServiceSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('reservationServiceSummary') > -1) ? true : false;
         console.log(this.props.config);
         return (
             <div className="SqtContent">
@@ -395,6 +401,23 @@ class Sqt extends Component {
                         </TabPane>
                      : null
                     }
+                    {
+                       reservationService ? 
+                        <TabPane tab="预约服务" key="6">
+                            {/* 附表--组件  */}
+                           <ReservationService onChange={(data) => this.getChildrenVildter(data,'reservationService')} power={this.props.config}></ReservationService>
+                        </TabPane>
+                     : null
+                    }
+                    {
+                       reservationServiceSummary ? 
+                        <TabPane tab="预约服务汇总" key="7">
+                            {/* 附表--组件  */}
+                           <ReservationServiceSummary onChange={(data) => this.getChildrenVildter(data,'reservationServiceSummary')} power={this.props.config}></ReservationServiceSummary>
+                        </TabPane>
+                     : null
+                    }
+
                 </Tabs>
             </div>
         )

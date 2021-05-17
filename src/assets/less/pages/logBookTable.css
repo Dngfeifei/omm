@@ -10,10 +10,10 @@
   margin-right: 16px !important;
 }
 
-.performanceContent .config .ant-descriptions-row  .ant-descriptions-item-content {
+.AttachmentList td,.performanceContent .config .ant-descriptions-row  .ant-descriptions-item-content {
   position: relative !important;
 }
-.performanceContent .config .upload .ant-upload {
+.AttachmentList .upload .ant-upload,.performanceContent .config .upload .ant-upload {
   position: absolute;
   right: 5px;
   top: 8px;
@@ -21,7 +21,7 @@
   width: 50px;
   cursor: pointer;
 }
-.performanceContent .config .upload .ant-upload-list div {
+.AttachmentList .upload .ant-upload-list div,.performanceContent .config .upload .ant-upload-list div {
   float: left;
   display: block;
   margin-left: 7px;
