@@ -261,7 +261,7 @@ class performance extends Component {
     }
 
     // 初始化接口
-    init = () => {
+    init = (disaBled) => {
         this.columns = [
             {
                 title: '培训方式',
@@ -302,22 +302,22 @@ class performance extends Component {
                 dataIndex: 'level',
                 align:'center'
             },{
-                title: '响应时限（小时）',
+                title: this.setRequired(disaBled,'响应时限（小时）') ? <div className="ant-form-item-required">响应时限（小时）</div> : '响应时限（小时）',
                 dataIndex: 'respondTime',
                 editable: true,
                 align:'center'
             },{
-                title: '工程师到场时限（小时）',
+                title:  this.setRequired(disaBled,'工程师到场时限（小时）') ? <div className="ant-form-item-required">工程师到场时限（小时）</div> : '工程师到场时限（小时）',
                 dataIndex: 'engineerArriveTime',
                 editable: true,
                 align:'center'
             },{
-                title: '备件到场时限（小时）',
+                title: this.setRequired(disaBled,'备件到场时限（小时）') ? <div className="ant-form-item-required">备件到场时限（小时）</div> : '备件到场时限（小时）',
                 dataIndex: 'spareArriveTime',
                 editable: true,
                 align:'center'
             },{
-                title: '解决时限（小时）',
+                title: this.setRequired(disaBled,'解决时限（小时）') ? <div className="ant-form-item-required">解决时限（小时）</div> : '解决时限（小时）',
                 dataIndex: 'solveTime',
                 editable: true,
                 align:'center'
@@ -694,7 +694,30 @@ addMouseLeave = (record) => {
        // this.setState({PerformanceData:{...this.state.PerformanceData,sparePartsFileList:fileList}})
     }
 
-
+    // 附件上传---客户方模板
+    ClienttChange=(info)=>{
+        // console.log(info)
+        let fileList = [...info.fileList];
+        // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
+        fileList = fileList.slice(-1);
+        // 2.读取响应并显示文件链接
+        fileList = fileList.map(file => {
+            if (file.response) {
+                if (file.response.success == 1) {
+                    // let number = Math.random().toString().slice(-6);
+                    // file.uid = number;
+                    file.fileName = file.response.data.fileName,
+                    file.fileUrl= file.response.data.fileUrl;
+                } else if (file.response.success == 0) {
+                    file.status = 'error';
+                }
+            }
+            return file;
+        });
+        let data = Object.assign({}, this.state.PerformanceData, { clientFileList:fileList});
+        this.setState({ ContractFileList:fileList , PerformanceData:data},()=>{this.updataToParent()});
+    // this.setState({PerformanceData:{...this.state.PerformanceData,sparePartsFileList:fileList}})
+    }
    
 
     // 所有【输入框以及下拉框】的onchange事件
@@ -775,7 +798,7 @@ addMouseLeave = (record) => {
     }
     //处理个lable显示是否必填
     setRequired = (node,key) => {
-        if(!node && (key == '服务方式' || key == '远程巡检周期'|| key == '现场巡检周期'|| key == '是否需要提供首次巡检服务'|| key == '是否收集相关配置信息'|| key == '服务报告提交周期'|| key == '服务单要求'|| key == '其他重要承诺及要求')){
+        if(!node && (key == '服务方式' || key == '远程巡检周期'|| key == '现场巡检周期'|| key == '是否需要提供首次巡检服务'|| key == '是否收集相关配置信息'|| key == '服务报告提交周期'|| key == '服务单要求'|| key == '其他重要承诺及要求' || key == '不收集配置信息原因说明')){
             return <span>{key}<span className='required'></span></span>
         }
         return <span>{key}</span>
@@ -793,8 +816,9 @@ addMouseLeave = (record) => {
         }
     }
     render = _ => {
-        this.init();
         let {isEdit,formRead,node} = this.props;
+        const disaBled = this.setJurisdiction(isEdit,formRead,node);
+        this.init(disaBled);
         const components = {
             body: {
                 row: EditableFormRow,
@@ -843,7 +867,7 @@ addMouseLeave = (record) => {
         });
         // console.log(isEdit,formRead,node)
          console.log(this.state.PerformanceData.afterSaleAgreement,this.state.PerformanceData.projectCycleType,this.state.PerformanceData.cycleEnd)
-        const disaBled = this.setJurisdiction(isEdit,formRead,node);
+        
         return (
             <div className="performanceContent">
                 <div className="formContent">
@@ -943,9 +967,9 @@ addMouseLeave = (record) => {
                                 <Option value="1">是</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(disaBled,"不收集配置信息原因说明")} span={2} className="mustFill">
+                        <Descriptions.Item label={this.state.PerformanceData.isCollectConfig == 0 ? this.setRequired(disaBled,"不收集配置信息原因说明") : "不收集配置信息原因说明"} span={2} className="mustFill">
                             
-                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择不收集配置信息原因说明" allowClear={true} showSearch value={this.state.PerformanceData.notCollectReason} onChange={(value)=>this.inputChange('notCollectReason',value)}>
+                            <Select disabled={disaBled ? true : this.state.PerformanceData.isCollectConfig == 1 ? true : false} style={{ width: '100%' }} placeholder="请选择不收集配置信息原因说明" allowClear={true} showSearch value={this.state.PerformanceData.notCollectReason} onChange={(value)=>this.inputChange('notCollectReason',value)}>
                                 {
                                     this.state.notCollectReasonArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -953,7 +977,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(disaBled,"服务报告提交周期")} span={2}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"服务报告提交周期")} span={1}>
                             <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务报告提交周期" allowClear={true} showSearch value={this.state.PerformanceData.serviceReportCycle} onChange={(value)=>this.inputChange('serviceReportCycle',value)}>
                                 {
                                     this.state.serviceReportCycleArray.map((items, index) => {
@@ -962,7 +986,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(disaBled,"服务单要求")} span={2}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"服务单要求")} span={1}>
                             <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceListRequire} onChange={(value) => this.inputChange('serviceListRequire', value)}>
                                 {
                                     this.state.serviceListRequireArray.map((items, index) => {
@@ -970,6 +994,13 @@ addMouseLeave = (record) => {
                                     })
                                 }
                             </Select>
+                        </Descriptions.Item>
+                        <Descriptions.Item label={this.setRequired(disaBled,"客户方模版")} span={2}>
+                            <div className="upload">
+                                <Upload disabled={disaBled ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ClienttChange} fileList={this.state.PerformanceData.clientFileList}>
+                                    <Icon type="upload" />上传
+                                </Upload>
+                            </div>
                         </Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(disaBled,"合同承诺备机备件清单")} span={3}>
                             <div className="upload">

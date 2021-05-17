@@ -499,7 +499,7 @@ class serviceArea extends React.Component {
                     <Button style={{marginRight: '10px'}} onClick={this.handlerDelete} disabled={isEdit ? true : false}>删除</Button>
                     {
                         !this.state.editingKey ? <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button> : (
-                            <Button style={{marginRight: '10px'}} disabled>取消</Button>
+                            <Button style={{marginRight: '10px'}} disabled>修改</Button>
                         )
                     }
                     {

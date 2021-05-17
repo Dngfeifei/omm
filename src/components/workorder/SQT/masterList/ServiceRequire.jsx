@@ -85,6 +85,7 @@ class servies extends Component {
             outsourcer: '', //外包商
             sparePartsFileList: [],// 合同承诺备机备件清单
             equipmentFileList: [], // 上传外包合同设备清单附件
+            clientFileList: [], // 客户方模版附件
             afterSaleAgreement: '1', // 集成/备件销售项目（101、102）售后服务约定 1-原厂服务，2-我司服务
             projectCycleType: '',// 项目周期类型，1-部分项目周期，2-全部项目周期，原厂服务周期类型
 
