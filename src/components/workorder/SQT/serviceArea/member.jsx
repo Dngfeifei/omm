@@ -53,7 +53,7 @@ class Member extends Component {
                     },
                 },
                 {
-                    title: '项目角色',
+                    title: props.edit ? <div className="ant-form-item-required">项目角色</div> : '项目角色',
                     dataIndex: 'type',
                     key: 'type',
                     width: "15%",
@@ -69,7 +69,7 @@ class Member extends Component {
                     },
                 },
                 {
-                    title: '姓名',
+                    title: props.edit ? <div className="ant-form-item-required">姓名</div> : '姓名',
                     dataIndex: 'realName',
                     key: 'realName',
                     width: "15%",
@@ -79,7 +79,7 @@ class Member extends Component {
                     },
                 },
                 {
-                    title: '联系电话 ',
+                    title: props.edit ? <div className="ant-form-item-required">联系电话</div> : '联系电话 ',
                     dataIndex: 'mobilePhone',
                     width: "15%",
                     align: 'center',
@@ -88,7 +88,7 @@ class Member extends Component {
                     },
                 },
                 {
-                    title: '邮箱',
+                    title: props.edit ? <div className="ant-form-item-required">邮箱</div> : '邮箱',
                     dataIndex: 'email',
                     key: 'email',
                     width: "26%",
