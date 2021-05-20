@@ -61,7 +61,7 @@ class basicInfor extends Component {
             }, {
                 label: '项目类别',
                 key: 'projectType',
-                render: (isEdit,formRead,node,disaBled) =>  <Select style={{width: '100%' }} disabled={disaBled ? true : false} placeholder="请选择项目类别" allowClear={true} value={this.state.basicInfor.projectType+''} onChange={(value)=>this.handleChange('projectType',value)}>
+                render: (isEdit,formRead,node,disaBled) =>  <Select style={{width: '100%' }} disabled={disaBled ? true : false} placeholder="请选择项目类别" allowClear={true} value={isNaN(this.state.basicInfor.projectType) ? this.state.basicInfor.projectType : this.state.basicInfor.projectType +''} onChange={(value)=>this.handleChange('projectType',value)}>
                     {
                         this.state.projectTypeArray.map((items, index) => {
                             return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
@@ -79,7 +79,7 @@ class basicInfor extends Component {
             }, {
                 label: '服务类别',
                 key: 'serviceTypeName',
-                render: (isEdit,formRead,node,disaBled) => <Select disabled={true}  placeholder='根据项目号进行带入' style={{width: '100%' }} placeholder="请选择" allowClear={true} value={this.state.basicInfor.serviceType+''} onChange={(value)=>this.handleChange('serviceType',value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select disabled={true}  placeholder='根据项目号进行带入' style={{width: '100%' }} placeholder="请选择" allowClear={true} value={isNaN(this.state.basicInfor.serviceType) ? this.state.basicInfor.serviceType : this.state.basicInfor.serviceType+''} onChange={(value)=>this.handleChange('serviceType',value)}>
                 {
                     this.state.ServiceTypeArray.map((items, index) => {
                         return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
@@ -155,7 +155,7 @@ class basicInfor extends Component {
             }, {
                 label: '是否续签项目',
                 key: 'isRenewal',
-                render: (isEdit,formRead,node,disaBled) => <Select style={{ width: '100%' }} disabled={disaBled ? true : false} placeholder="请选择是否续签项目" allowClear={true} value={this.state.basicInfor.isRenewal+''} onChange={(value)=>this.handleChange('isRenewal',value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select style={{ width: '100%' }} disabled={disaBled ? true : false} placeholder="请选择是否续签项目" allowClear={true} value={isNaN( this.state.basicInfor.isRenewal) ? this.state.basicInfor.isRenewal : this.state.basicInfor.isRenewal+''} onChange={(value)=>this.handleChange('isRenewal',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>
@@ -171,7 +171,7 @@ class basicInfor extends Component {
                 label: '是否转包项目',
                 key: 'isSubcontract',
                 span: 2,
-                render: (isEdit,formRead,node,disaBled) => <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否转包项目" allowClear={true} value={this.state.basicInfor.isSubcontract+''} onChange={(value)=>this.handleChange('isSubcontract',value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否转包项目" allowClear={true} value={isNaN(this.state.basicInfor.isSubcontract) ? this.state.basicInfor.isSubcontract : this.state.basicInfor.isSubcontract+''} onChange={(value)=>this.handleChange('isSubcontract',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>
@@ -183,7 +183,7 @@ class basicInfor extends Component {
                 label: '是否有团建负责',
                 key: 'isLeagueBuild',
                 span: 2,
-                render: (isEdit,formRead,node,disaBled) => <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否有团建负责" allowClear={true} value={this.state.basicInfor.isLeagueBuild+''} onChange={(value)=>this.handleChange('isLeagueBuild',value)}>
+                render: (isEdit,formRead,node,disaBled) => <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否有团建负责" allowClear={true} value={isNaN(this.state.basicInfor.isLeagueBuild) ? this.state.basicInfor.isLeagueBuild : this.state.basicInfor.isLeagueBuild +''} onChange={(value)=>this.handleChange('isLeagueBuild',value)}>
                     <Option value='1'>是</Option>
                     <Option value='0'>否</Option>
                 </Select>

@@ -32,36 +32,36 @@ class servies extends Component {
             writeUserName: '',//填写人
             writeDept: '销售部', //填写部门
             projectType: '1', //项目类别
-            projectNumber: '',//项目号
+            projectNumber: '请选择',//项目号
             projectName: '',//项目名称
             serviceType: '',//服务类别
             custNum: '',//客户编码
             custName: '',//客户名称
-            industry: '广发',//所属行业
+            industry: '',//所属行业
             custLevel: '0',//客户级别
-            salesmanName: '张懿哲',//项目销售
-            salesmanPhone: '13701202583',//销售联系方式
+            salesmanName: '请选择',//项目销售
+            salesmanPhone: '',//销售联系方式
             managerType: '2',//项目经理类型
-            managerName: '',//项目经理
-            managerPhone: '13701202583',//项目经理联系方式
+            managerName: '请选择',//项目经理
+            managerPhone: '',//项目经理联系方式
             startDate: '',//项目开始日期
             endDate: '',//项目结束日期
             isRenewal: 0,// 是否续签项目,1是，0-否
             renewalNumber: '',//续签项目号
             renewalName: '',//续签项目名称
             isSubcontract: '1',// 是否转包项目,1是，0-否
-            finalCustName: '宋波',//最终客户名称
+            finalCustName: '',//最终客户名称
             isLeagueBuild: '1',//是否有团建负责，1是，0否
-            leagueBuildName: '宋波',//团建负责人
+            leagueBuildName: '',//团建负责人
         },
         // 【服务区域】的table表格数据
         areaList: [],
         // 【服务承诺】组件的所有数据
         performancePledge: {
-            serviceMode: '',  // 服务方式
-            isReceiveReport: '',  // 是否提交验收报告1-是，0-否
-            longInspectionCycle: '',  //远程巡检周期
-            sceneInspectionCycle: '',      // 现场巡检周期
+            serviceMode: undefined,  // 服务方式
+            isReceiveReport: undefined,  // 是否提交验收报告1-是，0-否
+            longInspectionCycle: undefined,  //远程巡检周期
+            sceneInspectionCycle: undefined,      // 现场巡检周期
             inspectionDesc: '', //巡检特殊说明
             courseList: [{
                 id: 1,
@@ -72,16 +72,16 @@ class servies extends Component {
                 oursePersonTimes: "",  // 培训人次
             }],
             isFirstInspection: '', // 是否需要提供首次巡检服务，1-是，0-否
-            onsiteService: '',   // 项目是否约定驻场服务
+            onsiteService: undefined,   // 项目是否约定驻场服务
             peopleNum: '1', //人数
             specialDesc: '', //特殊说明
-            isCollectConfig: '', // 是否收集相关配置信息，1-是，0-否
-            notCollectReason: '',    // 不收集配置信息原因说明
-            serviceReportCycle: '', // 服务报告提交周期
-            serviceListRequire: '', // 服务单要求
+            isCollectConfig: '1', // 是否收集相关配置信息，1-是，0-否
+            notCollectReason: undefined,    // 不收集配置信息原因说明
+            serviceReportCycle: undefined, // 服务报告提交周期
+            serviceListRequire: undefined, // 服务单要求
             partsList: '',//合同承诺备机备件清单
             sparePartsTime: '',// 合同承诺备机备件到库时间
-            isOutsource: '',// 是否有外包情况（1-是，0-否，2-部分）
+            isOutsource: undefined,// 是否有外包情况（1-是，0-否，2-部分）
             outsourcer: '', //外包商
             sparePartsFileList: [],// 合同承诺备机备件清单
             equipmentFileList: [], // 上传外包合同设备清单附件

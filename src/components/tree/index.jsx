@@ -124,7 +124,7 @@ class TreeList extends Component {
         ) : <span>{item.title}</span>;
         if (item.children) {
             return (
-                <TreeNode key={item.key} title={title} dataRef={item}>
+                <TreeNode key={item.key} title={title} dataRef={item} disabled={item.disabled ? true : false}>
                     {this.loop(item.children)}
                 </TreeNode>
             );

@@ -7,7 +7,7 @@ import TreeParant from "@/components/tree/index.jsx"
 import { GetRoleTree, AddRoleGroup, EditRoleGroup, DelRoleGroup, GetRole, AddRole, EditRole, DelRole, GetResourceTree } from '/api/role.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
-import {rules1,rules2,assetsListData,columns} from './assetsList.js'//获取页面渲染配置项
+import {rules,assetsListData,columns} from './basicInfor.js'//获取页面渲染配置项
 import '@/assets/less/pages/assets.less'
 //引入状态管理
 import { connect } from 'react-redux'
@@ -22,12 +22,11 @@ const assignment = (data) => {
     data.forEach((list, i) => {
         list.key = list.id;
         list.value = list.id;
-        if (list.hasOwnProperty("roleCategoryName")) {
-            list.title = list.roleCategoryName;
-        } else if (list.hasOwnProperty("resourceName")) {
-            list.title = list.resourceName;
+        if (list.hasOwnProperty("title")) {
+            list.title = list.title;
         }
         if (list.hasOwnProperty("children")) {
+            list.disabled = 1;
             if (list.children.length > 0) {
                 assignment(list.children)
             }
@@ -64,18 +63,12 @@ class assetsAllocation extends Component {
                 total: 0,
             },
             // 分页配置
-            // 请求加锁 防止多次请求
-            lock: false,
-            // 资源类型
-            comboBox: {
-                status: [],
-            },
+
             //左侧角色树相关数据
             tree: {
                 //右侧角色树数据
                 treeData: [],
             },
-            // treeDataList: [],
             //右侧table相关数据
             table: {
                 //右侧角色表格配置
@@ -84,12 +77,10 @@ class assetsAllocation extends Component {
                 rolesData: [],
                
     
-            },
-            queryed: false,
-            rules1: rules1,
-            rules2: rules2,
-            //新增修改角色组弹窗配置
-            roleGroupWindow: {
+            },  
+            rules: rules,    //每个面板的查询条件配置
+            //二级面板显示配置
+            secondWindow: {
                 roleGroupModal: false, //弹窗是否显示可见
                 roleGroupModalType: 0, //0新增  1修改
                 roleGroupModalTitle: "新增",//弹窗title
@@ -101,7 +92,7 @@ class assetsAllocation extends Component {
                 //新增或修改后的角色组数据
                 newRoleGroupVal: null,
             },
-            //新增修改角色弹窗配置
+            //新增修改产看弹窗配置
             roleWindow: {
                 roleModal: false,
                 roleModalType: 0, //0新增  1修改
@@ -120,12 +111,11 @@ class assetsAllocation extends Component {
             //表格选中项
             tableSelecteds: [],
             tableSelectedInfo: [],
-            //资源树数据
-            resourceData: null,
-            serviceRegionList:[],
-            assetsList: assetsListData,
-            assetsPostData:{
-                1:'',
+            
+            serviceRegionList:{},     //每个面板二级弹出框显示内容
+            assetsList: assetsListData, //每个面板的第一层弹框显示内容
+            assetsPostData:{            //每个面板查看修改数据的时候要回显的数据存储,共用一个
+                1:'23',
                 2:'',
                 3:'',
                 4:'',
@@ -134,15 +124,7 @@ class assetsAllocation extends Component {
                 7:'',
                 8:'',
                 9:'',
-                10:'',
-                k:'',
-                l:'',
-                m:'',
-                n:'',
-                o:'',
-                p:'',
-                q:'',
-                r:'',
+                10:''
             }
         }
     }
@@ -200,7 +182,7 @@ class assetsAllocation extends Component {
             message.warning('请先选中左侧角色组，然后再进行查询。');
             return
         }
-        const fieldNames = this.state.rules1.map(item => item.key)
+        const fieldNames = this.state.rules['rules1'].map(item => item.key)
         let formValues = this.props.form.getFieldsValue(fieldNames)
         // 2 发起查询请求 查询后结构给table赋值
         let params = Object.assign({},formValues, this.state.pageConf, { offset: 0 })
@@ -360,17 +342,17 @@ class assetsAllocation extends Component {
             return
         }
         let row = this.state.tableSelectedInfo[0];
-        let ids = [];
-        if (row.resources && row.resources.length > 0) {
-            if (row.resources[0]) {
-                row.resources.forEach(item => { 
-                    //代码修改过，源代码为 ids.push(item.id)
-                    let item1 = this.getId(this.state.resourceData,item.id);
-                    !item1 && ids.push(item.id);     
-                    //代码修改过，源代码为 ids.push(item.id)
-                })
-            }
-        }
+        // let ids = [];
+        // if (row.resources && row.resources.length > 0) {
+        //     if (row.resources[0]) {
+        //         row.resources.forEach(item => { 
+        //             //代码修改过，源代码为 ids.push(item.id)
+        //             let item1 = this.getId(this.state.resourceData,item.id);
+        //             !item1 && ids.push(item.id);     
+        //             //代码修改过，源代码为 ids.push(item.id)
+        //         })
+        //     }
+        // }
         this.setState({
             roleWindow: {
                 roleModal: true,
@@ -601,13 +583,6 @@ class assetsAllocation extends Component {
         }
         return children;
       }
-      //展开/收起查询条件
-      setQueryed = _ =>{
-            const {queryed} = this.state;
-            this.setState({
-                queryed: !queryed
-            })
-      }
     render = _ => {
         const { h } = this.state;
         const { getFieldDecorator } = this.props.form;
@@ -620,27 +595,17 @@ class assetsAllocation extends Component {
                 </Col>
                 <Col span={19} className="gutter-row main_height" style={{ padding: '16px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
                     <Form id="assetsForm" layout='inline' style={{ width: '100%' }}>
-                        <Row type="flex" style={{flexWrap:'nowrap'}}>
-                        {this.state.rules1.map((val, index) =>
-                            index <= 1 ? <FormItem
+                        <Row>
+                        {this.state.rules['rules1'].map((val, index) =>
+                            <FormItem
                                 label={val.label} style={{ marginBottom: '8px' }} key={index}>
                                 {getFieldDecorator(val.key, val.option)(val.render())}
-                            </FormItem>:null)}
-                            <div style={{flex:'auto',textAlign:'right'}}>
+                            </FormItem>)}
+                            <FormItem style={{flex:'auto',textAlign:'right'}}>
                                 <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
                                 <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
-                                <span style={{ marginLeft: '10px',color:'#1890ff',fontSize:12}} onClick={this.setQueryed}>{this.state.queryed ? '收起' : '展开'}</span>
-                            </div>
+                            </FormItem>
                         </Row>
-                        {
-                            this.state.queryed ? <Row>
-                            {this.state.rules1.map((val, index) =>
-                                index > 1 ? <FormItem
-                                    label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                                    {getFieldDecorator(val.key, val.option)(val.render())}
-                                </FormItem>:null)}
-                            </Row> : null
-                        }
                         <Row>
                             <Col span={12} style={{ textAlign: 'left'}}>
                                 <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
@@ -665,18 +630,7 @@ class assetsAllocation extends Component {
                     </div>
                 </Col>
             </Row>
-            {/* 角色组新增修改弹窗 */}
-            <Modal
-                title={this.state.roleGroupWindow.roleGroupModalTitle}
-                visible={this.state.roleGroupWindow.roleGroupModal}
-                onCancel={_ => this.setState({ roleGroupWindow: { roleGroupModal: false } })}
-                onOk={this.saveRoleGroup}
-                cancelText="取消"
-                okText="保存"
-            >
-                <Input addonBefore="角色组名称" placeholder="请输入" value={this.state.newRoleGroup.newRoleGroupVal} onChange={this.getNewRoleGroupVal} style={{ margin: "5% 10px", width: '90%' }} />
-            </Modal>
-            {/* 角色的新增修改弹窗 */}
+            {/* 资产的新增、修改、查看弹窗 */}
             <Modal
                 title={this.state.roleWindow.roleModalTitle}
                 destroyOnClose
@@ -697,7 +651,7 @@ class assetsAllocation extends Component {
             >
                 {
                     <Form id="assetsBoxFrom" layout='inline'>
-                        <Row gutter={[24,15]}>{ this.getFields(this.state.assetsList)}</Row>
+                        <Row gutter={[24,15]}>{ this.getFields(this.state.assetsList['assetsListData1'])}</Row>
                     </Form>
                 }
             </Modal>

@@ -867,7 +867,7 @@ addMouseLeave = (record) => {
             };
         });
         // console.log(isEdit,formRead,node)
-         console.log(this.state.PerformanceData.afterSaleAgreement,this.state.PerformanceData.projectCycleType,this.state.PerformanceData.cycleEnd)
+         console.log(this.state.PerformanceData.isReceiveReport+'========'+this.state.PerformanceData.serviceMode)
         
         return (
             <div className="performanceContent">
@@ -883,7 +883,7 @@ addMouseLeave = (record) => {
                             </Select>
                         </Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(disaBled,'是否提交验收报告')}>
-                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否提交验收报告" allowClear={true} showSearch value={this.state.PerformanceData.isReceiveReport+''} onChange={(value) => this.inputChange('isReceiveReport', value)}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否提交验收报告" allowClear={true} showSearch value={isNaN(this.state.PerformanceData.isReceiveReport) ? this.state.PerformanceData.isReceiveReport : this.state.PerformanceData.isReceiveReport +''} onChange={(value) => this.inputChange('isReceiveReport', value)}>
                                 {
                                     this.state.siteServiceArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
@@ -1014,7 +1014,7 @@ addMouseLeave = (record) => {
                             <DatePicker disabled={disaBled ? true : false} style={{width:'100%'}}  value={this.state.PerformanceData.sparePartsTime?moment(this.state.PerformanceData.sparePartsTime, dateFormat):null} onChange={(date, dateString)=>this.timeChange('sparePartsTime',date, dateString)} format={dateFormat}></DatePicker>
                         </Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(disaBled,"是否有外包情况")}>
-                            <Select disabled={disaBled ? true : false} value={this.state.PerformanceData.isOutsource+''} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
+                            <Select disabled={disaBled ? true : false} placeholder="请选择" value={isNaN(this.state.PerformanceData.isOutsource) ? this.state.PerformanceData.isOutsource : this.state.PerformanceData.isOutsource+''} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
                                 <Option value="1">是</Option>
                                 <Option value="0">否</Option>
                                 <Option value="2">部分</Option>
