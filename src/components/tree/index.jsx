@@ -15,9 +15,6 @@ const { Search } = Input;
 import "./tree.css";
 
 
-
-
-
 const getParentKey = (title, tree) => {
     let parentKey;
     for (let i = 0; i < tree.length; i++) {
