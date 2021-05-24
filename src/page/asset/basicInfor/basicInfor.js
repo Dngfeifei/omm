@@ -191,7 +191,7 @@ export const assetsListData = {
         }
     ]
 }
-
+//表格参数
 export const columns = {
     columns1:[
         {
@@ -226,4 +226,54 @@ export const columns = {
             align: 'center',
         }
     ]
+}
+//表格参数数据匹配
+export const panes = {
+    pane1:{
+        
+    },
+    pane2:{
+        
+    },
+    pane3:{
+       
+    },
+    pane4:{
+        
+    },
+
+}
+
+//查询条件基础数据存储
+export const conditionalData = {
+    pane1:{
+        newEntry:false,
+        1:[],
+        2:[],
+        3:[],
+        4:[],
+        5:[],
+    },
+    pane2:{
+        newEntry:false,
+        selectData1:[],
+    },
+    pane3:{
+        newEntry:false,
+        selectData1:[],
+        selectData2:[],
+        selectData3:[],
+        selectData4:[],
+    },
+    pane4:{
+        newEntry:false,
+        selectData1:[],
+        selectData2:[],
+        selectData3:[],
+        selectData4:[],
+        selectData5:[],
+        selectData6:[],
+        selectData7:[],
+    },
+
 }

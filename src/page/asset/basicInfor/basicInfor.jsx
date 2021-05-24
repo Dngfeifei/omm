@@ -4,10 +4,10 @@ import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Dat
 import TreeParant from "@/components/tree/index.jsx"
 
 
-import { GetRoleTree, AddRoleGroup, EditRoleGroup, DelRoleGroup, GetRole, AddRole, EditRole, DelRole, GetResourceTree } from '/api/role.js'
+import { GetBasicTree,getBaseData, GetRole, DelRole } from '/api/assets.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
-import {rules,assetsListData,columns} from './basicInfor.js'//获取页面渲染配置项
+import {rules,assetsListData,columns,panes,conditionalData} from './basicInfor.js'//获取页面渲染配置项
 import '@/assets/less/pages/assets.less'
 //引入状态管理
 import { connect } from 'react-redux'
@@ -26,7 +26,6 @@ const assignment = (data) => {
             list.title = list.title;
         }
         if (list.hasOwnProperty("children")) {
-            list.disabled = 1;
             if (list.children.length > 0) {
                 assignment(list.children)
             }
@@ -108,11 +107,13 @@ class assetsAllocation extends Component {
                 status: null,
                 resources: [],
             },
+            panes:panes,
+            conditionalData:conditionalData,
             //表格选中项
             tableSelecteds: [],
             tableSelectedInfo: [],
             
-            serviceRegionList:{},     //每个面板二级弹出框显示内容
+            serviceRegionList:[],     //每个面板二级弹出框显示内容
             assetsList: assetsListData, //每个面板的第一层弹框显示内容
             assetsPostData:{            //每个面板查看修改数据的时候要回显的数据存储,共用一个
                 1:'23',
@@ -152,10 +153,10 @@ class assetsAllocation extends Component {
     }
     
 
-    //资产树结构数据查询
+    //基础树结构数据查询
     searchTree = async () => {
-        //请求角色组数据 右侧表格渲染第一列角色数据
-        GetRoleTree()
+        //请求树结构数据 右侧表格渲染第一列角色数据
+        GetBasicTree()
             .then(res => {
                 if (res.success != 1) {
                     message.error("请求错误")
@@ -168,12 +169,44 @@ class assetsAllocation extends Component {
                     // this.generateList(res.data)
                     if (res.data) {
                         this.setState({
-                            searchListID: res.data[0].id,
+                            searchListID: res.data[0].children[0].id,
                         })
-                        this.searchRoleFun(res.data[0].id)
+                        this.getBaseData(res.data[0].children[0].id)
+                        //this.searchRoleFun(res.data[0].children[0].id)//此处获取表格数据修改为先获取基础数据包再获取表格数据进行展示
                     }
                 }
             })
+    }
+    //获取每个面板的基础展示数据并存储，并获取表格数据
+    getBaseData = async (id) => {
+        const {panes,conditionalData} = this.state;
+        if(!conditionalData[`pane${id}`].newEntry){
+            let paneData = await getBaseData({id:id});
+            if (paneData.success == 1) {
+               conditionalData[`pane${id}`] = Object.assign({},panes[`pane${id}`],{newEntry:true},paneData.data)
+               panes[`pane${id}`] = Object.assign({},panes[`pane${id}`],this.setBaseData(paneData.data))
+            }
+            console.log(panes,conditionalData)
+            this.setState({
+                panes,
+                conditionalData
+            })
+        }
+    }
+    //处理基础数据存储Map供表格显示使用
+    setBaseData = (data) => {
+        let obj = {};
+        for(let i in data){
+            for(let j of i){
+                if(!j.data){
+                    obj[j.id] = j.basedataTypeName;
+                }else{
+                    obj = Object.assign({},obj,this.setBaseData([j.data]))
+                }
+            }
+            
+        }
+        return obj
     }
     //获取表格数据
     searchRoleFun = (id) => {
@@ -209,14 +242,9 @@ class assetsAllocation extends Component {
     }
     // 树选中后
     onTreeSelect = async (selectedKeys, info) => {
-        if (!info.selected) {
-            this.setState({
-                newRoleGroup: {
-                    treeSelect: null,
-                    newRoleGroupVal: null
-                },
-                searchListID: []
-            })
+        console.log(selectedKeys,info)
+        if (!info.selected || !info.selectedNodes[0].props.dataRef.selected) {
+            return
             let table = Object.assign({}, this.state.table, { rolesData: [] })
             let pagination = Object.assign({}, this.state.pagination, {
                 total: 0,
@@ -225,21 +253,18 @@ class assetsAllocation extends Component {
             let pageConf = Object.assign({}, this.state.pageConf, {
                 offset: 0,
             })
-            this.setState({ table: table, pagination: pagination, pageConf: pageConf })
+            this.setState({ table: table, pagination: pagination, pageConf: pageConf,searchListID: []})
             return
         }
         let data = info.selectedNodes[0].props.dataRef
         this.setState({
-            newRoleGroup: {
-                treeSelect: data.id,
-                newRoleGroupVal: data.roleCategoryName
-            },
             searchListID: data.id,
             tableSelecteds: [],
             tableSelectedInfo: []
+        },()=>{
+            // 选中后请求角色数据
+            this.searchRoleFun(data.id)
         })
-        // 选中后请求角色数据
-        this.searchRoleFun(data.id)
     };
     // 打开节点
     onExpand = expandedKeys => {
@@ -362,7 +387,7 @@ class assetsAllocation extends Component {
         })
     }
 
-    //角色表格单项删除
+    //表格单项删除
     delRoleItem = async (arr) => {
         if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
             message.destroy()

@@ -121,14 +121,14 @@ class TreeList extends Component {
         ) : <span>{item.title}</span>;
         if (item.children) {
             return (
-                <TreeNode key={item.key} title={title} dataRef={item} disabled={item.disabled ? true : false}>
+                <TreeNode key={item.key} title={title} dataRef={item}>
                     {this.loop(item.children)}
                 </TreeNode>
             );
         }
         return <TreeNode dataRef={item} key={item.key} title={title} />;
     });
-
+   
 
 
     // 输入框搜索节点
@@ -158,7 +158,7 @@ class TreeList extends Component {
         } = this.props;
         // 进行数组扁平化处理
         generateList(treeData);
-
+        console.log(treeData,defaultExpandAll,defaultExpandedKeys)
         return (
             <div className="TreeContent">
                 <Spin tip="Loading..." spinning={this.state.visible}>
