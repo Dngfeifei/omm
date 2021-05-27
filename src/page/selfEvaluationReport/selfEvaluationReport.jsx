@@ -1,3 +1,9 @@
+/***
+ *  工程师自评统计报表
+ * @auth yyp
+*/
+
+
 import React, { Component } from 'react'
 import { Modal, message, Button, Row, Col, Form, Input, Select, Table, DatePicker, TimePicker, Tooltip } from 'antd'
 
@@ -7,7 +13,7 @@ import Pagination from "@/components/pagination/index";
 
 
 // 引入 API接口
-import { getReport } from '/api/selfEvaluationReport'
+import { getReport, getAssessmentReport } from '/api/selfEvaluationReport'
 
 // 引入页面CSS
 // import '/assets/less/pages/logBookTable.css'
@@ -110,7 +116,7 @@ class AssessmentReport extends Component {
 
     // 页码改变的回调，参数是改变后的页码及每页条数
     onPageChange = (page, pageSize) => {
-        let data = Object.assign({}, this.state.pagination, { offset: (page-1)*pageSize })
+        let data = Object.assign({}, this.state.pagination, { offset: (page - 1) * pageSize })
 
         this.setState({
             pagination: data
@@ -130,14 +136,35 @@ class AssessmentReport extends Component {
             this.init()
         })
     }
-
-
+    // 导出工程师技能评价报告
+    downFile = () => {
+        let fileName = "工程师技能评价报告.xlsx"
+        const hide = message.loading('报表数据正在检索中,请耐心等待。。。', 0);
+        getAssessmentReport().then(res => {
+            if (res.success == 1) {
+                message.destroy()
+                var a = document.createElement("a");
+                document.body.appendChild(a);
+                a.href = res.data + "?filename=" + fileName;
+                // a.download = decodeURI(fileName);
+                a.click();
+                document.body.removeChild(a);
+            } else if (res.success == 0) {
+                message.destroy()
+                message.error(res.message);
+              
+            }
+        })
+    }
 
     render = _ => {
         const { h } = this.state;
-
         return (
             <div className="main_height" style={{ display: 'flex', flexDirection: 'column', flexWrap: 'nowrap', paddingTop: "20px" }}>
+                <div>
+                    <Button type="primary" onClick={this.downFile} style={{ float: "right", marginRight: "30px" }}>导出</Button>
+                </div>
+                <p style={{ paddingLeft: "20px", paddingBottom: "10px", fontSize: "16px", borderBottom: "1px solid #e8e8e8" }}>工程师自评统计日报</p>
                 <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
                     <Table
                         rowKey="id"
