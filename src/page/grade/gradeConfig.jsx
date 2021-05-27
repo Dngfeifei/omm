@@ -3,7 +3,7 @@
  * @auth yyp
  */
 import React, { Component } from 'react'
-import { Form, List, Tag, Button, Select, Input, message } from 'antd'
+import { Form, List, Tag, Button, Select, Input, message, Modal } from 'antd'
 import {
     FormOutlined
 } from '@ant-design/icons';
@@ -16,7 +16,9 @@ import Selector from '/components/selector/engineerSelector.jsx'
 // 引入页面CSS
 import '@/assets/less/components/layout.less'
 // 引入 API接口
-import { GetAssessLog, GetAssessConfig, PostAssessConfig, TemporaryOpen } from '/api/gradeConfig'
+import { GetAssessLog, GetAssessConfig, PostAssessConfig, TemporaryOpen, GetRecalculate, GetRecalculateLog } from '/api/gradeConfig'
+
+let logTimer = null;//计算日志定时器
 
 class engineerConfig extends Component {
     constructor(props) {
@@ -109,7 +111,10 @@ class engineerConfig extends Component {
             // 工程师选择器配置
             selector: {
                 visible: false,
-            }
+            },
+            // 重新计算数据日志
+            logVisible: false,
+            recalculateLog: [],
         }
     }
     // 组件将要挂载前触发的函数
@@ -520,7 +525,44 @@ class engineerConfig extends Component {
             }
         })
     }
+    // 工程师自评数据重新计算
+    onRecalculate = _ => {
+        GetRecalculate().then(res => {
+            if (res.success != 1) {
+                message.error(res.message)
+            } else {
+                this.setState({
+                    logVisible: true
+                }, () => {
+                    this.setLog()
+                })
+            }
+        })
+    }
 
+    // 渲染计算日志
+    setLog = () => {
+        logTimer = setInterval(() => {
+            GetRecalculateLog().then(res => {
+                if (res.success != 1) {
+                    message.error(res.message)
+                } else {
+                    let recalculateLog = this.state.recalculateLog
+                    this.setState({
+                        recalculateLog: recalculateLog.concat(res.data)
+                    })
+                }
+            })
+        }, 2000)
+    }
+    // 工程师自评数据重新计算log关闭
+    logModalCancel = _ => {
+        this.setState({
+            logVisible: false,
+            recalculateLog: []
+        })
+        clearInterval(logTimer)
+    }
     // 工程师选择器确定方法
     onSelectorOK = (selectedKeys) => {
         TemporaryOpen(selectedKeys).then(res => {
@@ -556,6 +598,7 @@ class engineerConfig extends Component {
                                 <Option value={1}>开启</Option>
                             </Select>
                             <Button type="primary" onClick={this.opening}>临时开启</Button>
+                            <Button type="primary" style={{ marginLeft: "10px" }} onClick={this.onRecalculate}>全部计算</Button>
                         </div>
                         <div className="loAreaContent">
                             <List
@@ -702,6 +745,20 @@ class engineerConfig extends Component {
                         onOk={this.onSelectorOK}
                         onCancel={this.onSelectorCancel} /> : ""
                 }
+                <Modal
+                    title="计算日志"
+                    visible={this.state.logVisible}
+                    onOk={this.logModalCancel}
+                    onCancel={this.logModalCancel}
+                >
+                    <div style={{ width: "100%", height: "300px", overflowY: "scroll" }}>
+                        {
+                            this.state.recalculateLog.map((item, index) => {
+                                return <p key={index}>{item}</p>
+                            })
+                        }
+                    </div>
+                </Modal>
             </div>
         )
     }
