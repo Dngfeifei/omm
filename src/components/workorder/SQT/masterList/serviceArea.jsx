@@ -313,15 +313,15 @@ class serviceArea extends React.Component {
                 title: '服务区域',
                 dataIndex: 'area',
                 editable: true,
-                render:(record,row)=>{
-                 if(row.isMainDutyArea == 1){
-                    record = record + '<span style="color:red">【主责区域】</span>'
-                    return  <span dangerouslySetInnerHTML={{ __html: record }}></span>
-                 }else{
-                    return  <span dangerouslySetInnerHTML={{ __html: record }}></span>
-                 }
+                // render:(record,row)=>{
+                //  if(row.isMainDutyArea == 1){
+                //     record = record + '<span style="color:red">【主责区域】</span>'
+                //     return  <span dangerouslySetInnerHTML={{ __html: record }}></span>
+                //  }else{
+                //     return  <span dangerouslySetInnerHTML={{ __html: record }}></span>
+                //  }
                    
-                }
+                // }
             },
             {
                 title: '是否是主责区域',

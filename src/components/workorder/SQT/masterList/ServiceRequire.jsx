@@ -27,10 +27,10 @@ class servies extends Component {
     state = {
         basicInfor: {
             orderNum: '',  //记录单号
-            companyName: '广发', //公司名称
+            companyName: '', //公司名称
             writeTime: '', //填写时间
             writeUserName: '',//填写人
-            writeDept: '销售部', //填写部门
+            writeDept: '', //填写部门
             projectType: '1', //项目类别
             projectNumber: '请选择',//项目号
             projectName: '',//项目名称
@@ -38,21 +38,21 @@ class servies extends Component {
             custNum: '',//客户编码
             custName: '',//客户名称
             industry: '',//所属行业
-            custLevel: '0',//客户级别
+            custLevel: undefined,//客户级别
             salesmanName: '请选择',//项目销售
             salesmanPhone: '',//销售联系方式
-            managerType: '2',//项目经理类型
+            managerType: undefined,//项目经理类型
             managerName: '请选择',//项目经理
             managerPhone: '',//项目经理联系方式
             startDate: '',//项目开始日期
             endDate: '',//项目结束日期
-            isRenewal: 0,// 是否续签项目,1是，0-否
+            isRenewal: undefined,// 是否续签项目,1是，0-否
             renewalNumber: '',//续签项目号
             renewalName: '',//续签项目名称
-            isSubcontract: '1',// 是否转包项目,1是，0-否
+            isSubcontract: undefined,// 是否转包项目,1是，0-否
             finalCustName: '',//最终客户名称
-            isLeagueBuild: '1',//是否有团建负责，1是，0否
-            leagueBuildName: '',//团建负责人
+            // isLeagueBuild: undefined,//是否有团建负责，1是，0否
+            // leagueBuildName: '',//团建负责人
         },
         // 【服务区域】的table表格数据
         areaList: [],

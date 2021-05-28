@@ -117,9 +117,11 @@ class Sqt extends Component {
                 errorMeassge:'主表项目经理类型不能为空！'
             },{
                 attribute: 'managerName',//项目经理
+                special:this.props.config.formControl ? this.props.config.formControl.masterList.nodes==2 ? true : '1' : '1',
                 errorMeassge:'主表项目经理不能为空！'
             },{
                 attribute: 'managerPhone',//项目经理联系方式
+                special:this.props.config.formControl ? this.props.config.formControl.masterList.nodes==2 ? true : '1' : '1',
                 errorMeassge:'主表项目经理联系方式不能为空！'
             },{
                 attribute: 'startDate',//项目开始日期
@@ -142,13 +144,15 @@ class Sqt extends Component {
             },{
                 attribute: 'finalCustName',//最终客户名称
                 errorMeassge:'主表最终客户名称不能为空！'
-            },{
-                attribute: 'isLeagueBuild',//是否有团建负责，1是，0否
-                errorMeassge:'主表是否有团建负责不能为空！'
-            },{
-                attribute: 'leagueBuildName',//团建负责人
-                errorMeassge:'主表团建负责人不能为空！'
-            },{
+            },
+            // {
+            //     attribute: 'isLeagueBuild',//是否有团建负责，1是，0否
+            //     errorMeassge:'主表是否有团建负责不能为空！'
+            // },{
+            //     attribute: 'leagueBuildName',//团建负责人
+            //     errorMeassge:'主表团建负责人不能为空！'
+            // },
+            {
                 attribute: 'serviceMode',  // 服务方式
                 errorMeassge:'主表服务方式不能为空！'
             },{
@@ -261,9 +265,9 @@ class Sqt extends Component {
 
         //所有附表数据验证提交
         for(var i in schedule){
-             console.log(schedule)
+            //  console.log(paramsObj)
              if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf(i) > -1 && this.props.config.formControl[i].isEdit){
-                 console.log(i)
+                //  console.log(i)
                 if(!schedule[i].info || !schedule[i].info.state) {
                     message.error(!schedule[i].info ? `请填写${schedule[i].area}附表！`: schedule[i].info.message)
                     return false;
@@ -302,8 +306,8 @@ class Sqt extends Component {
         //主表基本填写信息验证
         let slaNum = 0,{paramsObj,masterVildter} = this.state;
         for(var i of masterVildter){
-            console.log(i,paramsObj)
-            if((i.attribute == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i.attribute == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i.attribute == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i.attribute == 'managerName' && paramsObj['managerType'] == 1) || ((i.attribute == 'renewalName' || i.attribute == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
+            console.log(i.special)
+            if(i.special == '1' || (i.attribute == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i.attribute == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i.attribute == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i.attribute == 'managerName' && paramsObj['managerType'] == 1) || ((i.attribute == 'renewalName' || i.attribute == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
                 continue;
             }
             if(!(paramsObj[i.attribute]+'')){
