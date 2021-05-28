@@ -6,23 +6,24 @@ export const GetRoleTree = () => {
 }
 //获取配置库基础数据树数据
 export const GetBasicTree = () => {
-	return http.fetchGet(`/static/mock/assetsBaseInfor.json`)
+	//return http.fetchGet(`/static/mock/assetsBaseInfor.json`)
+	return http.fetchGet(`/basedata/tree`)
 }
 //获取表格数据
-export const GetRole = (params = {}) => {
-	return http.fetchGet(`/securityRoles`, params)
+export const GetTable = (params = {}) => {
+	return http.fetchGet(`/basedata/list`, params)
 }
 //新增
-export const AddRole = (params = {}) => {
-	return http.fetchPost(`/securityRoles`, params,true)
+export const AddTable = (params = {}) => {
+	return http.fetchPost(`/basedata/add`, params,true)
 }
 //编辑
-export const EditRole = (params = {}) => {
-	return http.fetchPut(`/securityRoles`, params,true)
+export const EditTable = (params = {}) => {
+	return http.fetchPost(`/basedata/update`, params,true)
 }
 //删除
-export const DelRole = (params = {}) => {
-	return http.fetchGet(`/securityRoles/deleteBacth`, params)
+export const DelTable = (params = {}) => {
+	return http.fetchGet(`/basedata/deleteBacth`, params)
 }
 
 
@@ -34,4 +35,8 @@ export const GetResourceTree = _ => {
 //获取基础数据页面的下拉数据接口
 export const getBaseData = (params = {}) => {
 	return http.fetchGet(`/static/mock/assetsData.json`, true)
+}
+//基础数据->下拉列表->数据类别
+export const getAllBaseDataTypes = (params = {}) => {
+	return http.fetchGet(`/basedata/listAllBaseDataTypes`, true)
 }

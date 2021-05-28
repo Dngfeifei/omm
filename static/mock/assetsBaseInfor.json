@@ -1,48 +1,74 @@
 {
 	"data":[{
-		"children":[{
 			"children":"",
 			"id":"1",
-			"key":"1",
-			"selected":true,
-			"parentId":"0",
-			"title":"服务目录",
-			"value":"1"
+			"basedataTypeId":"8",
+			"basedataTypeName":true,
+			"parentId":"-1",
+			"parentName":"123123",
+			"name":"服务类别(软件)",
+			"code":"1"
 		},
 		{
 			"children":"",
 			"id":"2",
-			"key":"2",
-			"selected":true,
+			"basedataTypeId":"1",
+			"basedataTypeName":true,
 			"parentId":"0",
-			"title":"品牌信息",
-			"value":"2"
+			"parentName":"123123",
+			"name":"技术方向",
+			"code":"1"
 		},
 		{
 			"children":"",
 			"id":"3",
-			"key":"3",
+			"basedataTypeId":"2",
+			"basedataTypeName":true,
 			"parentId":"0",
-			"selected":true,
-			"title":"产品信息",
-			"value":"3"
+			"parentName":"123123",
+			"name":"品牌",
+			"code":"1"
 		},
 		{
 			"children":"",
 			"id":"4",
-			"key":"4",
+			"basedataTypeId":"3",
+			"basedataTypeName":true,
 			"parentId":"0",
-			"selected":true,
-			"title":"风险配置",
-			"value":"0"
+			"parentName":"123123",
+			"name":"产品线",
+			"code":"1"
+		},
+		{
+			"children":"",
+			"id":"5",
+			"basedataTypeId":"13",
+			"basedataTypeName":true,
+			"parentId":"0",
+			"parentName":"123123",
+			"name":"产品型号",
+			"code":"1"
+		},
+		{
+			"children":"",
+			"id":"6",
+			"basedataTypeId":"7",
+			"basedataTypeName":true,
+			"parentId":"0",
+			"parentName":"123123",
+			"name":"专业能力项等级",
+			"code":"1"
+		},
+		{
+			"children":"",
+			"id":"8",
+			"basedataTypeId":"14",
+			"basedataTypeName":true,
+			"parentId":"0",
+			"parentName":"123123",
+			"name":"服务类别(软件、硬件)",
+			"code":"1"
 		}],
-		"id":"0",
-		"key":"0",
-		"selected":false,
-		"parentId":"",
-		"title":"董事会",
-		"value":"0"
-	}],
 	"message":"操作成功",
 	"status":"200",
 	"success":1,

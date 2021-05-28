@@ -75,3 +75,33 @@ export const getDate = (dateTime,type) => {
         type = type.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return type;
 }
+//获取每个面板的基础展示数据并存储，并获取表格数据
+export const getBaseData = async (id) => {
+    if(!conditionalData[`pane${id}`].newEntry){
+        let paneData = await getBaseData({id:id});
+        if (paneData.success == 1) {
+           conditionalData[`pane${id}`] = Object.assign({},panes[`pane${id}`],{newEntry:true},paneData.data)
+           panes[`pane${id}`] = Object.assign({},panes[`pane${id}`],this.setBaseData(paneData.data))
+        }
+        console.log(panes,conditionalData)
+        this.setState({
+            panes,
+            conditionalData
+        })
+    }
+}
+//处理基础数据存储Map供表格显示使用
+export const setBaseData = (data) => {
+    let obj = {};
+    for(let i in data){
+        for(let j of i){
+            if(!j.data){
+                obj[j.id] = j.basedataTypeName;
+            }else{
+                obj = Object.assign({},obj,this.setBaseData([j.data]))
+            }
+        }
+        
+    }
+    return obj
+}

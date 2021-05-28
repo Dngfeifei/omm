@@ -4,10 +4,10 @@ import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Dat
 import TreeParant from "@/components/tree/index.jsx"
 
 
-import { GetBasicTree,getBaseData, GetRole, DelRole } from '/api/assets.js'
+import { GetBasicTree,AddTable,EditTable, DelTable,GetTable, DelRole,getAllBaseDataTypes } from '/api/assets.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
-import {rules,assetsListData,columns,panes,conditionalData} from './basicInfor.js'//获取页面渲染配置项
+import {rules,assetsListData,columns,panes,conditionalData,baseData} from './basicInfor.js'//获取页面渲染配置项
 import '@/assets/less/pages/assets.less'
 //引入状态管理
 import { connect } from 'react-redux'
@@ -20,10 +20,10 @@ const FormItem = Form.Item
 const { TextArea } = Input;
 const assignment = (data) => {
     data.forEach((list, i) => {
-        list.key = list.id;
-        list.value = list.id;
-        if (list.hasOwnProperty("title")) {
-            list.title = list.title;
+        list.key = list['id'];
+        list.value = list['id'];
+        if (list.hasOwnProperty("name")) {
+            list.title = list['name'];
         }
         if (list.hasOwnProperty("children")) {
             if (list.children.length > 0) {
@@ -71,7 +71,7 @@ class assetsAllocation extends Component {
             //右侧table相关数据
             table: {
                 //右侧角色表格配置
-                columns: columns['columns1'],
+                columns: columns,
                 //右侧角色表格数据
                 rolesData: [],
                
@@ -84,12 +84,25 @@ class assetsAllocation extends Component {
                 roleGroupModalType: 0, //0新增  1修改
                 roleGroupModalTitle: "新增",//弹窗title
             },
-            //角色组参数数据 
+            basedataTypeList:[],
+            //新增修改角色组弹窗配置
+            roleGroupWindow: {
+                roleGroupModal: false, //弹窗是否显示可见
+                roleGroupModalType: 0, //0新增  1修改
+                roleGroupModalTitle: "新增",//弹窗title
+            },
+            //资源树新增编辑参数数据 
             newRoleGroup: {
                 //tree当前选中项ID
                 treeSelect: null,
-                //新增或修改后的角色组数据
+                //新增或修改后的资源树名称
                 newRoleGroupVal: null,
+                //新增或修改后的资源树编码
+                newRoleGroupCode: null,
+                //新增或修改后的资源树上级分类
+                newRoleGroupType: null,
+                //新增或修改后的资源树数据类别
+                newBaseDataTypes: null,
             },
             //新增修改产看弹窗配置
             roleWindow: {
@@ -100,6 +113,9 @@ class assetsAllocation extends Component {
             //右侧查询表单参数
             searchRoleName: null,
             searchListID: null,
+            searchListName: null,
+            basedataTypeId: null,
+            TreeParantID:null,
             //当前选中角色数据
             currentRole: {
                 id: null,
@@ -107,31 +123,18 @@ class assetsAllocation extends Component {
                 status: null,
                 resources: [],
             },
-            panes:panes,
-            conditionalData:conditionalData,
             //表格选中项
             tableSelecteds: [],
             tableSelectedInfo: [],
             
             serviceRegionList:[],     //每个面板二级弹出框显示内容
             assetsList: assetsListData, //每个面板的第一层弹框显示内容
-            assetsPostData:{            //每个面板查看修改数据的时候要回显的数据存储,共用一个
-                1:'23',
-                2:'',
-                3:'',
-                4:'',
-                5:'',
-                6:'',
-                7:'',
-                8:'',
-                9:'',
-                10:''
-            }
+            baseData:baseData //基本需上传字段数据
         }
     }
     SortTable = () => {
         setTimeout(() => {
-            let h = this.tableDom.clientHeight - 100 < 0 ? 100 : this.tableDom.clientHeight - 100 ;
+            let h = this.tableDom.clientHeight - 100 < 0 ? 120 : this.tableDom.clientHeight - 120 ;
             console.log(h)
             this.setState({
                 h: {
@@ -149,12 +152,21 @@ class assetsAllocation extends Component {
     }
     async componentWillMount() {
         // 查询左侧树，以及初始表格数据
-        this.searchTree()
+        this.init();
+        this.searchTree(1)
     }
-    
-
+    //初始化数据
+    init = () => {
+        getAllBaseDataTypes({}).then(res => {
+            if (res.success == 1) {
+                this.setState({basedataTypeList:res.data})
+            } else {
+                message.error(res.message)
+            }
+        })
+    }
     //基础树结构数据查询
-    searchTree = async () => {
+    searchTree = async (pass) => {
         //请求树结构数据 右侧表格渲染第一列角色数据
         GetBasicTree()
             .then(res => {
@@ -167,62 +179,40 @@ class assetsAllocation extends Component {
                         tree: { treeData: res.data },
                     })
                     // this.generateList(res.data)
-                    if (res.data) {
+                    if (pass && res.data) {
                         this.setState({
-                            searchListID: res.data[0].children[0].id,
+                            searchListID: res.data[0]['id'],
+                            searchListName:res.data[0]['name'],
+                            TreeParantID: res.data[0]['parentId'],
+                            basedataTypeId: res.data[0]['basedataTypeId'],
+                            newRoleGroup:{
+                                treeSelect:res.data[0]['parentId'],
+                                newRoleGroupVal:null,
+                                newRoleGroupCode:null,
+                                newRoleGroupType:null
+                            }
                         })
-                        this.getBaseData(res.data[0].children[0].id)
-                        //this.searchRoleFun(res.data[0].children[0].id)//此处获取表格数据修改为先获取基础数据包再获取表格数据进行展示
+                        // this.getBaseData(res.data[0].id)
+                        this.searchRoleFun(res.data[0]['parentId'])//此处获取表格数据修改为先获取基础数据包再获取表格数据进行展示
                     }
                 }
             })
     }
-    //获取每个面板的基础展示数据并存储，并获取表格数据
-    getBaseData = async (id) => {
-        const {panes,conditionalData} = this.state;
-        if(!conditionalData[`pane${id}`].newEntry){
-            let paneData = await getBaseData({id:id});
-            if (paneData.success == 1) {
-               conditionalData[`pane${id}`] = Object.assign({},panes[`pane${id}`],{newEntry:true},paneData.data)
-               panes[`pane${id}`] = Object.assign({},panes[`pane${id}`],this.setBaseData(paneData.data))
-            }
-            console.log(panes,conditionalData)
-            this.setState({
-                panes,
-                conditionalData
-            })
-        }
-    }
-    //处理基础数据存储Map供表格显示使用
-    setBaseData = (data) => {
-        let obj = {};
-        for(let i in data){
-            for(let j of i){
-                if(!j.data){
-                    obj[j.id] = j.basedataTypeName;
-                }else{
-                    obj = Object.assign({},obj,this.setBaseData([j.data]))
-                }
-            }
-            
-        }
-        return obj
-    }
     //获取表格数据
-    searchRoleFun = (id) => {
+    searchRoleFun = (parentId,pass) => {
         //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-        if (id == "" || id == null) {
+        if (parentId == "" || parentId == null) {
             message.warning('请先选中左侧角色组，然后再进行查询。');
             return
         }
-        const fieldNames = this.state.rules['rules1'].map(item => item.key)
-        let formValues = this.props.form.getFieldsValue(fieldNames)
+        // const fieldNames = this.state.rules['rules1'].map(item => item.key)
+        let x = this.props.form.getFieldsValue(['x']).x ? this.props.form.getFieldsValue(['x']).x :''
         // 2 发起查询请求 查询后结构给table赋值
-        let params = Object.assign({},formValues, this.state.pageConf, { offset: 0 })
-        GetRole(params).then(res => {
+        let params = pass ? Object.assign({},{x:x}, {parentId},this.state.pageConf) : Object.assign({},{x:x}, {parentId},this.state.pageConf, { offset: 0 })
+        GetTable(params).then(res => {
             if (res.success == 1) {
                 let data = Object.assign({}, this.state.table, {
-                    rolesData: res.data.records
+                    rolesData:res.data.records ? res.data.records : []
                 })
                 let pagination = Object.assign({}, this.state.pagination, {
                     total: res.data.total,
@@ -243,8 +233,7 @@ class assetsAllocation extends Component {
     // 树选中后
     onTreeSelect = async (selectedKeys, info) => {
         console.log(selectedKeys,info)
-        if (!info.selected || !info.selectedNodes[0].props.dataRef.selected) {
-            return
+        if (!info.selected) {
             let table = Object.assign({}, this.state.table, { rolesData: [] })
             let pagination = Object.assign({}, this.state.pagination, {
                 total: 0,
@@ -253,17 +242,32 @@ class assetsAllocation extends Component {
             let pageConf = Object.assign({}, this.state.pageConf, {
                 offset: 0,
             })
-            this.setState({ table: table, pagination: pagination, pageConf: pageConf,searchListID: []})
+            this.setState({ table: table, pagination: pagination, pageConf: pageConf,searchListID: null,searchListName:null,newRoleGroup:{
+                treeSelect:null,
+                newRoleGroupVal:null,
+                newRoleGroupCode:null,
+                newRoleGroupType:null
+            }})
             return
         }
         let data = info.selectedNodes[0].props.dataRef
         this.setState({
-            searchListID: data.id,
+            searchListID: data['id'],
+            searchListName:data['name'],
+            TreeParantID: data['parentId'],
+            basedataTypeId: data['basedataTypeId'],
             tableSelecteds: [],
-            tableSelectedInfo: []
+            tableSelectedInfo: [],
+            newRoleGroup:{
+                treeSelect:data['parentId'],
+                newRoleGroupVal:null,
+                newRoleGroupCode:null,
+                newRoleGroupType:null
+            }
         },()=>{
-            // 选中后请求角色数据
-            this.searchRoleFun(data.id)
+            // 选中后请求列表数据
+            let {TreeParantID} = this.state;
+            this.searchRoleFun(TreeParantID)
         })
     };
     // 打开节点
@@ -273,29 +277,27 @@ class assetsAllocation extends Component {
             autoExpandParent: false,
         });
     };
-    //获取新增或修改后的角色组名称
-    getNewRoleGroupVal = (e) => {
-        let newRoleGroup = Object.assign({}, this.state.newRoleGroup, { newRoleGroupVal: e.target.value })
+    //获取新增或修改后的资源树名称
+    getNewRoleGroupVal = (type,val) => {
+        let obj = {};
+        obj[type] = val;
+        let newRoleGroup = Object.assign({}, this.state.newRoleGroup, obj)
         this.setState({
             newRoleGroup: newRoleGroup
         })
     }
     //点击行选中选框
-    onRow = (record) => {
+    onRow = (record,index) => {
         return {
             onClick: () => {
-                let selectedKeys = [record.id], selectedItems = [record];
-                this.setState({
-                    tableSelecteds: selectedKeys,
-                    tableSelectedInfo: selectedItems
-                })
+                let selectedKeys = [`key${index}`], selectedItems = [record];
+                this.onTableSelect(selectedKeys, selectedItems);
             }
         }
     }
     // 资产表格数据查询
     onSearch = () => {
-        let id = this.state.searchListID
-        let name = this.state.searchRoleName
+        let id = this.state.TreeParantID;
         //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
         if (id == "" || id == null) {
             message.destroy()
@@ -304,86 +306,28 @@ class assetsAllocation extends Component {
         }
         this.searchRoleFun(id);
     }
-    // 查询列表数据
-    searchRoleNameFun2 = (pageConf) => {
-        let id = this.state.searchListID
-        let name = this.state.searchRoleName
-        //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-        if (id == "" || id == null) {
-            message.destroy()
-            message.warning('请先选中左侧角色组，然后再进行查询。');
-            return
-        }
-        // 2 发起查询请求 查询后结构给table赋值
-        // 选中后请求角色数据
-        let params = Object.assign({}, {
-            roleCategoryId: id,
-            roleName: name,
-        }, pageConf)
-
-        GetRole(params).then(res => {
-            if (res.success == 1) {
-                let data = Object.assign({}, this.state.table, {
-                    rolesData: res.data.records
-                })
-                let pagination = Object.assign({}, this.state.pagination, {
-                    total: res.data.total,
-                    pageSize: res.data.size,
-                    current: res.data.current,
-                })
-                let pageConf = Object.assign({}, this.state.pagination, {
-                    limit: res.data.size,
-                    offset: (res.data.current - 1) * res.data.size,
-                })
-                this.setState({ table: data, pagination: pagination, pageConf: pageConf })
-            } else {
-                message.error("请求失败,请重试！")
+    openModal = (roleModalType) => {
+        let {searchListID,table,tableSelectedInfo,baseData} = this.state,roleModalTitle = null;
+        if(roleModalType == 0){
+            if (searchListID == "" || searchListID == null) {
+                message.warning('请先选中左侧角色组，然后再进行角色新增。');
+                return
             }
-
-        })
-    }
-    
-    // 点击添加，按钮的弹出框
-    addRoleItem = _ => {
-        let id = this.state.searchListID
-        //1 判断角色组tree是否有选中 如无选中提示无选中 无法新增角色
-        if (id == "" || id == null) {
-            message.warning('请先选中左侧角色组，然后再进行角色新增。');
-            return
+            roleModalTitle = "新增资产配置";
+        }else{
+            if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
+                message.destroy()
+                message.warning("没有选中数据,无法进行修改!")
+                return
+            }
+            roleModalTitle = roleModalType == 1 ? "修改资产配置" : "查看资产配置";
         }
         this.setState({
             roleWindow: {
                 roleModal: true,
-                roleModalType: 0,
-                roleModalTitle: "新增资产配置"
+                roleModalType,
+                roleModalTitle
             },
-        })
-    }
-    // 点击修改，按钮的弹出框
-    editRoleItem = () => {
-        if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
-            message.destroy()
-            message.warning("没有选中数据,无法进行修改!")
-            return
-        }
-        let row = this.state.tableSelectedInfo[0];
-        // let ids = [];
-        // if (row.resources && row.resources.length > 0) {
-        //     if (row.resources[0]) {
-        //         row.resources.forEach(item => { 
-        //             //代码修改过，源代码为 ids.push(item.id)
-        //             let item1 = this.getId(this.state.resourceData,item.id);
-        //             !item1 && ids.push(item.id);     
-        //             //代码修改过，源代码为 ids.push(item.id)
-        //         })
-        //     }
-        // }
-        this.setState({
-            roleWindow: {
-                roleModal: true,
-                roleModalType: 1,
-                roleModalTitle: "修改资产配置"
-            }
         })
     }
 
@@ -392,6 +336,7 @@ class assetsAllocation extends Component {
         if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
             message.destroy()
             message.warning("没有选中数据,无法进行删除!")
+            return;
         }
         let id = this.state.tableSelectedInfo[0].id;
         let _this = this
@@ -402,9 +347,10 @@ class assetsAllocation extends Component {
             okType: 'danger',
             cancelText: '取消',
             onOk() {
-                DelRole({ ids: [id] }).then(res => {
+                DelTable({ ids: [id] }).then(res => {
                     if (res.success == 1) {
-                        _this.searchRoleFun(_this.state.searchListID)
+                        _this.searchRoleFun(_this.state.TreeParantID)
+                        this.searchTree()
                         _this.setState({
                             tableSelecteds: [],
                             tableSelectedInfo: []
@@ -425,145 +371,88 @@ class assetsAllocation extends Component {
             }
             console.log(fieldsValue);
             let newParams = {...fieldsValue}
-            //获取列表数据
-        //      getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
-        //         if (res.success == 1) {
-        //             this.setState({ loading: false })
-        //             this.setState({
-        //                 tabledata: res.data.records,
-        //                 total: parseInt(res.data.total)
-        //             })
-        //         } else if (res.success == 0) {
-        //             message.error(res.message);
-        //         }
-        //     })
-        // });
-
-        
-        // // 当前表单编辑类型（保存或修改）
+        // 当前表单编辑类型（保存或修改或者查看）
         let type = this.state.roleWindow.roleModalType
-        // // 当前选择的角色组ID
-        let id = this.state.searchListID
-        // // 资源树选中数组
-        // let resourceArr = []
+        let {TreeParantID,searchListID,searchListName} = this.state;
 		
-		// //重新格式化上传数据
-        // let updata = [];
-        // if (formData.resources && formData.resources.length > 0) {
-        //     formData.resources.forEach(item => {
-        //         let item1 = this.getParentId(this.state.resourceData,item);
-        //         updata = [...updata,...item1,...[item]];
-        //     })
-        // }
-        // updata = Array.from(new Set(updata))
-        // if (updata && updata.length > 0) {
-        //     updata.forEach(item => {
-        //         resourceArr.push({ id: item })
-        //     })
-        // }
-        // if (!type) {
-        //     // 新增保存
-        //     let params = {
-        //         roleName: formData.roleName,
-        //         status: formData.status,
-        //         resources: resourceArr,
-        //         roleCategoryId: id
-        //     }
-        //     if (this.state.lock) {
-        //         return
-        //     } else {
-        //         this.setState({ lock: true })
-        //     }
-        //     AddRole(params).then(res => {
-        //         if (res.success == 1) {
-        //             this.setState({
-        //                 roleWindow: {
-        //                     roleModal: false,
-        //                     roleModalType: null, //0新增  1修改
-        //                     roleModalTitle: null
-        //                 },
-        //                 currentRole: {
-        //                     roleCode: null,
-        //                     roleName: null,
-        //                     status: null,
-        //                     resources: [],
-        //                 },
-        //                 tableSelecteds: [],
-        //                 // tableSelectedInfo: []
-        //             })
-        //             this.searchRoleFun(id)
-        //             message.success("操作成功")
-        //         } else {
-        //             message.error(res.message)
-        //         }
-        //         this.setState({ lock: false })
-        //     })
-        // } else {
+        
+        if (!type) {
+            // 新增保存
+            let params = {
+                ...this.state.baseData,
+                parentId:searchListID,
+                parentName:searchListName,
+                ...newParams
+            }
+            AddTable(params).then(res => {
+                if (res.success == 1) {
+                    this.setState({
+                        roleWindow: {
+                            roleModal: false,
+                            roleModalType: null, //0新增  1修改
+                            roleModalTitle: null
+                        },
+                        tableSelecteds: [],
+                        tableSelectedInfo: []
+                    })
+                    this.searchRoleFun(TreeParantID)
+                    this.searchTree()
+                    message.success("操作成功")
+                } else {
+                    message.error(res.message)
+                }
+            })
+        } else {
         //     {
-        //         // 修改保存
-        //         let params = {
-        //             roleName: formData.roleName,
-        //             status: formData.status,
-        //             id: formData.id,
-        //             resources: resourceArr
-        //         }
-        //         if (this.state.lock) {
-        //             return
-        //         } else {
-        //             this.setState({ lock: true })
-        //         }
+                // 修改保存
+                let params = {
+                    ...this.state.tableSelectedInfo[0],
+                    ...newParams
+                }
 
-        //         EditRole(params).then(res => {
-        //             if (res.success == 1) {
-        //                 this.setState({
-        //                     roleWindow: {
-        //                         roleModal: false,
-        //                         roleModalType: null, //0新增  1修改
-        //                         roleModalTitle: null
-        //                     },
-        //                     currentRole: {
-        //                         roleCode: null,
-        //                         roleName: null,
-        //                         status: null,
-        //                         resources: []
-        //                     },
-        //                     tableSelecteds: [formData.id],
-        //                     tableSelectedInfo: [params]
-        //                 })
-        //                 this.searchRoleFun(id)
-        //                 message.success("操作成功")
-        //             } else {
-        //                 message.error(res.message)
-        //             }
-        //             this.setState({ lock: false })
-        //         })
-            // }
+                EditTable(params).then(res => {
+                    if (res.success == 1) {
+                        this.setState({
+                            roleWindow: {
+                                roleModal: false,
+                                roleModalType: null, //0新增  1修改
+                                roleModalTitle: null
+                            },
+                            tableSelecteds: [],
+                            tableSelectedInfo: []
+                        })
+                       this.searchRoleFun(TreeParantID)
+                       this.searchTree()
+                        message.success("操作成功")
+                    } else {
+                        message.error(res.message)
+                    }
+                })
+            }
          })
     }
     // 分页页码变化
     pageIndexChange = (current, pageSize) => {
         let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
+        // let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
         this.setState({
             pageConf: pageConf,
             tableSelecteds: [],
             tableSelectedInfo: []
+        },()=>{
+            this.searchRoleFun(this.state.TreeParantID,1)
         })
-        this.searchRoleNameFun2(pageConf)
     }
     // 分页条数变化
     pageSizeChange = (current, pageSize) => {
-        // let pagination = Object.assign({}, this.state.pageConf, { pageSize: pageSize });
-        // this.setState({
-        //     pageConf: pageConf,
-        // })
-        // this.searchRoleNameFun2(pageConf)
         let pageConf = Object.assign({}, this.state.pageConf, { limit: pageSize });
         this.setState({
             pageConf: pageConf,
             tableSelecteds: [],
             tableSelectedInfo: []
+        },()=>{
+            this.searchRoleFun(this.state.TreeParantID,1)
         })
-        this.searchRoleNameFun2(pageConf)
     }
 
     // 表格选中后
@@ -574,33 +463,21 @@ class assetsAllocation extends Component {
             tableSelectedInfo: info
         })
     };
-	 //判断该节点是否渲染
-    getId = (list,id)=>{
-        for (let i in list) {
-			if(list[i].id==id && list[i].children && list[i].children.length){
-				return true
-			}
-			if(list[i].children){
-				let node= this.getId(list[i].children,id);
-				if(node){
-					return true
-				}
-			}
-        } 
-    }
     //生成新增/修改/查看弹框内容
     getFields = (assetsList) => {
         // const {assetsList} = this.state;
-        const {assetsPostData} = this.state;
+        let {roleWindow,tableSelectedInfo,baseData,searchListID,searchListName} = this.state;
         const { getFieldDecorator } = this.props.form;
+        baseData = Object.assign({}, baseData, { parentId:  searchListID,parentName:searchListName});
         const children = [];
+        console.log(tableSelectedInfo[0])
         for (let i = 0; i < assetsList.length; i++) {
           children.push(
             <Col span={assetsList[i].span} key={i}>
               <Form.Item label={assetsList[i].label}>
-                {getFieldDecorator(`field-${i}`, {
+                {getFieldDecorator(assetsList[i].key, {
                   rules: assetsList[i].rules,
-                  initialValue: assetsPostData[assetsList[i].key],
+                  initialValue: !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+''
                 })(assetsList[i].render(this))}
               </Form.Item>
             </Col>,
@@ -608,14 +485,34 @@ class assetsAllocation extends Component {
         }
         return children;
       }
+     
+    //重置查询条件
+    clearSearchprops = () => {
+        this.props.form.resetFields(['searchName'])
+    }
+    //设置显示表格内容
+    getClums = (data) => {
+        const {basedataTypeId} = this.state;
+        let newColumns = data[0].data;
+        data.forEach((item) => {
+            if(item.type.indexOf(Number(basedataTypeId)) > -1){
+                newColumns = item.data;
+            }
+        })
+        return newColumns;
+    }
     render = _ => {
-        const { h } = this.state;
+        const { h,assetsList } = this.state;
+        const { columns } = this.state.table;
         const { getFieldDecorator } = this.props.form;
+        const column = this.getClums(columns) ? this.getClums(columns) : [];
+        const assetsLists = this.getClums(assetsList) ? this.getClums(assetsList) : [];
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%'}} >
             <Row gutter={24} className="main_height">
                 <Col span={5} className="gutter-row assetsTree" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
                     <TreeParant edit={false} treeData={this.state.tree.treeData} selectedKeys={[this.state.searchListID]}
-                        onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
+                       addTree={this.addRoleGroup} editTree={this.editRoleGroup} deletetTree={this.delRoleGroup}
+                       onExpand={this.onExpand} onSelect={this.onTreeSelect}  //点击树节点触发事件
                     ></TreeParant>
                 </Col>
                 <Col span={19} className="gutter-row main_height" style={{ padding: '16px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
@@ -633,24 +530,24 @@ class assetsAllocation extends Component {
                         </Row>
                         <Row>
                             <Col span={12} style={{ textAlign: 'left'}}>
-                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
+                                {/* <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
                                 <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>
                                 <Upload>
                                     <Button>
                                     <Icon type="upload" /> Click to Upload
                                     </Button>
-                                </Upload>
+                                </Upload> */}
                             </Col>
                             <Col span={12} style={{ textAlign: 'right' }}>
-                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>查看</Button>
+                                <Button type="primary" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(2)}>查看</Button>
                                 <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
-                                <Button type="info" style={{ marginRight: '10px' }} onClick={this.editRoleItem}>修改</Button>
-                                <Button type="primary" onClick={this.addRoleItem}>新增</Button>
+                                <Button type="info" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(1)}>修改</Button>
+                                <Button type="primary" onClick={(e) => this.openModal(0)}>新增</Button>
                             </Col>
                         </Row>
                     </Form>
                     <div className="tableParson" style={{ flex: 'auto',height: 10 }} ref={(el) => this.tableDom = el}>
-                        <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.table.rolesData} columns={this.state.table.columns} style={{ marginTop: '20px',maxHeight:'80%' }} rowKey={"id"} pagination={false} scroll={h} size="small" />
+                        <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.table.rolesData} columns={column} style={{ marginTop: '20px',maxHeight:'86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={h} size="small" />
                         <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                     </div>
                 </Col>
@@ -676,9 +573,49 @@ class assetsAllocation extends Component {
             >
                 {
                     <Form id="assetsBoxFrom" layout='inline'>
-                        <Row gutter={[24,15]}>{ this.getFields(this.state.assetsList['assetsListData1'])}</Row>
+                        <Row gutter={[24,15]}>{ this.getFields(assetsLists)}</Row>
                     </Form>
                 }
+            </Modal>
+            {/* 资源树新增修改弹窗 */}
+            <Modal
+                title={this.state.roleGroupWindow.roleGroupModalTitle}
+                visible={this.state.roleGroupWindow.roleGroupModal}
+                onCancel={_ => this.setState({ roleGroupWindow: { roleGroupModal: false } })}
+                onOk={this.saveRoleGroup}
+                cancelText="取消"
+                okText="保存"
+            >
+                <Form id="resourceTree" layout='inline' style={{ width: '100%'}}>
+                    <FormItem
+                        label={"名称"} style={{ marginBottom: '8px',width:'100%',display:'flex' }} required>
+                        <Input placeholder="请输入" value={this.state.newRoleGroup.newRoleGroupVal} onChange={({target:{value}}) => this.getNewRoleGroupVal('newRoleGroupVal',value)} />
+                    </FormItem>
+                    <FormItem
+                        label={"编码"} style={{ marginBottom: '8px',width:'100%',display:'flex' }} required>
+                        <Input placeholder="请输入" value={this.state.newRoleGroup.newRoleGroupCode} onChange={({target:{value}}) => this.getNewRoleGroupVal('newRoleGroupCode',value)} />
+                    </FormItem>
+                    <FormItem
+                        label={"上级分类"} style={{ marginBottom: '8px',width:'100%',display:'flex' }} required>
+                        <Select placeholder="请选择" value={this.state.newRoleGroup.newRoleGroupType} ononChange={(value) => this.getNewRoleGroupVal('newRoleGroupType',value)}>
+                            {
+                                [].map((items, index) => {
+                                    return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                                })
+                            }
+                        </Select>
+                    </FormItem>
+                    <FormItem
+                        label={"数据类别"} style={{ marginBottom: '8px',width:'100%',display:'flex' }} required>
+                        <Select placeholder="请选择" value={this.state.newRoleGroup.newBaseDataTypes} ononChange={(value) => this.getNewRoleGroupVal('newBaseDataTypes',value)}>
+                            {
+                                [].map((items, index) => {
+                                    return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                                })
+                            }
+                        </Select>
+                    </FormItem>
+                </Form>
             </Modal>
         </div>
     }

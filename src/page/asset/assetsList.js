@@ -594,26 +594,72 @@ export const columns = {
             render: (text, record, index) => `${index + 1}`
         },
         {
-            title: '角色名称',
+            title: '配置项',
             dataIndex: 'roleName',
+            ellipsis:true,
+            width:200,
             align: 'center',
         },
         {
-            title: '状态',
+            title: '客户编号',
             dataIndex: 'status',
-            align: 'center',
-            render: (t, r) => {
-                t.toString()
-                if (t == "1") {
-                    return "启用"
-                } else if (t == "0") {
-                    return "禁用"
-                }
-            }
+            align: 'center'
         },
         {
-            title: '最后更新时间',
+            title: '客户名称',
             dataIndex: 'updateTime',
+            ellipsis:true,
+            align: 'center',
+        },
+        {
+            title: '项目编号',
+            dataIndex: '1',
+            align: 'center',
+        },
+        {
+            title: '项目名称',
+            dataIndex: '2',
+            align: 'center',
+        },
+        {
+            title: '项目精力',
+            dataIndex: '3',
+            align: 'center',
+        },
+        {
+            title: '服务大区',
+            dataIndex: '4',
+            align: 'center',
+        },
+        {
+            title: '服务区域',
+            dataIndex: '5',
+            align: 'center',
+        },
+        {
+            title: '机房地址',
+            dataIndex: '6',
+            align: 'center',
+        },
+        {
+            title: '客户方管理员',
+            dataIndex: '7',
+            width:150,
+            align: 'center',
+        },
+        {
+            title: '联系方式',
+            dataIndex: '8',
+            align: 'center',
+        },
+        {
+            title: '开始时间',
+            dataIndex: '9',
+            align: 'center',
+        },
+        {
+            title: '结束时间',
+            dataIndex: '10',
             align: 'center',
         }
     ]

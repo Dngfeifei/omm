@@ -45,7 +45,7 @@ class assetsAllocation extends Component {
         super(props)
         this.state = {
             // 表格默认滚动高度
-            h: { y: 240 },
+            h: { x:true,y: 240 },
             // 首次进入 
             newEntry: true,
             // tree节点搜索高亮配置
@@ -152,6 +152,7 @@ class assetsAllocation extends Component {
             console.log(h)
             this.setState({
                 h: {
+                    x:1300,
                     y: (h)
                 }
             });
