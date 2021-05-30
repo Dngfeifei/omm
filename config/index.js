@@ -82,6 +82,9 @@ module.exports = {
       '/biSqtMacroRiskSum':target,     // 宏观风险汇总查询
       '/biSqtMacroResourceSum':target,     // 宏观风险汇总提交
       '/biSqtMacroRisk':target,     // 宏观风险
+      '/bdpFunAuth':target,     // 数据权限流程表单顶级模型树接口
+      '/sysPositionsCategories':target,//数据权限岗位组树装列表|查询岗位列表（分页）接口
+     
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

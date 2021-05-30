@@ -1,22 +1,13 @@
-// /*2：角色弹出框
+// /*2：岗位弹出框
 //  * @Author: mikey.wangxinyue
 //  */
 import React, { Component } from "react";
 // 引入 Tree树形组件
-import TreeParant from "../../../components/tree/index.jsx";
-import {
-  GetRoleTree,
-  AddRoleGroup,
-  EditRoleGroup,
-  DelRoleGroup,
-  GetRole,
-  AddRole,
-  EditRole,
-  DelRole,
-  GetResourceTree,
-} from "../../../api/role.js";
-import { GetDictInfo } from "../../..//api/dictionary";
-import Pagination from "../../../components/pagination";
+import TreeParant from "@/components/tree/index.jsx";
+import { GetResourceTree} from "@/api/role.js";
+import { GetDictInfo } from "@/api/dictionary";
+import Pagination from "@/components/pagination";
+import "@/assets/less/pages/quartersalert.css";
 import {
   Modal,
   Tree,
@@ -35,14 +26,15 @@ const { TreeNode } = Tree;
 const { Option } = Select;
 const FormItem = Form.Item;
 
+//1:yurry渲染模糊列表树管理
+import {GetgetTree,GetTreePaging} from "@/api/datajurisdiction.js"
+//树结构
 const assignment = (data) => {
   data.forEach((list, i) => {
     list.key = list.id;
     list.value = list.id;
-    if (list.hasOwnProperty("roleCategoryName")) {
-      list.title = list.roleCategoryName;
-    } else if (list.hasOwnProperty("resourceName")) {
-      list.title = list.resourceName;
+    if (list.hasOwnProperty("positionCategoryName")) {
+      list.title = list.positionCategoryName;
     }
     if (list.hasOwnProperty("children")) {
       if (list.children.length > 0) {
@@ -56,13 +48,12 @@ const assignment = (data) => {
 
 export default class MyModal extends Component {
   componentDidMount() {
-    this.SortTable();
+    // this.SortTable();
     //窗口变动的时候调用
     window.onresize = () => {
       this.SortTable();
     };
   }
-
   SortTable = () => {
     setTimeout(() => {
       let h = this.tableDom.clientHeight - 100;
@@ -73,7 +64,6 @@ export default class MyModal extends Component {
       });
     }, 0);
   };
-
   async componentWillMount() {
     // 查询左侧树
     this.searchTree();
@@ -133,36 +123,23 @@ export default class MyModal extends Component {
         //右侧角色表格配置
         columns: [
           {
-            title: "序号",
-            dataIndex: "key",
+            // title: "序号",
+            dataIndex: "positionCategoryId",
             editable: false,
             align: "center",
             width: "80px",
             render: (text, record, index) => `${index + 1}`,
           },
           {
-            title: "角色名称",
-            dataIndex: "roleName",
+            title: "岗位名称",
+            dataIndex: "positionName",
             align: "center",
           },
           {
-            title: "状态",
-            dataIndex: "status",
+            title: "描述",
+            dataIndex: "description",
             align: "center",
-            render: (t, r) => {
-              t.toString();
-              if (t == "1") {
-                return "启用";
-              } else if (t == "0") {
-                return "禁用";
-              }
-            },
-          },
-          {
-            title: "最后更新时间",
-            dataIndex: "updateTime",
-            align: "center",
-          },
+          }
         ],
         //右侧角色表格数据
         rolesData: [],
@@ -203,76 +180,45 @@ export default class MyModal extends Component {
       resourceData: null,
     };
   }
-  handleOk = (e) => {
-    alert("真的要确定吗");
+
+  handleOk = () => {
+    this.props.onOk(this.state.tableSelectedInfo);
   };
 
   handleCancel = (e) => {
-    console.log("cancel");
     this.props.onCance();
   };
 
-  //角色组树数据查询
+  //岗位组树数据查询
   searchTree = async () => {
-    //请求角色组数据 右侧表格渲染第一列角色数据
-    GetRoleTree().then((res) => {
+    //请求岗位组数据 右侧表格渲染第一列角色数据
+    GetgetTree().then((res) => {
       if (res.success != 1) {
         message.error("请求错误");
         return;
       } else {
+      
         assignment(res.data);
         this.setState({
           tree: { treeData: res.data },
         });
         // this.generateList(res.data)
-        if (this.state.newEntry && res.data) {
-          this.setState({
-            searchListID: res.data[0].id,
-            newRoleGroup: {
-              treeSelect: res.data[0].id,
-              newRoleGroupVal: res.data[0].roleCategoryName,
-            },
-          });
-          this.searchRoleFun(res.data[0].id);
-          this.setState({ newEntry: false });
-        }
+        // if (this.state.newEntry && res.data) {
+        //   this.setState({
+        //     searchListID: res.data[0].id,
+        //     newRoleGroup: {
+        //       treeSelect: res.data[0].id,
+        //       newRoleGroupVal: res.data[0].roleCategoryName,
+        //     },
+        //   });
+        //   this.searchRoleFun(res.data[0].id);
+        //   this.setState({ newEntry: false });
+        // }
       }
     });
   };
-  //新增角色组
-  addRoleGroup = () => {
-    // 新增内容区域内容置空 新增内容区域显示
-    let select = this.state.newRoleGroup.treeSelect;
-    this.setState({
-      newRoleGroup: {
-        treeSelect: select,
-        newRoleGroupVal: null,
-      },
-      roleGroupWindow: {
-        roleGroupModal: true,
-        roleGroupModalType: 0,
-        roleGroupModalTitle: "新增角色组",
-      },
-    });
-  };
-  //编辑角色组
-  editRoleGroup = () => {
-    let selected = this.state.newRoleGroup.treeSelect;
-    //1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
-    if (selected == "" || selected == null) {
-      message.destroy();
-      message.warning("没有选中数据,无法进行修改!");
-      return;
-    }
-    //2 编辑弹窗展示
-    this.setState({
-      roleGroupWindow: {
-        roleGroupModal: true,
-        roleGroupModalType: 1,
-        roleGroupModalTitle: "修改角色组",
-      },
-    });
-  };
+ 
+
 
   //删除角色组
   delRoleGroup = async (_) => {
@@ -334,7 +280,7 @@ export default class MyModal extends Component {
       });
       this.setState({
         table: table,
-        pagination: pagination,
+        // pagination: pagination,
         pageConf: pageConf,
       });
       return;
@@ -343,7 +289,7 @@ export default class MyModal extends Component {
     this.setState({
       newRoleGroup: {
         treeSelect: data.id,
-        newRoleGroupVal: data.roleCategoryName,
+        newRoleGroupVal: data.positionCategoryName,
       },
       searchListID: data.id,
       tableSelecteds: [],
@@ -389,50 +335,16 @@ export default class MyModal extends Component {
       //新增 请求新增方法
       let params = {
         parentId: this.state.newRoleGroup.treeSelect,
-        roleCategoryName: this.state.newRoleGroup.newRoleGroupVal,
+        positionCategoryName: this.state.newRoleGroup.newRoleGroupVal,
       };
-      AddRoleGroup(params).then((res) => {
-        if (res.success != 1) {
-          message.error(res.message);
-          this.setState({ lock: false });
-          return;
-        } else {
-          // 4 请求完成后关闭弹窗并将输入框赋值为空
-          this.setState({
-            roleGroupWindow: {
-              roleGroupModal: false,
-            },
-            newRoleGroup: Object.assign({}, this.state.newRoleGroup, {
-              newRoleGroupVal: "",
-            }),
-            lock: false,
-          });
-          //5 左侧角色组tree刷新
-          this.searchTree();
-        }
-      });
+   
     } else if (this.state.roleGroupWindow.roleGroupModalType == 1) {
       //修改 请求修改方法
       let params = {
         id: this.state.newRoleGroup.treeSelect,
-        roleCategoryName: this.state.newRoleGroup.newRoleGroupVal,
+        positionCategoryName: this.state.newRoleGroup.newRoleGroupVal,
       };
-      EditRoleGroup(params).then((res) => {
-        if (res.success != 1) {
-          message.error(res.message);
-          this.setState({ lock: false });
-          return;
-        } else {
-          // 4 请求完成后关闭弹窗并将输入框赋值为空
-          this.setState({
-            roleGroupWindow: {
-              roleGroupModal: false,
-            },
-            lock: false,
-          });
-          this.searchTree();
-        }
-      });
+    
     }
   };
 
@@ -449,7 +361,7 @@ export default class MyModal extends Component {
       },
     };
   };
-  // 角色名称查询
+  // 岗位名称查询
   searchRoleNameFun = () => {
     let id = this.state.searchListID;
     let name = this.state.searchRoleName;
@@ -466,24 +378,23 @@ export default class MyModal extends Component {
     // }
     // 2 发起查询请求 查询后结构给table赋值
     // 选中后请求角色数据
-    let params = Object.assign(
-      {},
-      {
-        roleCategoryId: id,
-        roleName: name,
-      },
-      this.state.pageConf
-    );
-
-    GetRole(params).then((res) => {
+    let params = Object.assign({}, {
+      positionCategoryId: id,
+      positionName: name,
+  }, this.state.pageConf, { offset: 0 })
+    
+    GetTreePaging(params).then((res) => {
       if (res.success == 1) {
+        console.log(res.data)
         let data = Object.assign({}, this.state.table, {
           rolesData: res.data.records,
         });
-        let pagination = Object.assign({}, this.state.pagination, {
-          total: res.data.total,
-        });
-        this.setState({ table: data, pagination: pagination });
+     
+        let pageConf = Object.assign({},{
+          limit: res.data.size,
+          offset: (res.data.current - 1) * res.data.size,
+      })
+        this.setState({ table: data,pageConf: pageConf });
       } else {
         message.error(res.message);
       }
@@ -504,13 +415,13 @@ export default class MyModal extends Component {
     let params = Object.assign(
       {},
       {
-        roleCategoryId: id,
+        positionCategoryId: id,
         roleName: name,
       },
       pageConf
     );
-
-    GetRole(params).then((res) => {
+    
+    GetTreePaging(params).then((res) => {
       if (res.success == 1) {
         let data = Object.assign({}, this.state.table, {
           rolesData: res.data.records,
@@ -535,7 +446,7 @@ export default class MyModal extends Component {
     });
   };
 
-  // 角色列表获取
+  // 岗位列表获取
   searchRoleFun = (id) => {
     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
     if (id == "" || id == null) {
@@ -547,12 +458,13 @@ export default class MyModal extends Component {
     let params = Object.assign(
       {},
       {
-        roleCategoryId: id,
+        positionCategoryId: id,
       },
       this.state.pageConf,
       { offset: 0 }
     );
-    GetRole(params).then((res) => {
+
+    GetTreePaging(params).then((res) => {
       if (res.success == 1) {
         let data = Object.assign({}, this.state.table, {
           rolesData: res.data.records,
@@ -576,242 +488,10 @@ export default class MyModal extends Component {
       }
     });
   };
-  // **************************
-  // 点击添加，按钮的弹出框********************
-  addRoleItem = (_) => {
-    let id = this.state.searchListID;
-    //1 判断角色组tree是否有选中 如无选中提示无选中 无法新增角色
-    if (id == "" || id == null) {
-      message.warning("请先选中左侧角色组，然后再进行角色新增。");
-      return;
-    }
-    this.setState({
-      roleWindow: {
-        roleModal: true,
-        roleModalType: 0,
-        roleModalTitle: "新增角色",
-      },
-    });
-  };
-  // 点击修改，按钮的弹出框
-  editRoleItem = () => {
-    if (
-      !this.state.tableSelectedInfo ||
-      this.state.tableSelectedInfo.length == 0
-    ) {
-      message.destroy();
-      message.warning("没有选中数据,无法进行修改!");
-      return;
-    }
-    let row = this.state.tableSelectedInfo[0];
-    let ids = [];
-    if (row.resources && row.resources.length > 0) {
-      if (row.resources[0]) {
-        row.resources.forEach((item) => {
-          //代码修改过，源代码为 ids.push(item.id)
-          let item1 = this.getId(this.state.resourceData, item.id);
-          !item1 && ids.push(item.id);
-          //代码修改过，源代码为 ids.push(item.id)
-        });
-      }
-    }
-    this.setState({
-      roleWindow: {
-        roleModal: true,
-        roleModalType: 1,
-        roleModalTitle: "修改角色",
-      },
-      currentRole: {
-        id: row.id,
-        roleName: row.roleName,
-        status: row.status.toString(),
-        resources: ids,
-      },
-    });
-  };
 
-  //角色表格单项删除
-  delRoleItem = async (arr) => {
-    if (
-      !this.state.tableSelectedInfo ||
-      this.state.tableSelectedInfo.length == 0
-    ) {
-      message.destroy();
-      message.warning("没有选中数据,无法进行删除!");
-    }
-    let id = this.state.tableSelectedInfo[0].id;
-    let _this = this;
-    confirm({
-      title: "删除",
-      content: "删除后不可恢复,确定删除吗？",
-      okText: "确定",
-      okType: "danger",
-      cancelText: "取消",
-      onOk() {
-        DelRole({ ids: [id] }).then((res) => {
-          if (res.success == 1) {
-            _this.searchRoleFun(_this.state.searchListID);
-            _this.setState({
-              tableSelecteds: [],
-              tableSelectedInfo: [],
-            });
-          } else {
-            message.error(res.message);
-          }
-        });
-      },
-    });
-  };
+  
 
-  // 角色数据保存
-  editRoleSave = async () => {
-    // 1 校验必填数据是否填写
-    // 表单数据
-    let formData = this.state.currentRole;
-    if (
-      !formData.roleName ||
-      formData.roleName.length == "" ||
-      formData.roleName.length == 0
-    ) {
-      message.destroy();
-      message.error("请输入角色名称");
-      return;
-    }
-
-    if (
-      !formData.status &&
-      formData.status === null &&
-      typeof formData.status != "number"
-    ) {
-      message.destroy();
-      message.error("请选择角色状态");
-      return;
-    }
-    // 当前表单编辑类型（保存或修改）
-    let type = this.state.roleWindow.roleModalType;
-    // 当前选择的角色组ID
-    let id = this.state.searchListID;
-    // 资源树选中数组
-    let resourceArr = [];
-    // 过滤掉含有子节点的父节点
-    // formData.resourcesInfo.checkedNodes.forEach((item) => {
-    //     if (item.props.parentResourceId ) {
-    //         resourceArr.push(({ id:item.props.id})
-    //     }
-    //     if (!item.props.parentResourceId && !item.props.children.length) {
-    //         resourceArr.push({ id:item.props.id})
-    //     }
-    // })
-    /* if (formData.resources && formData.resources.length > 0) {
-        formData.resources.forEach(item => {
-            resourceArr.push({ id: item })
-        })
-    }原代码*/
-    //重新格式化上传数据
-    let updata = [];
-    if (formData.resources && formData.resources.length > 0) {
-      formData.resources.forEach((item) => {
-        let item1 = this.getParentId(this.state.resourceData, item);
-        updata = [...updata, ...item1, ...[item]];
-      });
-    }
-    updata = Array.from(new Set(updata));
-    if (updata && updata.length > 0) {
-      updata.forEach((item) => {
-        resourceArr.push({ id: item });
-      });
-    }
-    if (!type) {
-      // 新增保存
-      let params = {
-        roleName: formData.roleName,
-        status: formData.status,
-        resources: resourceArr,
-        roleCategoryId: id,
-      };
-      if (this.state.lock) {
-        return;
-      } else {
-        this.setState({ lock: true });
-      }
-      AddRole(params).then((res) => {
-        if (res.success == 1) {
-          this.setState({
-            roleWindow: {
-              roleModal: false,
-              roleModalType: null, //0新增  1修改
-              roleModalTitle: null,
-            },
-            currentRole: {
-              roleCode: null,
-              roleName: null,
-              status: null,
-              resources: [],
-            },
-            tableSelecteds: [],
-            // tableSelectedInfo: []
-          });
-          this.searchRoleFun(id);
-          message.success("操作成功");
-        } else {
-          message.error(res.message);
-        }
-        this.setState({ lock: false });
-      });
-    } else {
-      {
-        // 修改保存
-        let params = {
-          roleName: formData.roleName,
-          status: formData.status,
-          id: formData.id,
-          resources: resourceArr,
-        };
-        if (this.state.lock) {
-          return;
-        } else {
-          this.setState({ lock: true });
-        }
-
-        EditRole(params).then((res) => {
-          if (res.success == 1) {
-            this.setState({
-              roleWindow: {
-                roleModal: false,
-                roleModalType: null, //0新增  1修改
-                roleModalTitle: null,
-              },
-              currentRole: {
-                roleCode: null,
-                roleName: null,
-                status: null,
-                resources: [],
-              },
-              tableSelecteds: [formData.id],
-              tableSelectedInfo: [params],
-            });
-            this.searchRoleFun(id);
-            message.success("操作成功");
-          } else {
-            message.error(res.message);
-          }
-          this.setState({ lock: false });
-        });
-      }
-    }
-  };
-
-  // 角色表格批量删除
-  delRoleItems = async () => {
-    let arr = this.state.tableSelecteds;
-    if (arr && arr.length) {
-      this.delRoleItem(arr);
-    } else {
-      message.destroy();
-      message.warning("请先选中要删除的数据，然后再进行批量删除操作。");
-    }
-  };
-  //获取角色名称查询选项
+  //获取岗位名称查询选项
   getSearchRoleName = (e) => {
     let newData = Object.assign({}, { searchRoleName: e.target.value });
     this.setState({
@@ -846,31 +526,15 @@ export default class MyModal extends Component {
     });
     this.searchRoleNameFun2(pageConf);
   };
-  //获取新增或修改后的角色名称
-  getroleName = (e) => {
-    let newData = Object.assign({}, this.state.currentRole, {
-      roleName: e.target.value,
-    });
-    this.setState({
-      currentRole: newData,
-      tableSelecteds: [],
-      tableSelectedInfo: [],
-    });
-  };
-  //获取新增或修改后的角色状态
-  getstatus = (e) => {
-    let newData = Object.assign({}, this.state.currentRole, { status: e });
-    this.setState({
-      currentRole: newData,
-    });
-  };
-
+ 
+ 
   // 表格选中后
   onTableSelect = (selectedRowKeys, info) => {
+
     //获取table选中项
     this.setState({
       tableSelecteds: selectedRowKeys,
-      tableSelectedInfo: info,
+      tableSelectedInfo: info, // positionName
     });
   };
 
@@ -928,25 +592,18 @@ export default class MyModal extends Component {
 
   render = (_) => {
     const { h } = this.state;
+    const {loading,dialog,message}=this.state;
     return (
       <Modal
-        key={Math.random()}
+        // key={Math.random()}
         title={this.props.title}
         visible={this.props.visible}
         onOk={this.handleOk}
         onCancel={this.handleCancel}
-        style={{width:"80%!important"}}
+        className="quartersbox"
       >
         {/* //这里写内容 */}
-        <div
-          style={{
-            border: "0px solid red",
-            background: " #fff",
-            height: "100%",
-            width:"80%!important"
-           
-          }}
-        >
+        <div>
           <Row gutter={24} className="main_height">
             <Col
               span={5}
@@ -959,11 +616,8 @@ export default class MyModal extends Component {
               }}
             >
               <TreeParant
+                edit={false}
                 treeData={this.state.tree.treeData}
-                selectedKeys={[this.state.searchListID]}
-                addTree={this.addRoleGroup}
-                editTree={this.editRoleGroup}
-                deletetTree={this.delRoleGroup}
                 onExpand={this.onExpand}
                 onSelect={this.onTreeSelect} //点击树节点触发事件
               ></TreeParant>
@@ -983,7 +637,7 @@ export default class MyModal extends Component {
                 <Row>
                   <Col span={12}>
                     <Input
-                      addonBefore="角色名称"
+                      addonBefore="岗位名称"
                       placeholder="请输入"
                       value={this.state.searchRoleName}
                       onChange={this.getSearchRoleName}
@@ -991,25 +645,6 @@ export default class MyModal extends Component {
                     />
                     <Button type="primary" onClick={this.searchRoleNameFun}>
                       查询
-                    </Button>
-                  </Col>
-                  <Col span={12} style={{ textAlign: "right" }}>
-                    <Button
-                      type="info"
-                      style={{ marginRight: "10px" }}
-                      onClick={this.delRoleItem}
-                    >
-                      删除
-                    </Button>
-                    <Button
-                      type="info"
-                      style={{ marginRight: "10px" }}
-                      onClick={this.editRoleItem}
-                    >
-                      修改
-                    </Button>
-                    <Button type="primary" onClick={this.addRoleItem}>
-                      新增
                     </Button>
                   </Col>
                 </Row>
@@ -1025,7 +660,7 @@ export default class MyModal extends Component {
                   rowSelection={{
                     onChange: this.onTableSelect,
                     selectedRowKeys: this.state.tableSelecteds,
-                    type: "radio",
+                    type: "checkbox",
                   }}
                   dataSource={this.state.table.rolesData}
                   columns={this.state.table.columns}
@@ -1046,6 +681,7 @@ export default class MyModal extends Component {
               </div>
             </Col>
           </Row>
+         
         </div>
       </Modal>
     );
