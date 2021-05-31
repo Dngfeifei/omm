@@ -21,7 +21,7 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-var target = {target: 'http://172.16.100.81/api/dat'}
+var target = {target: 'http://172.16.100.81/api/uat'}
 // var target = {target: 'http://10.0.17.214:8111'}
 // var target = {target: 'http://10.0.11.109:8111'}
 // var target = {target: 'http://10.0.16.132:8111'}
@@ -82,6 +82,8 @@ module.exports = {
       '/biSqtMacroRiskSum':target,     // 宏观风险汇总查询
       '/biSqtMacroResourceSum':target,     // 宏观风险汇总提交
       '/biSqtMacroRisk':target,     // 宏观风险
+      '/biStatisticalReport':target,     //统计报表
+      
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

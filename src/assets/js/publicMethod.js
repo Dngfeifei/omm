@@ -40,10 +40,10 @@ export const arrayObject = (data,id) => {
 获取时间日期的时间戳
 @params  date
 */
-export const getTime = (date) => {
+// export const getTime = (date) => {
     
-    return newArr;
-}
+//     return newArr;
+// }
 /*
 根据时间戳格式化日期
 @params  date
