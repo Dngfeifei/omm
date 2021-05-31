@@ -7,3 +7,8 @@ export const getReport = (params = {}) => {
 	console.log(params,"paramsparams")
 	return http.fetchGet('/biStatisticalReport', params)
 }
+
+//  获取工程师技能评价报告.xlsx
+export const getAssessmentReport = () => {
+	return http.fetchGet('/assess/assessLevelReport',{},180000)
+}
