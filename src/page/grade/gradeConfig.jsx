@@ -3,7 +3,7 @@
  * @auth yyp
  */
 import React, { Component } from 'react'
-import { Form, List, Tag, Button, Select, Input, message } from 'antd'
+import { Form, List, Tag, Button, Select, Input, message, Modal } from 'antd'
 import {
     FormOutlined
 } from '@ant-design/icons';
@@ -16,7 +16,9 @@ import Selector from '/components/selector/engineerSelector.jsx'
 // 引入页面CSS
 import '@/assets/less/components/layout.less'
 // 引入 API接口
-import { GetAssessLog, GetAssessConfig, PostAssessConfig, TemporaryOpen } from '/api/gradeConfig'
+import { GetAssessLog, GetAssessConfig, PostAssessConfig, TemporaryOpen, GetRecalculate, GetRecalculateLog } from '/api/gradeConfig'
+
+let logTimer = null;//计算日志定时器
 
 class engineerConfig extends Component {
     constructor(props) {
@@ -63,7 +65,7 @@ class engineerConfig extends Component {
                 },
                 {
                     key: "competenceLevel",
-                    name: "专业能力级别"
+                    name: "自评能力级别"
                 }
             ],
             // 专业能力评分规则
@@ -89,7 +91,7 @@ class engineerConfig extends Component {
                 },
                 {
                     key: "competence",
-                    name: "专业能力"
+                    name: "专业综合能力"
                 },
             ],
             // 工程师评分规则
@@ -109,7 +111,10 @@ class engineerConfig extends Component {
             // 工程师选择器配置
             selector: {
                 visible: false,
-            }
+            },
+            // 重新计算数据日志
+            logVisible: false,
+            recalculateLog: [],
         }
     }
     // 组件将要挂载前触发的函数
@@ -204,6 +209,32 @@ class engineerConfig extends Component {
         }, () => {
         })
     }
+    // 工程师专业能力级别案例数改变方法
+    onChangeitemValue3 = (e) => {
+        let id = e.target.id.slice(1)
+        let val = e.target.value
+        let data = this.state.competenceLevel;
+        data.forEach(item => {
+            item.itemCode == id ? item.itemValue3 = val : '';
+        })
+        this.setState({
+            competenceLevel: data
+        }, () => {
+        })
+    }
+    // 工程师专业能力级别案例数改变方法
+    onChangeitemValue4 = (e) => {
+        let id = e.target.id.slice(1)
+        let val = e.target.value
+        let data = this.state.competenceLevel;
+        data.forEach(item => {
+            item.itemCode == id ? item.itemValue4 = val : '';
+        })
+        this.setState({
+            competenceLevel: data
+        }, () => {
+        })
+    }
     // 工程师本项专业能力分值计算规则改变方法
     onChangecomableFormulaVal = (e) => {
         let val = e.target.value
@@ -259,6 +290,33 @@ class engineerConfig extends Component {
         }, () => {
         })
     }
+    // 工程师级别起始分值改变方法
+    onChangeStart2 = (e) => {
+        let id = e.target.id.slice(1)
+        let val = e.target.value
+        let data = this.state.engineerLevel;
+        data.forEach(item => {
+            item.itemCode == id ? item.itemValue4 = val : '';
+        })
+        this.setState({
+            engineerLevel: data
+        }, () => {
+        })
+    }
+
+    // 工程师级别截止分值改变方法
+    onChangeEnd2 = (e) => {
+        let id = e.target.id.slice(1)
+        let val = e.target.value
+        let data = this.state.engineerLevel;
+        data.forEach(item => {
+            item.itemCode == id ? item.itemValue5 = val : '';
+        })
+        this.setState({
+            engineerLevel: data
+        }, () => {
+        })
+    }
     // 专业能力tag添加方法
     appendComable = (item) => {
         if (this.state.editStatus) { return }
@@ -308,12 +366,38 @@ class engineerConfig extends Component {
         //     current = el.itemValue
 
         // })
-
+        let competencestart = competenceLevel[0].itemValue3
+        let competenceend = competenceLevel[0].itemValue4
+        let competencelevel = competenceLevel[0].itemName
         competenceLevel.forEach((el, i) => {
-            if (el.itemValue == "" || isNaN(Number(el.itemValue))||el.itemValue2 == "" || isNaN(Number(el.itemValue2))) {
+            if (el.itemValue == "" || isNaN(Number(el.itemValue)) || el.itemValue2 == "" || isNaN(Number(el.itemValue2))) {
                 el["error"] = "分值和案例说明数量不能为空且必须是数字"
                 error = false
-            } 
+            }
+            if (i == 0) {
+                if (el.itemValue3 == "" || isNaN(Number(el.itemValue3))) {
+                    el["error2"] = "起始分值不能为空且必须是数字"
+                    error = false
+                } else {
+                    el["error2"] = ""
+                }
+            } else {
+                if (el.itemValue3 == "" || el.itemValue4 == "" || isNaN(Number(el.itemValue3)) || isNaN(Number(el.itemValue4))) {
+                    el["error2"] = "分值不能为空且必须是数字"
+                    error = false
+                } else if (el.itemValue4 * 1 >= competencestart * 1 && competencestart != "") {
+                    el["error2"] = "请填写正确的分值"
+                    error = false
+                } else if (el.itemValue3 * 1 > el.itemValue4 * 1) {
+                    el["error2"] = "请填写正确的分值"
+                    error = false
+                } else {
+                    el["error2"] = ""
+                }
+                competencestart = el.itemValue3
+                competenceend = el.itemValue4
+                competencelevel = el.itemName
+            }
         })
         this.setState({
             competenceLevel: competenceLevel
@@ -365,7 +449,16 @@ class engineerConfig extends Component {
         let start = engineerLevel[0].itemValue
         let end = engineerLevel[0].itemValue2
         let level = engineerLevel[0].itemName
+        let preVal = engineerLevel[0].itemValue5
         engineerLevel.forEach((item, i) => {
+            if (item.itemValue4 == "" || isNaN(Number(item.itemValue4)) || item.itemValue5 == "" || isNaN(Number(item.itemValue5))) {
+                item["error2"] = "技能数和对应分值不能为空且必须是数字"
+                error = false
+            }
+            if (item.itemValue5 * 1 > preVal * 1 && preVal) {
+                item["error2"] = "请填写正确的分值"
+                error = false
+            }
             if (i == 0) {
                 if (item.itemValue == "" || isNaN(Number(item.itemValue))) {
                     item["error"] = "起始分值不能为空且必须是数字"
@@ -389,6 +482,7 @@ class engineerConfig extends Component {
                 start = item.itemValue
                 end = item.itemValue2
                 level = item.itemName
+                preVal = item.itemValue5
             }
         })
         this.setState({
@@ -431,7 +525,44 @@ class engineerConfig extends Component {
             }
         })
     }
+    // 工程师自评数据重新计算
+    onRecalculate = _ => {
+        GetRecalculate().then(res => {
+            if (res.success != 1) {
+                message.error(res.message)
+            } else {
+                this.setState({
+                    logVisible: true
+                }, () => {
+                    this.setLog()
+                })
+            }
+        })
+    }
 
+    // 渲染计算日志
+    setLog = () => {
+        logTimer = setInterval(() => {
+            GetRecalculateLog().then(res => {
+                if (res.success != 1) {
+                    message.error(res.message)
+                } else {
+                    let recalculateLog = this.state.recalculateLog
+                    this.setState({
+                        recalculateLog: recalculateLog.concat(res.data)
+                    })
+                }
+            })
+        }, 2000)
+    }
+    // 工程师自评数据重新计算log关闭
+    logModalCancel = _ => {
+        this.setState({
+            logVisible: false,
+            recalculateLog: []
+        })
+        clearInterval(logTimer)
+    }
     // 工程师选择器确定方法
     onSelectorOK = (selectedKeys) => {
         TemporaryOpen(selectedKeys).then(res => {
@@ -467,6 +598,7 @@ class engineerConfig extends Component {
                                 <Option value={1}>开启</Option>
                             </Select>
                             <Button type="primary" onClick={this.opening}>临时开启</Button>
+                            <Button type="primary" style={{ marginLeft: "10px" }} onClick={this.onRecalculate}>全部计算</Button>
                         </div>
                         <div className="loAreaContent">
                             <List
@@ -491,7 +623,7 @@ class engineerConfig extends Component {
                                 rowKey={"level"}
                                 renderItem={(item, i) =>
                                     <List.Item>
-                                        {item.itemName + '级别评定规则为'}
+                                        {item.itemName + '专业能力级别评定规则为'}
                                         <Input id={"m" + item.itemCode} disabled={this.state.editStatus} onChange={this.onChangeitemValue} style={{ width: "80px", margin: "0 5px" }} value={item.itemValue} />
                                         {'分以上；'}
                                         {'案例说明数量达到'}
@@ -502,19 +634,68 @@ class engineerConfig extends Component {
                             />
                         </div>
                     </div>
+
                     <div className="loArea">
                         <div className="loAreaTitle">
                             <FormOutlined style={{ marginRight: "10px" }} />
-                            工程师本项专业能力分值计算规则：
+                            工程师单项专业技能分值计算规则：
                             {this.state.comableType.map((item, key) => {
                                 return <Tag key={key} onClick={_ => this.appendComable(item)}>{item.name}</Tag>
                             })}
                         </div>
                         <div className="loAreaContent">
-                            <TextArea disabled={this.state.editStatus} rows={4} value={this.state.comableFormulaVal} onChange={this.onChangecomableFormulaVal} style={{ marginTop: "10px" }} />
+                            <TextArea disabled={this.state.editStatus} rows={3} value={this.state.comableFormulaVal} onChange={this.onChangecomableFormulaVal} style={{ marginTop: "10px" }} />
                             <span className="ListError">{this.state.comableFormulaError}</span>
                         </div>
                     </div>
+                    <div className="loArea">
+                        <div className="loAreaTitle">
+                            <FormOutlined style={{ marginRight: "10px" }} />
+                            工程师单项专业技能级别评定规则
+                        </div>
+                        <div className="loAreaContent">
+                            <List
+                                dataSource={this.state.competenceLevel}
+                                split={false}
+                                size="small"
+                                rowKey={"level"}
+                                renderItem={(item, i) =>
+                                    <List.Item >
+                                        {item.itemName + '单项专业技能级别评定规则为'}
+                                        <Input disabled={this.state.editStatus} style={{ width: "80px", margin: "0 5px" }} id={"a" + item.itemCode} onChange={this.onChangeitemValue3} value={item.itemValue3} />
+                                        {'分至'}
+                                        <Input disabled={this.state.editStatus} style={{ width: "80px", margin: "0 5px" }} id={"b" + item.itemCode} onChange={this.onChangeitemValue4} value={item.itemValue4} />
+                                        {'分；'}
+                                        <span className="ListError">{item.error2}</span>
+                                    </List.Item>}
+                            />
+                        </div>
+                    </div>
+                    <div className="loArea">
+                        <div className="loAreaTitle">
+                            <FormOutlined style={{ marginRight: "10px" }} />
+                            专业综合技能级别评定规则及对应分值：
+                        </div>
+                        <div className="loAreaContent">
+                            <List
+                                dataSource={this.state.engineerLevel}
+                                split={false}
+                                size="small"
+                                rowKey={"level"}
+                                renderItem={(item, i) =>
+                                    <List.Item>
+                                        {item.itemName + '专业综合技能级别评定规则为：' + item.itemValue3 + '技能数达到'}
+                                        <Input id={"m" + item.itemCode} disabled={this.state.editStatus} onChange={this.onChangeStart2} style={{ width: "80px", margin: "0 5px" }} value={item.itemValue4} />
+                                        {'项以上；'}
+                                        {item.itemName + '对应分值为'}
+                                        <Input id={"n" + item.itemCode} disabled={this.state.editStatus} onChange={this.onChangeEnd2} style={{ width: "80px", margin: "0 5px" }} value={item.itemValue5} />
+                                        {'分；'}
+                                        <span className="ListError">{item.error2}</span>
+                                    </List.Item>}
+                            />
+                        </div>
+                    </div>
+
                     <div className="loArea">
                         <div className="loAreaTitle">
                             <FormOutlined style={{ marginRight: "10px" }} />
@@ -524,7 +705,7 @@ class engineerConfig extends Component {
                             })}
                         </div>
                         <div className="loAreaContent">
-                            <TextArea disabled={this.state.editStatus} rows={4} value={this.state.proableFormulaVal} onChange={this.onChangeAllRules} style={{ marginTop: "10px" }} />
+                            <TextArea disabled={this.state.editStatus} rows={3} value={this.state.proableFormulaVal} onChange={this.onChangeAllRules} style={{ marginTop: "10px" }} />
                             <span className="ListError">{this.state.proableFormulaError}</span>
                         </div>
                     </div>
@@ -564,6 +745,20 @@ class engineerConfig extends Component {
                         onOk={this.onSelectorOK}
                         onCancel={this.onSelectorCancel} /> : ""
                 }
+                <Modal
+                    title="计算日志"
+                    visible={this.state.logVisible}
+                    onOk={this.logModalCancel}
+                    onCancel={this.logModalCancel}
+                >
+                    <div style={{ width: "100%", height: "300px", overflowY: "scroll" }}>
+                        {
+                            this.state.recalculateLog.map((item, index) => {
+                                return <p key={index}>{item}</p>
+                            })
+                        }
+                    </div>
+                </Modal>
             </div>
         )
     }
