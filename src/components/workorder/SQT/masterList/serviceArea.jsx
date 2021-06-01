@@ -135,7 +135,7 @@ class serviceArea extends React.Component {
             data: [],
             count:0,
             // 省区联级选则数据
-            computerRegion: [],
+            computerRegion: this.FormatCity(address),
             computerRegionValue:'',
            
             radioLock:false,  
@@ -198,10 +198,19 @@ class serviceArea extends React.Component {
     }
 
     
-
+    //验证已新增内容是否填写
+    validation = () => {
+        const {data} = this.state;
+        for(let i of data){
+            if(!i.area || !i.isMainDutyArea || !i.address){
+                return false;
+            }
+        }
+        return true;
+    }
     // 新增table表格一行
     handleAdd = () => {
-        if (!this.state.editingKey) {
+        if (this.validation()) {
             const { count, data } = this.state;
             const newData = {
                 key: count,
@@ -223,7 +232,7 @@ class serviceArea extends React.Component {
             });
             
         }else {
-            message.warning('请先保存服务区域数据！')
+            message.warning('请先确保服务区域数据填写完整！')
         }
         
 
@@ -296,7 +305,38 @@ class serviceArea extends React.Component {
         }
        
     }
-
+    //验证服务区域选择是否有重复
+    validationArea = (data,val) => {
+        for(let i of data){
+            if(i.area  == val.join('/')){
+                return false;
+            }
+        }
+        return true;
+    }
+    //重置是否为主责区域
+    resetMainDutyArea = (data,val) => {
+        for(let i of data){
+            i.isMainDutyArea = '0';
+        }
+    }
+    //区域更改值并回传
+    onAreaChange = (index,key,val) => {
+        let {data} = this.state;
+        if(key == 'area' && !this.validationArea(data,val)){
+            message.warning('服务区域有重复，请重新选择！')
+            return false;
+        }
+        if(key == 'isMainDutyArea' && val == 1){
+            this.resetMainDutyArea(data);
+        }
+        if(data[index]){
+            data[index][key] = key == 'area' ? val.join('/'):val.toString();
+            this.setState({data},()=>{
+                this.updataToParent();
+            });
+        }
+    }
     // 初始化
     init = () => {
         this.columns = [
@@ -310,9 +350,13 @@ class serviceArea extends React.Component {
                 render:(text,record,index)=> `${index+1}`
             },
             {
-                title: '服务区域',
+                title: <div className="ant-form-item-required">服务区域</div>,
                 dataIndex: 'area',
                 editable: true,
+                render:(text,record,index) => {
+                   let value = text.split("/"),parentedit = this.props.isEdit ? 0 : 1;;
+                   return <Cascader disabled={parentedit ? false : true} options={this.state.computerRegion} value={value} onChange={(value) => this.onAreaChange(index,'area',value)} placeholder="请选择区域" />
+                }
                 // render:(record,row)=>{
                 //  if(row.isMainDutyArea == 1){
                 //     record = record + '<span style="color:red">【主责区域】</span>'
@@ -324,14 +368,25 @@ class serviceArea extends React.Component {
                 // }
             },
             {
-                title: '是否是主责区域',
+                title: <div className="ant-form-item-required">是否是主责区域</div>,
                 dataIndex: 'isMainDutyArea',
-                render: t => t == '1' ? '是' : '否',
+                // render: t => t == '1' ? '是' : '否',
+                render:(text,record,index)=>{
+                    let parentedit = this.props.isEdit ? 0 : 1;
+                    return (<Radio.Group value={text} onChange={({target:{value}}) => this.onAreaChange(index,'isMainDutyArea',value)}>
+                        <Radio value='1' disabled={parentedit ? false : true}>是</Radio>
+                        <Radio value='0' disabled={parentedit ? false : true}>否</Radio>
+                    </Radio.Group>)
+                },
                 editable: true,
                
             },{
-                title: '客户地址',
+                title: <div className="ant-form-item-required">客户地址</div>,
                 dataIndex: 'address',
+                render:(text,record,index) => {
+                    let node = this.setJurisdiction(this.props.isEdit,this.props.formRead,this.props.node);
+                    return <Input disabled={node} onChange={({target:{value}}) => this.onAreaChange(index,'address',value)} />
+                },
                 editable: true,
             }
         ]
@@ -497,7 +552,8 @@ class serviceArea extends React.Component {
             <div>
                 <Row gutter={24} style={{textAlign:'right',visibility:  this.setJurisdiction(isEdit,formRead,node) ? 'hidden' : 'visible'}}>
                     <Button style={{marginRight: '10px'}} onClick={this.handlerDelete} disabled={isEdit ? true : false}>删除</Button>
-                    {
+                    <Button type="primary" style={{marginRight: '10px'}} disabled={isEdit ? true : false} onClick={this.handleAdd}>新增</Button>
+                    {/* {
                         !this.state.editingKey ? <Button style={{marginRight: '10px'}} onClick={this.handleEdit}>修改</Button> : (
                             <Button style={{marginRight: '10px'}} disabled>修改</Button>
                         )
@@ -517,19 +573,19 @@ class serviceArea extends React.Component {
                         this.state.editingKey ? <Button type="primary" style={{marginRight: '10px'}} disabled>新增</Button> : (
                             <Button type="primary" style={{marginRight: '10px'}} disabled={isEdit ? true : false} onClick={this.handleAdd}>新增</Button>
                         )
-                    }
+                    } */}
                 </Row>
                 
                 <Provider value={this.props.form}>
                     <Table
                         className="jxlTable"
                         onRow={this.onRow}
-                        components={components}   //覆盖默认的 table 元素
+                        // components={components}   //覆盖默认的 table 元素
                         bordered
                         rowKey={'key'}
                         rowSelection={this.setJurisdiction(isEdit,formRead,node) ? null : rowSelectionArea}  
                         dataSource={this.state.data}
-                        columns={columns}
+                        columns={this.columns}
                         scroll={this.props.scroll}
                         rowClassName="editable-row"
                         pagination={false}
