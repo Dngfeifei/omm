@@ -6,6 +6,7 @@
 
 import React, { Component } from 'react'
 import { Modal, message, Button, Row, Col, Form, Input, Select, Table, DatePicker, TimePicker, Tooltip } from 'antd'
+import moment from 'moment';
 
 // 分页组件
 import Pagination from "@/components/pagination/index";
@@ -138,7 +139,8 @@ class AssessmentReport extends Component {
     }
     // 导出工程师技能评价报告
     downFile = () => {
-        let fileName = "工程师技能评价报告.xlsx"
+        let currentDay = moment().format('YYYYMMDD');
+        let fileName = "工程师技能评价报告_" + currentDay + ".xlsx"
         const hide = message.loading('报表数据正在检索中,请耐心等待。。。', 0);
         getAssessmentReport().then(res => {
             if (res.success == 1) {
@@ -146,13 +148,12 @@ class AssessmentReport extends Component {
                 var a = document.createElement("a");
                 document.body.appendChild(a);
                 a.href = res.data + "?filename=" + fileName;
-                // a.download = decodeURI(fileName);
                 a.click();
                 document.body.removeChild(a);
             } else if (res.success == 0) {
                 message.destroy()
                 message.error(res.message);
-              
+
             }
         })
     }
