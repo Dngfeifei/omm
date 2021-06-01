@@ -23,8 +23,6 @@ var buildconfig = {
 
 var target = {target: 'http://172.16.100.81/api/uat'}
 // var target = {target: 'http://10.0.17.214:8111'}
-// var target = {target: 'http://10.0.11.109:8111'}
-// var target = {target: 'http://10.0.16.132:8111'}
 
 
 module.exports = {
@@ -83,7 +81,9 @@ module.exports = {
       '/biSqtMacroResourceSum':target,     // 宏观风险汇总提交
       '/biSqtMacroRisk':target,     // 宏观风险
       '/biStatisticalReport':target,     //统计报表
-      
+      '/bdpFunAuth':target,     // 数据权限流程表单顶级模型树接口
+      '/sysPositionsCategories':target,//数据权限岗位组树装列表|查询岗位列表（分页）接口
+     
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
