@@ -193,7 +193,7 @@ class assetsAllocation extends Component {
                             }
                         })
                         // this.getBaseData(res.data[0].id)
-                        this.searchRoleFun(res.data[0]['parentId'])//此处获取表格数据修改为先获取基础数据包再获取表格数据进行展示
+                        this.searchRoleFun(res.data[0]['id'])//此处获取表格数据修改为先获取基础数据包再获取表格数据进行展示
                     }
                 }
             })
@@ -266,8 +266,8 @@ class assetsAllocation extends Component {
             }
         },()=>{
             // 选中后请求列表数据
-            let {TreeParantID} = this.state;
-            this.searchRoleFun(TreeParantID)
+            let {searchListID} = this.state;
+            this.searchRoleFun(searchListID)
         })
     };
     // 打开节点
@@ -297,7 +297,7 @@ class assetsAllocation extends Component {
     }
     // 资产表格数据查询
     onSearch = () => {
-        let id = this.state.TreeParantID;
+        let id = this.state.searchListID;
         //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
         if (id == "" || id == null) {
             message.destroy()
@@ -349,7 +349,7 @@ class assetsAllocation extends Component {
             onOk() {
                 DelTable({ ids: [id] }).then(res => {
                     if (res.success == 1) {
-                        _this.searchRoleFun(_this.state.TreeParantID)
+                        _this.searchRoleFun(_this.state.searchListID)
                         this.searchTree()
                         _this.setState({
                             tableSelecteds: [],
@@ -395,7 +395,7 @@ class assetsAllocation extends Component {
                         tableSelecteds: [],
                         tableSelectedInfo: []
                     })
-                    this.searchRoleFun(TreeParantID)
+                    this.searchRoleFun(searchListID)
                     this.searchTree()
                     message.success("操作成功")
                 } else {
@@ -421,7 +421,7 @@ class assetsAllocation extends Component {
                             tableSelecteds: [],
                             tableSelectedInfo: []
                         })
-                       this.searchRoleFun(TreeParantID)
+                       this.searchRoleFun(searchListID)
                        this.searchTree()
                         message.success("操作成功")
                     } else {
@@ -440,7 +440,7 @@ class assetsAllocation extends Component {
             tableSelecteds: [],
             tableSelectedInfo: []
         },()=>{
-            this.searchRoleFun(this.state.TreeParantID,1)
+            this.searchRoleFun(this.state.searchListID,1)
         })
     }
     // 分页条数变化
@@ -451,7 +451,7 @@ class assetsAllocation extends Component {
             tableSelecteds: [],
             tableSelectedInfo: []
         },()=>{
-            this.searchRoleFun(this.state.TreeParantID,1)
+            this.searchRoleFun(this.state.searchListID,1)
         })
     }
 
@@ -476,9 +476,9 @@ class assetsAllocation extends Component {
             <Col span={assetsList[i].span} key={i}>
               <Form.Item label={assetsList[i].label}>
                 {getFieldDecorator(assetsList[i].key, {
-                  rules: assetsList[i].rules,
+                  rules: roleWindow.roleModalType == 2 ? [] : assetsList[i].rules,
                   initialValue: !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+''
-                })(assetsList[i].render(this))}
+                })(roleWindow.roleModalType == 2 ? <Input disabled/> : assetsList[i].render(this))}
               </Form.Item>
             </Col>,
           );
@@ -570,6 +570,7 @@ class assetsAllocation extends Component {
                 style={{ top: 50, marginBottom: 100 }}
                 okText="保存"
                 cancelText="取消"
+                className={this.state.roleWindow.roleModalType == 2 ? 'seeModal' : ''}
             >
                 {
                     <Form id="assetsBoxFrom" layout='inline'>

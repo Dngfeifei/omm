@@ -664,3 +664,445 @@ export const columns = {
         }
     ]
 }
+const panes = [
+    {
+        type:[8,14,1,2,3,13],
+        rules:[
+            {
+                label: '品牌',
+                key: 'a',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                                {
+                                    [].map((items, index) => {
+                                        return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                                    })
+                                }
+                            </Select>
+            },
+            {
+                label: '序列号',
+                key: 'b',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                    {
+                        [].map((items, index) => {
+                            return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                        })
+                    }
+                </Select>
+               
+            },{
+                label: '配置项名称',
+                key: 'c',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入人员名称"/>
+            },{
+                label: '项目号',
+                key: 'd',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+               
+            },{
+                label: '客户名称',
+                key: 'e',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入人员名称"/>
+            },{
+                label: '项目号',
+                key: 'f',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+               
+            },{
+                label: '状态',
+                key: 'g',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                                {
+                                    [].map((items, index) => {
+                                        return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                                    })
+                                }
+                            </Select>
+            },{
+                label: '业务重要性',
+                key: 'h',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                                {
+                                    [].map((items, index) => {
+                                        return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                                    })
+                                }
+                            </Select>
+            },{
+                label: '机房地理位置',
+                key: 'i',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+            },{
+                label: '机柜位置',
+                key: 'j',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+            },{
+                label: '管理IP',
+                key: 'k',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+            },{
+                label: '设备高度',
+                key: 'l',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+            },{
+                label: '型号',
+                key: 'm',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+            },{
+                label: '资产编号',
+                key: 'n',
+                render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
+            },{
+                label: '投产日期',
+                key: 'o',
+                render:_=>  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            },{
+                label: '采购日期',
+                key: 'p',
+                render:_=>  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            },{
+                label: '过保日期',
+                key: 'q',
+                render:_=>  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            },{
+                label: '设备电源是否冗余',
+                key: 'h',
+                render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                                {
+                                    [].map((items, index) => {
+                                        return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                                    })
+                                }
+                            </Select>
+            }
+        ],
+        columns:[
+            {
+                title: '编码',
+                dataIndex: 'code',
+                align: 'center',
+            },{
+                title: '名称',
+                dataIndex: 'name',
+                align: 'center',
+            },{
+                title: '分类',
+                dataIndex: 'basedataTypeName',
+                align: 'center',
+            },{
+                title: '所属',
+                dataIndex: 'parentName',
+                align: 'center',
+            },{
+                title: '状态',
+                dataIndex: 'status',
+                align: 'center',
+                render:(val)=>{
+                    return val == 1 ? '启用' : '废弃';
+                }
+            },{
+                title: '创建人',
+                dataIndex: 'creatorName',
+                align: 'center',
+            },
+            {
+                title: '创建时间',
+                dataIndex: 'createTime',
+                align: 'center',
+            }
+        ],
+        assetsListData:[
+            {
+                key:'1',
+                label:'配置项名称',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'2',
+                label:'项目号',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'3',
+                label:'客户名称',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'4',
+                label:'状态',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: _this =>{
+                    return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
+                                {
+                                    _this.state.serviceRegionList.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>;
+                }
+            },
+            {
+                key:'5',
+                label:'业务重要性',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: _this =>{
+                    return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
+                                {
+                                    _this.state.serviceRegionList.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>;
+                }
+            },
+            {
+                key:'6',
+                label:'机房地理位置',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'7',
+                label:'机柜位置',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'8',
+                label:'机位',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'9',
+                label:'品牌',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: _this =>{
+                    return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
+                                {
+                                    _this.state.serviceRegionList.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>;
+                }
+            },
+            {
+                key:'10',
+                label:'型号',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'11',
+                label:'设备电源是否冗余',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: _this =>{
+                    return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
+                                {
+                                    _this.state.serviceRegionList.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>;
+                }
+            },
+            {
+                key:'12',
+                label:'管理IP',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'13',
+                label:'设备高度',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                
+                render: _this =>{
+                    return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
+                                {
+                                    _this.state.serviceRegionList.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>;
+                }
+            },
+            {
+                key:'14',
+                label:'序列号',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                key:'15',
+                label:'资产编号',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                
+                render: () =>{
+                    return <Input placeholder="placeholder" />;
+                }
+            },
+            {
+                label: '投产日期',
+                key: '16',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render:_=>  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            },
+            {
+                label: '采购日期',
+                key: '17',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render:_=>  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            },
+            {
+                label: '过保日期',
+                key: '18',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render:_=>  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+            },
+            {
+                label: '描述',
+                key: '19',
+                span:24,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    }
+                  ],
+                render:_=>  <TextArea rows={4} />
+            }
+        ]
+    }
+];
