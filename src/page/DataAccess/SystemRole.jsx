@@ -14,6 +14,7 @@ import {
   Select,
   Table,
   Card,
+  Tooltip
 } from "antd";
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx";
@@ -31,7 +32,7 @@ import {
   GetResourceTree,
 } from "/api/role.js";
 //1:yurry渲染模糊列表树管理
-import {GetsystemTree,GetList,GetDelete} from "/api/datajurisdiction.js"
+import {GetsystemTree,GetList,GetDelete,Addadd} from "/api/datajurisdiction.js"
 import { GetDictInfo } from "/api/dictionary";
 import Pagination from "/components/pagination";
 const { confirm } = Modal;
@@ -146,6 +147,10 @@ class Access extends Component {
           title: "权限对象",
           dataIndex: "positionName",
           align: "center",
+          render: (text, record)=> 
+          <Tooltip placement="topLeft" title={text}>
+              <span style={{ cursor: 'pointer',display:'block' }} onClick={() => this.previewing(record)}>{text}</span>
+          </Tooltip>
         },
         {
           title: "权限点",
@@ -164,6 +169,10 @@ class Access extends Component {
           title: "配置属性",
           dataIndex: "configFieldInfo",
           align: "center",
+          render: (text, record)=> 
+          <Tooltip placement="topLeft" title={text}>
+              <span style={{ cursor: 'pointer',display:'block' }} onClick={() => this.previewing(record)}>{text}</span>
+          </Tooltip>
         },
       ],
       //右侧角色表格数据
@@ -497,7 +506,7 @@ class Access extends Component {
       roleName: name,
   }, this.state.pageConf)
 
-    GetList(params).then((res) => {
+    Addadd(params).then((res) => {
       console.log(res)
       if (res.success == 1) {
         let data = Object.assign({}, this.state.table, {
@@ -606,8 +615,7 @@ class Access extends Component {
     ) {
       message.destroy();
       message.warning("没有选中数据,无法进行修改!");
-      return;
-    }
+l    }
     let row = this.state.tableSelectedInfo[0];
     let visible = this.state.visible;
     this.setState({
@@ -1015,11 +1023,12 @@ class Access extends Component {
                   </Button>
                   {
                     this.state.visible?<MyModal
-                    
                     title={this.state.statusModal ? this.state.updateTitle : this.state.addTitle}
                     searchListID={this.state.searchListID}
                     updataModal={this.state.statusModal ? this.state.updataModal : ''}
-                   onCancel={this.onCancel}>
+                   onCancel={this.onCancel} 
+                   onOk={this.handleOk}  
+                   >
                </MyModal> :null
                   }
                 </Col>
@@ -1097,12 +1106,12 @@ class Access extends Component {
           cancelText="取消"
         >
           <FormItem label={"角色名称"} labelCol={{ span: 4 }}>
-            <Input
+            <Tooltip><Input
               placeholder="请输入"
               value={this.state.currentRole.roleName}
               onChange={this.getroleName}
               style={{ width: "300px" }}
-            />
+            /></Tooltip>
           </FormItem>
           <FormItem label={"角色状态"} labelCol={{ span: 4 }}>
             <Select
