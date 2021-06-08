@@ -25,7 +25,7 @@ class MyModal extends Component {
       visible: true,
       title: "选择岗位",
       AllOff: false,
-      Allname:"所有人",
+      Allname: "所有人",
       //权限点
       Seconddata: [
         { label: "查看", value: "select", checked: false },
@@ -41,7 +41,6 @@ class MyModal extends Component {
       //配置属性
       plainOptions: [],
       plainValue: [],
-      oldplainValue: [],
       //配置属性id 对应的数据
       fieldDate: [],
       //配置属性下面的盒子
@@ -50,7 +49,7 @@ class MyModal extends Component {
       attriteId: "",
       attriteVisible: false,
       station: "", // 岗位
-      logid:"",//登录人id
+      // logid: "", //登录人id
       // 工程师选择器配置
       selector: {
         EngineerOff: false,
@@ -79,6 +78,7 @@ class MyModal extends Component {
     window.resetStore = this.props.reset;
     console.log(this.props, "updataModal");
     if (this.props.updataModal) {
+      debugger
       defaultValue = this.props.updataModal.function.split(",");
       station = this.props.updataModal.positionName;
       this.props.updataModal.fieldList.forEach((item) => {
@@ -108,9 +108,10 @@ class MyModal extends Component {
       fieldMetaid.push(item.fieldMeta);
     });
 
-    if (this.props.updataModal) { // 修改要走的接口
+    if (this.props.updataModal) {
+      // 修改要走的接口
       let fieldDate2 = [];
-      let positionDate = ''
+      let positionDate = "";
       this.props.updataModal.fieldList.forEach((item) => {
         let obj = {
           fieldMeta: item.fieldMeta,
@@ -119,11 +120,11 @@ class MyModal extends Component {
         fieldDate2.push(obj);
       });
       if (AllOff) {
-        positionDate = 0
+        positionDate = 0;
       } else if (positionId) {
-        positionDate = positionId
+        positionDate = positionId;
       } else {
-        positionDate = this.props.updataModal.position
+        positionDate = this.props.updataModal.position;
       }
       let obj = {
         id: this.props.updataModal.id,
@@ -132,7 +133,7 @@ class MyModal extends Component {
         function: authorValue ? authorValue : this.props.updataModal.function,
         feildAuthorizeList: fieldDate.length ? fieldDate : fieldDate2,
       };
-      console.log(obj);
+      console.log(obj, '=========');
       Getupdate(obj).then((res) => {
         if (res.success != 1) {
           message.error("请求错误");
@@ -141,7 +142,8 @@ class MyModal extends Component {
           this.props.onCancel();
         }
       });
-    } else { // 新增走的接口
+    } else {
+      // 新增走的接口
       let obj = {
         businessKey: searchListID,
         position: AllOff ? 0 : positionId,
@@ -172,11 +174,12 @@ class MyModal extends Component {
   };
   //icon确定按钮岗位
   onMyModaOk = (info) => {
+    debugger
     let str = [];
     let positionId = [];
     info.forEach((item) => {
       str.push(item.positionName);
-      positionId.push(item.id);
+      positionId.push(item.positionCode);
     });
     console.log(str, "station");
     this.setState(
@@ -201,13 +204,12 @@ class MyModal extends Component {
       oFF: !oFF,
     });
   };
-    //点击复选框所有 事件
-    showAll = (e) => {
-      this.setState({
-        AllOff: e.target.checked,
-      
-      });
-    };
+  //点击复选框所有 事件
+  showAll = (e) => {
+    this.setState({
+      AllOff: e.target.checked,
+    });
+  };
   //3：渲染配置属性 复选框
   componentDidMount = () => {
     const { searchListID } = this.props;
@@ -237,6 +239,7 @@ class MyModal extends Component {
 
   //权限事件
   authorHandle = (checkedValues) => {
+    debugger
     let listValue = [];
     this.state.Seconddata.forEach((item) => {
       if (checkedValues.includes(item.value)) {
@@ -254,21 +257,38 @@ class MyModal extends Component {
   };
   //4：点击复选框
   onCheckobtn = (checkedValues) => {
+    let {plainValue} = this.state;
+    let listValue = this.state.listOptions.filter((item) => {
+      if (checkedValues.includes(item.fieldMeta)) {
+        return item;
+      }
+    });
+    console.log(plainValue, "plainValue");
     if (this.props.updataModal) {
-      console.log(checkedValues, "checkedValues");
-    } else {
-      let listValue = this.state.listOptions.filter((item) => {
-        if (checkedValues.includes(item.fieldMeta)) {
-          return true;
+      debugger
+      plainValue.forEach(item => {
+        listValue.forEach((items,index) => {
+          if (item.fieldMeta === items.fieldMeta) {
+            listValue.splice(index, 1 , item)
+          }
+        })
+      })
+      console.log(listValue, plainValue, "checkedValues");
+
+      this.setState(
+        {
+          plainValue: listValue,
         }
-      });
+      );
+    } else {
+      
       console.log(listValue, "listValue");
       this.setState(
         {
           plainValue: listValue,
         },
         () => {
-          console.log(this.state.plainValue);
+          console.log(plainValue);
         }
       );
     }
@@ -324,46 +344,51 @@ class MyModal extends Component {
     }
   };
   //第二个弹框选中的事件
-  attriteOk = (info) => {
+  attriteOk = () => {
+    debugger
     let { attriteValue, plainValue, attriteId, fieldDate } = this.state;
-    let obj = {
-      fieldMeta: attriteId,
-      fieldData: [],
-    };
+    let newfieldDate = []
 
     let checkedLabel = [];
+    let checkedValue = [];
     attriteValue.forEach((item, index) => {
       if (item.checked) {
         checkedLabel.push(item.label);
-        obj.fieldData.push(item.value);
+        checkedValue.push(item.value);
+        // obj.fieldData.push(item.value);
       }
     });
-    obj.fieldData = obj.fieldData.join(",");
-    let every = fieldDate.every((item) => item.fieldMeta !== attriteId);
-    if (every) {
-      fieldDate.push(obj);
-    } else {
-      fieldDate.forEach((item, index) => {
-        if (item.fieldMeta === attriteId) {
-          fieldDate.splice(index, 1, obj);
-        }
-      });
-    }
-
-    this.setState({
-      attriteVisible: false,
-      fieldDate,
-    });
-    // let newArr = plainValue;
-    plainValue.map((item) => {
+    plainValue.forEach((item) => {
       if (item.fieldMeta === attriteId) {
-        return (item.fieldName = checkedLabel.join(","));
+        item.fieldName = checkedLabel.join(",");
+        item.fieldData = checkedValue.join(",");
       }
+      let obj = {
+        fieldMeta: item.fieldMeta,
+        fieldData: item.fieldData,
+      };
+      newfieldDate.push(obj);
     });
+    // obj.fieldData = obj.fieldData.join(",");
+    // let every = fieldDate.every((item) => item.fieldMeta !== attriteId);
+    // if (every) {
+    //   fieldDate.push(obj);
+    // } else {
+    //   fieldDate.forEach((item, index) => {
+    //     if (item.fieldMeta === attriteId) {
+    //       fieldDate.splice(index, 1, obj);
+    //     }
+    //   });
+    // }
+
+    // let newArr = plainValue;
+    
     console.log(checkedLabel, "params");
 
     this.setState(
       {
+        attriteVisible: false,
+        fieldDate: newfieldDate,
         plainValue,
       },
       () => {
@@ -390,45 +415,74 @@ class MyModal extends Component {
 
   // 工程师选择器确定方法
   onSelectorOK = (selectedKeys, selectedInfo) => {
-    let { plainValue, selector, fieldDate,username,userid } = this.state;
+    let { plainValue, selector, fieldDate } = this.state;
     var EngineerInputId = selectedKeys.join();
     let EngineerInputname = "";
-    let obj = {
-      fieldMeta: selector.fieldMeta,
-      fieldData: selectedKeys,
-    };
-    obj.fieldData = obj.fieldData.join(",");
-    let every = fieldDate.every(
-      (item) => item.fieldMeta !== selector.fieldMeta
-    );
-    if (every) {
-      fieldDate.push(obj);
-    } else {
-      fieldDate.forEach((item, index) => {
-        if (item.fieldMeta === selector.fieldMeta) {
-          fieldDate.splice(index, 1, obj);
-        }
-      });
-    }
+    let newfieldDate = []
+    // let obj = {
+    //   fieldMeta: selector.fieldMeta,
+    //   fieldData: selectedKeys,
+    // };
+    // obj.fieldData = obj.fieldData.join(",");
+    // let every = fieldDate.every(
+    //   (item) => item.fieldMeta !== selector.fieldMeta
+    // );
+    // if (every) {
+    //   fieldDate.push(obj);
+    // } else {
+    //   fieldDate.forEach((item, index) => {
+    //     if (item.fieldMeta === selector.fieldMeta) {
+    //       fieldDate.splice(index, 1, obj);
+    //     }
+    //   });
+    // }
+
     selectedInfo.forEach((item, index) => {
       if (index) {
-        EngineerInputname += "," + item.realName+username;
+        EngineerInputname += "," + item.realName;
       } else {
-        EngineerInputname += item.realName+username;
+        EngineerInputname += item.realName;
       }
     });
+    
     plainValue.forEach((item) => {
       if (item.fieldMeta == selector.fieldMeta) {
-        item.fieldData = EngineerInputId;
-        item.fieldName = EngineerInputname;
+        if (item.fieldName === undefined) {
+          item.fieldData = EngineerInputId;
+          item.fieldName = EngineerInputname;
+        } else {
+          debugger
+          item.fieldName = item.fieldName.split(',')
+          item.fieldData = item.fieldData.split(',')
+          EngineerInputId = EngineerInputId.split(',')
+          EngineerInputname = EngineerInputname.split(',')
+
+          EngineerInputname.forEach((items,index) => {
+            if (item.fieldName.indexOf(items) === -1) {
+              item.fieldName.push(items)
+            }
+          })
+          EngineerInputId.forEach((items,index) => {
+            if (item.fieldData.indexOf(items) === -1) {
+              item.fieldData.push(items)
+            }
+          })
+          item.fieldName = item.fieldName.join(',')
+          item.fieldData = item.fieldData.join(',')
+        }
       }
+      let obj = {
+        fieldMeta: item.fieldMeta,
+        fieldData: item.fieldData,
+      };
+      newfieldDate.push(obj);
     });
     this.setState({
       plainValue,
       selector: {
         EngineerOff: false,
       },
-      fieldDate,
+      fieldDate: newfieldDate,
     });
 
     this.onSelectorCancel();
@@ -443,33 +497,75 @@ class MyModal extends Component {
   };
   //登录人事件
   showuser = (e) => {
-    let { plainValue, oldplainValue } = this.state;
+    let { plainValue, username, userid, fieldDate } = this.state;
     let userOFF = e.target.checked;
 
     if (userOFF) {
-      oldplainValue = JSON.parse(JSON.stringify(plainValue));
-      this.setState(
-        {
-          oldplainValue,
-        },
-        () => {
+      // oldplainValue = JSON.parse(JSON.stringify(plainValue));
+      // this.setState(
+      //   {
+      //     oldplainValue,
+      //   },
+      //   () => {
+          let arr = [];
+          let num = [];
           plainValue.forEach((item, index) => {
             if (item.isUser === "1") {
-              item.fieldName = this.state.username;
-              item.fieldData=this.state.logid 
+              if (item.fieldName === undefined) {
+                arr = username;
+                item.fieldName = arr;
+              } else {
+                arr = item.fieldName.split(",");
+                arr.push(username);
+                item.fieldName = arr.join(',');
+              }
+
+              if (item.fieldData === undefined) {
+                num = userid;
+                item.fieldData = num;
+              } else {
+                num = item.fieldData.split(",");
+                num.push(userid);
+                item.fieldData = num.join(',');
+              }
+              let obj = {
+                fieldMeta: item.fieldMeta,
+                fieldData: item.fieldData,
+              };
+              fieldDate.push(obj);
             }
+            
           });
-          this.setState({
-            plainValue,
-          });
-        }
-      );
+        // }
+      // );
     } else {
-      this.setState({
-        plainValue: oldplainValue,
+      plainValue.forEach((item, index) => {
+        if (item.isUser === "1") {
+          item.fieldName = item.fieldName.split(',')
+          item.fieldData = item.fieldData.split(',')
+          item.fieldName.forEach((its,index) => {
+            if (its === username) {
+              item.fieldName.splice(index, 1)
+            }
+          })
+          item.fieldData.forEach((its,index) => {
+            if (its === userid) {
+              item.fieldData.splice(index, 1)
+            }
+          })
+          item.fieldName = item.fieldName.join(',')
+          item.fieldData = item.fieldData.join(',');
+          let obj = {
+            fieldMeta: item.fieldMeta,
+            fieldData: item.fieldData,
+          };
+          fieldDate.push(obj);
+        }
       });
-      console.log(oldplainValue);
     }
+    this.setState({
+      plainValue,
+    });
   };
 
   render = (_) => {
@@ -493,25 +589,31 @@ class MyModal extends Component {
               {/* 岗位: */}
               <div className="quartersBox">
                 <Form.Item label={"岗位"} required={false}>
-                {this.state.AllOff?<Input disabled
-                    suffix={
-                      <Icon
-                        type="solution"
-                        style={{ cursor: "pointer", fontSize: "24px" }}
-                        onClick={this.showConnet}
-                      />
-                    }
-                    value={this.state.Allname}
-                  />:<Input 
-                  suffix={
-                    <Icon
-                      type="solution"
-                      style={{ cursor: "pointer", fontSize: "24px" }}
-                      onClick={this.showConnet}
+                  {this.state.AllOff ? (
+                    <Input
+                      disabled
+                      suffix={
+                        <Icon
+                          type="solution"
+                          style={{ cursor: "pointer", fontSize: "24px" }}
+                          onClick={this.showConnet}
+                        />
+                      }
+                      value={this.state.Allname}
                     />
-                  }
-                  value={this.state.station}
-                />}
+                  ) : (
+                    <Input
+                    ref={myInput=>this.myInput=myInput}
+                      suffix={
+                        <Icon
+                          type="solution"
+                          style={{ cursor: "pointer", fontSize: "24px" }}
+                          onClick={this.showConnet}
+                        />
+                      }
+                      value={this.state.station}
+                    />
+                  )}
                 </Form.Item>
                 <Checkbox
                   style={{ marginLeft: "12px" }}
@@ -544,7 +646,7 @@ class MyModal extends Component {
           <div className="configurationProperties">
             <p>配置属性</p>
             {/* 3:复选框 */}
-            <div className="PropertiesBox" style={{  }}>
+            <div className="PropertiesBox" style={{}}>
               <Checkbox.Group
                 options={this.state.plainOptions}
                 defaultValue={this.state.defaultOptions}
@@ -553,7 +655,7 @@ class MyModal extends Component {
             </div>
             {/* //点击出现盒子 */}
             {this.state.plainValue.length !== 0 ? (
-              <div className="plain" >
+              <div className="plain">
                 {this.state.plainValue.map((k, index) => (
                   <Form.Item
                     {...formItemLayout}

@@ -12,3 +12,9 @@ export const getReport = (params = {}) => {
 export const getAssessmentReport = () => {
 	return http.fetchGet('/assess/assessLevelReport',{},180000)
 }
+
+
+//  获取工程师评定结果
+export const getAssessLeaderReport = () => {
+	return http.fetchGet('/assess/assessLeaderReport',{},180000)
+}

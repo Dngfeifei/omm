@@ -21,14 +21,11 @@ import TreeParant from "@/components/tree/index.jsx";
 //引入新增弹出框
 import MyModal from './AddalertConmponent/Addalert'
 import {
- 
   AddRoleGroup,
   EditRoleGroup,
   DelRoleGroup,
-  
   AddRole,
   EditRole,
- 
   GetResourceTree,
 } from "/api/role.js";
 //1:yurry渲染模糊列表树管理
@@ -96,7 +93,7 @@ class Access extends Component {
     //新增按钮弹出框快关
     visible: false,
     addTitle: '新增',
-    updateTitle: '新增',
+    updateTitle: '修改',
     statusModal: 0,
     updataModal: {},
     // 表格默认滚动高度
@@ -491,6 +488,7 @@ class Access extends Component {
 //   };
   // 角色名称查询
   searchRoleNameFun2 = (pageConf) => {
+ 
     let id = this.state.searchListID;
     let name = this.state.searchRoleName;
     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
@@ -503,10 +501,10 @@ class Access extends Component {
     // 选中后请求角色数据
     let params = Object.assign({}, {
       businessKey:id,
-      roleName: name,
-  }, this.state.pageConf)
+      // roleName: name,
+  }, pageConf)
 
-    Addadd(params).then((res) => {
+  GetList(params).then((res) => {
       console.log(res)
       if (res.success == 1) {
         let data = Object.assign({}, this.state.table, {
@@ -533,6 +531,7 @@ class Access extends Component {
   };
   // 角色列表获取
   searchRoleFun = (id) => {
+  
     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
     if (id == "" || id == null) {
       message.warning("请先选中左侧角色组，然后再进行查询。");
@@ -605,6 +604,7 @@ class Access extends Component {
       visible: false,
       key: Math.random()
     });
+    this.searchRoleNameFun2(this.state.pageConf);
   }
 
   // 点击修改，按钮的弹出框
@@ -615,7 +615,7 @@ class Access extends Component {
     ) {
       message.destroy();
       message.warning("没有选中数据,无法进行修改!");
-l    }
+   }
     let row = this.state.tableSelectedInfo[0];
     let visible = this.state.visible;
     this.setState({
@@ -624,34 +624,6 @@ l    }
       searchListID: row.businessKey,
       visible: !visible,
     })
-
-
-
-
-    // let ids = [];
-    // if (row.resources && row.resources.length > 0) {
-    //   if (row.resources[0]) {
-    //     row.resources.forEach((item) => {
-    //       //代码修改过，源代码为 ids.push(item.id)
-    //       let item1 = this.getId(this.state.resourceData, item.id);
-    //       !item1 && ids.push(item.id);
-    //       //代码修改过，源代码为 ids.push(item.id)
-    //     });
-    //   }
-    // }
-    // this.setState({
-    //   roleWindow: {
-    //     roleModal: true,
-    //     roleModalType: 1,
-    //     roleModalTitle: "修改角色",
-    //   },
-    //   currentRole: {
-    //     id: row.id,
-    //     roleName: row.roleName,
-    //     status: row.status.toString(),
-    //     resources: ids,
-    //   },
-    // });
   };
 
   //角色表格单项删除
@@ -843,8 +815,10 @@ l    }
   };
   // 分页页码变化
   pageIndexChange = (current, pageSize) => {
+    
     let pageConf = Object.assign({}, this.state.pageConf, {
       offset: (current - 1) * pageSize,
+      businessKey: this.state.searchListID,
     });
     this.setState({
       pageConf: pageConf,
@@ -855,6 +829,7 @@ l    }
   };
   // 分页条数变化
   pageSizeChange = (current, pageSize) => {
+   
     // let pagination = Object.assign({}, this.state.pageConf, { pageSize: pageSize });
     // this.setState({
     //     pageConf: pageConf,
@@ -967,7 +942,7 @@ l    }
           >
             <TreeParant
               treeData={this.state.tree.treeData}
-              // selectedKeys={[this.state.searchListID]}
+              selectedKeys={[this.state.searchListID]}
               // addTree={this.addRoleGroup}
               // editTree={this.editRoleGroup}
               // deletetTree={this.delRoleGroup}
@@ -1026,8 +1001,7 @@ l    }
                     title={this.state.statusModal ? this.state.updateTitle : this.state.addTitle}
                     searchListID={this.state.searchListID}
                     updataModal={this.state.statusModal ? this.state.updataModal : ''}
-                   onCancel={this.onCancel} 
-                   onOk={this.handleOk}  
+                   onCancel={this.onCancel}            
                    >
                </MyModal> :null
                   }

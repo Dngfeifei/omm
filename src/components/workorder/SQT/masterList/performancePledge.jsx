@@ -259,37 +259,73 @@ class performance extends Component {
         // 依赖于的数据字典--接口
         this.getDictItems();
     }
-
+    //培训方式赋值回传
+    trainChange = (index,key,val) => {
+        let {courseList} = this.state.PerformanceData;
+        if(courseList[index]){
+            courseList[index][key] = val.toString();
+            this.setState({PerformanceData: this.state.PerformanceData},()=>{
+                this.updataToParent();
+            });
+        }
+    }
     // 初始化接口
     init = (disaBled) => {
         this.columns = [
             {
                 title: '培训方式',
                 dataIndex: 'trainMode',
-                render: t => t == 'online' ? '线上' : '线下',
+                // render: t => t == 'online' ? '线上' : '线下',
+                render:(text,record,index) => {
+                    return <Select style={{ width: '100%' }} placeholder="请选择" value={text} allowClear={true} onChange={(value) => this.trainChange(index,'trainMode',value)}>
+                                {
+                                    this.state.trainModeArray.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>
+                },
                 editable: true,
                 align:'center'
             },
             {
                 title: '培训师资',
                 dataIndex: 'trainTeachers',
-                render: t => t == '1' ? '原厂' : t == '2' ? '合作方' : '我司提供培训',
+                // render: t => t == '1' ? '原厂' : t == '2' ? '合作方' : '我司提供培训',
+                render:(text,record,index) => {
+                    return <Select style={{ width: '100%' }} placeholder="请选择" value={text} allowClear={true} onChange={(value) => this.trainChange(index,'trainTeachers',value)}>
+                                {
+                                    this.state.trainTeachersArray.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>
+                },
                 editable: true,
                 align:'center'
             },
             {
                 title: '课程方向',
                 dataIndex: 'courseDirection',
+                render:(text,record,index) => {
+                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'courseDirection',value)} />
+                },
                 editable: true,
                 align:'center'
             }, {
                 title: '培训课程',
                 dataIndex: 'trainCourse',
+                render:(text,record,index) => {
+                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'trainCourse',value)} />
+                },
                 editable: true,
                 align:'center'
             }, {
                 title: '培训人次',
                 dataIndex: 'oursePersonTimes',
+                render:(text,record,index) => {
+                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'oursePersonTimes',value)} />
+                },
                 editable: true,
                 align:'center'
             },
@@ -303,22 +339,26 @@ class performance extends Component {
                 align:'center'
             },{
                 title: this.setRequired(disaBled,'响应时限（小时）') ? <div className="ant-form-item-required">响应时限（小时）</div> : '响应时限（小时）',
+                text:'响应时限（小时）',
                 dataIndex: 'respondTime',
                 editable: true,
                 align:'center'
             },{
                 title:  this.setRequired(disaBled,'工程师到场时限（小时）') ? <div className="ant-form-item-required">工程师到场时限（小时）</div> : '工程师到场时限（小时）',
                 dataIndex: 'engineerArriveTime',
+                text:'工程师到场时限（小时）',
                 editable: true,
                 align:'center'
             },{
                 title: this.setRequired(disaBled,'备件到场时限（小时）') ? <div className="ant-form-item-required">备件到场时限（小时）</div> : '备件到场时限（小时）',
                 dataIndex: 'spareArriveTime',
+                text:'备件到场时限（小时）',
                 editable: true,
                 align:'center'
             },{
                 title: this.setRequired(disaBled,'解决时限（小时）') ? <div className="ant-form-item-required">解决时限（小时）</div> : '解决时限（小时）',
                 dataIndex: 'solveTime',
+                text:'解决时限（小时）',
                 editable: true,
                 align:'center'
             },{
@@ -862,7 +902,7 @@ addMouseLeave = (record) => {
                     record,
                     editable: col.editable,
                     dataIndex: col.dataIndex,
-                    title: col.title,
+                    title: col.text,
                     handleSave: this.handleSave,
                 }),
             };
@@ -934,7 +974,7 @@ addMouseLeave = (record) => {
                             bordered
                             rowKey={(record, index) => `Training${record.id}${index}`}
                             size={'small'}
-                            components={components}
+                            // components={components}
                             rowClassName={() => 'editable-row'}
                             dataSource={this.state.PerformanceData.courseList}
                             columns={columns}

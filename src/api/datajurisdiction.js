@@ -40,7 +40,7 @@ export const GetList = (params={}) => {
 // 8、修改数据权限post  bdpFunAuth/update
 
 export const Getupdate = (params={}) => {
-	return http.fetchPost('bdpFunAuth/update',params)
+	return http.fetchPost('bdpFunAuth/update',params,true)
 }
 
 //9、删除数据权限GET
