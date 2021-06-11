@@ -55,14 +55,14 @@ export default class MyModal extends Component {
     };
   }
   SortTable = () => {
-    setTimeout(() => {
-      let h = this.tableDom.clientHeight - 100;
-      this.setState({
-        h: {
-          y: h,
-        },
-      });
-    }, 0);
+    // setTimeout(() => {
+      // let h = this.tableDom.clientHeight - 100;
+    //   this.setState({
+    //     h: {
+    //       y: h,
+    //     },
+    //   });
+    // }, 0);
   };
   async componentWillMount() {
     // 查询左侧树

@@ -22,7 +22,7 @@ var buildconfig = {
 }
 
 var target = {target: 'http://172.16.100.81/api/dat'}
-// var target = {target: 'http://10.0.16.50:8111'}
+// var target = {target: 'http://10.0.17.170:8111'}
 
 
 module.exports = {
