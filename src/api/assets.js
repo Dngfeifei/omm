@@ -42,7 +42,7 @@ export const DelAllocationTable = (params = {}) => {
 //联想输入数据查询-配置管理
 export const getAllocationSearchData = (params = {}) => {
 	return http.fetchGet(`/biConfiguration/listKeywords`, params)
-	return http.fetchGet(`/static/mock/searchData.json`, params)
+	//return http.fetchGet(`/static/mock/searchData.json`, params)
 }
 
 
@@ -75,6 +75,6 @@ export const getAllBaseDataTypes = (params = {}) => {
 }
 //联想输入数据查询-基础数据
 export const getBasicSearchData = (params = {}) => {
-	// return http.fetchGet(`/basedata/listKeywords`, params)
-	return http.fetchGet(`/static/mock/searchData.json`, params)
+	return http.fetchGet(`/basedata/listKeywords`, params)
+	//return http.fetchGet(`/static/mock/searchData.json`, params)
 }
