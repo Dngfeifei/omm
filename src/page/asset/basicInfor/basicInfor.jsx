@@ -347,7 +347,7 @@ class assetsAllocation extends Component {
                 DelTable({ ids: [id] }).then(res => {
                     if (res.success == 1) {
                         _this.searchRoleFun(_this.state.searchListID)
-                        this.searchTree()
+                        _this.searchTree()
                         _this.setState({
                             tableSelecteds: [],
                             tableSelectedInfo: []

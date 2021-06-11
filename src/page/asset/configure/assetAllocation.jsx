@@ -396,7 +396,7 @@ class assetsAllocation extends Component {
                 DelAllocationTable({ ids: [id] }).then(res => {
                     if (res.success == 1) {
                         _this.searchRoleFun(_this.state.searchListID)
-                        this.searchTree()
+                        _this.searchTree()
                         _this.setState({
                             tableSelecteds: [],
                             tableSelectedInfo: []
@@ -417,8 +417,6 @@ class assetsAllocation extends Component {
             // }
             console.log(fieldsValue);
             let newParams = {...fieldsValue}
-            console.log(newParams)
-            return
         // 当前表单编辑类型（保存或修改或者查看）
         let type = this.state.roleWindow.roleModalType
         let {searchListID,searchListName} = this.state;
@@ -428,7 +426,6 @@ class assetsAllocation extends Component {
             let params = {
                 ...this.state.baseData,
                 parentId:searchListID,
-                parentName:searchListName,
                 ...newParams
             }
             AddAllocationTable(params).then(res => {
@@ -443,6 +440,7 @@ class assetsAllocation extends Component {
                         tableSelectedInfo: []
                     })
                     this.searchRoleFun(searchListID)
+                    this.searchTree()
                     message.success("操作成功")
                 } else {
                     message.error(res.message)
@@ -468,6 +466,7 @@ class assetsAllocation extends Component {
                             tableSelectedInfo: []
                         })
                        this.searchRoleFun(searchListID)
+                       this.searchTree()
                         message.success("操作成功")
                     } else {
                         message.error(res.message)
