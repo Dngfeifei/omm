@@ -51,7 +51,6 @@ export const getAllocationSearchData = (params = {}) => {
 //获取配置库基础数据树数据
 export const GetBasicTree = () => {
 	return http.fetchGet(`/basedata/tree?type=configuration`)
-	return http.fetchGet(`/basedata/tree`)
 }
 //获取配置库基础数据表格数据
 export const GetTable = (params = {}) => {

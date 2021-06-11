@@ -624,11 +624,11 @@ class assetsAllocation extends Component {
                 getAllocationSearchData({x:value}).then(res =>{
                     if (res.success != 1) {
                         message.error("请求错误")
-                        this.setState({ searchData: [] });
+                        this.setState({ searchData: []});
                         return
                     }else{
                         // let data = res.data.unshift(value)
-                        this.setState({searchData:res.data ? res.data : []})
+                        this.setState({searchData:res.data ? res.data : [],searchX:value})
                     }
                 });
             } else {

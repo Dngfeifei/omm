@@ -24,7 +24,6 @@ export const rules1= [
                 filterOption={false}
                 onSearch={_this.handleSearch}
                 onChange={_this.handleChange}
-                onBlur={()=> {debugger}}
                 notFoundContent={null}
             >
                 {options}
