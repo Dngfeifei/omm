@@ -4,7 +4,7 @@ import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Dat
 import TreeParant from "@/components/tree/index.jsx"
 
 
-import { GetBasicTree,AddTable,EditTable, DelTable,GetTable, DelRole,getAllBaseDataTypes } from '/api/assets.js'
+import { GetBasicTree,AddTable,EditTable, DelTable,GetTable, DelRole,getAllBaseDataTypes,getBasicSearchData } from '/api/assets.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
 import {rules,assetsListData,columns,panes,conditionalData,baseData} from './basicInfor.js'//获取页面渲染配置项
@@ -18,6 +18,7 @@ const { TreeNode } = Tree;
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea } = Input;
+let timeout;
 const assignment = (data) => {
     data.forEach((list, i) => {
         list.key = list['id'];
@@ -129,7 +130,9 @@ class assetsAllocation extends Component {
             
             serviceRegionList:[],     //每个面板二级弹出框显示内容
             assetsList: assetsListData, //每个面板的第一层弹框显示内容
-            baseData:baseData //基本需上传字段数据
+            baseData:baseData, //基本需上传字段数据
+            searchData:[],//联想查询输入回传数据
+            searchX:undefined        //联想查询输入数据
         }
     }
     SortTable = () => {
@@ -206,9 +209,9 @@ class assetsAllocation extends Component {
             return
         }
         // const fieldNames = this.state.rules['rules1'].map(item => item.key)
-        let x = this.props.form.getFieldsValue(['x']).x ? this.props.form.getFieldsValue(['x']).x :''
+        let x = this.state.searchX?this.state.searchX:'';//this.props.form.getFieldsValue(['x']).x ? this.props.form.getFieldsValue(['x']).x :''
         // 2 发起查询请求 查询后结构给table赋值
-        let params = pass ? Object.assign({},{x:x}, {parentId},this.state.pageConf) : Object.assign({},{x:x}, {parentId},this.state.pageConf, { offset: 0 })
+        let params = pass ? Object.assign({},{x}, {parentId},this.state.pageConf) : Object.assign({},{x}, {parentId},this.state.pageConf, { offset: 0 })
         GetTable(params).then(res => {
             if (res.success == 1) {
                 let data = Object.assign({}, this.state.table, {
@@ -298,12 +301,6 @@ class assetsAllocation extends Component {
     // 资产表格数据查询
     onSearch = () => {
         let id = this.state.searchListID;
-        //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-        if (id == "" || id == null) {
-            message.destroy()
-            message.warning('请先选中左侧角色组，然后再进行查询。');
-            return
-        }
         this.searchRoleFun(id);
     }
     openModal = (roleModalType) => {
@@ -488,7 +485,8 @@ class assetsAllocation extends Component {
      
     //重置查询条件
     clearSearchprops = () => {
-        this.props.form.resetFields(['searchName'])
+        // this.props.form.resetFields(['searchName'])
+        this.setState({searchX:undefined});
     }
     //设置显示表格内容
     getClums = (data) => {
@@ -501,6 +499,34 @@ class assetsAllocation extends Component {
         })
         return newColumns;
     }
+    //联想查询数据切换
+    handleSearch = value => {
+        if (timeout) {
+            clearTimeout(timeout);
+            timeout = null;
+        }
+        timeout = setTimeout(()=>{
+             console.log(value)
+            if (value) {
+                getBasicSearchData({x:value}).then(res =>{
+                    if (res.success != 1) {
+                        message.error("请求错误")
+                        this.setState({ searchData: [] });
+                        return
+                    }else{
+                        // let data = res.data.unshift(value)
+                        this.setState({searchData:res.data,searchX:value})
+                    }
+                });
+            } else {
+                this.setState({ searchData: [] });
+            }
+        }, 300);
+    };
+    //联想输入输入数据回填
+    handleChange = searchX => {
+        this.setState({ searchX });
+    };
     render = _ => {
         const { h,assetsList } = this.state;
         const { columns } = this.state.table;
@@ -519,10 +545,14 @@ class assetsAllocation extends Component {
                     <Form id="assetsForm" layout='inline' style={{ width: '100%' }}>
                         <Row>
                         {this.state.rules['rules1'].map((val, index) =>
+                            // <FormItem
+                            //     label={val.label} style={{ marginBottom: '8px' }} key={index}>
+                            //     {getFieldDecorator(val.key, val.option)(val.render(this))}
+                            // </FormItem>
                             <FormItem
-                                label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                                {getFieldDecorator(val.key, val.option)(val.render())}
-                            </FormItem>)}
+                            label={val.label} style={{ marginBottom: '8px' }} key={index}>
+                            {val.render(this)}
+                        </FormItem>)}
                             <FormItem style={{flex:'auto',textAlign:'right'}}>
                                 <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
                                 <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>

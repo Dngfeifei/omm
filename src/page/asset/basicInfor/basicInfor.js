@@ -134,7 +134,24 @@ export const rules = {
         {
             label: '模糊查询',
             key: 'x',
-            render: _ => <Input placeholder="请输入查询条件" />
+            // render: _this => <Input placeholder="请输入查询条件" />
+            render: _this => {
+                const options = _this.state.searchData.map(d => <Option key={d}>{d}</Option>);
+                return <Select
+                    showSearch
+                    value={_this.state.searchX}
+                    placeholder="请输入查询"
+                    style={{minWidth:195}}
+                    defaultActiveFirstOption={false}
+                    showArrow={false}
+                    filterOption={false}
+                    onSearch={_this.handleSearch}
+                    onChange={_this.handleChange}
+                    notFoundContent={null}
+                >
+                    {options}
+                </Select>
+            }
         }
     ]
 }
