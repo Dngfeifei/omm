@@ -171,7 +171,7 @@ class assetsAllocation extends Component {
     //基础树结构数据查询
     searchTree = async (pass) => {
         //请求树结构数据 右侧表格渲染第一列角色数据
-        GetBasicTree()
+        GetBasicTree({type:'basedata'})
             .then(res => {
                 if (res.success != 1) {
                     message.error("请求错误")

@@ -1,9 +1,9 @@
 import http from './index'
 
 //获取资产配置管理结构树数据
-export const GetAllocationTree = () => {
-	return http.fetchGet(`/basedata/tree?type=configuration`);
-	//return http.fetchGet(`/static/mock/assetsBaseInfor.json`)
+export const GetAllocationTree = (params = {}) => {
+	return http.fetchGet(`/basedata/tree`,params);
+	//return http.fetchGet(`/static/mock/assetsBaseInfor.json`)type=configuration
 }
 // //获取资产配置管理页面的下拉数据
 // export const getBaseData = (params = {}) => {
@@ -49,8 +49,8 @@ export const getAllocationSearchData = (params = {}) => {
 
 
 //获取配置库基础数据树数据
-export const GetBasicTree = () => {
-	return http.fetchGet(`/basedata/tree?type=basedata`)
+export const GetBasicTree = (params = {}) => {
+	return http.fetchGet(`/basedata/tree`,params)//?type=basedata
 }
 //获取配置库基础数据表格数据
 export const GetTable = (params = {}) => {

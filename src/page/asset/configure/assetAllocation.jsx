@@ -6,7 +6,7 @@ import TreeParant from "@/components/tree/index.jsx"
 import ProjectSelector from '/components/selector/projectSelector.jsx'
 
 
-import { GetAllocationTree, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,GetAllocationArea,GetAllocationCustomer} from '/api/assets.js'
+import { GetAllocationTree, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,GetAllocationArea,GetAllocationCustomer,getAllBaseDataTypes} from '/api/assets.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
 import {panes,baseData,assetsListData} from './assetsList.js'//获取页面渲染配置项
@@ -180,7 +180,7 @@ class assetsAllocation extends Component {
     //基础树结构数据查询
     searchTree = async (pass) => {
         //请求树结构数据 右侧表格渲染第一列角色数据
-        GetAllocationTree()
+        GetAllocationTree({type:'configuration'})
             .then(res => {
                 if (res.success != 1) {
                     message.error("请求错误")
