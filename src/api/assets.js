@@ -20,7 +20,7 @@ export const GetAllocationArea = (projectId="") => {
 }
 //获取资产配置管理-客户联系人下拉列表
 export const GetAllocationCustomer = (projectAreaId="") => {
-	return http.fetchGet(`/biProjectArea/getByProId/${projectAreaId}`)
+	return http.fetchGet(`/biCustContact/getByProId/${projectAreaId}`)
 }
 
 //获取资产库配置管理表格数据

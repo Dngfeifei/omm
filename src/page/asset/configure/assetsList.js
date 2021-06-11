@@ -106,7 +106,7 @@ export const rules3= [
         render: _this => <Input style={{ width: 200 }} placeholder="请输入客户名称" onChange={({target:{value}}) => _this.onChangeSearch('i',value)}/>
     }
 ]
-function render(_this,type,selectData,itemCode,itemValue) {
+function render(_this,type,selectData,itemCode,itemValue,selectChange) {
     if(type == 'input1'){
         return <Input placeholder="请输入" />
     }else if(type == 'input2'){
@@ -124,7 +124,7 @@ function render(_this,type,selectData,itemCode,itemValue) {
                     }
                 </Select>
     }else if(type == 'select1'){
-        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} onChange={_this.onAreaChange}>
+        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value)}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
@@ -242,9 +242,8 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render:_=>  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />,
         render: render,
-        type:'date',
+        type:'input2',
     },
     //开始时间
     'projectStartDate':{
@@ -258,7 +257,7 @@ export const assetsListData = {
             },
           ],
         render: render,
-        type:'date',
+        type:'input2',
     },
     //项目经理
     'projectManagerName':{
@@ -367,15 +366,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: () =>{
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>;
-        },
         render:render,
         type:'select'
     },
@@ -407,17 +397,8 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: _this =>{
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>;
-        },
         render:render,
-        type:'select'
+        type:'select1'
     },
     //技术方向
     'skillTypeId':{
@@ -430,17 +411,8 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: _this =>{
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>;
-        },
         render:render,
-        type:'select'
+        type:'select1'
     },
     //品牌
     'brandId':{
@@ -453,17 +425,8 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: _this =>{
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>;
-        },
         render:render,
-        type:'select'
+        type:'select1'
     },
     //产品线
     'productLineId':{
@@ -476,17 +439,8 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: () =>{
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>;
-        },
         render:render,
-        type:'select'
+        type:'select1'
     },
     //产品型号
     'productModelId':{
@@ -500,17 +454,8 @@ export const assetsListData = {
             },
           ],
         
-        render: _this =>{
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>;
-        },
         render:render,
-        type:'select'
+        type:'select1'
     },
     //产品等级
     'productLevel':{
@@ -524,15 +469,6 @@ export const assetsListData = {
             },
           ],
         
-        render: () =>{
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>;
-        },
         render:render,
         type:'select'
     },
@@ -565,15 +501,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: _this =>  {
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>
-        },
         render:render,
         type:'select'
     },
@@ -588,15 +515,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: _this =>  {
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>
-        },
         render:render,
         type:'select'
     },
@@ -611,15 +529,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             }
           ],
-          render: _this =>  {
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>
-        },
         render:render,
         type:'select'
     },
@@ -718,15 +627,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: _this =>  {
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>
-        },
         render:render,
         type:'select'
     },
@@ -1083,17 +983,19 @@ const columnsBase = [{
     key:"projectManagerName",
     align: 'center',
 },
-{
-    title: '服务大区',
-    dataIndex: '4',
-    key:"6",
-    align: 'center',
-},
+// {
+//     title: '服务大区',
+//     dataIndex: '4',
+//     key:"6",
+//     align: 'center',
+// },
 {
     title: '服务区域',
     dataIndex: 'projectArea',
     key:"projectAreaId",
     selectData:'areaData',
+    itemValue:'area',
+    selectChange: 'projectAreaId',
     align: 'center',
 },
 {
@@ -1105,7 +1007,8 @@ const columnsBase = [{
 {
     title: '客户方管理员',
     dataIndex: 'custUserName',
-    key:"custUserName",
+    selectData:'customerData',
+    key:"custUserId",
     align: 'center',
 },
 {
@@ -1136,17 +1039,23 @@ const columnsBase = [{
     title: '产品类别',
     dataIndex: 'serviceClassName',
     key:"serviceClassId",
+    selectChange: 'serviceClassId',
+    selectData:'productType',
     align: 'center',
 },
 {
     title: '技术方向',
     dataIndex: 'skillTypeName',
+    selectChange: 'skillTypeId',
+    selectData:'productSkillType',
     key:"skillTypeId",
     align: 'center',
 },
 {
     title: '品牌',
     dataIndex: 'brandName',
+    selectChange: 'brandId',
+    selectData:'productBrandType',
     key:"brandId",
     align: 'center',
 }]
@@ -1155,15 +1064,17 @@ export const columns = [
 {
     title: '产品线',
     dataIndex: 'productLineName',
-    selectData:'productLineLevel',
+    selectData:'productLineType',
     key:"productLineId",
+    selectChange: 'productLineId',
     align: 'center',
 },
 {
     title: '产品型号',
     dataIndex: 'productModelName',
-    selectData:'productType',
+    selectData:'productModeType',
     key:"productModelId",
+    selectChange: 'productModelId',
     align: 'center',
 },
 {

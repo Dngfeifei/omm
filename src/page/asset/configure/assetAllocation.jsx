@@ -143,6 +143,10 @@ class assetsAllocation extends Component {
                 customerData:[{id:1,name:'ahe'}],//客户下拉列表输入数据
                 maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
                 basedataTypeList:[],//配置项下拉数据
+                productModeType:[], //产品型号
+                productLineType:[], //产品线
+                productBrandType:[], //品牌
+                productSkillType:[], //技术方向
             },
         }
     }
@@ -360,6 +364,13 @@ class assetsAllocation extends Component {
                 return
             }
             roleModalTitle = "新增资产配置";
+            this.setState({
+                roleWindow: {
+                    roleModal: true,
+                    roleModalType,
+                    roleModalTitle
+                }
+            })
         }else{
             if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
                 message.destroy()
@@ -367,16 +378,31 @@ class assetsAllocation extends Component {
                 return
             }
             roleModalTitle = roleModalType == 1 ? "修改资产配置" : "查看资产配置";
+            
+            
+            let selectData = this.initSelectData();
+            this.setState({
+                roleWindow: {
+                    roleModal: true,
+                    roleModalType,
+                    roleModalTitle
+                },
+                selectData
+            })
         }
-        this.setState({
-            roleWindow: {
-                roleModal: true,
-                roleModalType,
-                roleModalTitle
-            },
-        })
     }
-
+    //编辑的时候初始化下拉框数据
+    initSelectData =() => {
+        let {selectData} = this.state;
+        let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].productLineId);
+        let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].serviceClassId);
+        let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].skillTypeId);
+        let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].brandId);
+        this.getAreaData(this.state.tableSelectedInfo[0].projectId)
+        this.getCustomer(this.state.tableSelectedInfo[0].projectAreaId)
+        selectData = Object.assign({}, selectData, { productModeType,productSkillType,productBrandType,productLineType});
+        return selectData;
+    }
     //表格单项删除
     delRoleItem = async (arr) => {
         if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
@@ -526,14 +552,14 @@ class assetsAllocation extends Component {
                 item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
             }
             let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'';
-            if(assetsList[i].key == 'projectStartDate' || assetsList[i].key == 'projectEndDate' || assetsList[i].key == 'updateTime') initialValue = initialValue == undefined ? initialValue : moment(initialValue);
+            // if(assetsList[i].key == 'projectStartDate' || assetsList[i].key == 'projectEndDate' || assetsList[i].key == 'updateTime') initialValue = initialValue == undefined ? initialValue : moment(initialValue);
             children.push(
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? item.label : '修改字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
                     rules: roleWindow.roleModalType == 2 ? [] : item ? item.rules : [],
                     initialValue: initialValue
-                    })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue) : <Input />)}
+                    })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange) : <Input />)}
                 </Form.Item>
                 </Col>
             );
@@ -603,9 +629,57 @@ class assetsAllocation extends Component {
             }
         })
     }
+    //查找产品联动数据
+    getProjectData = (list,id) => {
+        for (let i in list) {
+			if(list[i].id==id){
+                if(list[i].children){
+                    return list[i].children;
+                }else{
+                    return [];
+                }
+			}
+			if(list[i].children){
+				let node= this.getProjectData(list[i].children,id);
+				if(node!==undefined){
+					return node
+				}
+			}
+        }
+    }
     //服务区域选择改变
-    onAreaChange = (projectAreaId)=>{
-        this.getCustomer(projectAreaId)
+    onAreaChange = (selectChange,id)=>{
+        // console.log(selectChange,id)
+        if(selectChange == 'projectAreaId' ){  //服务区域
+            this.getCustomer(id)
+        }else if(selectChange == 'serviceClassId'){//产品类别
+            this.props.form.resetFields(['skillTypeId','brandId','productLineId','productModelId'])
+            let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
+            // // console.log(productSkillType)
+            // return
+            let {selectData} = this.state;
+            selectData = Object.assign({}, selectData, { productSkillType});
+            this.setState({selectData})
+        }else if(selectChange == 'skillTypeId'){//技术方向
+            this.props.form.resetFields(['brandId','productLineId','productModelId'])
+            let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
+            let {selectData} = this.state;
+            selectData = Object.assign({}, selectData, { productBrandType});
+            this.setState({selectData})
+        }else if(selectChange == 'brandId'){//品牌
+            this.props.form.resetFields(['productLineId','productModelId'])
+            let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
+            let {selectData} = this.state;
+            selectData = Object.assign({}, selectData, { productLineType});
+            this.setState({selectData})
+        }else if(selectChange == 'productLineId'){//产品线
+            this.props.form.resetFields(['productModelId'])
+            let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
+            let {selectData} = this.state;
+            selectData = Object.assign({}, selectData, { productModeType});
+            this.setState({selectData})
+        }
+        // this.getCustomer(projectAreaId)
     }
     //处理项目选择器返回数据
     setProjectHandleOk = (info) =>{
@@ -616,12 +690,15 @@ class assetsAllocation extends Component {
             info.projectEndDate = info.endDate
             info.projectSalesmanName = info.salesmanName
         }
+        return info;
     }
     //项目选择器回传参数
     projecthandleOk = (info) => {
         info = this.setProjectHandleOk(info);
         const { roleWindow,tableSelectedInfo} = this.state;
         this.props.form.resetFields();
+         console.log(info)
+        // return 
         if(roleWindow.roleModalType == 0){
             this.setState({
                 baseData: info ? info : {}
@@ -632,8 +709,8 @@ class assetsAllocation extends Component {
             this.setState({
                 tableSelectedInfo: info ? {...tableSelectedInfo,...info} : tableSelectedInfo
             },()=>{
-                this.getAreaData(this.state.tableSelectedInfo.projectId)
-                this.getCustomer(this.state.tableSelectedInfo.projectAreaId)
+                this.getAreaData(this.state.tableSelectedInfo[0].projectId)
+                this.getCustomer(this.state.tableSelectedInfo[0].projectAreaId)
             })
         }
         
@@ -669,7 +746,7 @@ class assetsAllocation extends Component {
     render = _ => {
         const { h,panes } = this.state;
         const { getFieldDecorator } = this.props.form;
-        console.log(panes)
+        // console.log(panes)
         // const baseData = this.getClums(panes);
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%'}} >
             <Row gutter={24} className="main_height">
