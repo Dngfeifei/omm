@@ -138,7 +138,8 @@ class assetsAllocation extends Component {
             selectData:{
                 areaData:[{id:1,name:'ahe'}],//区域下拉列表输入数据
                 customerData:[{id:1,name:'ahe'}],//客户下拉列表输入数据
-                maintained:[{id:"0",name:"否"},{id:"1",name:"是"}]
+                maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
+                basedataTypeList:[],//配置项下拉数据
             },
         }
     }
@@ -168,10 +169,21 @@ class assetsAllocation extends Component {
     }
     //初始化数据
     init = () => {
+        //所有下拉数据初始化
         getBaseData({}).then(res => {
             if (res.success == 1) {
                 let {selectData} = this.state;
                 this.setState({selectData:{...selectData,...res.data}})
+            } else {
+                message.error(res.message)
+            }
+        })
+        //配置项下拉数据初始化
+        getAllBaseDataTypes({}).then(res => {
+            if (res.success == 1) {
+                let {selectData} = this.state;
+                selectData = Object.assign({}, selectData, { basedataTypeList: res.data});
+                this.setState({selectData})
             } else {
                 message.error(res.message)
             }
@@ -517,7 +529,7 @@ class assetsAllocation extends Component {
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
                     rules: roleWindow.roleModalType == 2 ? [] : item ? item.rules : [],
                     initialValue: !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+''
-                    })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData) : <Input />)}
+                    })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue) : <Input />)}
                 </Form.Item>
                 </Col>
             );
