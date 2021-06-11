@@ -526,7 +526,7 @@ class assetsAllocation extends Component {
                 item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
             }
             let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'';
-            if(assetsList[i].key == 'projectStartDate' || assetsList[i].key == 'projectEndDate' || assetsList[i].key == 'updateTime') initialValue = moment(initialValue);
+            if(assetsList[i].key == 'projectStartDate' || assetsList[i].key == 'projectEndDate' || assetsList[i].key == 'updateTime') initialValue = initialValue == undefined ? initialValue : moment(initialValue);
             children.push(
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? item.label : '修改字段'}>
@@ -607,8 +607,19 @@ class assetsAllocation extends Component {
     onAreaChange = (projectAreaId)=>{
         this.getCustomer(projectAreaId)
     }
+    //处理项目选择器返回数据
+    setProjectHandleOk = (info) =>{
+        if(info){
+            info.projectId = info.id
+            info.projectManagerName = info.managerName
+            info.projectStartDate = info.startDate
+            info.projectEndDate = info.endDate
+            info.projectSalesmanName = info.salesmanName
+        }
+    }
     //项目选择器回传参数
     projecthandleOk = (info) => {
+        info = this.setProjectHandleOk(info);
         const { roleWindow,tableSelectedInfo} = this.state;
         this.props.form.resetFields();
         if(roleWindow.roleModalType == 0){
@@ -616,7 +627,6 @@ class assetsAllocation extends Component {
                 baseData: info ? info : {}
             },()=>{
                 this.getAreaData(this.state.baseData.projectId)
-                this.getCustomer(this.state.tableSelectedInfo.projectAreaId)
             })
         }else{
             this.setState({
@@ -761,7 +771,7 @@ class assetsAllocation extends Component {
                 }
             </Modal>
             {
-                this.state.visibleModule ? <ProjectSelector title={'项目选择器'} onCancel={this.close} onOk={this.handleOk}></ProjectSelector> : null
+                this.state.visibleModule ? <ProjectSelector title={'项目选择器'} onCancel={this.close} onOk={this.projecthandleOk}></ProjectSelector> : null
             }
         </div>
     }

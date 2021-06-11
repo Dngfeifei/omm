@@ -116,6 +116,7 @@ class assetsAllocation extends Component {
             searchListID: null,
             searchListName: null,
             basedataTypeId: null,
+            basedataTypeIdSelect: 0,
             TreeParantID:null,
             //当前选中角色数据
             currentRole: {
@@ -311,6 +312,14 @@ class assetsAllocation extends Component {
                 return
             }
             roleModalTitle = "新增资产配置";
+            this.setState({
+                roleWindow: {
+                    roleModal: true,
+                    roleModalType,
+                    roleModalTitle
+                },
+                basedataTypeIdSelect:''
+            })
         }else{
             if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
                 message.destroy()
@@ -318,14 +327,16 @@ class assetsAllocation extends Component {
                 return
             }
             roleModalTitle = roleModalType == 1 ? "修改资产配置" : "查看资产配置";
+            this.setState({
+                roleWindow: {
+                    roleModal: true,
+                    roleModalType,
+                    roleModalTitle
+                },
+                basedataTypeIdSelect:tableSelectedInfo.basedataTypeId
+            })
         }
-        this.setState({
-            roleWindow: {
-                roleModal: true,
-                roleModalType,
-                roleModalTitle
-            },
-        })
+        
     }
 
     //表格单项删除
@@ -457,21 +468,33 @@ class assetsAllocation extends Component {
         //获取table选中项
         this.setState({
             tableSelecteds: selectedRowKeys,
-            tableSelectedInfo: info
+            tableSelectedInfo: info,
         })
     };
     //生成新增/修改/查看弹框内容
     getFields = (assetsList) => {
         // const {assetsList} = this.state;
-        let {roleWindow,tableSelectedInfo,baseData,searchListID,searchListName} = this.state;
+        let {roleWindow,tableSelectedInfo,baseData,searchListID,searchListName,basedataTypeIdSelect} = this.state;
         const { getFieldDecorator } = this.props.form;
         baseData = Object.assign({}, baseData, { parentId:  searchListID,parentName:searchListName});
         const children = [];
-        console.log(tableSelectedInfo[0])
         for (let i = 0; i < assetsList.length; i++) {
+            let label = assetsList[i].label;
+            if(basedataTypeIdSelect == 13){
+                if(assetsList[i].key == 'code'){
+                    label = '产品型号'
+                }
+                if(assetsList[i].key == 'name'){
+                    label = '产品名称'
+                }
+            }else{
+                if(assetsList[i].key == 'intValue1'){
+                    continue;
+                }
+            }
           children.push(
             <Col span={assetsList[i].span} key={i}>
-              <Form.Item label={assetsList[i].label}>
+              <Form.Item label={label}>
                 {getFieldDecorator(assetsList[i].key, {
                   rules: roleWindow.roleModalType == 2 ? [] : assetsList[i].rules,
                   initialValue: !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+''
@@ -482,7 +505,10 @@ class assetsAllocation extends Component {
         }
         return children;
       }
-     
+     //特殊处理选择数据类别
+     onChange = (value)=>{
+        this.setState({basedataTypeIdSelect:value})
+     }
     //重置查询条件
     clearSearchprops = () => {
         // this.props.form.resetFields(['searchName'])

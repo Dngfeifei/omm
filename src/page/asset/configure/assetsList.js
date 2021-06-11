@@ -136,7 +136,7 @@ function render(_this,type,selectData,itemCode,itemValue) {
     }else if(type == 'textarea'){
         return <TextArea placeholder="请输入" rows={4}/>
     }else if(type == 'date'){
-        return <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />
+        return <DatePicker placeholder="项目带入" showTime format="YYYY-MM-DD" />
     }
 }
 function renderDom(obj) {
@@ -197,9 +197,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: () =>{
-            return <Input placeholder="请选择项目号带入" />;
-        },
         render: render,
         type:'input2',
     },
@@ -221,8 +218,8 @@ export const assetsListData = {
         type:'input2',
     },
     //客户名称
-    'custId':{
-        key:'custId',
+    'custName':{
+        key:'custName',
         label:'客户名称',
         span:6,
         rules:[
@@ -231,17 +228,8 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: () =>{
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>;
-        },
         render: render,
-        type:'select',
+        type:'input2',
     },
     //结束时间
     'projectEndDate':{
@@ -269,7 +257,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render:_=>  <DatePicker showTime format="YYYY-MM-DD HH:mm:ss" />,
         render: render,
         type:'date',
     },
@@ -338,10 +325,10 @@ export const assetsListData = {
         render:render,
         type:'input1'
     },
-    //机房管理员
+    //客户方管理员
     'custUserName':{
         key:'custUserName',
-        label:'机房管理员',
+        label:'客户方管理员',
         span:6,
         rules:[
             {
@@ -1068,7 +1055,6 @@ const columnsBase = [{
 {
     title: '客户编号',
     dataIndex: 'custNum',
-    key:"custId",
     selectData:'customerData',
     align: 'center'
 },
@@ -1076,6 +1062,7 @@ const columnsBase = [{
     title: '客户名称',
     dataIndex: 'custName',
     ellipsis:true,
+    key:"custName",
     align: 'center',
 },
 {

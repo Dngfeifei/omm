@@ -79,7 +79,7 @@ export const rules = {
         {
             label: '一级服务目录',
             key: 'a',
-            render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+            render: _ => <Select  placeholder="请选择" allowClear={true}>
                             {
                                 [].map((items, index) => {
                                     return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
@@ -90,7 +90,7 @@ export const rules = {
         {
             label: '二级服务目录',
             key: 'b',
-            render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+            render: _ => <Select  placeholder="请选择" allowClear={true}>
                 {
                     [].map((items, index) => {
                         return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
@@ -101,7 +101,7 @@ export const rules = {
         },{
             label: '三级服务目录',
             key: 'g',
-            render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+            render: _ => <Select  placeholder="请选择" allowClear={true}>
                             {
                                 [].map((items, index) => {
                                     return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
@@ -111,7 +111,7 @@ export const rules = {
         },{
             label: '需求类型',
             key: 'h',
-            render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+            render: _ => <Select  placeholder="请选择" allowClear={true}>
                             {
                                 [].map((items, index) => {
                                     return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
@@ -121,7 +121,7 @@ export const rules = {
         },{
             label: '状态',
             key: 'h',
-            render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+            render: _ => <Select  placeholder="请选择" allowClear={true}>
                             {
                                 [].map((items, index) => {
                                     return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
@@ -158,8 +158,28 @@ export const rules = {
 //新增/修改弹出框内容
 export const assetsListData = [
     {
-        type:[8,14,1,2,3],
+        type:[8,14,1,2,3,13],
         data:[
+            {
+                key:'basedataTypeId',
+                label:'数据类别',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: _this =>{
+                    return <Select  placeholder="请选择" allowClear={true} onChange={_this.onChange}>
+                                {
+                                    _this.state.basedataTypeList.map((items, index) => {
+                                        return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
+                                    })
+                                }
+                            </Select>;
+                }
+            },
             {
                 key:'code',
                 label:'编码',
@@ -213,15 +233,15 @@ export const assetsListData = [
                     },
                   ],
                 render: _this =>{
-                    return <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                    return <Select  placeholder="请选择" allowClear={true}>
                                 <Option key="1" value="1">启动</Option>
                                 <Option key="0" value="0">废弃</Option>
                             </Select>;
                 }
             },
             {
-                key:'basedataTypeId',
-                label:'数据类别',
+                key:'intValue1',
+                label:'产品等级',
                 span:12,
                 rules:[
                     {
@@ -230,13 +250,7 @@ export const assetsListData = [
                     },
                   ],
                 render: _this =>{
-                    return <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
-                                {
-                                    _this.state.basedataTypeList.map((items, index) => {
-                                        return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
-                                    })
-                                }
-                            </Select>;
+                    return <Input disabled placeholder="请输入" />;
                 }
             }
         ]
@@ -245,6 +259,26 @@ export const assetsListData = [
         type:[13],
         data:[
             {
+                key:'basedataTypeId',
+                label:'数据类别',
+                span:12,
+                rules:[
+                    {
+                      required: true,
+                      message: '该选项不能为空！',
+                    },
+                  ],
+                render: _this =>{
+                    return <Select  placeholder="请选择" allowClear={true}>
+                                {
+                                    _this.state.basedataTypeList.map((items, index) => {
+                                        return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
+                                    })
+                                }
+                            </Select>;
+                }
+            },
+            {
                 key:'code',
                 label:'编码',
                 span:12,
@@ -297,29 +331,9 @@ export const assetsListData = [
                     },
                   ],
                 render: _this =>{
-                    return <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                    return <Select  placeholder="请选择" allowClear={true}>
                                 <Option key="1" value="1">启动</Option>
                                 <Option key="0" value="0">废弃</Option>
-                            </Select>;
-                }
-            },
-            {
-                key:'basedataTypeId',
-                label:'数据类别',
-                span:12,
-                rules:[
-                    {
-                      required: true,
-                      message: '该选项不能为空！',
-                    },
-                  ],
-                render: _this =>{
-                    return <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
-                                {
-                                    _this.state.basedataTypeList.map((items, index) => {
-                                        return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
-                                    })
-                                }
                             </Select>;
                 }
             },
