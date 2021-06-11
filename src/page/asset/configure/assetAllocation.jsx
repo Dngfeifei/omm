@@ -21,6 +21,9 @@ const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea } = Input;
 let timeout;
+const dateFormat = 'YYYY-MM-DD hh:mm:ss';
+// 引入日期格式化
+import moment from 'moment'
 const assignment = (data) => {
     data.forEach((list, i) => {
         list.key = list['id'];
@@ -523,12 +526,14 @@ class assetsAllocation extends Component {
             if(assetsList[i].key.indexOf('strValue')>-1 && (assetsList[i].key.split('strValue')[1]>2&&assetsList[i].key.split('strValue')[1]<5) ){
                 item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
             }
+            let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'';
+            if(assetsList[i].key == 'projectStartDate' || assetsList[i].key == 'projectEndDate' || assetsList[i].key == 'updateTime') initialValue = moment(initialValue);
             children.push(
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? item.label : '修改字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
                     rules: roleWindow.roleModalType == 2 ? [] : item ? item.rules : [],
-                    initialValue: !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+''
+                    initialValue: initialValue
                     })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue) : <Input />)}
                 </Form.Item>
                 </Col>
