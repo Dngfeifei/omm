@@ -39,14 +39,15 @@ class Medium extends Component {
                 }
             })
     }
-    // 个人数据变化——>全部数据更新
-    personalListUpdate = _ => {
-        this.All.getTableData()
-    }
     // 全部数据变化——>个人数据更新
+    personalListUpdate = _ => {
+        this.Personal ? this.Personal.getTableData() : ""
+        this.Personal ? this.Personal.getTableData2() : ""
+
+    }
+    // 个人数据变化——>全部数据更新
     allListUpdate = _ => {
-        this.Personal.getTableData()
-        this.Personal.getTableData2()
+        this.all ? this.All.getTableData() : ""
     }
     render = _ => {
         let { monetaryValue } = this.state

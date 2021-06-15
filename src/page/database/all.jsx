@@ -51,6 +51,7 @@ class All extends Component {
         window.onresize = () => {
             this.SortTable();
         }
+        this.props.onRef(this);
     }
     async componentWillMount() {
         // 查询左侧树
@@ -298,6 +299,9 @@ class All extends Component {
             this.subpageChange()
             this.getTableData()
         })
+    }
+    open = (n) => {
+        alert(n)
     }
     // 申请文件下载
     applyFileDownload = (key) => {

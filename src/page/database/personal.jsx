@@ -71,7 +71,7 @@ class Personal extends Component {
         window.onresize = () => {
             this.SortTable();
         }
-
+        this.props.onRef(this);
     }
     async componentWillMount() {
         // 查询左侧树
