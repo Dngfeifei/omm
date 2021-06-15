@@ -58,7 +58,8 @@ class fileUpload extends Component {
         fileLabelData: [],
         uploadConf: {//上传配置
             name: 'file',
-            action: '/fileLibrary/upload',
+            // action: '/fileLibrary/upload',
+            action: `${process.env.API_URL}/fileLibrary/upload`,
             headers: {
                 'Authorization': `Bearer ${token}`
             },
