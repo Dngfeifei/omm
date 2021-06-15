@@ -22,7 +22,7 @@ if (process.env.NODE_ENV == 'production') {
     tokenName = `${process.env.ENV_NAME}_${tokenName}`
 }
 let token = `${localStorage.getItem(tokenName) || ''}`;
-let uploadUrl = `${process.env.API_URL}/fileLibrary/upload`,
+let uploadUrl = `${process.env.API_URL}/fileLibrary/upload`
 class fileUpload extends Component {
 
     componentDidMount() {
