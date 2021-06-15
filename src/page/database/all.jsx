@@ -296,8 +296,8 @@ class All extends Component {
             fileId: key
         }
         PostFileDownload(params).then(res => {
-            this.subpageChange()
             this.getTableData()
+            this.subpageChange()
         })
     }
     open = (n) => {
@@ -312,8 +312,8 @@ class All extends Component {
             if (res.success != 1) {
                 message.error(res.message)
             } else {
-                this.subpageChange()
                 message.success("该文件的下载申请已提交。")
+                this.subpageChange()
             }
         })
     }
@@ -326,8 +326,8 @@ class All extends Component {
             if (res.success != 1) {
                 message.error(res.message)
             } else {
-                this.subpageChange()
                 this.getTableData()
+                this.subpageChange()
             }
         })
     }
@@ -341,8 +341,8 @@ class All extends Component {
                 message.error(res.message)
                 return
             } else {
-                this.subpageChange()
                 this.getTableData()
+                this.subpageChange()
             }
         })
     }
