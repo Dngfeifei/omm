@@ -154,7 +154,6 @@ class TreeList extends Component {
         } = this.props;
         // 进行数组扁平化处理
         generateList(treeData);
-        console.log(treeData,defaultExpandAll,defaultExpandedKeys)
         return (
             <div className="TreeContent">
                 <Spin tip="Loading..." spinning={this.state.visible}>
