@@ -15,7 +15,7 @@ const { TabPane } = Tabs;
 import TreeParant from "@/components/tree/index.jsx"
 
 
-import { GetFileCategories, AddTreeNode, EditTreeNode, DelTreeNode, GetFileLibrary, PostFileDownload, DeleteFile, BatchDeleteFile } from '/api/mediaLibrary.js'
+import { GetFileCategories, AddTreeNode, EditTreeNode, DelTreeNode, GetFileLibrary, PostFileDownload, DeleteFile, BatchDeleteFile, GetFileApply } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
 import Pagination from '/components/pagination'
@@ -310,11 +310,14 @@ class Personal extends Component {
                 title: '操作',
                 align: 'center',
                 render: (t, r) => {
+                    let type = r.reviewStatus
                     let status = r.isDownload
-                    if (status == "1") {
-                        return <a onClick={(e) => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
-                    } else {
-                        return ""
+                    if (type == "1") {
+                        if (status == "1") {
+                            return <a onClick={(e) => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
+                        } else {
+                            return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
+                        }
                     }
                 }
             },
@@ -735,7 +738,7 @@ class Personal extends Component {
             fileId: key
         }
         PostFileDownload(params).then(res => {
-
+            this.getTableData()
         })
     }
     // 文件下载
@@ -746,7 +749,21 @@ class Personal extends Component {
             fileId: key
         }
         PostFileDownload(params).then(res => {
-
+            this.getTableData2()
+        })
+    }
+    // 申请文件下载
+    applyFileDownload = (key) => {
+        let params = {
+            fileId: key
+        }
+        GetFileApply(params).then(res => {
+            if (res.success != 1) {
+                message.error(res.message)
+            } else {
+                message.success("该文件的下载申请已提交。")
+                this.getTableData2()
+            }
         })
     }
     // 文件删除

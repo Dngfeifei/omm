@@ -313,7 +313,7 @@ class All extends Component {
                 message.error(res.message)
             } else {
                 message.success("该文件的下载申请已提交。")
-                this.subpageChange()
+                this.getTableData()
             }
         })
     }

@@ -18,11 +18,12 @@ const layout = {
 };
 
 let tokenName = 'token'
+let uploadUrl = `/fileLibrary/upload`
 if (process.env.NODE_ENV == 'production') {
     tokenName = `${process.env.ENV_NAME}_${tokenName}`
+    uploadUrl = `${process.env.API_URL}/fileLibrary/upload`
 }
 let token = `${localStorage.getItem(tokenName) || ''}`;
-let uploadUrl = `${process.env.API_URL}/fileLibrary/upload`
 class fileUpload extends Component {
 
     componentDidMount() {
