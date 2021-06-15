@@ -239,7 +239,7 @@ class DownloadAudit extends Component {
     }// 文件下载
     downloadFile = (key) => {
         let params = {
-            downloadType: "all",
+            downloadType: "collect",
             fileId: key
         }
         PostFileDownload(params).then(res => {

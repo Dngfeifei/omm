@@ -312,7 +312,7 @@ class Personal extends Component {
                 render: (t, r) => {
                     let status = r.isDownload
                     if (status == "1") {
-                        return <a onClick={(e) => this.downloadFile(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
+                        return <a onClick={(e) => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
                     } else {
                         return ""
                     }
@@ -731,7 +731,18 @@ class Personal extends Component {
     downloadFile = (key, e) => {
         e.stopPropagation()
         let params = {
-            downloadType: "uploadReview",
+            downloadType: "upload",
+            fileId: key
+        }
+        PostFileDownload(params).then(res => {
+
+        })
+    }
+    // 文件下载
+    downloadFile2 = (key, e) => {
+        e.stopPropagation()
+        let params = {
+            downloadType: "download",
             fileId: key
         }
         PostFileDownload(params).then(res => {
