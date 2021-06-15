@@ -58,8 +58,8 @@ class DownloadAudit extends Component {
                     return <div>
                         <div>{t}</div>
                         <div style={{ color: "#bfb8b8" }}>
-                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme="outlined" style={{ margin: "0 3px 0 0", cursor: "pointer" }} />{r.likeNum ? r.likeNum : 0}
-                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme="outlined" style={{ margin: "0 3px 0 5px", cursor: "pointer" }} />{r.collectNum ? r.collectNum : 0}
+                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={{ margin: "0 3px 0 0", cursor: "pointer" }} />{r.likeNum ? r.likeNum : 0}
+                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={{ margin: "0 3px 0 5px", cursor: "pointer" }} />{r.collectNum ? r.collectNum : 0}
                         </div>
                     </div>
                 }

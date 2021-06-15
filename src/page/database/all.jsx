@@ -85,8 +85,8 @@ class All extends Component {
                     return <div>
                         <div>{t}</div>
                         <div style={{ color: "#bfb8b8" }}>
-                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme="outlined" style={{ margin: "0 3px 0 0", cursor: "pointer" }} />{r.likeNum ? r.likeNum : 0}
-                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme="outlined" style={{ margin: "0 3px 0 5px", cursor: "pointer" }} />{r.collectNum ? r.collectNum : 0}
+                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={{ margin: "0 3px 0 0", cursor: "pointer" }} />{r.likeNum ? r.likeNum : 0}
+                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={{ margin: "0 3px 0 5px", cursor: "pointer" }} />{r.collectNum ? r.collectNum : 0}
                         </div>
                     </div>
                 }
@@ -227,20 +227,21 @@ class All extends Component {
     getTableData = (obj = 1) => {
         let id = this.state.treeSelectInfo ? this.state.treeSelectInfo.id : ""
         let key = this.state.searchKey
+        let order = this.state.sortValue == "file_name" ? {} : { order: "desc" }
         // 选中后请求文件数据
         let params = Object.assign({}, {
             categoriesId: id,
             fileName: key,
             queryType: "all",
-            sort: this.state.sortValue
+            sort: this.state.sortValue,
+            ...order
         })
-
         GetFileLibrary(this.state.pagination.pageSize, obj ? (this.state.pagination.current - 1) * 10 : 0, params).then(res => {
             if (res.success == 1) {
                 let pagination = Object.assign({}, this.state.pagination, {
                     pageSize: res.data.size,
                     current: res.data.current,
-                    total: res.data.total
+                    total: res.data.total,
                 })
                 this.setState({ tableData: res.data.records, pagination: pagination })
             } else {
