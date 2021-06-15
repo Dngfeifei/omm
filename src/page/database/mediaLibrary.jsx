@@ -39,17 +39,26 @@ class Medium extends Component {
                 }
             })
     }
+    // 个人数据变化——>全部数据更新
+    personalListUpdate = _ => {
+        this.all.getTableData()
+    }
+    // 全部数据变化——>个人数据更新
+    allListUpdate = _ => {
+        this.personal.getTableData()
+        this.personal.getTableData2()
+    }
     render = _ => {
         let { monetaryValue } = this.state
         return <div style={{ height: '100%', padding: "0 10px" }} >
             <Tabs defaultActiveKey="1" animated={false}>
                 <TabPane tab="个人文件管理" key="1">
                     <p style={{ marginLeft: "12px" }}>我的币值：{monetaryValue}</p>
-                    <Personal></Personal>
+                    <Personal onRef={c => this.personal = c} listUpdate={this.allListUpdate}></Personal>
                 </TabPane>
                 <TabPane tab="全部文件" key="2">
                     <p style={{ marginLeft: "12px" }}>我的币值：{monetaryValue}</p>
-                    <All></All>
+                    <All onRef={c => this.all = c} listUpdate={this.personalListUpdate}></All>
                 </TabPane>
             </Tabs>
 
