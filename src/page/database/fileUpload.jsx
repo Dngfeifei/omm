@@ -17,7 +17,11 @@ const layout = {
     wrapperCol: { span: 16 },
 };
 
-let token = localStorage.getItem('token')
+let tokenName = 'token'
+if (process.env.NODE_ENV == 'production') {
+    tokenName = `${process.env.ENV_NAME}_${tokenName}`
+}
+let token = `${localStorage.getItem(tokenName) || ''}`;
 
 class fileUpload extends Component {
 
