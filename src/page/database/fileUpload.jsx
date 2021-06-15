@@ -146,7 +146,7 @@ class fileUpload extends Component {
     uploadFile = () => {
         var formData = new FormData();
         formData.append('file', this.state.file);
-        fetch('/fileLibrary/upload', {
+        fetch(uploadUrl, {
             method: 'POST',
             processData: false,
             body: formData,
