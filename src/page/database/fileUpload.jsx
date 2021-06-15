@@ -22,7 +22,7 @@ if (process.env.NODE_ENV == 'production') {
     tokenName = `${process.env.ENV_NAME}_${tokenName}`
 }
 let token = `${localStorage.getItem(tokenName) || ''}`;
-
+let uploadUrl = `${process.env.API_URL}/fileLibrary/upload`,
 class fileUpload extends Component {
 
     componentDidMount() {
@@ -59,7 +59,7 @@ class fileUpload extends Component {
         uploadConf: {//上传配置
             name: 'file',
             // action: '/fileLibrary/upload',
-            action: `${process.env.API_URL}/fileLibrary/upload`,
+            action: uploadUrl,
             headers: {
                 'Authorization': `Bearer ${token}`
             },
