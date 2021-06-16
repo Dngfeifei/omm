@@ -175,7 +175,17 @@ class DownloadAudit extends Component {
                 align: 'center',
                 editable: true,
                 render: (t, r) => {
-                    return t ? fileLevels[t].levelName : ""
+                    if (r.uploadStatus == 0) {
+                        return <Select style={{ width: 120 }} value={t} onChange={(val, opt) => this.getRowInput(val, 'fileLevelId', r.id)}>
+                            {
+                                fileLevelsArr.map((item) => {
+                                    return <Option key={item.id} value={item.id}>{item.levelName}</Option>
+                                })
+                            }
+                        </Select>
+                    } else {
+                        return t ? fileLevels[t].levelName : ""
+                    }
                 }
             },
             {
@@ -183,12 +193,27 @@ class DownloadAudit extends Component {
                 dataIndex: 'points',
                 align: 'center',
                 editable: true,
+                render: (t, r) => {
+                    if (r.uploadStatus == 0) {
+                        return r.fileLevelId ? fileLevels[r.fileLevelId].points : ""
+                    } else {
+                        return t
+                    }
+
+                }
             },
             {
                 title: <div className="ant-form-item-required">资料下架日期</div>,
                 dataIndex: 'clearTime',
                 align: 'center',
                 editable: true,
+                render: (t, r) => {
+                    if (r.uploadStatus == 0) {
+                        return <DatePicker onChange={(date, dateStr) => this.getRowInput(dateStr, 'clearTime', r.id)} />
+                    } else {
+                        return t
+                    }
+                }
             },
             {
                 title: '描述',
@@ -223,13 +248,10 @@ class DownloadAudit extends Component {
 
                     let isSave = (editingKey != "" && editingKey == r.id)    //在编辑状态 且编辑项id与行id相同时 同意按钮正常显示
                     if (status == "0") {
-
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
                             <a disabled={isEditDisplay} onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                            <a onClick={_ => this.saveItem(r.id, 1)} style={{ margin: "0 3px" }}>同意</a>
                             <a disabled={isEditDisplay} onClick={_ => this.saveItem(r.id, 2)} style={{ margin: "0 3px" }}>驳回</a>
-                            <a disabled={!isSave} onClick={_ => this.saveItem(r.id, 1)} style={{ margin: "0 3px" }}>同意</a>
-                            {idEdit ? <a disabled={isEditDisplay} onClick={_ => this.editItem(r.id)} style={{ margin: "0 3px" }}>编辑</a> : ""}
-                            {!idEdit ? <a onClick={_ => this.editCancel(r.id)} style={{ margin: "0 3px" }}>取消</a> : ""}
                         </div>
                     } else if (status == "1") {
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
@@ -308,7 +330,13 @@ class DownloadAudit extends Component {
             searchKey: e.target.value
         })
     }
-
+    getRowInput = (val, name, id) => {
+        let tableData = this.state.tableData;
+        tableData.forEach((item) => {
+            item.id == id ? item[name] = val : ""
+        })
+        this.setState({ tableData })
+    }
     // 分页页码变化
     pageIndexChange = (current, pageSize) => {
         let pagination = Object.assign({}, this.state.pagination, { current: current });
@@ -346,15 +374,36 @@ class DownloadAudit extends Component {
     //保存行数据
     saveItem = (key, status) => {
         //  status  1 审核通过  2 驳回  3编辑保存
-        if (status == 1 || status == 3) {
+        if (status == 1) {
+            let tableData = this.state.tableData;
+            let params = { uploadStatus: 1, id: key }
+            tableData.forEach((item) => {
+                if (item.id == key) {
+                    params.fileLevelId = item.fileLevelId
+                    params.clearTime = item.clearTime
+                }
+            })
+            if (params.fileLevelId == "" || params.clearTime == "") {
+                message.destroy()
+                message.warning("请将资料级别和资料下架日期日期填写后再审核！")
+                return
+            }
+            FileUpdateExamine(params).then(res => {
+                if (res.success != 1) {
+                    message.error(res.message)
+                } else {
+                    editingKey = ""
+                    this.setState({ editingKey: '' }, _ => {
+                        this.getTableData()
+                    });
+                }
+            })
+        } else if (status == 3) {
             this.props.form.validateFields((error, row) => {
                 if (error) { return }
                 var params = JSON.parse(JSON.stringify(row));
                 params.clearTime = params.clearTime ? moment(params.clearTime).format("YYYY-MM-DD") : params.clearTime
                 params = Object.assign({}, params, { id: key })
-                if (status == 1) {
-                    params = Object.assign({}, params, { uploadStatus: 1 })
-                }
                 FileUpdateExamine(params).then(res => {
                     if (res.success != 1) {
                         message.error(res.message)
