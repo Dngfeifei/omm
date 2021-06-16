@@ -107,11 +107,6 @@ class DownloadAudit extends Component {
         editingKey: '',
         // 表格默认滚动高度
         h: { y: 240 },
-        // 分页参数
-        pageConf: {
-            limit: 10,
-            offset: 0
-        },
         // 分页配置
         pagination: {
             pageSize: 10,
@@ -294,14 +289,7 @@ class DownloadAudit extends Component {
             fileName: key,
             queryType: "uploadReview"
         })
-        if (!obj) {
-            let pagination = this.state.pagination;
-            pagination = Object.assign({}, pagination, { current: 0, })
-            this.setState({
-                pagination
-            })
-        }
-        GetFileLibrary(this.state.pageConf.limit, obj ? this.state.pageConf.offset : 0, params).then(res => {
+        GetFileLibrary(this.state.pagination.pageSize, obj ? (this.state.pagination.current - 1) * this.state.pagination.pageSize : 0, params).then(res => {
             if (res.success == 1) {
                 let pagination = Object.assign({}, this.state.pagination, {
                     total: res.data.total
@@ -320,27 +308,22 @@ class DownloadAudit extends Component {
         })
     }
 
-    // 分页页码变化
-    pageIndexChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
-        let pagination = Object.assign({}, this.state.pagination, { current: current });
+  // 分页页码变化
+  pageIndexChange = (current, pageSize) => {
+    let pagination = Object.assign({}, this.state.pagination, { current: current });
+    this.setState({
+        pagination,
+        tableSelecteds: [],
+        tableSelectedInfo: []
+    }, _ => {
+        this.getTableData()
+    })
+}
 
-        this.setState({
-            pageConf,
-            pagination,
-            tableSelecteds: [],
-            tableSelectedInfo: []
-        }, _ => {
-            this.getTableData()
-        })
-    }
-
-    // 分页条数变化
-    pageSizeChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, { limit: pageSize });
+     // 分页条数变化
+     pageSizeChange = (current, pageSize) => {
         let pagination = Object.assign({}, this.state.pagination, { pageSize: pageSize });
         this.setState({
-            pageConf,
             pagination,
             tableSelecteds: [],
             tableSelectedInfo: []

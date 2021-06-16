@@ -605,7 +605,7 @@ class Personal extends Component {
             queryType: "upload"
         })
 
-        GetFileLibrary(this.state.pagination.pageSize, obj ? (this.state.pagination.current - 1) * 10 : 0, params).then(res => {
+        GetFileLibrary(this.state.pagination.pageSize, obj ? (this.state.pagination.current - 1) * this.state.pagination.pageSize : 0, params).then(res => {
             if (res.success == 1) {
                 let pagination = Object.assign({}, this.state.pagination, {
                     pageSize: res.data.size,
@@ -629,7 +629,7 @@ class Personal extends Component {
             queryType: "download"
         })
 
-        GetFileLibrary(this.state.pagination2.pageSize, obj ? (this.state.pagination2.current - 1) * 10 : 0, params).then(res => {
+        GetFileLibrary(this.state.pagination2.pageSize, obj ? (this.state.pagination2.current - 1) * this.state.pagination2.pageSize : 0, params).then(res => {
             if (res.success == 1) {
                 let pagination = Object.assign({}, this.state.pagination2, {
                     pageSize: res.data.size,

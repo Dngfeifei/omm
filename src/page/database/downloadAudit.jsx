@@ -197,7 +197,7 @@ class DownloadAudit extends Component {
             queryType: "downloadReview"
         })
 
-        GetFileLibrary(this.state.pagination.pageSize, obj ? (this.state.pagination.current - 1) * 10 : 0, params).then(res => {
+        GetFileLibrary(this.state.pagination.pageSize, obj ? (this.state.pagination.current - 1) * this.state.pagination.pageSize : 0, params).then(res => {
             if (res.success == 1) {
                 let pagination = Object.assign({}, this.state.pagination, {
                     total: res.data.total
