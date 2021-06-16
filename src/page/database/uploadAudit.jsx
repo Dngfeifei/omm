@@ -41,11 +41,11 @@ class EditableCell extends React.Component {
                         {getFieldDecorator(dataIndex, {
                             rules: [{
                                 required: true,
-                                message: `请输入${title}!`
+                                message: `请选择资料级别!`
                             }],
                             initialValue: record[dataIndex],
                         })(
-                            <Select style={{ width: 120 }} >
+                            <Select style={{ width: 80 }} >
                                 {
                                     fileLevelsArr.map((item) => {
                                         return <Option key={item.id} value={item.id}>{item.levelName}</Option>
@@ -63,10 +63,11 @@ class EditableCell extends React.Component {
                 {editing && dataIndex == 'clearTime' ?
                     < Item style={{ margin: 0 }}>
                         {getFieldDecorator(dataIndex, {
-                            rules: [{ required: true, message: `选择${title}!` }],
+                            rules: [{ required: true, message: `请选择下架日期!` }],
+                            // initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                             initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                         })(
-                            <DatePickers />
+                            <DatePickers style={{ width: 115 }} />
                             // <Inputs />
                         )}
                     </Item> : ""
@@ -107,11 +108,6 @@ class DownloadAudit extends Component {
         editingKey: '',
         // 表格默认滚动高度
         h: { y: 240 },
-        // 分页参数
-        pageConf: {
-            limit: 10,
-            offset: 0
-        },
         // 分页配置
         pagination: {
             pageSize: 10,
@@ -177,9 +173,20 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">资料级别</div>,
                 dataIndex: 'fileLevelId',
                 align: 'center',
+                width:90,
                 editable: true,
                 render: (t, r) => {
-                    return t ? fileLevels[t].levelName : ""
+                    if (r.uploadStatus == 0) {
+                        return <Select  value={t} onChange={(val, opt) => this.getRowInput(val, 'fileLevelId', r.id)}>
+                            {
+                                fileLevelsArr.map((item) => {
+                                    return <Option key={item.id} value={item.id}>{item.levelName}</Option>
+                                })
+                            }
+                        </Select>
+                    } else {
+                        return t ? fileLevels[t].levelName : ""
+                    }
                 }
             },
             {
@@ -187,12 +194,28 @@ class DownloadAudit extends Component {
                 dataIndex: 'points',
                 align: 'center',
                 editable: true,
+                render: (t, r) => {
+                    if (r.uploadStatus == 0) {
+                        return r.fileLevelId ? fileLevels[r.fileLevelId].points : ""
+                    } else {
+                        return t
+                    }
+
+                }
             },
             {
                 title: <div className="ant-form-item-required">资料下架日期</div>,
                 dataIndex: 'clearTime',
                 align: 'center',
+                width:128,
                 editable: true,
+                render: (t, r) => {
+                    if (r.uploadStatus == 0) {
+                        return <DatePicker onChange={(date, dateStr) => this.getRowInput(dateStr, 'clearTime', r.id)} />
+                    } else {
+                        return t
+                    }
+                }
             },
             {
                 title: '描述',
@@ -227,13 +250,10 @@ class DownloadAudit extends Component {
 
                     let isSave = (editingKey != "" && editingKey == r.id)    //在编辑状态 且编辑项id与行id相同时 同意按钮正常显示
                     if (status == "0") {
-
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
                             <a disabled={isEditDisplay} onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                            <a onClick={_ => this.saveItem(r.id, 1)} style={{ margin: "0 3px" }}>同意</a>
                             <a disabled={isEditDisplay} onClick={_ => this.saveItem(r.id, 2)} style={{ margin: "0 3px" }}>驳回</a>
-                            <a disabled={!isSave} onClick={_ => this.saveItem(r.id, 1)} style={{ margin: "0 3px" }}>同意</a>
-                            {idEdit ? <a disabled={isEditDisplay} onClick={_ => this.editItem(r.id)} style={{ margin: "0 3px" }}>编辑</a> : ""}
-                            {!idEdit ? <a onClick={_ => this.editCancel(r.id)} style={{ margin: "0 3px" }}>取消</a> : ""}
                         </div>
                     } else if (status == "1") {
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
@@ -294,14 +314,7 @@ class DownloadAudit extends Component {
             fileName: key,
             queryType: "uploadReview"
         })
-        if (!obj) {
-            let pagination = this.state.pagination;
-            pagination = Object.assign({}, pagination, { current: 0, })
-            this.setState({
-                pagination
-            })
-        }
-        GetFileLibrary(this.state.pageConf.limit, obj ? this.state.pageConf.offset : 0, params).then(res => {
+        GetFileLibrary(this.state.pagination.pageSize, obj ? (this.state.pagination.current - 1) * this.state.pagination.pageSize : 0, params).then(res => {
             if (res.success == 1) {
                 let pagination = Object.assign({}, this.state.pagination, {
                     total: res.data.total
@@ -319,14 +332,17 @@ class DownloadAudit extends Component {
             searchKey: e.target.value
         })
     }
-
+    getRowInput = (val, name, id) => {
+        let tableData = this.state.tableData;
+        tableData.forEach((item) => {
+            item.id == id ? item[name] = val : ""
+        })
+        this.setState({ tableData })
+    }
     // 分页页码变化
     pageIndexChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
         let pagination = Object.assign({}, this.state.pagination, { current: current });
-
         this.setState({
-            pageConf,
             pagination,
             tableSelecteds: [],
             tableSelectedInfo: []
@@ -337,10 +353,8 @@ class DownloadAudit extends Component {
 
     // 分页条数变化
     pageSizeChange = (current, pageSize) => {
-        let pageConf = Object.assign({}, this.state.pageConf, { limit: pageSize });
         let pagination = Object.assign({}, this.state.pagination, { pageSize: pageSize });
         this.setState({
-            pageConf,
             pagination,
             tableSelecteds: [],
             tableSelectedInfo: []
@@ -362,15 +376,36 @@ class DownloadAudit extends Component {
     //保存行数据
     saveItem = (key, status) => {
         //  status  1 审核通过  2 驳回  3编辑保存
-        if (status == 1 || status == 3) {
+        if (status == 1) {
+            let tableData = this.state.tableData;
+            let params = { uploadStatus: 1, id: key }
+            tableData.forEach((item) => {
+                if (item.id == key) {
+                    params.fileLevelId = item.fileLevelId
+                    params.clearTime = item.clearTime
+                }
+            })
+            if (params.fileLevelId == "" || params.clearTime == "") {
+                message.destroy()
+                message.warning("请将资料级别和资料下架日期日期填写后再审核！")
+                return
+            }
+            FileUpdateExamine(params).then(res => {
+                if (res.success != 1) {
+                    message.error(res.message)
+                } else {
+                    editingKey = ""
+                    this.setState({ editingKey: '' }, _ => {
+                        this.getTableData()
+                    });
+                }
+            })
+        } else if (status == 3) {
             this.props.form.validateFields((error, row) => {
                 if (error) { return }
                 var params = JSON.parse(JSON.stringify(row));
                 params.clearTime = params.clearTime ? moment(params.clearTime).format("YYYY-MM-DD") : params.clearTime
                 params = Object.assign({}, params, { id: key })
-                if (status == 1) {
-                    params = Object.assign({}, params, { uploadStatus: 1 })
-                }
                 FileUpdateExamine(params).then(res => {
                     if (res.success != 1) {
                         message.error(res.message)
