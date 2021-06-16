@@ -56,6 +56,8 @@ class servies extends Component {
         },
         // 【服务区域】的table表格数据
         areaList: [],
+         // 【附件下载】的table表格数据
+         accList: [],
         // 【服务承诺】组件的所有数据
         performancePledge: {
             serviceMode: undefined,  // 服务方式
@@ -85,6 +87,8 @@ class servies extends Component {
             outsourcer: '', //外包商
             sparePartsFileList: [],// 合同承诺备机备件清单
             equipmentFileList: [], // 上传外包合同设备清单附件
+            customerModelName:'',// 客户方模版名称
+            customerModelPath:'',// 客户方模版路径
             clientFileList: [], // 客户方模版附件
             afterSaleAgreement: '1', // 集成/备件销售项目（101、102）售后服务约定 1-原厂服务，2-我司服务
             projectCycleType: '',// 项目周期类型，1-部分项目周期，2-全部项目周期，原厂服务周期类型
@@ -222,9 +226,9 @@ setIsFirstInspection = (info,performancePledge)=>{
             performancePledge
         }, () => {
             //向父组件【SQT页面】传递数据
-            let {basicInfor,areaList,performancePledge}=this.state
+            let {basicInfor,areaList,performancePledge,accList}=this.state
             console.log(performancePledge)
-            let result=Object.assign({},basicInfor,performancePledge,{areaList})
+            let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
             this.props.onChangeData(result);
         })
     }
@@ -237,12 +241,23 @@ setIsFirstInspection = (info,performancePledge)=>{
             areaList: info
         }, () => {
              // 向父组件【SQT页面】传递数据
-             let {basicInfor,performancePledge,areaList}=this.state
-             let result=Object.assign({},basicInfor,performancePledge,{areaList})
+             let {basicInfor,performancePledge,areaList,accList}=this.state
+             let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
              this.props.onChangeData(result);
         })
     }
-
+    //  接收到【附件上传】子组件返回的数据  
+    getChildrenDataUpload = (info) => {
+        // console.log('服务区域')
+        this.setState({
+            accList: info
+        }, () => {
+            // 向父组件【SQT页面】传递数据
+            let {basicInfor,performancePledge,areaList,accList}=this.state
+            let result=Object.assign({},basicInfor,performancePledge,{accList},{areaList})
+            this.props.onChangeData(result);
+        })
+    }
     //  接收到【服务承诺】子组件返回的数据  
     getChildrenData = (info) => {
         // console.log('服务承诺')
@@ -250,8 +265,8 @@ setIsFirstInspection = (info,performancePledge)=>{
             performancePledge: info
         }, () => {
           // 向父组件【SQT页面】传递数据
-          let {basicInfor,areaList,performancePledge}=this.state
-           let result=Object.assign({},basicInfor,performancePledge,{areaList})
+          let {basicInfor,areaList,performancePledge,accList}=this.state
+           let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
           this.props.onChangeData(result);
         })
     }
@@ -261,14 +276,15 @@ setIsFirstInspection = (info,performancePledge)=>{
     onGetChangeSelect = (data) => {
         // console.log(data)
         // 当选择器中的数据有返回时，将【服务区域、服务承诺】组件中需要带入的数据进行带入
-        let newPerformance = this.setInfo(data, this.state.performancePledge),{areaList} = this.state;
+        let newPerformance = this.setInfo(data, this.state.performancePledge),{accList} = this.state;
         newPerformance = this.setIsFirstInspection(data,newPerformance);
         this.setState({
             performancePledge: newPerformance,
-            areaList: data.areaList
+            areaList: data.areaList,
+            accList: data.accList?data.accList:accList,
         },()=>{
-            let {basicInfor,areaList,performancePledge}=this.state
-            let result=Object.assign({},basicInfor,performancePledge,{areaList})
+            let {basicInfor,areaList,performancePledge,accList}=this.state
+            let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
             this.props.onChangeData(result);
         })
     }
@@ -298,10 +314,10 @@ setIsFirstInspection = (info,performancePledge)=>{
                     <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} basicInfor={this.state.basicInfor} node={node} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
                 {/* 附件上传---区域 */}
-                {/* <div className="commTop">
+                <div className="commTop">
                     <div className="navTitle">附件上传</div>
-                    <AttachmentTable isEdit={this.state.isEdit} formRead={this.state.formRead} node={node} sign={power.sign ? power.sign : 0} onChange={this.getChildrenDataUpload}></AttachmentTable>
-                </div> */}
+                    <AttachmentTable isEdit={this.state.isEdit} data={this.state.accList} formRead={this.state.formRead} node={node} sign={power.sign ? power.sign : 0} onChange={this.getChildrenDataUpload}></AttachmentTable>
+                </div>
 
             </div>
         )

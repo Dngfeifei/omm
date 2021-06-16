@@ -21,8 +21,8 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-// var target = {target: 'http://172.16.100.81/api/dat'}
-var target = {target: 'http://10.0.16.191:8111'}
+var target = {target: 'http://172.16.100.81/api/dat'}
+// var target = {target: 'http://10.0.16.191:8111'}
 
 
 module.exports = {

@@ -32,80 +32,6 @@ export const rules1= [
         }
     }
 ]
-export const rules2= [
-    {
-        label: '项目号',
-        key: 'a',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入项目号" onChange={({target:{value}}) => _this.onChangeSearch('a',value)}/>
-    },
-    {
-        label: '项目名称',
-        key: 'b',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入项目名称" onChange={({target:{value}}) => _this.onChangeSearch('b',value)}/>
-       
-    },{
-        label: '服务区域',
-        key: 'c',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入服务区域" onChange={({target:{value}}) => _this.onChangeSearch('c',value)}/>
-    },{
-        label: '品牌',
-        key: 'd',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入品牌名称" onChange={({target:{value}}) => _this.onChangeSearch('d',value)}/>
-       
-    },{
-        label: '数据库名称',
-        key: 'f',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入产品线" onChange={({target:{value}}) => _this.onChangeSearch('f',value)}/>
-       
-    },{
-        label: '数据库版本',
-        key: 'g',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入产品型号" onChange={({target:{value}}) => _this.onChangeSearch('g',value)}/>
-    },{
-        label: 'OS版本',
-        key: 'h',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入MODEL型号" onChange={({target:{value}}) => _this.onChangeSearch('h',value)}/>
-    },{
-        label: '客户名称',
-        key: 'i',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入客户名称" onChange={({target:{value}}) => _this.onChangeSearch('i',value)}/>
-    }
-]
-export const rules3= [
-    {
-        label: '项目号',
-        key: 'a',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入项目号" onChange={({target:{value}}) => _this.onChangeSearch('a',value)}/>
-    },
-    {
-        label: '项目名称',
-        key: 'b',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入项目名称" onChange={({target:{value}}) => _this.onChangeSearch('b',value)}/>
-       
-    },{
-        label: '服务区域',
-        key: 'c',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入服务区域" onChange={({target:{value}}) => _this.onChangeSearch('c',value)}/>
-    },{
-        label: '品牌',
-        key: 'd',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入品牌名称" onChange={({target:{value}}) => _this.onChangeSearch('d',value)}/>
-       
-    },{
-        label: '中间件名称',
-        key: 'f',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入产品线" onChange={({target:{value}}) => _this.onChangeSearch('f',value)}/>
-       
-    },{
-        label: '客户名称',
-        key: 'h',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入MODEL型号" onChange={({target:{value}}) => _this.onChangeSearch('h',value)}/>
-    },{
-        label: '版本',
-        key: 'i',
-        render: _this => <Input style={{ width: 200 }} placeholder="请输入客户名称" onChange={({target:{value}}) => _this.onChangeSearch('i',value)}/>
-    }
-]
 function render(_this,type,selectData,itemCode,itemValue,selectChange) {
     if(type == 'input1'){
         return <Input placeholder="请输入" />
@@ -656,17 +582,8 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: _this =>  {
-            return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
-                        {
-                            [].map((items, index) => {
-                                return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>
-        },
         render:render,
-        type:'select'
+        type:'input1'
     },
     //序列号
     'strValue2':{
@@ -676,10 +593,6 @@ export const assetsListData = {
         rules:[
             
           ],
-        
-        render: _this =>{
-            return <Input disabled/>;
-        },
         render:render,
         type:'input1'
     },
@@ -818,7 +731,7 @@ export const assetsListData = {
         rules:[],
         renderDom:renderDom,
         render:render,
-        type:'select'
+        type:'input1'
     },
     //异步型号
     'strValue14':{
@@ -924,6 +837,16 @@ export const assetsListData = {
     'strValue24':{
         key:'strValue24',
         label:'风险规避意见',
+        span:6,
+        rules:[],
+        renderDom:renderDom,
+        render:render,
+        type:'input1'
+    },
+    //用途
+    'usage':{
+        key:'usage',
+        label:'用途',
         span:6,
         rules:[],
         renderDom:renderDom,
@@ -1186,8 +1109,8 @@ export const panes = [
             },
             {
                 title: '用途',
-                dataIndex: '32',
-                key:'34',
+                dataIndex: 'usage',
+                key:'usage',
                 align: 'center',
             },
             {
@@ -1392,12 +1315,6 @@ export const panes = [
                 dataIndex: 'strValue24',
                 inputType:'input1',
                 key: 'strValue24',
-                align: 'center',
-            },
-            {
-                title: '是否维护',
-                dataIndex: '44',
-                key: '44',
                 align: 'center',
             },
             {

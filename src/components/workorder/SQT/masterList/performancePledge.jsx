@@ -245,6 +245,11 @@ class performance extends Component {
     //初始化服务承诺接收数据  @author  gl
     initData = (data) => {
         // console.log(data)
+        if(data.customerModelName && data.customerModelPath){
+            let number = Math.random().toString().slice(-6);
+            let arr = [{ uid: number, name: data.customerModelName,fileName:data.customerModelName,fileUrl:data.customerModelPath, status: 'done', url: data.customerModelPath }]
+            data.clientFileList = arr;
+        }
         this.setState({
             PerformanceData: data,
             count: data.courseList ? data.courseList.length + 1 : 1,
@@ -755,8 +760,8 @@ addMouseLeave = (record) => {
             }
             return file;
         });
-        let data = Object.assign({}, this.state.PerformanceData, { clientFileList:fileList});
-        this.setState({ ContractFileList:fileList , PerformanceData:data},()=>{this.updataToParent()});
+        let data = Object.assign({}, this.state.PerformanceData, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
+        this.setState({PerformanceData:data},()=>{this.updataToParent()});
     // this.setState({PerformanceData:{...this.state.PerformanceData,sparePartsFileList:fileList}})
     }
    
@@ -1079,7 +1084,7 @@ addMouseLeave = (record) => {
                             <div className="key">集成/备件销售项目<br />（101、102）售后服务约定</div>
                             <div className="bigVal4">
                                 <div className="radioContent">
-                                    <div className="title">
+                                    <div className="title title2">
                                         {/* <Radio disabled={disaBled ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='1'?true:false} onClick={this.changeRadioOriginal}>原厂服务</Radio> */}
                                         原厂服务
                                     </div>
@@ -1128,7 +1133,7 @@ addMouseLeave = (record) => {
                                     </div>
                                 </div>
                                 <div className="radioContent">
-                                    <div className="title">
+                                    <div className="title title2">
                                         {/* <Radio disabled={disaBled ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='2'?true:false} onClick={this.changeRadioStatus}>我司服务</Radio> */}
                                         我司服务
                                     </div>

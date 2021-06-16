@@ -12,7 +12,7 @@ import '/assets/less/pages/logBookTable.css'
 
 
 
-// 正式服务区域---渲染
+// 附件上传---渲染
 class AttachmentTable extends React.Component {
     constructor(props) {
         super(props)
@@ -26,10 +26,10 @@ class AttachmentTable extends React.Component {
             columns : [
                 {
                     title: '附件类型',
-                    dataIndex: 'contractType',
+                    dataIndex: 'acc_type',
                     editable: true,
                     render: (value, row, index) => {
-                        return <Select disabled={props.edit} bordered={props.edit} style={{ width: "100%" }} value={value} onSelect={this.onSelectContactType}>
+                        return <Select disabled={props.edit} bordered={props.edit} style={{ width: "100%" }} value={value} onChange={(value) => this.onSelectContactType(value,index)}>
                             {/* <Option key={index} value={"1"}>职级主管</Option>
                             <Option key={index} value={"2"}>技术联系人</Option> */}
                             {
@@ -45,7 +45,7 @@ class AttachmentTable extends React.Component {
                     dataIndex: 'fileName',
                     render: (value, row, index) => {
                         return <div className="upload">
-                                <Upload disabled={this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,'configTemplateName','configTemplate')}>
+                                <Upload disabled={this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,index)}>
                                     <Icon type="upload" />上传
                                 </Upload>
                             </div>
@@ -116,67 +116,28 @@ class AttachmentTable extends React.Component {
         
 
     };
+    //附件类型
+    onSelectContactType = (value,index) => {
 
-    
-    
-
-    //取消
-    cancel = () => {
-        var id = this.state.selectedRowKeys[0];
-        const data = [...this.state.data];
-        // 判断  若是【新增】的取消功能，则刚刚新增数据删除；若是【修改】的取消功能 则是取消修改
-        if (this.state.editLock) {   // 修改
-            
-            let index = data.findIndex((item) => id === item.key);
-            let item = data[index];
-            
-           
-            // 首先通过判断【是否是主责区域】，再去修改area属性(将数组修改为字符串)
-            // if (item.isMainDutyArea == '1') {
-            //     item.area = item.area.join("/") + '<span style="color:red">【主责区域】</span>'
-            // }else if (item.isMainDutyArea == '0'){
-            //     item.area = item.area.join("/");
-            // }
-            //item.area = item.area.join("/");
-            this.setState({
-                editingKey: '',
-                editLock: false
-            })
-        }else {  // 新增
-            let newData = data.filter(item => item.key !== id);
-            this.setState({ 
-                data: newData ,
-                editingKey: '',
-                count: newData.length + 1,
-                selectedRowKeys:null
-            },()=>{
-                this.updataToParent();
-            });
-        }
-       
     }
-//附件上传过程函数
-uploadChange=(info,typeName,typeUrl)=>{
-    let fileList = [...info.fileList];
-    // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
-    fileList = fileList.slice(-1);
-    // 2.读取响应并显示文件链接
-    // if(info.file.status == 'uploading'){
-    //     debugger
-    //     this.props.changeCheck(fileList,typeName,typeUrl);
-    // }
-    fileList = fileList.map(file => {
-        if (file.response) {
-            if (file.response.success == 1) {
-                file.url = file.response.data.fileUrl;
-            } else if (file.response.success == 0) {
-                file.status = 'error';
+    //附件上传过程函数
+    uploadChange=(info,index)=>{
+        let fileList = [...info.fileList];
+        // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
+        fileList = fileList.slice(-1);
+        fileList = fileList.map(file => {
+            if (file.response) {
+                if (file.response.success == 1) {
+                    file.url = file.response.data.fileUrl;
+                } else if (file.response.success == 0) {
+                    file.status = 'error';
+                }
             }
-        }
-        return file;
-    });
-    if(this.props.changeCheck) this.props.changeCheck(fileList,typeName,typeUrl);
-}
+            return file;
+        });
+        let data = Object.assign({}, this.state.data, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
+        this.setState({PerformanceData:data},()=>{this.updataToParent()});
+    }
     // 初始化
     init = () => {
         
