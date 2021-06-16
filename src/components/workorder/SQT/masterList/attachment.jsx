@@ -46,7 +46,7 @@ class AttachmentTable extends React.Component {
                     title: '上传附件',
                     dataIndex: 'upload',
                     render: (value, row, index) => {
-                        // console.log(row)
+                        //  console.log(value)
                         //  let fileList = row['acc_name'] && row['acc_path'] ? [{ uid: index + '', name: row['acc_name'], status: 'done', url: row['acc_path'] }] : [];
                         return <div className="upload">
                                 <Upload disabled={this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,index)} fileList={value}>
@@ -85,7 +85,7 @@ class AttachmentTable extends React.Component {
         this.initData(nextprops.data)
 	}
     initData = (data) => {
-        this.setUpload();
+        // this.setUpload(data);
         this.setState({
             data: data,
         })
@@ -93,7 +93,7 @@ class AttachmentTable extends React.Component {
     //处理数据
     setUpload = (data = []) => {
         data.forEach((item,index) => {
-            let upload = item['acc_name'] && item['acc_path'] ? [{ uid: index + '', name: item['acc_name'], status: 'done', url: item['acc_path'] }] : []
+            let upload = item['acc_name'] ? [{ uid: index + '', name: item['acc_name'], status: 'done', url: item['acc_path'] }] : []
             data[index].upload = upload;
         })
         return data;
@@ -117,12 +117,8 @@ class AttachmentTable extends React.Component {
             const newSelectKey = []
             newSelectKey.push(newData.key)
             this.setState({
-                data: [...data, newData],
-                count: count + 1,
-                editingKey: newData.key, //将当前新增的行放置到可编辑状态
-                selectedRowKeys:newSelectKey,   // 将当前新增的行进行选中
-                editLock: false
-            });
+                data: [...data, newData]
+            },()=>{this.updataToParent()});
             
         }else {
             message.warning('请先保存服务区域数据！')
@@ -139,12 +135,13 @@ class AttachmentTable extends React.Component {
     //附件上传过程函数
     uploadChange=(info,index)=>{
         let fileList = [...info.fileList];
+        console.log(fileList,"1词")
         // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
         fileList = fileList.slice(-1);
         fileList = fileList.map(file => {
             if (file.response) {
                 if (file.response.success == 1) {
-                    console.log(file.response.data.fileUrl)
+                    console.log(file.response.data)
                     file.url = file.response.data.fileUrl;
                 } else if (file.response.success == 0) {
                     file.status = 'error';
@@ -152,10 +149,10 @@ class AttachmentTable extends React.Component {
             }
             return file;
         });
-        console.log(fileList)
         let {data} = this.state;//Object.assign({}, this.state.data, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
         data[index]['acc_name'] = fileList[0] && fileList[0].status !='error' ? fileList[0].name:'';
-        data[index]['acc_path'] = fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl:'';
+        data[index]['acc_path'] = fileList[0] && fileList[0].status !='error' ? fileList[0].url:'';
+        data[index]['upload'] = fileList;
         this.setState({data},()=>{this.updataToParent()});
     }
     // 初始化
