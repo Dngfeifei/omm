@@ -22,7 +22,10 @@ export const rules1= [
                 style={{minWidth:195}}
                 defaultActiveFirstOption={false}
                 showArrow={false}
+                allowClear
                 filterOption={false}
+                onInputKeyDown={()=> _this.swich = true}
+                onBlur={()=> _this.swich = false}
                 onSearch={_this.handleSearch}
                 onChange={_this.handleChange}
                 notFoundContent={null}

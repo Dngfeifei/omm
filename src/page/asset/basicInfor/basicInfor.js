@@ -143,8 +143,11 @@ export const rules = {
                     placeholder="请输入查询"
                     style={{minWidth:195}}
                     defaultActiveFirstOption={false}
+                    allowClear
                     showArrow={false}
                     filterOption={false}
+                    onInputKeyDown={()=> _this.swich = true}
+                    onBlur={()=> _this.swich = false}
                     onSearch={_this.handleSearch}
                     onChange={_this.handleChange}
                     notFoundContent={null}
@@ -250,7 +253,13 @@ export const assetsListData = [
                     },
                   ],
                 render: _this =>{
-                    return <Input disabled placeholder="请输入" />;
+                    return <Select  placeholder="请选择" allowClear={true}>
+                                {
+                                    _this.state.productLevel.map((items, index) => {
+                                        return (<Option key={items.id} value={items.id}>{items.name}</Option>)
+                                    })
+                                }
+                            </Select>;
                 }
             }
         ]

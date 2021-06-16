@@ -4,7 +4,7 @@ import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Dat
 import TreeParant from "@/components/tree/index.jsx"
 
 
-import { GetBasicTree,AddTable,EditTable, DelTable,GetTable, DelRole,getAllBaseDataTypes,getBasicSearchData } from '/api/assets.js'
+import { GetBasicTree,AddTable,EditTable, DelTable,GetTable, DelRole,getAllBaseDataTypes,getBasicSearchData,getBaseData } from '/api/assets.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
 import {rules,assetsListData,columns,panes,conditionalData,baseData} from './basicInfor.js'//获取页面渲染配置项
@@ -85,7 +85,8 @@ class assetsAllocation extends Component {
                 roleGroupModalType: 0, //0新增  1修改
                 roleGroupModalTitle: "新增",//弹窗title
             },
-            basedataTypeList:[],
+            basedataTypeList:[],//数据类别数据包
+            productLevel:[],//产品等级数据包
             //新增修改角色组弹窗配置
             roleGroupWindow: {
                 roleGroupModal: false, //弹窗是否显示可见
@@ -161,9 +162,19 @@ class assetsAllocation extends Component {
     }
     //初始化数据
     init = () => {
+        //数据类别下拉数据初始化
         getAllBaseDataTypes({}).then(res => {
             if (res.success == 1) {
                 this.setState({basedataTypeList:res.data})
+            } else {
+                message.error(res.message)
+            }
+        })
+        //产品等级下拉数据初始化
+        getBaseData({}).then(res => {
+            if (res.success == 1) {
+                let {productLevel} = this.state;
+                this.setState({productLevel:res.data.productLevel})
             } else {
                 message.error(res.message)
             }
@@ -525,6 +536,8 @@ class assetsAllocation extends Component {
         })
         return newColumns;
     }
+    swich = false
+
     //联想查询数据切换
     handleSearch = value => {
         if (timeout) {
@@ -544,7 +557,9 @@ class assetsAllocation extends Component {
                         this.setState({searchData:res.data,searchX:value})
                     }
                 });
-            } else {
+            }else if(value === '' && this.swich){
+                this.setState({searchData:[],searchX:undefined})
+            }else {
                 this.setState({ searchData: [] });
             }
         }, 300);

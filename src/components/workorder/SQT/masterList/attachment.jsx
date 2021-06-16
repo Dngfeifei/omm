@@ -80,7 +80,9 @@ class AttachmentTable extends React.Component {
         this.initData(nextprops.data)
 	}
     initData = (data) => {
-
+        this.setState({
+            data: data,
+        })
     }
     // 向父组件传递本页面数据集合
     updataToParent=()=>{
@@ -135,8 +137,11 @@ class AttachmentTable extends React.Component {
             }
             return file;
         });
-        let data = Object.assign({}, this.state.data, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
-        this.setState({PerformanceData:data},()=>{this.updataToParent()});
+        
+        let {data} = this.state;//Object.assign({}, this.state.data, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
+        data[index]['acc_name'] = fileList[0] && fileList[0].status !='error' ? fileList[0].name:'';
+        data[index]['acc_path'] = fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl:'';
+        this.setState({data},()=>{this.updataToParent()});
     }
     // 初始化
     init = () => {

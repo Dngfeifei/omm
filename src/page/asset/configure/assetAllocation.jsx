@@ -715,6 +715,7 @@ class assetsAllocation extends Component {
         }
         
     }
+    swich = false
     //联想查询数据切换
     handleSearch = value => {
         if (timeout) {
@@ -734,6 +735,8 @@ class assetsAllocation extends Component {
                         this.setState({searchData:res.data ? res.data : [],searchX:value})
                     }
                 });
+            }else if(value === '' && this.swich){
+                this.setState({searchData:[],searchX:undefined})
             } else {
                 this.setState({ searchData: [] });
             }

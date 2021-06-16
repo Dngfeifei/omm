@@ -314,10 +314,10 @@ setIsFirstInspection = (info,performancePledge)=>{
                     <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} basicInfor={this.state.basicInfor} node={node} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
                 {/* 附件上传---区域 */}
-                <div className="commTop">
+                {/* <div className="commTop">
                     <div className="navTitle">附件上传</div>
                     <AttachmentTable isEdit={this.state.isEdit} data={this.state.accList} formRead={this.state.formRead} node={node} sign={power.sign ? power.sign : 0} onChange={this.getChildrenDataUpload}></AttachmentTable>
-                </div>
+                </div> */}
 
             </div>
         )
