@@ -44,12 +44,12 @@ class AttachmentTable extends React.Component {
                 },
                 {
                     title: '上传附件',
-                    dataIndex: 'fileName',
+                    dataIndex: 'upload',
                     render: (value, row, index) => {
-                        console.log(row)
-                         let fileList = row['acc_name'] && row['acc_path'] ? [{ uid: index + '', name: row['acc_name'], status: 'done', url: row['acc_path'] }] : [];
+                        // console.log(row)
+                        //  let fileList = row['acc_name'] && row['acc_path'] ? [{ uid: index + '', name: row['acc_name'], status: 'done', url: row['acc_path'] }] : [];
                         return <div className="upload">
-                                <Upload disabled={this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,index)} fileList={fileList}>
+                                <Upload disabled={this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,index)} fileList={value}>
                                     <Icon type="upload" />上传
                                 </Upload>
                             </div>
@@ -85,9 +85,18 @@ class AttachmentTable extends React.Component {
         this.initData(nextprops.data)
 	}
     initData = (data) => {
+        this.setUpload();
         this.setState({
             data: data,
         })
+    }
+    //处理数据
+    setUpload = (data = []) => {
+        data.forEach((item,index) => {
+            let upload = item['acc_name'] && item['acc_path'] ? [{ uid: index + '', name: item['acc_name'], status: 'done', url: item['acc_path'] }] : []
+            data[index].upload = upload;
+        })
+        return data;
     }
     // 向父组件传递本页面数据集合
     updataToParent=()=>{
@@ -101,7 +110,8 @@ class AttachmentTable extends React.Component {
             const newData = {
                 acc_type: undefined,
                 acc_name: '',
-                acc_path: ''
+                acc_path: '',
+                upload:[]
             };
 
             const newSelectKey = []
@@ -142,7 +152,7 @@ class AttachmentTable extends React.Component {
             }
             return file;
         });
-        // console.log(fileList)
+        console.log(fileList)
         let {data} = this.state;//Object.assign({}, this.state.data, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
         data[index]['acc_name'] = fileList[0] && fileList[0].status !='error' ? fileList[0].name:'';
         data[index]['acc_path'] = fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl:'';

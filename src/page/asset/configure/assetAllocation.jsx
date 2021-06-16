@@ -359,6 +359,7 @@ class assetsAllocation extends Component {
     //打开新增、编辑、查看窗口
     openModal = (roleModalType) => {
         let {searchListID,table,tableSelectedInfo,baseData} = this.state,roleModalTitle = null;
+        this.props.form.resetFields();
         if(roleModalType == 0){
             if (searchListID == "" || searchListID == null) {
                 message.warning('请先选中左侧角色组，然后再进行角色新增。');
@@ -370,7 +371,8 @@ class assetsAllocation extends Component {
                     roleModal: true,
                     roleModalType,
                     roleModalTitle
-                }
+                },
+                baseData:{}
             })
         }else{
             if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
@@ -465,6 +467,8 @@ class assetsAllocation extends Component {
                         },
                         tableSelecteds: [],
                         tableSelectedInfo: []
+                    },()=>{
+                        this.props.form.resetFields();
                     })
                     this.searchRoleFun(searchListID)
                     this.searchTree()
@@ -491,6 +495,8 @@ class assetsAllocation extends Component {
                             },
                             tableSelecteds: [],
                             tableSelectedInfo: []
+                        },()=>{
+                            this.props.form.resetFields();
                         })
                        this.searchRoleFun(searchListID)
                        this.searchTree()
@@ -610,6 +616,8 @@ class assetsAllocation extends Component {
     close = () => {
         this.setState({
             visibleModule:false
+        },()=>{
+            this.props.form.resetFields();
         })
     }
     //获取服务区域下拉列表数据
@@ -706,7 +714,7 @@ class assetsAllocation extends Component {
     projecthandleOk = (info) => {
         info = this.setProjectHandleOk(info);
         const { roleWindow,tableSelectedInfo} = this.state;
-        this.props.form.resetFields();
+        this.props.form.resetFields(['projectNumber','projectName','projectManagerName','custName','projectEndDate','projectStartDate','projectManagerName','projectSalesmanName']);
          console.log(info)
         // return 
         if(roleWindow.roleModalType == 0){
