@@ -52,6 +52,7 @@ class ResetPassword extends Component {
     // 清除定时器
     clearInterval = () => {
         clearInterval(this.timer)
+        this.timer=null
     }
 
     // 发送验证码
@@ -60,6 +61,13 @@ class ResetPassword extends Component {
         if (!this.props.form.getFieldValue('userName')) {
             message.warning('请先填写系统账号等信息！');
         } else {
+            let counting=this.state.counting
+            this.setState({ count: 60 });
+            if(counting){
+                return
+            }
+            message.destroy()
+            message.warning("验证码发送中")
             this.setState({ counting: true });
             sendEmail({ userName: this.props.form.getFieldValue('userName') }).then(res => {
                 if (res.success == 1) {
