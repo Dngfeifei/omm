@@ -789,6 +789,11 @@ class Personal extends Component {
         this.state.tableSelectedInfo.forEach(el => {
             params.push(el.id)
         });
+        if(!params.length){
+            message.destroy()
+            message.warning("请选中后再进行批量删除操作！")
+            return
+        }
         BatchDeleteFile({ ids: params.join() }).then(res => {
             if (res.success != 1) {
                 message.destroy()

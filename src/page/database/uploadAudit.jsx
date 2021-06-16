@@ -41,7 +41,7 @@ class EditableCell extends React.Component {
                         {getFieldDecorator(dataIndex, {
                             rules: [{
                                 required: true,
-                                message: `请输入${title}!`
+                                message: `请选择资料级别!`
                             }],
                             initialValue: record[dataIndex],
                         })(
@@ -63,7 +63,8 @@ class EditableCell extends React.Component {
                 {editing && dataIndex == 'clearTime' ?
                     < Item style={{ margin: 0 }}>
                         {getFieldDecorator(dataIndex, {
-                            rules: [{ required: true, message: `选择${title}!` }],
+                            rules: [{ required: true, message: `请选择下架日期!` }],
+                            // initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                             initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                         })(
                             <DatePickers />
@@ -308,20 +309,20 @@ class DownloadAudit extends Component {
         })
     }
 
-  // 分页页码变化
-  pageIndexChange = (current, pageSize) => {
-    let pagination = Object.assign({}, this.state.pagination, { current: current });
-    this.setState({
-        pagination,
-        tableSelecteds: [],
-        tableSelectedInfo: []
-    }, _ => {
-        this.getTableData()
-    })
-}
+    // 分页页码变化
+    pageIndexChange = (current, pageSize) => {
+        let pagination = Object.assign({}, this.state.pagination, { current: current });
+        this.setState({
+            pagination,
+            tableSelecteds: [],
+            tableSelectedInfo: []
+        }, _ => {
+            this.getTableData()
+        })
+    }
 
-     // 分页条数变化
-     pageSizeChange = (current, pageSize) => {
+    // 分页条数变化
+    pageSizeChange = (current, pageSize) => {
         let pagination = Object.assign({}, this.state.pagination, { pageSize: pageSize });
         this.setState({
             pagination,
