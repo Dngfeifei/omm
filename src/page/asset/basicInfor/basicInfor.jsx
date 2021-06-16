@@ -313,6 +313,7 @@ class assetsAllocation extends Component {
     // 资产表格数据查询
     onSearch = () => {
         let id = this.state.searchListID;
+        this.setState({searchX:undefined})
         this.searchRoleFun(id);
     }
     openModal = (roleModalType) => {

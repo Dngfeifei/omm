@@ -35,7 +35,7 @@ export const rules1= [
         }
     }
 ]
-function render(_this,type,selectData,itemCode,itemValue,selectChange) {
+function render(_this,type,selectData,itemCode,itemValue,selectChange,required) {
     if(type == 'input1'){
         return <Input placeholder="请输入" />
     }else if(type == 'input2'){
@@ -43,7 +43,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange) {
     }else if(type == 'input3'){
         return <Input placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={_this.openProject} />} />
     }else if(type == 'select'){
-        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true}>
+        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
@@ -53,7 +53,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange) {
                     }
                 </Select>
     }else if(type == 'select1'){
-        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value)}>
+        return <Select style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value)}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
@@ -109,9 +109,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: (_this) =>{
-            return <Input placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={_this.openProject} />} />;
-        },
         render: render,
         type:'input3',
     },
@@ -438,12 +435,7 @@ export const assetsListData = {
         label: '风险等级',
         key: 'riskLevelId',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
+        rules:[],
         render:render,
         type:'select'
     },
@@ -452,12 +444,7 @@ export const assetsListData = {
         label: '是否维护',
         key: 'isMroId',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            }
-          ],
+        rules:[],
         render:render,
         type:'select'
     },
@@ -466,16 +453,7 @@ export const assetsListData = {
         key:'usage',
         label:'用途',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
-        
-        render: _this =>{
-            return <Input placeholder="请输入" />;
-        },
+        rules:[],
         render:render,
         type:'input1'
     },
@@ -484,16 +462,7 @@ export const assetsListData = {
         key:'operation',
         label:'操作',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
-        
-        render: _this =>{
-            return <Input placeholder="请输入" />;
-        },
+        rules:[],
         render:render,
         type:'input1'
     },
@@ -502,16 +471,7 @@ export const assetsListData = {
         key:'creatorName',
         label:'创建人',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
-        
-        render: _this =>{
-            return <Input disabled/>;
-        },
+        rules:[],
         render:render,
         type:'input1'
     },
@@ -520,13 +480,7 @@ export const assetsListData = {
         key:'updateTime',
         label:'修改时间',
         span:6,
-        rules:[
-            
-          ],
-        
-        render: _this =>{
-            return <Input disabled/>;
-        },
+        rules:[],
         render:render,
         type:'input1'
     },
@@ -535,13 +489,7 @@ export const assetsListData = {
         key:'updaterName',
         label:'修改人',
         span:6,
-        rules:[
-            
-          ],
-        
-        render: _this =>{
-            return <Input disabled/>;
-        },
+        rules:[],
         render:render,
         type:'input1'
     },
@@ -564,13 +512,7 @@ export const assetsListData = {
         key:'description',
         label:'备注',
         span:24,
-        rules:[
-            
-          ],
-        
-        render: _this =>{
-            return <TextArea placeholder="请输入"/>;
-        },
+        rules:[],
         render:render,
         type:'textarea'
     },
@@ -579,12 +521,7 @@ export const assetsListData = {
         label: 'MODEL型号',
         key: 'strValue1',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
+        rules:[],
         render:render,
         type:'input1'
     },
@@ -593,9 +530,7 @@ export const assetsListData = {
         key:'strValue2',
         label:'序列号',
         span:6,
-        rules:[
-            
-          ],
+        rules:[],
         render:render,
         type:'input1'
     },
@@ -653,10 +588,7 @@ export const assetsListData = {
         key:'strValue7',
         label:'硬盘/驱动器/SFP数量',
         span:6,
-        rules:[
-            
-          ],
-        
+        rules:[],
         renderDom:renderDom,
         render:render,
         type:'input1'
@@ -666,10 +598,7 @@ export const assetsListData = {
         key:'strValue8',
         label:'控制器微码',
         span:6,
-        rules:[
-            
-          ],
-        
+        rules:[],
         renderDom:renderDom,
         render:render,
         type:'input1'
@@ -679,11 +608,8 @@ export const assetsListData = {
         key:'strValue9',
         label:'Raid保护',
         span:6,
-        rules:[
-            
-          ],
-        
-          renderDom:renderDom,
+        rules:[],
+        renderDom:renderDom,
         render:render,
         type:'input1'
     },
@@ -692,11 +618,8 @@ export const assetsListData = {
         key:'strValue10',
         label:'电源风扇冗余',
         span:6,
-        rules:[
-            
-          ],
-        
-          renderDom:renderDom,
+        rules:[],
+        renderDom:renderDom,
         render:render,
         type:'input1'
     },
@@ -705,11 +628,8 @@ export const assetsListData = {
         key:'strValue11',
         label:'风险规避意见',
         span:6,
-        rules:[
-            
-          ],
-        
-          renderDom:renderDom,
+        rules:[],
+        renderDom:renderDom,
         render:render,
         type:'input1'
     },
@@ -718,11 +638,8 @@ export const assetsListData = {
         key:'strValue12',
         label:'HotSpare描述',
         span:6,
-        rules:[
-            
-          ],
-        
-          renderDom:renderDom,
+        rules:[],
+        renderDom:renderDom,
         render:render,
         type:'input1'
     },
@@ -885,16 +802,16 @@ const columnsBase = [{
     align: 'center'
 },
 {
+    title: '项目编号',
+    dataIndex: 'projectNumber',
+    key:"projectNumber",
+    align: 'center',
+},
+{
     title: '客户名称',
     dataIndex: 'custName',
     ellipsis:true,
     key:"custName",
-    align: 'center',
-},
-{
-    title: '项目编号',
-    dataIndex: 'projectNumber',
-    key:"projectNumber",
     align: 'center',
 },
 {
@@ -909,12 +826,24 @@ const columnsBase = [{
     key:"projectManagerName",
     align: 'center',
 },
-// {
-//     title: '服务大区',
-//     dataIndex: '4',
-//     key:"6",
-//     align: 'center',
-// },
+{
+    title: '开始时间',
+    dataIndex: 'projectStartDate',
+    key:"projectStartDate",
+    align: 'center',
+},
+{
+    title: '结束时间',
+    dataIndex: 'projectEndDate',
+    key:"projectEndDate",
+    align: 'center',
+},
+{
+    title: '项目销售',
+    dataIndex: 'projectSalesmanName',
+    key:"projectSalesmanName",
+    align: 'center',
+},
 {
     title: '服务区域',
     dataIndex: 'projectArea',
@@ -941,24 +870,6 @@ const columnsBase = [{
     title: '联系方式',
     dataIndex: 'custUserMobile',
     key:"custUserMobile",
-    align: 'center',
-},
-{
-    title: '开始时间',
-    dataIndex: 'projectStartDate',
-    key:"projectStartDate",
-    align: 'center',
-},
-{
-    title: '结束时间',
-    dataIndex: 'projectEndDate',
-    key:"projectEndDate",
-    align: 'center',
-},
-{
-    title: '项目销售',
-    dataIndex: 'projectSalesmanName',
-    key:"projectSalesmanName",
     align: 'center',
 },
 {

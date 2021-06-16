@@ -348,6 +348,7 @@ class assetsAllocation extends Component {
             message.warning('请先选中左侧角色组，然后再进行查询。');
             return
         }
+        this.setState({searchX:undefined})
         this.searchRoleFun(id);
     }
     //回传点击查询按钮所填参数
@@ -400,7 +401,7 @@ class assetsAllocation extends Component {
         let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].brandId);
         this.getAreaData(this.state.tableSelectedInfo[0].projectId)
         this.getCustomer(this.state.tableSelectedInfo[0].projectAreaId)
-        selectData = Object.assign({}, selectData, { productModeType,productSkillType,productBrandType,productLineType});
+        selectData = Object.assign({}, selectData, { productModeType:productModeType? productModeType :[],productSkillType:productSkillType? productSkillType :[],productBrandType:productBrandType? productBrandType :[],productLineType:productLineType? productLineType :[]});
         return selectData;
     }
     //表格单项删除
@@ -551,15 +552,24 @@ class assetsAllocation extends Component {
             if(assetsList[i].key.indexOf('strValue')>-1 && (assetsList[i].key.split('strValue')[1]>2&&assetsList[i].key.split('strValue')[1]<5) ){
                 item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
             }
-            let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] : roleWindow.roleModalType == 2 ? tableSelectedInfo[0][assetsList[i].dataIndex] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'';
-            // if(assetsList[i].key == 'projectStartDate' || assetsList[i].key == 'projectEndDate' || assetsList[i].key == 'updateTime') initialValue = initialValue == undefined ? initialValue : moment(initialValue);
+            let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] : roleWindow.roleModalType == 2 ? tableSelectedInfo[0][assetsList[i].dataIndex] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'',rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
+             //处理产品联动是否可编辑
+            if(assetsList[i].selectData == 'productSkillType' || assetsList[i].selectData == 'productBrandType' || assetsList[i].selectData == 'productLineType' || assetsList[i].selectData == 'productModeType'){
+                const len = this.state.selectData[assetsList[i].selectData].length
+                rules = roleWindow.roleModalType == 2 ? [] : item ? len ?  item.rules : [] : [];
+                required = len ? false : true;
+            }
+            //处理配置项是否可编辑
+            if(assetsList[i].key == 'basedataTypeId' && roleWindow.roleModalType){
+                required = true;
+            }
             children.push(
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? item.label : '修改字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
-                    rules: roleWindow.roleModalType == 2 ? [] : item ? item.rules : [],
+                    rules: rules,
                     initialValue: initialValue
-                    })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange) : <Input />)}
+                    })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required) : <Input />)}
                 </Form.Item>
                 </Col>
             );

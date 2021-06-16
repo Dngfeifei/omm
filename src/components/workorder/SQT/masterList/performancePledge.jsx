@@ -881,16 +881,7 @@ addMouseLeave = (record) => {
                 return col;
             }
             return {
-                ...col,
-                onCell: record => ({
-                    record,
-                    editable: col.editable,
-                    dataIndex: col.dataIndex,
-                    title: col.title,
-                    trainModeArray:this.state.trainModeArray ? this.state.trainModeArray  : [],
-                    trainTeachersArray:this.state.trainTeachersArray ? this.state.trainTeachersArray  : [],
-                    handleSave: this.handleSave,
-                }),
+                ...col
             };
         });
         // 【等级、响应时限（小时）、工程师到场时限（小时）、备件到场时限（小时）、解决时限（小时）、备注】----表格数据
