@@ -1172,7 +1172,7 @@ export const panes = [
                 title: 'CPU型号',
                 dataIndex: 'strValue4',
                 key: 'strValue4',
-                inputType:'select',
+                inputType:'input1',
                 align: 'center',
             },
             {
