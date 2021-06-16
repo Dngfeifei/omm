@@ -109,17 +109,8 @@ class AssessmentReport extends Component {
           </Tooltip>
         ),
       },
-      {
-        title: "部门名称",
-        dataIndex: "orgFullName",
-        align: "center",
-        render: (text) => (
-          <Tooltip placement="topLeft" title={text}>
-            {text}
-          </Tooltip>
-        ),
-      }, {
-        title: "大区名称",
+     {
+        title: "大区",
         dataIndex: "regionalName",
         align: "center",
         render: (text) => (
@@ -128,6 +119,16 @@ class AssessmentReport extends Component {
           </Tooltip>
         ),
       },
+       {
+        title: "部门名称",
+        dataIndex: "orgFullName",
+        align: "center",
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        ),
+      }, 
       {
         title: "工作经验",
         dataIndex: "experienceName",
@@ -237,6 +238,16 @@ class AssessmentReport extends Component {
             >
               {text}
             </span>
+          </Tooltip>
+        ),
+      },
+       {
+        title: "大区",
+        dataIndex: "regionalName",
+        align: "center",
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>
+            {text}
           </Tooltip>
         ),
       },
