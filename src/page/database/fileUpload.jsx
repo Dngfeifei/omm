@@ -5,8 +5,11 @@
 
 
 import React, { Component } from 'react'
-import { Modal, Form, Input, Button, Radio, Upload, message } from 'antd'
+import { Modal, Form, Input, Button, Radio, Upload, message, Spin } from 'antd'
 import SparkMD5 from 'spark-md5'
+
+import { LoadingOutlined } from '@ant-design/icons';
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 import { GetSignResult, PostFilePublish } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
@@ -47,6 +50,7 @@ class fileUpload extends Component {
     state = {
         fileName: "",
         file: null,
+        uploadIng: false,
         params: {
             fileUrl: "",
             size: "",
@@ -145,6 +149,9 @@ class fileUpload extends Component {
     }
     // 文件上传
     uploadFile = () => {
+        this.setState({
+            uploadIng: true
+        })
         var formData = new FormData();
         formData.append('file', this.state.file);
         fetch(uploadUrl, {
@@ -155,12 +162,17 @@ class fileUpload extends Component {
                 'Authorization': `Bearer ${token}`
             }
         })
-            .then(response => response.json())
-            .catch(error => console.error('Error:', error))
+            .then(response => {
+                this.setState({
+                    uploadIng: false
+                })
+                return response.json()
+            })
+            .catch(error => { message.error(error) })
             .then(response => {
                 let params = Object.assign({}, this.state.params, { fileUrl: response.data.fileUrl })
                 this.setState({
-                    params,
+                    params
                 })
             });
     }
@@ -204,9 +216,10 @@ class fileUpload extends Component {
                 <Form {...layout} name="nest-messages" >
 
                     <Form.Item label="选择文件">
-                        <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.afterUpload} >
-                            <Button key="submit" type="primary">上传</Button>
+                        <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.afterUpload}>
+                            {this.state.uploadIng ? <span><Spin indicator={antIcon} style={{marginRight:"8px"}}/>正在上传中...</span> : (this.state.params.fileUrl ? <Button key="submit" type="primary">重新上传</Button> : <Button key="submit" type="primary">上传</Button>)}
                         </Upload>
+
                     </Form.Item>
                     <Form.Item label="文件名称">
                         {this.state.fileName}
