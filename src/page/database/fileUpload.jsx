@@ -149,11 +149,19 @@ class fileUpload extends Component {
     }
     // 文件上传
     uploadFile = () => {
+        // 获取token
+        let tokenName = 'token'
+        if (process.env.NODE_ENV == 'production') {
+            tokenName = `${process.env.ENV_NAME}_${tokenName}`
+        }
+        let token = `${localStorage.getItem(tokenName) || ''}`;
+
         this.setState({
             uploadIng: true
         })
         var formData = new FormData();
         formData.append('file', this.state.file);
+
         fetch(uploadUrl, {
             method: 'POST',
             processData: false,
