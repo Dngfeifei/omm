@@ -118,6 +118,15 @@ class AssessmentReport extends Component {
             {text}
           </Tooltip>
         ),
+      }, {
+        title: "大区名称",
+        dataIndex: "regionalName",
+        align: "center",
+        render: (text) => (
+          <Tooltip placement="topLeft" title={text}>
+            {text}
+          </Tooltip>
+        ),
       },
       {
         title: "工作经验",
