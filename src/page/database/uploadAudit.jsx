@@ -45,7 +45,7 @@ class EditableCell extends React.Component {
                             }],
                             initialValue: record[dataIndex],
                         })(
-                            <Select style={{ width: 120 }} >
+                            <Select style={{ width: 80 }} >
                                 {
                                     fileLevelsArr.map((item) => {
                                         return <Option key={item.id} value={item.id}>{item.levelName}</Option>
@@ -67,7 +67,7 @@ class EditableCell extends React.Component {
                             // initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                             initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                         })(
-                            <DatePickers />
+                            <DatePickers style={{ width: 115 }} />
                             // <Inputs />
                         )}
                     </Item> : ""
@@ -173,10 +173,11 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">资料级别</div>,
                 dataIndex: 'fileLevelId',
                 align: 'center',
+                width:90,
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
-                        return <Select style={{ width: 120 }} value={t} onChange={(val, opt) => this.getRowInput(val, 'fileLevelId', r.id)}>
+                        return <Select  value={t} onChange={(val, opt) => this.getRowInput(val, 'fileLevelId', r.id)}>
                             {
                                 fileLevelsArr.map((item) => {
                                     return <Option key={item.id} value={item.id}>{item.levelName}</Option>
@@ -206,6 +207,7 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">资料下架日期</div>,
                 dataIndex: 'clearTime',
                 align: 'center',
+                width:128,
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
