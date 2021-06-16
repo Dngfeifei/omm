@@ -7,7 +7,7 @@
 import React, { Component } from 'react'
 import { Modal, Form, Input, Button, Radio, Upload, message, Spin } from 'antd'
 import SparkMD5 from 'spark-md5'
-
+const { TextArea } = Input;
 import { LoadingOutlined } from '@ant-design/icons';
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
@@ -217,7 +217,7 @@ class fileUpload extends Component {
 
                     <Form.Item label="选择文件">
                         <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.afterUpload}>
-                            {this.state.uploadIng ? <span><Spin indicator={antIcon} style={{marginRight:"8px"}}/>正在上传中...</span> : (this.state.params.fileUrl ? <Button key="submit" type="primary">重新上传</Button> : <Button key="submit" type="primary">上传</Button>)}
+                            {this.state.uploadIng ? <span><Spin indicator={antIcon} style={{ marginRight: "8px" }} />正在上传中...</span> : (this.state.params.fileUrl ? <Button key="submit" type="primary">重新上传</Button> : <Button key="submit" type="primary">上传</Button>)}
                         </Upload>
 
                     </Form.Item>
@@ -228,7 +228,7 @@ class fileUpload extends Component {
                         {getFieldDecorator('fileVersion', {
                             rules: [{ required: true, message: '请输入版本号！' }],
                         })(
-                            <Input disabled={this.state.fileName == ""} />,
+                            <Input disabled={this.state.fileName == ""} maxLength={30} />,
                         )}
                     </Form.Item>
                     <Form.Item label="资料类型">
@@ -251,7 +251,7 @@ class fileUpload extends Component {
                         {getFieldDecorator('description', {
                             rules: [{ required: true, message: '请输入文件相关描述' }],
                         })(
-                            <Input disabled={this.state.fileName == ""} />,
+                            <TextArea disabled={this.state.fileName == ""} placeholder="限制50字以内" maxLength={50} />
                         )}
                     </Form.Item>
                 </Form>
