@@ -27,6 +27,12 @@ let fileLevelsArr = []
 let fileLevels = {}
 // 可编辑字段标识
 let editingKey = ''
+
+// 禁选日期方法
+function disabledDate(current) {
+    // Can not select days before today and today
+    return current && current < moment().endOf('day');
+  }
 // 表格可编辑行渲染
 class EditableCell extends React.Component {
     renderCell = ({ getFieldDecorator }) => {
@@ -67,7 +73,7 @@ class EditableCell extends React.Component {
                             // initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                             initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                         })(
-                            <DatePickers style={{ width: 115 }} />
+                            <DatePickers  disabledDate={disabledDate} style={{ width: 115 }} />
                             // <Inputs />
                         )}
                     </Item> : ""
@@ -173,11 +179,11 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">资料级别</div>,
                 dataIndex: 'fileLevelId',
                 align: 'center',
-                width:90,
+                width: "90",
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
-                        return <Select  value={t} onChange={(val, opt) => this.getRowInput(val, 'fileLevelId', r.id)}>
+                        return <Select style={{ width: "80px" }} value={t} onChange={(val, opt) => this.getRowInput(val, 'fileLevelId', r.id)}>
                             {
                                 fileLevelsArr.map((item) => {
                                     return <Option key={item.id} value={item.id}>{item.levelName}</Option>
@@ -207,11 +213,11 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">资料下架日期</div>,
                 dataIndex: 'clearTime',
                 align: 'center',
-                width:128,
+                width: 128,
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
-                        return <DatePicker onChange={(date, dateStr) => this.getRowInput(dateStr, 'clearTime', r.id)} />
+                        return <DatePicker  disabledDate={disabledDate} style={{ width: 115 }} onChange={(date, dateStr) => this.getRowInput(dateStr, 'clearTime', r.id)} />
                     } else {
                         return t
                     }

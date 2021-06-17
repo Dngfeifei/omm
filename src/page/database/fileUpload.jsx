@@ -259,7 +259,7 @@ class fileUpload extends Component {
                         {getFieldDecorator('description', {
                             rules: [{ required: true, message: '请输入文件相关描述' }],
                         })(
-                            <TextArea disabled={this.state.fileName == ""} placeholder="限制50字以内" maxLength={50} />
+                            <TextArea disabled={this.state.fileName == ""} placeholder="最多可输入50个字符" maxLength={50} />
                         )}
                     </Form.Item>
                 </Form>
