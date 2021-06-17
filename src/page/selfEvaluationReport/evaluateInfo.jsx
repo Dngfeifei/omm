@@ -49,8 +49,8 @@ class AssessmentReport extends Component {
   // 获取表格高度
   SortTable = () => {
     setTimeout(() => {
-      
-        let h = this.tableDom.clientHeight ;
+      console.log(this.tableDom.clientHeight,'biaoge')
+        let h = this.tableDom.clientHeight -150;
         this.setState({
           h: {
             y: h,
@@ -60,7 +60,7 @@ class AssessmentReport extends Component {
     }, 0);
   };
   state = {
-    h: { y: 650 }, //设置表格的高度
+    h: { y: 240 }, //设置表格的高度
     visible: false, // 对话框的状态
     // 表单的input
     regionalName: "", //大区
@@ -466,11 +466,9 @@ class AssessmentReport extends Component {
     return {
       onClick: () => {
         let assessId = record.assessId;
-        // let selectedKeys = record.assessId;
-
-        console.log(record);
         let selectedRows = [record];
         this.setState({
+          loading: true,
           assessId: assessId,
           selectedRows,
         });
@@ -488,6 +486,12 @@ class AssessmentReport extends Component {
             message.error(res.message);
           }
         });
+        
+        this.setState({
+          loading: false,
+          Twotabledata: null
+        });
+
       },
     };
   };
@@ -515,6 +519,7 @@ class AssessmentReport extends Component {
   };
   render = (_) => {
     const { h, selectedRowKeys } = this.state;
+    console.log(h)
     const rowSelection = {
       selectedRowKeys,
       onChange: this.onSelectChange,
@@ -580,6 +585,7 @@ class AssessmentReport extends Component {
           >
             导出工程师评定结果
           </Button>
+          </div>
           {/* //表格 */}
           <div
             className="tableParson"
@@ -618,7 +624,7 @@ class AssessmentReport extends Component {
           </div>
           {/* //弹出框 */}
           <Modal
-           
+             title='工程师技能评价查看'
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
@@ -651,7 +657,7 @@ class AssessmentReport extends Component {
             </div>
           </Modal>
         </div>
-      </div>
+    
     );
   };
 }

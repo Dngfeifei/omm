@@ -567,6 +567,13 @@ class MyModal extends Component {
       plainValue,
     });
   };
+//input 删除字母
+  inputChange = (event)=>{
+    console.log(event)  // 通过target获取dom节点
+    this.setState({
+      station:event.target.value,//  结构函数的username赋值dom节点val
+    })
+}
 
   render = (_) => {
     var AttriteData = this.state.AttributeData;
@@ -590,7 +597,9 @@ class MyModal extends Component {
               <div className="quartersBox">
                 <Form.Item label={"岗位"} required={false}>
                   {this.state.AllOff ? (
+                    
                     <Input
+                    ref="inputModelRef"
                       disabled
                       suffix={
                         <Icon
@@ -600,6 +609,7 @@ class MyModal extends Component {
                         />
                       }
                       value={this.state.Allname}
+                      onChange = {this.inputChange}
                     />
                   ) : (
                     <Input
