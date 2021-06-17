@@ -49,7 +49,7 @@ class MicroSum extends Component{
             uploadConf: {
                 // 发到后台的文件参数名
                 name: 'file', 
-                action:"/biSqtBase/upload",
+                action:`${actionUrl}/biSqtBase/upload`,
                 headers: header,
                 multiple: true,
             }

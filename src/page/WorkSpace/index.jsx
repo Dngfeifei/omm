@@ -70,11 +70,6 @@ class workList extends Component {
             limit:10,
             offset:1,
         },
-
-
-
-
-
         loading:true,  //表格加载太
         rules: [
             {
@@ -138,7 +133,7 @@ class workList extends Component {
                 },
                 render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
             }, {
-                title: '当前任务',
+                title: '工单任务',
                 dataIndex: 'taskName',
                 ellipsis: {
                     showTitle: false,

@@ -46,7 +46,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		rsl(res.json())
 	})
 	.then(res => {
-		if (res.status == '2006' || res.status == '2007'|| res.status == '2008') {
+		if (res.status == '2006' || res.status == '2007' || res.status == '2008') {
 			if (countNum) {
 				message.error(res.message);
 			}
@@ -63,7 +63,7 @@ const handleResponse = res => new Promise((rsl, rej) => {
 	.catch(err => {
 		message.error('请求超时，请联系管理员！');
 		hashHistory.push('/login');
-		console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
+		// console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
 	})
 
 const handleTimeout = (url, type, body = {}, json = false, times = 100000) => Promise.race([
@@ -104,7 +104,7 @@ const handleParams = (params, s = '') => {
 //删除方法单个或批量操作格式化参数方法
 const handleDeleteParams = (params = [], s = '') => {
 	let str = '';
-	if(!params.length){
+	if (!params.length) {
 		return ""
 	}
 	str = params && params.length && s + params.join(",");
@@ -162,16 +162,17 @@ export default {
 		})
 	},
 	fetchBlobPost(url, params = {}, json = false, ) {
-		console.log(params, 1)
 		return handleTimeout(url, 'POST', json ? params : handleParams(params), null, 900000).then(function (response) {
 			if (response.status == 901) {
 				message.error('没有找到对应的资料')
 				return null;
 			} else {
 				let filename = decodeURI(response.headers.get('Content-Disposition').split('filename=')[1]);
+				let contentType = decodeURI(response.headers.get('content-type'));
 				response.arrayBuffer().then(response => {
 					let blobObj = new Blob([response], {
-						type: "application/vnd.ms-excel"
+						// type: "application/vnd.ms-excel"
+						type: contentType
 					});
 					let url = window.URL.createObjectURL(blobObj);
 					var a = document.createElement("a");

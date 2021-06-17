@@ -28,6 +28,9 @@ import '@/assets/less/pages/pane.less'
 // 引入--数据字典统一接口
 import {customerLevel } from '/api/customerInfor'
 
+// 引入--时间日期格式化函数
+import {getTimeStamp,getTime,getNextDayTime } from '/assets/js/publicMethod'
+
 // 行内表单渲染
 const EditableRow = ({ form, index, ...props }) => (
     <Provider value={form}>
@@ -179,7 +182,7 @@ class performance extends Component {
             uploadConf: {
                 // 发到后台的文件参数名
                 name: 'file', 
-                action:"/biSqtBase/upload",
+                action:`${actionUrl}/biSqtBase/upload`,
                 // 接受的文件类型
                 // accept: '.xls,.xlsx,.doc,.txt,.PPT,.DOCS,.XLSX,.PPTX',
                 headers: header,
@@ -242,6 +245,11 @@ class performance extends Component {
     //初始化服务承诺接收数据  @author  gl
     initData = (data) => {
         // console.log(data)
+        if(data.customerModelName && data.customerModelPath){
+            let number = Math.random().toString().slice(-6);
+            let arr = [{ uid: number, name: data.customerModelName,fileName:data.customerModelName,fileUrl:data.customerModelPath, status: 'done', url: data.customerModelPath }]
+            data.clientFileList = arr;
+        }
         this.setState({
             PerformanceData: data,
             count: data.courseList ? data.courseList.length + 1 : 1,
@@ -256,37 +264,73 @@ class performance extends Component {
         // 依赖于的数据字典--接口
         this.getDictItems();
     }
-
+    //培训方式赋值回传
+    trainChange = (index,key,val) => {
+        let {courseList} = this.state.PerformanceData;
+        if(courseList[index]){
+            courseList[index][key] = val.toString();
+            this.setState({PerformanceData: this.state.PerformanceData},()=>{
+                this.updataToParent();
+            });
+        }
+    }
     // 初始化接口
-    init = () => {
+    init = (disaBled) => {
         this.columns = [
             {
                 title: '培训方式',
                 dataIndex: 'trainMode',
-                render: t => t == 'online' ? '线上' : '线下',
+                // render: t => t == 'online' ? '线上' : '线下',
+                render:(text,record,index) => {
+                    return <Select style={{ width: '100%' }} placeholder="请选择" value={text} allowClear={true} onChange={(value) => this.trainChange(index,'trainMode',value)}>
+                                {
+                                    this.state.trainModeArray.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>
+                },
                 editable: true,
                 align:'center'
             },
             {
                 title: '培训师资',
                 dataIndex: 'trainTeachers',
-                render: t => t == '1' ? '原厂' : t == '2' ? '合作方' : '我司提供培训',
+                // render: t => t == '1' ? '原厂' : t == '2' ? '合作方' : '我司提供培训',
+                render:(text,record,index) => {
+                    return <Select style={{ width: '100%' }} placeholder="请选择" value={text} allowClear={true} onChange={(value) => this.trainChange(index,'trainTeachers',value)}>
+                                {
+                                    this.state.trainTeachersArray.map((items, index) => {
+                                        return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
+                                    })
+                                }
+                            </Select>
+                },
                 editable: true,
                 align:'center'
             },
             {
                 title: '课程方向',
                 dataIndex: 'courseDirection',
+                render:(text,record,index) => {
+                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'courseDirection',value)} />
+                },
                 editable: true,
                 align:'center'
             }, {
                 title: '培训课程',
                 dataIndex: 'trainCourse',
+                render:(text,record,index) => {
+                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'trainCourse',value)} />
+                },
                 editable: true,
                 align:'center'
             }, {
                 title: '培训人次',
                 dataIndex: 'oursePersonTimes',
+                render:(text,record,index) => {
+                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'oursePersonTimes',value)} />
+                },
                 editable: true,
                 align:'center'
             },
@@ -299,23 +343,27 @@ class performance extends Component {
                 dataIndex: 'level',
                 align:'center'
             },{
-                title: '响应时限（小时）',
+                title: this.setRequired(disaBled,'响应时限（小时）') ? <div className="ant-form-item-required">响应时限（小时）</div> : '响应时限（小时）',
+                text:'响应时限（小时）',
                 dataIndex: 'respondTime',
                 editable: true,
                 align:'center'
             },{
-                title: '工程师到场时限（小时）',
+                title:  this.setRequired(disaBled,'工程师到场时限（小时）') ? <div className="ant-form-item-required">工程师到场时限（小时）</div> : '工程师到场时限（小时）',
                 dataIndex: 'engineerArriveTime',
+                text:'工程师到场时限（小时）',
                 editable: true,
                 align:'center'
             },{
-                title: '备件到场时限（小时）',
+                title: this.setRequired(disaBled,'备件到场时限（小时）') ? <div className="ant-form-item-required">备件到场时限（小时）</div> : '备件到场时限（小时）',
                 dataIndex: 'spareArriveTime',
+                text:'备件到场时限（小时）',
                 editable: true,
                 align:'center'
             },{
-                title: '解决时限（小时）',
+                title: this.setRequired(disaBled,'解决时限（小时）') ? <div className="ant-form-item-required">解决时限（小时）</div> : '解决时限（小时）',
                 dataIndex: 'solveTime',
+                text:'解决时限（小时）',
                 editable: true,
                 align:'center'
             },{
@@ -581,10 +629,23 @@ addMouseLeave = (record) => {
     }
 
     // 【原厂服务】下的【部分项目周期】单选框事件按钮
-    changeOriginaPartsRadio=()=>{
-
-       // 修改 projectCycleType 项目周期类型，1-部分项目周期，2-全部项目周期
-       let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '1',cycleEnd : '',cycleStart : '' });
+    changeOriginaPartsRadio=(type)=>{
+      // let data = Object.assign({}, this.state.PerformanceData, { originalSeriveType: '1',ourcompServieType : '1',originalCycleStart : '',originalCycleEnd : '',ourcompCycleStart : '',ourcompCycleEnd : '' });
+        let data = null;
+        if(!this.props.basicInfor.startDate || !this.props.basicInfor.endDate){
+            message.warning('请先将基本信息板块的项目开始、结束日期填写完整！');
+            return;
+        }
+       // 项目周期类型，1-部分项目周期，2-全部项目周期
+        if(type == 1){
+            data = Object.assign({}, this.state.PerformanceData, { originalSeriveType: '1',ourcompServieType : '1',originalCycleStart : '',originalCycleEnd : '',ourcompCycleStart : '',ourcompCycleEnd : '' });
+        }else if(type == 2){
+            data = Object.assign({}, this.state.PerformanceData, { originalSeriveType: '2',ourcompServieType : '',originalCycleStart : '',originalCycleEnd : '',ourcompCycleStart : '',ourcompCycleEnd : '' });
+        }else if(type == 3){
+            data = Object.assign({}, this.state.PerformanceData, { originalSeriveType: '1',ourcompServieType : '1',originalCycleStart : '',originalCycleEnd : '',ourcompCycleStart : '',ourcompCycleEnd : '' });
+        }else{
+            data = Object.assign({}, this.state.PerformanceData, { originalSeriveType: '',ourcompServieType : '2',originalCycleStart : '',originalCycleEnd : '',ourcompCycleStart : '',ourcompCycleEnd : '' });
+        }
         this.setState({
             PerformanceData: data
         },()=>{
@@ -615,96 +676,11 @@ addMouseLeave = (record) => {
 
 
     }
-    // 【原厂服务】下的【全部项目周期】单选框事件按钮
-    changeOriginaAllRadio = () => {
-        // 修改 projectCycleType 项目周期类型，1-部分项目周期，2-全部项目周期
-        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '2',cycleEnd : '',cycleStart : '' });
-        this.setState({
-            PerformanceData: data
-        }, () => {
-            this.updataToParent();
-        })
-        if (data.afterSaleAgreement != '1' && data.projectCycleType != '2') {
-            return false;
-        }else{
-            // 现将所有时间清空格式化
-            let formatTime = {
-                originalServiceParts_start: '',  // 原厂服务--部分项目周期---起始日期
-                originalServiceParts_end: '', // 原厂服务--部分项目周期---结束日期
-                originalServiceAll_start: '',     // 原厂服务--全部项目周期---起始日期
-                originalServiceAll_end: '', // 原厂服务--全部项目周期---起始日期
 
-                ourDriverParts_start: '',  // 我司服务--部分项目周期---起始日期
-                ourDriverParts_end: '', // 我司服务--部分项目周期---结束日期
-                ourDriverAll_start: '',     // 我司服务--全部项目周期---起始日期
-                ourDriverAll_end: '', // 我司服务--全部项目周期---起始日期
-            }
-            this.setState({
-                dateTime: formatTime
-            })
-        }
-    }
-    // 【我司服务】下的【部分项目周期】单选框事件按钮 
-    changeOurPartsRadio=()=>{
-        // 修改 projectCycleType 项目周期类型，1-部分项目周期，2-全部项目周期
-        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '1',cycleEnd : '',cycleStart : '' });
-        this.setState({
-            PerformanceData: data
-        },()=>{
-            this.updataToParent();
-        })
-        if(data.afterSaleAgreement!='2' && data.projectCycleType!='1'){
-            return false;
-        }else {
-             // 现将所有时间清空格式化
-             let formatTime = {
-                originalServiceParts_start:'',  // 原厂服务--部分项目周期---起始日期
-                originalServiceParts_end:'', // 原厂服务--部分项目周期---结束日期
-                originalServiceAll_start:'',     // 原厂服务--全部项目周期---起始日期
-                originalServiceAll_end:'', // 原厂服务--全部项目周期---起始日期
-
-                ourDriverParts_start:'',  // 我司服务--部分项目周期---起始日期
-                ourDriverParts_end:'', // 我司服务--部分项目周期---结束日期
-                ourDriverAll_start:'',     // 我司服务--全部项目周期---起始日期
-                ourDriverAll_end:'', // 我司服务--全部项目周期---起始日期
-            }
-            this.setState({
-                dateTime:formatTime,
-            })
-        }
-    }
-    // 【我司服务】下的【全部项目周期】单选框事件按钮
-    changeOurAllRadio=()=>{
-        // 修改 projectCycleType 项目周期类型，1-部分项目周期，2-全部项目周期
-        let data = Object.assign({}, this.state.PerformanceData, { projectCycleType: '2',cycleEnd : '',cycleStart : '' });
-        this.setState({
-            PerformanceData: data
-        }, () => {
-            this.updataToParent();
-        })
-        if(data.afterSaleAgreement != '2' && data.projectCycleType != '2'){
-            return false;
-        }else {
-            // 现将所有时间清空格式化
-            let formatTime = {
-                originalServiceParts_start:'',  // 原厂服务--部分项目周期---起始日期
-                originalServiceParts_end:'', // 原厂服务--部分项目周期---结束日期
-                originalServiceAll_start:'',     // 原厂服务--全部项目周期---起始日期
-                originalServiceAll_end:'', // 原厂服务--全部项目周期---起始日期
-
-                ourDriverParts_start:'',  // 我司服务--部分项目周期---起始日期
-                ourDriverParts_end:'', // 我司服务--部分项目周期---结束日期
-                ourDriverAll_start:'',     // 我司服务--全部项目周期---起始日期
-                ourDriverAll_end:'', // 我司服务--全部项目周期---起始日期
-            }
-            this.setState({
-                dateTime:formatTime,
-            })
-        }
-    }
 
     // 附件上传-----上传外包合同设备清单附件
     beforeUpload = (file) => {
+        console.log(file.size,file.size / 1024 / 1024)
         const isLt2M = file.size / 1024 / 1024 < 30;
         if (!isLt2M) {
             message.error('上传文件大小不能超过30MB!');
@@ -716,12 +692,6 @@ addMouseLeave = (record) => {
         let fileList = [...info.fileList];
         // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
         fileList = fileList.slice(-3);
-
-        // if (info.file.status === 'done') {
-        //     message.success(`${info.file.name} 文件上传成功`);
-        // } else if (info.file.status === 'error') {
-        //     message.error(`${info.file.name} 文件上传失败.`);
-        // }
 
         // 2.读取响应并显示文件链接
         fileList = fileList.map(file => {
@@ -770,7 +740,30 @@ addMouseLeave = (record) => {
        // this.setState({PerformanceData:{...this.state.PerformanceData,sparePartsFileList:fileList}})
     }
 
-
+    // 附件上传---客户方模板
+    ClienttChange=(info)=>{
+        // console.log(info)
+        let fileList = [...info.fileList];
+        // 1. 限制上载文件的数量---只显示最近上传的3个文件，旧文件将被新文件替换
+        fileList = fileList.slice(-1);
+        // 2.读取响应并显示文件链接
+        fileList = fileList.map(file => {
+            if (file.response) {
+                if (file.response.success == 1) {
+                    // let number = Math.random().toString().slice(-6);
+                    // file.uid = number;
+                    file.fileName = file.response.data.fileName,
+                    file.fileUrl= file.response.data.fileUrl;
+                } else if (file.response.success == 0) {
+                    file.status = 'error';
+                }
+            }
+            return file;
+        });
+        let data = Object.assign({}, this.state.PerformanceData, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
+        this.setState({PerformanceData:data},()=>{this.updataToParent()});
+    // this.setState({PerformanceData:{...this.state.PerformanceData,sparePartsFileList:fileList}})
+    }
    
 
     // 所有【输入框以及下拉框】的onchange事件
@@ -804,29 +797,56 @@ addMouseLeave = (record) => {
                 this.updataToParent();
             })
         }else {
-            // 第二步 正式修改 PerformanceData对象下的cycleStart、cycleEnd数据并且传递到父组件
-            if (el.indexOf('start') > 1) {
-                let data = Object.assign({}, this.state.PerformanceData,{cycleStart:dateString});
-
-                this.setState({
-                    PerformanceData: data
-                }, () => {
-                    this.updataToParent();
-                })
-            }else {
-                let data = Object.assign({}, this.state.PerformanceData,{cycleEnd:dateString});
-                this.setState({
-                    PerformanceData: data
-                }, () => {
-                    this.updataToParent();
-                })
+            // 第二步 正式修改 PerformanceData下的日期数据并且传递到父组件
+            let data = null;
+            if(el == 'originalServiceParts_start' || el == 'originalServiceAll_start'){
+                if (!this.judgeTime(this.props.basicInfor.startDate,dateString,1)) return;
+                data = Object.assign({}, this.state.PerformanceData,{originalCycleStart:dateString});
+            }else if(el == 'originalServiceParts_end'){
+                let {originalCycleStart} = this.state.PerformanceData, ourcompCycleStart  = getNextDayTime(dateString),ourcompCycleEnd = this.props.basicInfor.endDate;
+                if (!this.judgeTime(originalCycleStart,dateString)) return;
+                ourcompCycleStart = getTimeStamp(ourcompCycleStart) > getTimeStamp(ourcompCycleEnd) ? ourcompCycleEnd : getNextDayTime(dateString);
+                data = Object.assign({}, this.state.PerformanceData,{originalCycleEnd:dateString,ourcompCycleStart,ourcompCycleEnd});
+            }else if(el == 'originalServiceAll_end'){
+                data = Object.assign({}, this.state.PerformanceData,{originalCycleEnd:dateString});
+            }else if(el == 'ourDriverParts_start' || el == 'ourDriverAll_start'){
+                if (!this.judgeTime(this.props.basicInfor.startDate,dateString,1)) return;
+                data = Object.assign({}, this.state.PerformanceData,{ourcompCycleStart:dateString});
+            }else if(el == 'ourDriverParts_end'){
+                let {ourcompCycleStart} = this.state.PerformanceData, originalCycleStart  = getNextDayTime(dateString),originalCycleEnd = this.props.basicInfor.endDate;
+                if (!this.judgeTime(ourcompCycleStart,dateString)) return;
+                originalCycleStart = getTimeStamp(originalCycleStart) > getTimeStamp(originalCycleEnd) ? originalCycleEnd : getNextDayTime(dateString);
+                data = Object.assign({}, this.state.PerformanceData,{ourcompCycleEnd:dateString,originalCycleStart,originalCycleEnd});
+            }else if(el == 'ourDriverAll_end'){
+                data = Object.assign({}, this.state.PerformanceData,{ourcompCycleEnd:dateString});
             }
+            this.setState({
+                PerformanceData: data
+            }, () => {
+                this.updataToParent();
+            })
         }
+    }
+    //判断时间选择正确与否
+    judgeTime = (start,end,type) => {
+        if(type && getTimeStamp(start) > getTimeStamp(end)){
+            message.warning('起始日期不能大于项目开始日期');
+            return false;
+        }
+        if (!start) {
+            message.warning('请先填写开始时间！');
+            return false;
+        }else if (getTimeStamp(start) > getTimeStamp(end)) {
+            message.warning('起始日期不能大于结束日期');
+            return false;
+        }
+        return true;
     }
     //处理个lable显示是否必填
     setRequired = (node,key) => {
-        if(!node && (key == '服务方式' || key == '远程巡检周期'|| key == '现场巡检周期'|| key == '是否需要提供首次巡检服务'|| key == '是否收集相关配置信息'|| key == '服务报告提交周期'|| key == '服务单要求'|| key == '其他重要承诺及要求')){
-            return <span>{key}<span className='required'></span></span>
+        if(!node && (key == '服务方式' || key == '远程巡检周期'|| key == '现场巡检周期'|| key == '是否需要提供首次巡检服务'|| key == '是否收集相关配置信息'|| key == '服务报告提交周期'|| key == '服务单要求'|| key == '其他重要承诺及要求' || key == '不收集配置信息原因说明')){
+            // return <span>{key}<span className='required'></span></span>ant-form-item-required
+            return <span className='ant-form-item-required'>{key}</span>
         }
         return <span>{key}</span>
     }
@@ -843,8 +863,9 @@ addMouseLeave = (record) => {
         }
     }
     render = _ => {
-        this.init();
         let {isEdit,formRead,node} = this.props;
+        const disaBled = this.setJurisdiction(isEdit,formRead,node);
+        this.init(disaBled);
         const components = {
             body: {
                 row: EditableFormRow,
@@ -860,16 +881,7 @@ addMouseLeave = (record) => {
                 return col;
             }
             return {
-                ...col,
-                onCell: record => ({
-                    record,
-                    editable: col.editable,
-                    dataIndex: col.dataIndex,
-                    title: col.title,
-                    trainModeArray:this.state.trainModeArray ? this.state.trainModeArray  : [],
-                    trainTeachersArray:this.state.trainTeachersArray ? this.state.trainTeachersArray  : [],
-                    handleSave: this.handleSave,
-                }),
+                ...col
             };
         });
         // 【等级、响应时限（小时）、工程师到场时限（小时）、备件到场时限（小时）、解决时限（小时）、备注】----表格数据
@@ -886,14 +898,14 @@ addMouseLeave = (record) => {
                     record,
                     editable: col.editable,
                     dataIndex: col.dataIndex,
-                    title: col.title,
+                    title: col.text,
                     handleSave: this.handleSave,
                 }),
             };
         });
         // console.log(isEdit,formRead,node)
-         console.log(this.state.PerformanceData.afterSaleAgreement,this.state.PerformanceData.projectCycleType,this.state.PerformanceData.cycleEnd)
-        const disaBled = this.setJurisdiction(isEdit,formRead,node);
+         console.log(this.state.PerformanceData.isReceiveReport+'========'+this.state.PerformanceData.serviceMode)
+        
         return (
             <div className="performanceContent">
                 <div className="formContent">
@@ -908,7 +920,7 @@ addMouseLeave = (record) => {
                             </Select>
                         </Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(disaBled,'是否提交验收报告')}>
-                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否提交验收报告" allowClear={true} showSearch value={this.state.PerformanceData.isReceiveReport+''} onChange={(value) => this.inputChange('isReceiveReport', value)}>
+                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择是否提交验收报告" allowClear={true} showSearch value={isNaN(this.state.PerformanceData.isReceiveReport) ? this.state.PerformanceData.isReceiveReport : this.state.PerformanceData.isReceiveReport +''} onChange={(value) => this.inputChange('isReceiveReport', value)}>
                                 {
                                     this.state.siteServiceArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
@@ -958,7 +970,7 @@ addMouseLeave = (record) => {
                             bordered
                             rowKey={(record, index) => `Training${record.id}${index}`}
                             size={'small'}
-                            components={components}
+                            // components={components}
                             rowClassName={() => 'editable-row'}
                             dataSource={this.state.PerformanceData.courseList}
                             columns={columns}
@@ -971,7 +983,7 @@ addMouseLeave = (record) => {
                 <div className="config">
                     <Descriptions bordered column={4} size={'small'}>
                         <Descriptions.Item label={this.setRequired(disaBled,"是否需要提供首次巡检服务")}>
-                            <Select disabled={ disaBled ? true : (this.props.serviceType == '201' || this.props.serviceType == '212') ? false : true} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection +''} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
+                            <Select disabled={ disaBled ? true : (this.props.basicInfor.serviceType == '201' || this.props.basicInfor.serviceType == '212') ? false : true} showSearch style={{ width: '100%' }} value={this.state.PerformanceData.isFirstInspection +''} onChange={(value)=>this.inputChange('isFirstInspection',value)}>
                                 <Option value="0">否</Option>
                                 <Option value="1">是</Option>
                             </Select>
@@ -993,9 +1005,9 @@ addMouseLeave = (record) => {
                                 <Option value="1">是</Option>
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(disaBled,"不收集配置信息原因说明")} span={2} className="mustFill">
+                        <Descriptions.Item label={this.state.PerformanceData.isCollectConfig == 0 ? this.setRequired(disaBled,"不收集配置信息原因说明") : "不收集配置信息原因说明"} span={2} className="mustFill">
                             
-                            <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择不收集配置信息原因说明" allowClear={true} showSearch value={this.state.PerformanceData.notCollectReason} onChange={(value)=>this.inputChange('notCollectReason',value)}>
+                            <Select disabled={disaBled ? true : this.state.PerformanceData.isCollectConfig == 1 ? true : false} style={{ width: '100%' }} placeholder="请选择不收集配置信息原因说明" allowClear={true} showSearch value={this.state.PerformanceData.notCollectReason} onChange={(value)=>this.inputChange('notCollectReason',value)}>
                                 {
                                     this.state.notCollectReasonArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -1003,7 +1015,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(disaBled,"服务报告提交周期")} span={2}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"服务报告提交周期")} span={1}>
                             <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务报告提交周期" allowClear={true} showSearch value={this.state.PerformanceData.serviceReportCycle} onChange={(value)=>this.inputChange('serviceReportCycle',value)}>
                                 {
                                     this.state.serviceReportCycleArray.map((items, index) => {
@@ -1012,7 +1024,7 @@ addMouseLeave = (record) => {
                                 }
                             </Select>
                         </Descriptions.Item>
-                        <Descriptions.Item label={this.setRequired(disaBled,"服务单要求")} span={2}>
+                        <Descriptions.Item label={this.setRequired(disaBled,"服务单要求")} span={1}>
                             <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceListRequire} onChange={(value) => this.inputChange('serviceListRequire', value)}>
                                 {
                                     this.state.serviceListRequireArray.map((items, index) => {
@@ -1020,6 +1032,13 @@ addMouseLeave = (record) => {
                                     })
                                 }
                             </Select>
+                        </Descriptions.Item>
+                        <Descriptions.Item label={this.setRequired(disaBled,"客户方模版")} span={2}>
+                            <div className="upload">
+                                <Upload disabled={disaBled ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ClienttChange} fileList={this.state.PerformanceData.clientFileList}>
+                                    <Icon type="upload" />上传
+                                </Upload>
+                            </div>
                         </Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(disaBled,"合同承诺备机备件清单")} span={3}>
                             <div className="upload">
@@ -1032,7 +1051,7 @@ addMouseLeave = (record) => {
                             <DatePicker disabled={disaBled ? true : false} style={{width:'100%'}}  value={this.state.PerformanceData.sparePartsTime?moment(this.state.PerformanceData.sparePartsTime, dateFormat):null} onChange={(date, dateString)=>this.timeChange('sparePartsTime',date, dateString)} format={dateFormat}></DatePicker>
                         </Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(disaBled,"是否有外包情况")}>
-                            <Select disabled={disaBled ? true : false} value={this.state.PerformanceData.isOutsource+''} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
+                            <Select disabled={disaBled ? true : false} placeholder="请选择" value={isNaN(this.state.PerformanceData.isOutsource) ? this.state.PerformanceData.isOutsource : this.state.PerformanceData.isOutsource+''} style={{ width: '100%' }} showSearch onChange={(value)=>this.inputChange('isOutsource',value)}>
                                 <Option value="1">是</Option>
                                 <Option value="0">否</Option>
                                 <Option value="2">部分</Option>
@@ -1056,23 +1075,24 @@ addMouseLeave = (record) => {
                             <div className="key">集成/备件销售项目<br />（101、102）售后服务约定</div>
                             <div className="bigVal4">
                                 <div className="radioContent">
-                                    <div className="title">
-                                        <Radio disabled={disaBled ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='1'?true:false} onClick={this.changeRadioOriginal}>原厂服务</Radio>
+                                    <div className="title title2">
+                                        {/* <Radio disabled={disaBled ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='1'?true:false} onClick={this.changeRadioOriginal}>原厂服务</Radio> */}
+                                        原厂服务
                                     </div>
                                     <div className="timeRight">
                                         <div className="partsProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'?true:false :false} onClick={this.changeOriginaPartsRadio} disabled={isEdit ? true : (this.state.PerformanceData.afterSaleAgreement != '1' || !this.state.PerformanceData.afterSaleAgreement) ? true:false}>部分项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.originalSeriveType=='1'?true:false} onClick={ () => this.changeOriginaPartsRadio(1)} disabled={isEdit ? true :false}>部分项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'? this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null :null:null} disabled={disaBled ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='1'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={ this.state.PerformanceData.originalSeriveType=='1'? this.state.PerformanceData.originalCycleStart?moment(this.state.PerformanceData.originalCycleStart, dateFormat):null :null} disabled={disaBled ? true : this.state.PerformanceData.originalSeriveType != '1' ? true : false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceParts_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='1'?this.state.PerformanceData.cycleEnd? moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={disaBled ? true :this.state.PerformanceData.afterSaleAgreement!='1'?true:this.state.PerformanceData.projectCycleType !='1'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={ this.state.PerformanceData.originalSeriveType=='1'?this.state.PerformanceData.originalCycleEnd? moment(this.state.PerformanceData.originalCycleEnd, dateFormat):null:null} disabled={disaBled ? true : this.state.PerformanceData.originalSeriveType != '1' ? true : false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceParts_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1081,19 +1101,19 @@ addMouseLeave = (record) => {
                                         </div>
                                         <div className="allProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?true:false : false} onClick={this.changeOriginaAllRadio} disabled={disaBled ? true :(this.state.PerformanceData.afterSaleAgreement != '1' || !this.state.PerformanceData.afterSaleAgreement)?true:false}>全部项目周期</Radio> 
+                                                <Radio checked={ this.state.PerformanceData.originalSeriveType=='2'?true:false} onClick={() => this.changeOriginaPartsRadio(2)} disabled={disaBled ? true : false}>全部项目周期</Radio> 
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={disaBled ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='2'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={ this.state.PerformanceData.originalSeriveType=='2'?this.state.PerformanceData.originalCycleStart?moment(this.state.PerformanceData.originalCycleStart, dateFormat):null:null} disabled={disaBled ? true : this.state.PerformanceData.originalSeriveType != '2' ? true : false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceAll_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='1' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={disaBled ? true :this.state.PerformanceData.afterSaleAgreement !='1'?true:this.state.PerformanceData.projectCycleType !='2'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={ this.state.PerformanceData.originalSeriveType=='2'?this.state.PerformanceData.originalCycleEnd?moment(this.state.PerformanceData.originalCycleEnd, dateFormat):null:null} disabled={disaBled ? true : this.state.PerformanceData.originalSeriveType != '2' ? true : false}
                                                             onChange={(date, dateString)=>this.timeChange('originalServiceAll_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
@@ -1104,24 +1124,25 @@ addMouseLeave = (record) => {
                                     </div>
                                 </div>
                                 <div className="radioContent">
-                                    <div className="title">
-                                        <Radio disabled={disaBled ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='2'?true:false} onClick={this.changeRadioStatus}>我司服务</Radio>
+                                    <div className="title title2">
+                                        {/* <Radio disabled={disaBled ? true : false} checked={this.state.PerformanceData.afterSaleAgreement=='2'?true:false} onClick={this.changeRadioStatus}>我司服务</Radio> */}
+                                        我司服务
                                     </div>
                                     <div className="timeRight">
                                     <div className="partsProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='2'? this.state.PerformanceData.projectCycleType=='1'?true:false :false} disabled={disaBled ? true : (this.state.PerformanceData.afterSaleAgreement != '2' || !this.state.PerformanceData.afterSaleAgreement) ? true:false} onClick={this.changeOurPartsRadio}>部分项目周期</Radio>
+                                                <Radio checked={ this.state.PerformanceData.ourcompServieType=='1' ? true : false} disabled={disaBled ? true :false} onClick={() => this.changeOriginaPartsRadio(3)}>部分项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.afterSaleAgreement == '2' ? this.state.PerformanceData.projectCycleType == '1' ? this.state.PerformanceData.cycleStart ? moment(this.state.PerformanceData.cycleStart, dateFormat) : null : null : null} disabled={disaBled ? true : this.state.PerformanceData.afterSaleAgreement != '2' ? true : this.state.PerformanceData.projectCycleType != '1' ? true : false}
-                                                            onChange={(date, dateString) => this.timeChange('originalServiceParts_start', date, dateString)}
+                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.ourcompServieType == '1' ? this.state.PerformanceData.ourcompCycleStart ? moment(this.state.PerformanceData.ourcompCycleStart, dateFormat) : null : null} disabled={disaBled ? true : this.state.PerformanceData.ourcompServieType != '1' ? true : false}
+                                                            onChange={(date, dateString) => this.timeChange('ourDriverParts_start', date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
-                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.afterSaleAgreement == '2' ? this.state.PerformanceData.projectCycleType == '1' ? this.state.PerformanceData.cycleEnd ? moment(this.state.PerformanceData.cycleEnd, dateFormat) : null : null : null} disabled={disaBled ? true : this.state.PerformanceData.afterSaleAgreement != '2' ? true : this.state.PerformanceData.projectCycleType != '1' ? true : false}
-                                                            onChange={(date, dateString) => this.timeChange('originalServiceParts_end', date, dateString)}
+                                                        <DatePicker style={{ width: '100%' }} value={this.state.PerformanceData.ourcompServieType == '1' ? this.state.PerformanceData.ourcompCycleEnd ? moment(this.state.PerformanceData.ourcompCycleEnd, dateFormat) : null : null} disabled={disaBled ? true : this.state.PerformanceData.ourcompServieType != '1' ? true : false}
+                                                            onChange={(date, dateString) => this.timeChange('ourDriverParts_end', date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                 </Descriptions>
@@ -1129,18 +1150,18 @@ addMouseLeave = (record) => {
                                         </div>
                                         <div className="allProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.afterSaleAgreement=='2'? this.state.PerformanceData.projectCycleType=='2'?true:false : false} disabled={disaBled ? true : (this.state.PerformanceData.afterSaleAgreement != '2' || !this.state.PerformanceData.afterSaleAgreement) ? true:false} onClick={this.changeOurAllRadio}>全部项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.ourcompServieType=='2'? true : false } disabled={disaBled ? true :false} onClick={() => this.changeOriginaPartsRadio(4)}>全部项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
                                                     <Descriptions.Item label="起始日期">
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleStart?moment(this.state.PerformanceData.cycleStart, dateFormat):null:null:null} disabled={disaBled ? true : this.state.PerformanceData.afterSaleAgreement!='2'? true:this.state.PerformanceData.projectCycleType!='2'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.ourcompServieType=='2'?this.state.PerformanceData.ourcompCycleStart?moment(this.state.PerformanceData.ourcompCycleStart, dateFormat):null:null} disabled={disaBled ? true : this.state.PerformanceData.ourcompServieType != '2' ? true : false}
                                                             onChange={(date, dateString)=>this.timeChange('ourDriverAll_start',date, dateString)}
                                                         />
                                                     </Descriptions.Item>
                                                     <Descriptions.Item label="结束日期">
                                                         <div></div>
-                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.afterSaleAgreement=='2' ? this.state.PerformanceData.projectCycleType=='2'?this.state.PerformanceData.cycleEnd?moment(this.state.PerformanceData.cycleEnd, dateFormat):null:null:null} disabled={disaBled ? true : this.state.PerformanceData.afterSaleAgreement!='2'? true:this.state.PerformanceData.projectCycleType!='2'?true:false}
+                                                        <DatePicker style={{width:'100%'}} value={this.state.PerformanceData.ourcompServieType=='2'?this.state.PerformanceData.ourcompCycleEnd?moment(this.state.PerformanceData.ourcompCycleEnd, dateFormat):null:null} disabled={disaBled ? true : this.state.PerformanceData.ourcompServieType != '2' ? true : false}
                                                             onChange={(date, dateString)=>this.timeChange('ourDriverAll_end',date, dateString)}
                                                         />
                                                     </Descriptions.Item>

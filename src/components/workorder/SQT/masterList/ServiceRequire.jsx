@@ -27,41 +27,43 @@ class servies extends Component {
     state = {
         basicInfor: {
             orderNum: '',  //记录单号
-            companyName: '广发', //公司名称
+            companyName: '', //公司名称
             writeTime: '', //填写时间
             writeUserName: '',//填写人
-            writeDept: '销售部', //填写部门
+            writeDept: '', //填写部门
             projectType: '1', //项目类别
-            projectNumber: '',//项目号
+            projectNumber: '请选择',//项目号
             projectName: '',//项目名称
             serviceType: '',//服务类别
             custNum: '',//客户编码
             custName: '',//客户名称
-            industry: '广发',//所属行业
-            custLevel: '0',//客户级别
-            salesmanName: '张懿哲',//项目销售
-            salesmanPhone: '13701202583',//销售联系方式
-            managerType: '2',//项目经理类型
-            managerName: '张懿哲',//项目经理
-            managerPhone: '13701202583',//项目经理联系方式
+            industry: '',//所属行业
+            custLevel: undefined,//客户级别
+            salesmanName: '请选择',//项目销售
+            salesmanPhone: '',//销售联系方式
+            managerType: undefined,//项目经理类型
+            managerName: '请选择',//项目经理
+            managerPhone: '',//项目经理联系方式
             startDate: '',//项目开始日期
             endDate: '',//项目结束日期
-            isRenewal: 0,// 是否续签项目,1是，0-否
+            isRenewal: undefined,// 是否续签项目,1是，0-否
             renewalNumber: '',//续签项目号
             renewalName: '',//续签项目名称
-            isSubcontract: '1',// 是否转包项目,1是，0-否
-            finalCustName: '宋波',//最终客户名称
-            isLeagueBuild: '1',//是否有团建负责，1是，0否
-            leagueBuildName: '宋波',//团建负责人
+            isSubcontract: undefined,// 是否转包项目,1是，0-否
+            finalCustName: '',//最终客户名称
+            // isLeagueBuild: undefined,//是否有团建负责，1是，0否
+            // leagueBuildName: '',//团建负责人
         },
         // 【服务区域】的table表格数据
         areaList: [],
+         // 【附件下载】的table表格数据
+         accList: [],
         // 【服务承诺】组件的所有数据
         performancePledge: {
-            serviceMode: '',  // 服务方式
-            isReceiveReport: '',  // 是否提交验收报告1-是，0-否
-            longInspectionCycle: '',  //远程巡检周期
-            sceneInspectionCycle: '',      // 现场巡检周期
+            serviceMode: undefined,  // 服务方式
+            isReceiveReport: undefined,  // 是否提交验收报告1-是，0-否
+            longInspectionCycle: undefined,  //远程巡检周期
+            sceneInspectionCycle: undefined,      // 现场巡检周期
             inspectionDesc: '', //巡检特殊说明
             courseList: [{
                 id: 1,
@@ -72,23 +74,32 @@ class servies extends Component {
                 oursePersonTimes: "",  // 培训人次
             }],
             isFirstInspection: '', // 是否需要提供首次巡检服务，1-是，0-否
-            onsiteService: '',   // 项目是否约定驻场服务
+            onsiteService: undefined,   // 项目是否约定驻场服务
             peopleNum: '1', //人数
             specialDesc: '', //特殊说明
-            isCollectConfig: '', // 是否收集相关配置信息，1-是，0-否
-            notCollectReason: '',    // 不收集配置信息原因说明
-            serviceReportCycle: '', // 服务报告提交周期
-            serviceListRequire: '', // 服务单要求
+            isCollectConfig: '1', // 是否收集相关配置信息，1-是，0-否
+            notCollectReason: undefined,    // 不收集配置信息原因说明
+            serviceReportCycle: undefined, // 服务报告提交周期
+            serviceListRequire: undefined, // 服务单要求
             partsList: '',//合同承诺备机备件清单
             sparePartsTime: '',// 合同承诺备机备件到库时间
-            isOutsource: '',// 是否有外包情况（1-是，0-否，2-部分）
+            isOutsource: undefined,// 是否有外包情况（1-是，0-否，2-部分）
             outsourcer: '', //外包商
             sparePartsFileList: [],// 合同承诺备机备件清单
             equipmentFileList: [], // 上传外包合同设备清单附件
+            customerModelName:'',// 客户方模版名称
+            customerModelPath:'',// 客户方模版路径
+            clientFileList: [], // 客户方模版附件
             afterSaleAgreement: '1', // 集成/备件销售项目（101、102）售后服务约定 1-原厂服务，2-我司服务
-            projectCycleType: '1',// 项目周期类型，1-部分项目周期，2-全部项目周期
-            cycleStart: '',  // 周期开始日期
-            cycleEnd: '', // 周期结束日期
+            projectCycleType: '',// 项目周期类型，1-部分项目周期，2-全部项目周期，原厂服务周期类型
+
+            originalSeriveType:'',//原厂服务周期类型,1-部分项目周期，2-全部项目周期
+            ourcompServieType:'',//我司服务周期类型,1-部分项目周期，2-全部项目周期
+            originalCycleStart: '',  // 原厂服务开始时间
+            originalCycleEnd: '', // 原厂服务结束时间
+            ourcompCycleStart: '',  // 我司服务服务开始时间
+            ourcompCycleEnd: '', // 我司服务结束时间
+
             otherPromise: '', //其他重要承诺及要求
             slaList: []
         },
@@ -215,9 +226,9 @@ setIsFirstInspection = (info,performancePledge)=>{
             performancePledge
         }, () => {
             //向父组件【SQT页面】传递数据
-            let {basicInfor,areaList,performancePledge}=this.state
+            let {basicInfor,areaList,performancePledge,accList}=this.state
             console.log(performancePledge)
-            let result=Object.assign({},basicInfor,performancePledge,{areaList})
+            let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
             this.props.onChangeData(result);
         })
     }
@@ -230,12 +241,23 @@ setIsFirstInspection = (info,performancePledge)=>{
             areaList: info
         }, () => {
              // 向父组件【SQT页面】传递数据
-             let {basicInfor,performancePledge,areaList}=this.state
-             let result=Object.assign({},basicInfor,performancePledge,{areaList})
+             let {basicInfor,performancePledge,areaList,accList}=this.state
+             let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
              this.props.onChangeData(result);
         })
     }
-
+    //  接收到【附件上传】子组件返回的数据  
+    getChildrenDataUpload = (info) => {
+        // console.log('服务区域')
+        this.setState({
+            accList: info
+        }, () => {
+            // 向父组件【SQT页面】传递数据
+            let {basicInfor,performancePledge,areaList,accList}=this.state
+            let result=Object.assign({},basicInfor,performancePledge,{accList},{areaList})
+            this.props.onChangeData(result);
+        })
+    }
     //  接收到【服务承诺】子组件返回的数据  
     getChildrenData = (info) => {
         // console.log('服务承诺')
@@ -243,8 +265,8 @@ setIsFirstInspection = (info,performancePledge)=>{
             performancePledge: info
         }, () => {
           // 向父组件【SQT页面】传递数据
-          let {basicInfor,areaList,performancePledge}=this.state
-           let result=Object.assign({},basicInfor,performancePledge,{areaList})
+          let {basicInfor,areaList,performancePledge,accList}=this.state
+           let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
           this.props.onChangeData(result);
         })
     }
@@ -254,14 +276,15 @@ setIsFirstInspection = (info,performancePledge)=>{
     onGetChangeSelect = (data) => {
         // console.log(data)
         // 当选择器中的数据有返回时，将【服务区域、服务承诺】组件中需要带入的数据进行带入
-        let newPerformance = this.setInfo(data, this.state.performancePledge),{areaList} = this.state;
+        let newPerformance = this.setInfo(data, this.state.performancePledge),{accList} = this.state;
         newPerformance = this.setIsFirstInspection(data,newPerformance);
         this.setState({
             performancePledge: newPerformance,
-            areaList: data.areaList
+            areaList: data.areaList,
+            accList: data.accList?data.accList:accList,
         },()=>{
-            let {basicInfor,areaList,performancePledge}=this.state
-            let result=Object.assign({},basicInfor,performancePledge,{areaList})
+            let {basicInfor,areaList,performancePledge,accList}=this.state
+            let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
             this.props.onChangeData(result);
         })
     }
@@ -288,12 +311,12 @@ setIsFirstInspection = (info,performancePledge)=>{
                 {/* 服务承诺---区域 */}
                 <div className="commTop">
                     <div className="navTitle">服务承诺</div>
-                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} serviceType={this.state.basicInfor.serviceType} node={node} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
+                    <PerformancePledge isEdit={this.state.isEdit} formRead={this.state.formRead} basicInfor={this.state.basicInfor} node={node} sign={power.sign ? power.sign : 0} data={this.state.performancePledge} onChange={this.getChildrenData}></PerformancePledge>
                 </div>
                 {/* 附件上传---区域 */}
                 <div className="commTop">
                     <div className="navTitle">附件上传</div>
-                    <AttachmentTable isEdit={this.state.isEdit} formRead={this.state.formRead} node={node} sign={power.sign ? power.sign : 0} onChange={this.getChildrenDataUpload}></AttachmentTable>
+                    <AttachmentTable isEdit={this.state.isEdit} data={this.state.accList} formRead={this.state.formRead} node={node} sign={power.sign ? power.sign : 0} onChange={this.getChildrenDataUpload}></AttachmentTable>
                 </div>
 
             </div>

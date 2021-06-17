@@ -40,15 +40,24 @@ export const arrayObject = (data,id) => {
 获取时间日期的时间戳
 @params  date
 */
-// export const getTime = (date) => {
-    
-//     return newArr;
-// }
+export const getTimeStamp= (date) => {
+    const newDate = new Date(date).getTime();
+    return newDate;
+}
+/*
+获取指定日期的后一天日期
+@params  date
+*/
+export const getNextDayTime= (date) => {
+    let newDate = new Date(date).getTime()+24*60*60*1000;
+    newDate = getDate(newDate,'yyyy-MM-dd');
+    return newDate;
+}
 /*
 根据时间戳格式化日期
 @params  date
 */
-export const getTime = (dateTime,type) => {
+export const getDate = (dateTime,type) => {
     const date = new Date(dateTime);
     const o = {
         "M+" : date.getMonth() + 1, //月份
@@ -62,7 +71,37 @@ export const getTime = (dateTime,type) => {
     if (/(y+)/.test(type))
         type = type.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
     for (var k in o)
-        if (new RegExp("(" + k + ")").test(fmt))
+        if (new RegExp("(" + k + ")").test(type))
         type = type.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
     return type;
+}
+//获取每个面板的基础展示数据并存储，并获取表格数据
+export const getBaseData = async (id) => {
+    if(!conditionalData[`pane${id}`].newEntry){
+        let paneData = await getBaseData({id:id});
+        if (paneData.success == 1) {
+           conditionalData[`pane${id}`] = Object.assign({},panes[`pane${id}`],{newEntry:true},paneData.data)
+           panes[`pane${id}`] = Object.assign({},panes[`pane${id}`],this.setBaseData(paneData.data))
+        }
+        console.log(panes,conditionalData)
+        this.setState({
+            panes,
+            conditionalData
+        })
+    }
+}
+//处理基础数据存储Map供表格显示使用
+export const setBaseData = (data) => {
+    let obj = {};
+    for(let i in data){
+        for(let j of i){
+            if(!j.data){
+                obj[j.id] = j.basedataTypeName;
+            }else{
+                obj = Object.assign({},obj,this.setBaseData([j.data]))
+            }
+        }
+        
+    }
+    return obj
 }

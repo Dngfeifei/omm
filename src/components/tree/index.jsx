@@ -15,24 +15,18 @@ const { Search } = Input;
 import "./tree.css";
 
 
-
-
-
 const getParentKey = (title, tree) => {
     let parentKey;
     for (let i = 0; i < tree.length; i++) {
         const node = tree[i];
         if (node.children) {
             if (node.children.some(item => item.title === title)) {
-                console.log("1",title,node.key)
                 parentKey = node.key;
             } else if (getParentKey(title, node.children)) {
-                console.log("2",title,node.children)
                 parentKey = getParentKey(title, node.children);
             }
         }
     }
-    console.log(3,parentKey)
     return parentKey;
 };
 
@@ -106,10 +100,10 @@ class TreeList extends Component {
 
     onExpand = expandedKeys => {
         this.setState({
-          expandedKeys,
-          autoExpandParent: false
+            expandedKeys,
+            autoExpandParent: false
         });
-      };
+    };
     loop = data => data.map((item) => {
         let { searchValue } = this.state;
         const index = item.title.indexOf(searchValue);
@@ -131,7 +125,7 @@ class TreeList extends Component {
         }
         return <TreeNode dataRef={item} key={item.key} title={title} />;
     });
-
+   
 
 
     // 输入框搜索节点
@@ -143,7 +137,6 @@ class TreeList extends Component {
             return null;
         }).filter((item, i, self) => item && self.indexOf(item) === i);
 
-        console.log(expandedKeys,"expandedKeys")
         this.setState({
             expandedKeys,
             searchValue: value,
@@ -161,7 +154,6 @@ class TreeList extends Component {
         } = this.props;
         // 进行数组扁平化处理
         generateList(treeData);
-
         return (
             <div className="TreeContent">
                 <Spin tip="Loading..." spinning={this.state.visible}>
@@ -188,7 +180,7 @@ class TreeList extends Component {
                     </Row>
                     <div className="treeContantier">
                         <Tree
-                            // style={{ paddingTop: '5px' }}
+                            style={!search && !edit ? { top: "0px" } : {}}
                             className="tree"
                             autoExpandParent={this.state.autoExpandParent}   // 是否自动展开父节点
                             checkable={checkable}  // 节点前添加 Checkbox 复选框

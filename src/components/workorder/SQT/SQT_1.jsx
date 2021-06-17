@@ -29,6 +29,10 @@ import  MacroRiskSummary from '@/components/workorder/SQT/macroRisk/macroRiskSum
 import  MicroRisk from '@/components/workorder/SQT/microrisk/microrisk'
 //引入微观风险汇总附表组件
 import  MicroRiskSummary from '@/components/workorder/SQT/microrisk/microriskSummary'
+//引入预约服务附表组件
+import  ReservationService from '@/components/workorder/SQT/reservationService/reservationServiceList'
+//引入预约服务汇总附表组件
+import  ReservationServiceSummary from '@/components/workorder/SQT/reservationService/reservationServiceSummary'
 
 
 class Sqt extends Component {
@@ -113,9 +117,11 @@ class Sqt extends Component {
                 errorMeassge:'主表项目经理类型不能为空！'
             },{
                 attribute: 'managerName',//项目经理
+                special:this.props.config.formControl ? this.props.config.formControl.masterList.nodes==2 ? true : '1' : '1',
                 errorMeassge:'主表项目经理不能为空！'
             },{
                 attribute: 'managerPhone',//项目经理联系方式
+                special:this.props.config.formControl ? this.props.config.formControl.masterList.nodes==2 ? true : '1' : '1',
                 errorMeassge:'主表项目经理联系方式不能为空！'
             },{
                 attribute: 'startDate',//项目开始日期
@@ -138,13 +144,15 @@ class Sqt extends Component {
             },{
                 attribute: 'finalCustName',//最终客户名称
                 errorMeassge:'主表最终客户名称不能为空！'
-            },{
-                attribute: 'isLeagueBuild',//是否有团建负责，1是，0否
-                errorMeassge:'主表是否有团建负责不能为空！'
-            },{
-                attribute: 'leagueBuildName',//团建负责人
-                errorMeassge:'主表团建负责人不能为空！'
-            },{
+            },
+            // {
+            //     attribute: 'isLeagueBuild',//是否有团建负责，1是，0否
+            //     errorMeassge:'主表是否有团建负责不能为空！'
+            // },{
+            //     attribute: 'leagueBuildName',//团建负责人
+            //     errorMeassge:'主表团建负责人不能为空！'
+            // },
+            {
                 attribute: 'serviceMode',  // 服务方式
                 errorMeassge:'主表服务方式不能为空！'
             },{
@@ -257,9 +265,9 @@ class Sqt extends Component {
 
         //所有附表数据验证提交
         for(var i in schedule){
-             console.log(schedule)
+            //  console.log(paramsObj)
              if(this.props.config.formControl &&  this.props.config.formControl.action.indexOf(i) > -1 && this.props.config.formControl[i].isEdit){
-                 console.log(i)
+                //  console.log(i)
                 if(!schedule[i].info || !schedule[i].info.state) {
                     message.error(!schedule[i].info ? `请填写${schedule[i].area}附表！`: schedule[i].info.message)
                     return false;
@@ -298,8 +306,8 @@ class Sqt extends Component {
         //主表基本填写信息验证
         let slaNum = 0,{paramsObj,masterVildter} = this.state;
         for(var i of masterVildter){
-            console.log(i,paramsObj)
-            if((i.attribute == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i.attribute == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i.attribute == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i.attribute == 'managerName' && paramsObj['managerType'] == 1) || ((i.attribute == 'renewalName' || i.attribute == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
+            console.log(i.special)
+            if(i.special == '1' || (i.attribute == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i.attribute == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i.attribute == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i.attribute == 'managerName' && paramsObj['managerType'] == 1) || ((i.attribute == 'renewalName' || i.attribute == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
                 continue;
             }
             if(!(paramsObj[i.attribute]+'')){
@@ -339,12 +347,14 @@ class Sqt extends Component {
         return true;       
     }
     render = _ => {
-        let {datasources,paramsObj} = this.state;
+        let {paramsObj} = this.state;
         const schedule = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('serviceArea') > -1) ? true : false;
         const macroRiskList = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('macroRisk') > -1) ? true : false;
         const macroRiskSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('macroRiskSummary') > -1) ? true : false;
         const microRisk = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('microRisk') > -1) ? true : false;
         const microRiskSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('microRiskSummary') > -1) ? true : false;
+        const reservationService = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('reservationService') > -1) ? true : false;
+        const reservationServiceSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('reservationServiceSummary') > -1) ? true : false;
         console.log(this.props.config);
         return (
             <div className="SqtContent">
@@ -395,6 +405,23 @@ class Sqt extends Component {
                         </TabPane>
                      : null
                     }
+                    {
+                       reservationService ? 
+                        <TabPane tab="预约服务" key="6">
+                            {/* 附表--组件  */}
+                           <ReservationService onChange={(data) => this.getChildrenVildter(data,'reservationService')} power={this.props.config}></ReservationService>
+                        </TabPane>
+                     : null
+                    }
+                    {
+                       reservationServiceSummary ? 
+                        <TabPane tab="预约服务汇总" key="7">
+                            {/* 附表--组件  */}
+                           <ReservationServiceSummary onChange={(data) => this.getChildrenVildter(data,'reservationServiceSummary')} power={this.props.config}></ReservationServiceSummary>
+                        </TabPane>
+                     : null
+                    }
+
                 </Tabs>
             </div>
         )

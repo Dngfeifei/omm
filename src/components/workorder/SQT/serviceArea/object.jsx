@@ -61,7 +61,7 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '产品类别',
+                    title: props.edit ? <div className="ant-form-item-required">产品类别</div> : '产品类别',
                     dataIndex: 'productCategory',
                     key: 'productCategory',
                     width: "8%",
@@ -78,7 +78,7 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '技术方向',
+                    title: props.edit ? <div className="ant-form-item-required">技术方向</div> : '技术方向',
                     dataIndex: 'productType',
                     key: 'productType',
                     width: "13%",
@@ -99,7 +99,7 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '品牌',
+                    title: props.edit ? <div className="ant-form-item-required">品牌</div> : '品牌',
                     dataIndex: 'brand',
                     key: 'brand',
                     width: "10%",
@@ -128,7 +128,7 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '产品线',
+                    title: props.edit ? <div className="ant-form-item-required">产品线</div> : '产品线',
                     dataIndex: 'productLine',
                     width: "14%",
                     align: 'center',
@@ -155,7 +155,7 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '设备等级',
+                    title: props.edit ? <div className="ant-form-item-required">设备等级</div> : '设备等级',
                     dataIndex: 'deviceLevel',
                     width: "9%",
                     align: 'center',
@@ -206,7 +206,7 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '设备数量 ',
+                    title: props.edit ? <div className="ant-form-item-required">设备数量</div> : '设备数量 ',
                     dataIndex: 'deviceCount',
                     key: 'deviceCount',
                     width: "9%",
@@ -216,7 +216,7 @@ class ObjectEl extends Component {
                     },
                 },
                 {
-                    title: '外包数量',
+                    title: props.edit ? <div className="ant-form-item-required">外包数量</div> : '外包数量',
                     dataIndex: 'outsourceCount',
                     key: 'outsourceCount',
                     width: "9%",
