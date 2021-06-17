@@ -20,7 +20,7 @@ class Paginations extends Component {
     render=()=>{
         return (
             <div className="pageContent" style={{marginTop: '15px',textAlign: 'right', marginRight: '15px',marginBottom:'15px'}}>
-                <Pagination size="small" showSizeChanger showQuickJumper showTotal={this.showTotal} pageSize={this.props.pageSize||100}  current={this.props.current||1} total={Number(this.props.total)} onChange={this.props.onChange} onShowSizeChange={this.props.onShowSizeChange}/>
+                <Pagination size="small" showSizeChanger showQuickJumper showTotal={this.showTotal} pageSize={this.props.pageSize||10}  current={this.props.current||1} total={Number(this.props.total)} onChange={this.props.onChange} onShowSizeChange={this.props.onShowSizeChange}/>
             </div>
             
         )

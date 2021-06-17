@@ -1,6 +1,6 @@
 /***
  *  工程师自评统计报表-工程师技能评价查看-导出工程师评定结果
- * @auth yyp
+ * @auth wangxinyue
  */
 
 import React, { Component } from "react";
@@ -49,18 +49,18 @@ class AssessmentReport extends Component {
   // 获取表格高度
   SortTable = () => {
     setTimeout(() => {
-      if (tableDom) {
-        let h = this.tableDom.clientHeight - 125;
+      
+        let h = this.tableDom.clientHeight ;
         this.setState({
           h: {
             y: h,
           },
         });
-      }
+      
     }, 0);
   };
   state = {
-    h: { y: 450 }, //设置表格的高度
+    h: { y: 650 }, //设置表格的高度
     visible: false, // 对话框的状态
     // 表单的input
     regionalName: "", //大区
@@ -91,6 +91,7 @@ class AssessmentReport extends Component {
       {
         title: "姓名",
         dataIndex: "realName",
+        align: "center",
         ellipsis: {
           showTitle: false,
         },
@@ -100,7 +101,7 @@ class AssessmentReport extends Component {
               style={{
                 color: "#1890ff",
                 cursor: "pointer",
-                display: "block",
+               
               }}
               onClick={() => this.showModal(record)}
             >
@@ -223,6 +224,7 @@ class AssessmentReport extends Component {
       {
         title: "姓名",
         dataIndex: "realName",
+        align: "center",
         ellipsis: {
           showTitle: false,
         },
@@ -232,7 +234,7 @@ class AssessmentReport extends Component {
               style={{
                 color: "#1890ff",
                 cursor: "pointer",
-                display: "block",
+                fontSize:"12px"
               }}
               onClick={() => this.showModal(record)}
             >
@@ -537,28 +539,28 @@ class AssessmentReport extends Component {
                   placeholder="请输入"
                   value={this.state.regionalName}
                   onChange={this.inputChange.bind(this, "regionalName")}
-                  style={{ width: "200px", margin: "0 25px" }}
+                  style={{ width: "170px" , margin:"0 15px" }}
                 />
                 <Input
                   addonBefore="部门"
                   placeholder="请输入"
                   value={this.state.departmentName}
                   onChange={this.inputChange.bind(this, "departmentName")}
-                  style={{ width: "200px", margin: "0 15px" }}
+                  style={{ width: "170px",margin:"0 5px" }}
                 />
                 <Input
                   addonBefore="姓名"
                   placeholder="请输入"
                   value={this.state.userName}
                   onChange={this.inputChange.bind(this, "userName")}
-                  style={{ width: "200px", margin: "0 15px" }}
+                  style={{ width: "170px",margin:"0 5px" }}
                 />
-                <Button type="primary" onClick={() => this.search()}>
+                <Button type="primary"  style={{ margin:"0 5px" }} onClick={() => this.search()}>
                   查询
                 </Button>
                 <Button
                   type="primary"
-                  style={{ marginLeft: "10px" }}
+                  style={{ margin:"0 5px" }}
                   onClick={() => this.reset()}
                 >
                   重置
@@ -591,11 +593,14 @@ class AssessmentReport extends Component {
               dataSource={this.state.tabledata}
               columns={this.state.columns}
               style={{
+                tableLayout:"fixed",
                 marginTop: "20px",
                 zoom: "1",
                 marginTop: "16px",
                 overflowY: "Auto",
                 padding: "0 15px",
+                borderCollapse:"separate",
+                borderSpacing: 0
               }}
               pagination={false}
               scroll={h}
@@ -613,7 +618,7 @@ class AssessmentReport extends Component {
           </div>
           {/* //弹出框 */}
           <Modal
-            title="Basic Modal"
+           
             visible={this.state.visible}
             onOk={this.handleOk}
             onCancel={this.handleCancel}
