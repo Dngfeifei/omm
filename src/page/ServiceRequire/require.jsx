@@ -5,7 +5,7 @@
 
 
 import React , {Component} from 'react'
-import { Button ,message} from 'antd';
+import { Button ,message,Spin} from 'antd';
 const creatHistory = require("history").createHashHistory;
 const history = creatHistory();//返回上一页这段代码
 
@@ -42,11 +42,15 @@ class RequireSqt extends Component {
     constructor(props) {
         super(props)
         this.state = {
-            disabled:false
-
+            disabled:false,
+            spin:true
         }
     }
-
+    componentDidMount(){
+        setTimeout(()=>{
+            this.setState({spin:false})
+        },1000);
+    }
     // 服务需求表  ---- 提交按钮事件
     handleSubmit = async (data) => {
         console.log('************       服务需求表  ---- 提交按钮事件        ***************')
@@ -103,8 +107,10 @@ class RequireSqt extends Component {
     render = _ => {
         return (
             <div className="service" style={{height:'100%', padding: '0 15px',overflow:'hidden'}}>
+                <Spin size="large" spinning={this.state.spin}>
+                    <SQT ref="getSwordButton" config={{id:90}}></SQT>
+                </Spin>
                 
-                <SQT ref="getSwordButton" config={{id:90}}></SQT>
                 {/* 提交按钮--区域 */}
                 <div className="btnContent" style={{textAlign:'right',marginTop:'0px'}}>
                     <Button disabled={this.state.disabled} type="primary" style={{ marginRight: '30px' }} onClick={this.handleSubmit}>提交</Button>
