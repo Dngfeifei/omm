@@ -214,7 +214,16 @@ class performance extends Component {
             PerformanceData:null,
 
             // 项目是否约定驻场服务
-            siteServiceArray:[],
+            siteServiceArray:[
+                {
+                    itemCode:'1',
+                    itemValue:'是'
+                },
+                {
+                    itemCode:'0',
+                    itemValue:'否'
+                }
+            ],
             // 服务方式
             serviceModeArray:[],
             // 不收集配置信息原因说明
@@ -379,15 +388,15 @@ class performance extends Component {
 
     getDictItems = () => {
         // 项目是否约定驻场服务--数据
-        customerLevel({ dictCode: 'onsiteService' }).then(res => {
-            if (res.success == 1) {
-                this.setState({
-                    siteServiceArray: res.data
-                })
-            } else if (res.success == 0) {
-                message.error(res.message)
-            }
-        })
+        // customerLevel({ dictCode: 'onsiteService' }).then(res => {
+        //     if (res.success == 1) {
+        //         this.setState({
+        //             siteServiceArray: res.data
+        //         })
+        //     } else if (res.success == 0) {
+        //         message.error(res.message)
+        //     }
+        // })
 
         // 服务方式，数据字典
         customerLevel({ dictCode: 'serviceMode' }).then(res => {
