@@ -179,7 +179,7 @@ class MyModal extends Component {
     let positionId = [];
     info.forEach((item) => {
       str.push(item.positionName);
-      positionId.push(item.positionCode);
+      positionId.push(item.id);
     });
     console.log(str, "station");
     this.setState(
@@ -597,7 +597,6 @@ class MyModal extends Component {
               <div className="quartersBox">
                 <Form.Item label={"岗位"} required={false}>
                   {this.state.AllOff ? (
-                    
                     <Input
                     ref="inputModelRef"
                       disabled

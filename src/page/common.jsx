@@ -40,7 +40,6 @@ class Common extends Component {
 			total: 0,
 			showTotal: total => `共${total}条`,
 			size: 'small',
-			total: 1,
 			current: 1,
 			pageSize: 10
 		},

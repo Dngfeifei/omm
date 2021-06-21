@@ -41,6 +41,16 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	}
 	return new Request(wholeUrl, req)
 }
+const handleText = res => new Promise((rsl, rej) => {
+	rsl(res.text())
+}).then(res => {
+		countNum = true;
+		return res
+}).catch(err => {
+	message.error('请求超时，请联系管理员！');
+	hashHistory.push('/login');
+	console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
+})
 
 const handleResponse = res => new Promise((rsl, rej) => {
 		rsl(res.json())
@@ -131,8 +141,20 @@ export default {
 		return handleTimeout(url, 'POST', json ? params : handleParams(params), json, times)
 			.then(handleResponse)
 	},
+	fetchGetXml(url, params = {}, times = 100000) { //get接口 xml 信息
+		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, times)
+			.then(handleText)
+	},
+	fetchFormData(url, params = {}, json = false, times = 100000) { //post接口调用
+		return handleTimeout(url, 'POST',qs.stringify(params), json, times)
+			.then(handleResponse)
+	},
 	fetchDelete(url, params = [], json = false, times = 100000) { //Delet接口
 		return handleTimeout(`${url}${handleDeleteParams(params, '/')}`, 'DELETE', null, null, times)
+			.then(handleResponse)
+	},
+	fetchDeleteWithKey(url, params = {}, json = false, times = 100000) { //Delet接口
+		return handleTimeout(`${url}${parseParams(params)}`, 'DELETE', null, null, times)
 			.then(handleResponse)
 	},
 	fetchPut(url, params = {}, json = false, times = 100000) { //put接口
