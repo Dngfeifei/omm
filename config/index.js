@@ -21,15 +21,15 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-var target = {target: 'http://172.16.100.81/api/uat'}
+// var target = {target: 'http://172.16.100.81/api/uat'}
 // var target = {target: 'http://10.0.17.214:8111'}
-
+var target = {target: 'http://localhost:8111'}
 
 module.exports = {
   build: buildconfig,
   dev: {
     env: require('./dev.env'),
-    port: 8111,
+    port: 8112,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
@@ -91,6 +91,15 @@ module.exports = {
       '/fileCollect': target, //介质库文件收藏
       '/fileLevel': target, //介质文件级别数据
       '/fileApply': target, //介质文件下载审核
+
+      '/metaCategories':target,     // 元数据分类
+      '/metaTable':target,     // 元数据
+      '/metaData':target,     // 元数据
+      '/flowable':target,     // 流程设计
+      '/extension':target,     // 流程设计
+      '/sys':target,     // 流程设计
+      '/app/':target,     // 流程设计
+      '/form/':target,     // 流程设计
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

@@ -87,6 +87,8 @@ class DSider extends Component{
 			icon = 'file-text'
 		}else if(val.id == 156){
 			icon = 'file-text'
+		} else {
+			icon = 'file-text'
 		}
 		return (<span>
 			{icon ? <Icon type={icon} /> : leva ? <MyIco /> :null}

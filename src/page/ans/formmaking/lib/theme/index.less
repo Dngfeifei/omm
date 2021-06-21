@@ -1,0 +1,38 @@
+.jp-container{
+  background: #fff;
+  height: 100%;
+  border: 1px solid #e0e0e0;
+  .jp-container__layout {
+    display: flex;
+    position: relative;
+    .jp-container__layout-left {
+      width: 250px;
+      border-right: 2px solid #eee;
+      position: relative
+    }
+    .jp-container__layout-center {
+      position: absolute;
+      left: 250px;
+      right: 300px;
+      top: 0;
+      bottom: 0;
+      background-color: #fafafa;
+    }
+    .jp-container__layout-right {
+      width: 300px;
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      overflow-x: hidden;
+      overflow-y: auto;
+      border-left: 2px solid #eee;
+    }
+  }
+  // 属性设置全局css
+  .jp-form-attributes-global {
+    .aaant-form-item-label {
+      line-height: 32px;
+    }
+  }
+}
