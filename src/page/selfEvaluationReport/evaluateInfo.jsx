@@ -24,13 +24,14 @@ import {
   GetselectAssessReportList,
   GetselectAssessProableReportList,
 } from "/api/evaluateInfo.js";
+// 引入页面CSS
 import "@/assets/less/pages/evalutateinfo.less";
 
 // 分页组件
 import Pagination from "@/components/pagination/index";
 import { AutoScroll } from "sortablejs";
-// 引入页面CSS
-// import '/assets/less/pages/logBookTable.css'
+
+// import '/assets/less/pages/evalutateinfo.less'
 const FormItem = Form.Item;
 class AssessmentReport extends Component {
   // 挂载完成
