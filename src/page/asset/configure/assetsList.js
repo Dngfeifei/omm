@@ -1241,6 +1241,7 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
                 align: 'center',
             },
@@ -1431,6 +1432,7 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
                 align: 'center',
             },
@@ -1601,6 +1603,7 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
                 align: 'center',
             },
@@ -1664,6 +1667,7 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
                 align: 'center',
             },
@@ -1743,6 +1747,7 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
                 align: 'center',
             },
@@ -1878,6 +1883,7 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
                 align: 'center',
             },

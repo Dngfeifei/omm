@@ -29,7 +29,7 @@ module.exports = {
   build: buildconfig,
   dev: {
     env: require('./dev.env'),
-    port: 8112,
+    port: 8111,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
