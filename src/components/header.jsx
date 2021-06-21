@@ -68,28 +68,15 @@ class DHeader extends Component {
     }
     render = _ => <Header
         className="header" style={{background:'#4876e7 url(static/images/topBG.png) 0 center no-repeat',backgroundSize: 'auto 102%'}}>
-        {/* <div className={this.props.collapsed ? 'avatar-wrapper collaps' : 'avatar-wrapper'}>
-            {<div className="logo">
-                <Icon type="question-circle" className="icon" />
-                <span className="username">LOGO</span>
-            </div>}
-        </div>
-        <Icon
-            className="trigger"
-            type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
-            onClick={this.props.toggle} />
-            <div style={{fontSize: "24px",color:"white",paddingLeft:"25px"}}>银信运维管理系统</div> */}
-        {/* <Breadcrumb separator=">" style={{marginLeft: 25}}>
-            {
-                this.props.breadcrumb && this.props.breadcrumb.length && this.props.breadcrumb.map((item,index) => {
-                    return <Breadcrumb.Item style={{fontWeight: 600}} key={index}>{item}</Breadcrumb.Item>
-                })
-            }
-        </Breadcrumb> */}
         <div className="settingwrap">
-            <Badge count={0} style={{cursor:'pointer'}}  onClick={()=> this.handleClick(true)}>
+            <Badge count={4} className="messages-receiving" style={{cursor:'pointer'}}  onClick={()=> this.handleClick(true)}>
                 <span className="head-example">
                     <Icon type="bell" theme="filled" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
+                </span>
+            </Badge>
+            <Badge count={0} className="messages-push" style={{cursor:'pointer'}}  onClick={()=> this.handleClick(true)}>
+                <span className="head-example">
+                    <Icon type="mail" theme="outlined" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
                 </span>
             </Badge>
             <img
