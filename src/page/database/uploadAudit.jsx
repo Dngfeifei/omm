@@ -179,7 +179,7 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">资料级别</div>,
                 dataIndex: 'fileLevelId',
                 align: 'center',
-                width: "90",
+                width: 96,
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
