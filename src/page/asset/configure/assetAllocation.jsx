@@ -717,17 +717,19 @@ class assetsAllocation extends Component {
         info = this.setProjectHandleOk(info);
         const { roleWindow,tableSelectedInfo} = this.state;
         this.props.form.resetFields(['projectNumber','projectName','projectManagerName','custName','projectEndDate','projectStartDate','projectManagerName','projectSalesmanName']);
-         console.log(info)
-        // return 
+         console.log(info,this.props.form.getFieldsValue())
+         let nowParams = this.props.form.getFieldsValue();
+        // //  this.props.form.getFieldsValue()
+        //  return 
         if(roleWindow.roleModalType == 0){
             this.setState({
-                baseData: info ? info : {}
+                baseData: info ? {...nowParams,...info} : {...nowParams}
             },()=>{
                 this.getAreaData(this.state.baseData.projectId)
             })
         }else{
             this.setState({
-                tableSelectedInfo: info ? {...tableSelectedInfo,...info} : tableSelectedInfo
+                tableSelectedInfo: info ? {...tableSelectedInfo,...nowParams,...info} : {...tableSelectedInfo,...nowParams}
             },()=>{
                 // console.log(this.state.tableSelectedInfo[0].projectId,this.state.tableSelectedInfo[0].projectAreaId)
                 this.getAreaData(this.state.tableSelectedInfo[0].projectId)
