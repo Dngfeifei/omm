@@ -303,7 +303,8 @@ export const assetsListData = {
         rules:[
             {
               required: true,
-              message: '该选项不能为空！',
+              pattern:/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/,
+              message: '请输入正确的联系方式！',
             },
           ],
         render: () =>{
