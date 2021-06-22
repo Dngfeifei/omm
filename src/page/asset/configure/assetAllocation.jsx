@@ -142,6 +142,7 @@ class assetsAllocation extends Component {
                 areaData:[{id:1,name:'ahe'}],//区域下拉列表输入数据
                 customerData:[{id:1,name:'ahe'}],//客户下拉列表输入数据
                 maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
+                statusList:[],//状态下拉数据
                 basedataTypeList:[],//配置项下拉数据
                 productModeType:[], //产品型号
                 productLineType:[], //产品线
@@ -444,7 +445,6 @@ class assetsAllocation extends Component {
             // if (err) {
             //     return;
             // }
-            console.log(fieldsValue);
             let newParams = {...fieldsValue}
         // 当前表单编辑类型（保存或修改或者查看）
         let type = this.state.roleWindow.roleModalType
@@ -484,7 +484,6 @@ class assetsAllocation extends Component {
                     ...this.state.tableSelectedInfo[0],
                     ...newParams
                 }
-
                 EditAllocationTable(params).then(res => {
                     if (res.success == 1) {
                         this.setState({
@@ -727,6 +726,7 @@ class assetsAllocation extends Component {
             this.setState({
                 tableSelectedInfo: info ? {...tableSelectedInfo,...info} : tableSelectedInfo
             },()=>{
+                // console.log(this.state.tableSelectedInfo[0].projectId,this.state.tableSelectedInfo[0].projectAreaId)
                 this.getAreaData(this.state.tableSelectedInfo[0].projectId)
                 this.getCustomer(this.state.tableSelectedInfo[0].projectAreaId)
             })

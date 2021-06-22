@@ -101,6 +101,7 @@ class DSider extends Component{
 		// return (<span>
 		// 	{icon ? <Icon type={icon} /> : leva ? <Icon type="bars" /> :null}
 		// <span>{val.resourceName}</span></span>)
+
 	}
 	
 	//监听菜单缩放事件并重置collapsed触发收缩

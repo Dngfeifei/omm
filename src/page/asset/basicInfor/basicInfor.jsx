@@ -491,7 +491,7 @@ class assetsAllocation extends Component {
         baseData = Object.assign({}, baseData, { parentId:  searchListID,parentName:searchListName});
         const children = [];
         for (let i = 0; i < assetsList.length; i++) {
-            let label = assetsList[i].label;
+            let label = assetsList[i].label,disabled = false;
             if(basedataTypeIdSelect == 13){
                 if(assetsList[i].key == 'code'){
                     label = '产品型号'
@@ -504,13 +504,17 @@ class assetsAllocation extends Component {
                     continue;
                 }
             }
+            //当打开窗口为修改时，数据类别字段禁止编辑
+            if(roleWindow.roleModalType == 1 && assetsList[i].key == 'basedataTypeId'){
+                disabled = true
+            }
           children.push(
             <Col span={assetsList[i].span} key={i}>
               <Form.Item label={label}>
                 {getFieldDecorator(assetsList[i].key, {
                   rules: roleWindow.roleModalType == 2 ? [] : assetsList[i].rules,
                   initialValue: !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+''
-                })(roleWindow.roleModalType == 2 ? <Input disabled/> : assetsList[i].render(this))}
+                })(roleWindow.roleModalType == 2 ? assetsList[i].render(this,disabled) : assetsList[i].render(this,disabled))}
               </Form.Item>
             </Col>,
           );

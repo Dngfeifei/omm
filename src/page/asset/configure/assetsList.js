@@ -409,10 +409,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        
-        render: _this =>{
-            return <Input placeholder="请输入" />;
-        },
         render:render,
         type:'input1'
     },
@@ -421,12 +417,10 @@ export const assetsListData = {
         label: '应用类别',
         key: 'appTypeId',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
+        rules:[{
+            required: true,
+            message: '该选项不能为空！',
+          },],
         render:render,
         type:'select'
     },
@@ -498,12 +492,7 @@ export const assetsListData = {
         label: '状态',
         key: 'status',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
+        rules:[],
         render:render,
         type:'select'
     },
@@ -551,9 +540,7 @@ export const assetsListData = {
         key:'strValue4',
         label:'控制器型号',
         span:6,
-        rules:[
-            
-          ],
+        rules:[],
         render:render,
         renderDom:renderDom,
         type:'input1'
@@ -1727,12 +1714,14 @@ export const panes = [
             {
                 title: '应用类别',
                 dataIndex: 'appTypeName',
+                selectData:'appType',
                 key: 'appTypeId',
                 align: 'center',
             },
             {
                 title: '状态',
                 dataIndex: 'strValue3',
+                selectData:'statusList',
                 inputType:'input1',
                 key: 'strValue3',
                 align: 'center',
@@ -1740,7 +1729,8 @@ export const panes = [
             {
                 title: '是否集群',
                 dataIndex: 'strValue4',
-                inputType:'input1',
+                selectData:'maintained',
+                inputType:'select',
                 key: 'strValue4',
                 align: 'center',
             },
@@ -1767,13 +1757,11 @@ export const panes = [
             {
                 title: '操作人',
                 dataIndex: 'updaterName',
-                key: '0',
                 align: 'center',
             },
             {
                 title: '操作时间',
                 dataIndex: '48',
-                key: '48',
                 align: 'center',
             },
             {
@@ -1807,6 +1795,7 @@ export const panes = [
             {
                 title: '应用类别',
                 dataIndex: 'appTypeName',
+                selectData:'appType',
                 key: 'appTypeId',
                 align: 'center',
             },
@@ -1848,7 +1837,8 @@ export const panes = [
             {
                 title: '是否集群',
                 dataIndex: 'strValue8',
-                inputType:'input1',
+                selectData:'maintained',
+                inputType:'select',
                 key: 'strValue8',
                 align: 'center',
             },
