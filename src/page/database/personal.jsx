@@ -792,7 +792,6 @@ class Personal extends Component {
                 })
             }
         })
-
     }
     // 文件批量删除
     batchDeleteFile = () => {
@@ -805,18 +804,32 @@ class Personal extends Component {
             message.warning("请选中后再进行批量删除操作！")
             return
         }
-        BatchDeleteFile({ ids: params.join() }).then(res => {
-            if (res.success != 1) {
-                message.destroy()
-                message.error(res.message)
-            } else {
-                this.setState({
-                    tableSelecteds: [],
-                    tableSelectedInfo: [],
+        let _this = this
+        confirm({
+            title: '删除',
+            content: '您确定要批量删除选中的数据吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+
+                BatchDeleteFile({ ids: params.join() }).then(res => {
+                    if (res.success != 1) {
+                        message.destroy()
+                        message.error(res.message)
+                    } else {
+                        _this.setState({
+                            tableSelecteds: [],
+                            tableSelectedInfo: [],
+                        })
+                        _this.getTableData()
+                    }
                 })
-                this.getTableData()
             }
         })
+
+
+
     }
     render = _ => {
         const { h, h2 } = this.state;
