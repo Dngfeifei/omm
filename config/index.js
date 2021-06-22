@@ -7,12 +7,12 @@ var buildconfig = {
   assetsRoot: path.resolve(__dirname, '../omsweb'), //path.resolve(__dirname, '../dist'),
   assetsSubDirectory: 'static', //静态资源目录名
   assetsPublicPath: './', //入口文件引用静态资源的路径配置
-  productionSourceMap: true, //设置成false 可以加密源码，但是无法准确定位输出错误找到错误位置
+  productionSourceMap: false, //设置成false 可以加密源码，但是无法准确定位输出错误找到错误位置
   // Gzip off by default as many popular static hosts such as
   // Surge or Netlify already gzip all static assets for you.
   // Before setting to `true`, make sure to:
   // npm install --save-dev compression-webpack-plugin
-  productionGzip: true,
+  productionGzip: false,
   productionGzipExtensions: ['js', 'css'],
   // Run the build command with an extra argument to
   // View the bundle analyzer report after build finishes:
