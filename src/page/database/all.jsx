@@ -3,9 +3,10 @@
  * @auth yyp
 */
 
-
 import React, { Component } from 'react'
-import { Modal, Tree, message, Button, Row, Col, Form, Input, Table, Icon } from 'antd'
+import { Modal, Tree, message, Button, Row, Col, Form, Input, Table, Icon, Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons';
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
@@ -30,7 +31,10 @@ const assignment = (data) => {
         }
     });
 }
+// 标签集合
 let fileLabelData = {}
+// 下载队列
+let downArr = []
 class All extends Component {
     SortTable = () => {
         setTimeout(() => {
@@ -160,7 +164,7 @@ class All extends Component {
                 render: (t, r) => {
                     t.toString()
                     if (t == "1") {
-                        return <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                        return downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon} /> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (t == "0") {
                         return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                     }
@@ -175,6 +179,8 @@ class All extends Component {
         //表格选中项
         tableSelecteds: [],
         tableSelectedInfo: [],
+        // 下载队列
+        downArr: []
     }
     // 获取数据字典-产品类别数据
     getDictInfo = async () => {
@@ -291,17 +297,18 @@ class All extends Component {
 
     // 文件下载
     downloadFile = (key) => {
+        downArr.push(key)
+        this.setState({ downArr })
         let params = {
             downloadType: "all",
             fileId: key
         }
         PostFileDownload(params).then(res => {
+            downArr = downArr.filter(item => item != key)
+            this.setState({ downArr })
             this.getTableData()
             this.subpageChange()
         })
-    }
-    open = (n) => {
-        alert(n)
     }
     // 申请文件下载
     applyFileDownload = (key) => {

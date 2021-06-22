@@ -6,7 +6,10 @@
 
 import React, { Component } from 'react'
 
-import { Form, message, Button, Row, Col, Input, Table, Icon } from 'antd'
+import { Form, message, Button, Row, Col, Input, Table, Icon, Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons';
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+
 
 import { GetFileLibrary, PostFileDownload, GetFileApply, GetFileLike, GetFileCollect } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
@@ -15,7 +18,8 @@ import Pagination from '/components/pagination'
 
 // 标签字典对象集合
 let fileLabelData = {}
-
+// 下载队列
+let downArr = []
 class DownloadAudit extends Component {
     SortTable = () => {
         setTimeout(() => {
@@ -131,7 +135,7 @@ class DownloadAudit extends Component {
                 render: (t, r) => {
                     t.toString()
                     if (t == "1") {
-                        return <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                        return downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon} /> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (t == "0") {
                         return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                     }
@@ -143,6 +147,8 @@ class DownloadAudit extends Component {
         tableData: [],
         //右侧查询关键字
         searchKey: null,
+        // 下载队列
+        downArr: []
     }
     // 获取标签字典数据
     getDictInfo = async () => {
@@ -238,11 +244,15 @@ class DownloadAudit extends Component {
         })
     }// 文件下载
     downloadFile = (key) => {
+        downArr.push(key)
+        this.setState({ downArr })
         let params = {
             downloadType: "collect",
             fileId: key
         }
         PostFileDownload(params).then(res => {
+            downArr = downArr.filter(item => item != key)
+            this.setState({ downArr })
             this.getTableData()
         })
     }
