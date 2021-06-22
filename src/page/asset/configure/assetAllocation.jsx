@@ -121,6 +121,7 @@ class assetsAllocation extends Component {
             searchListID: null,
             searchListName: null,
             basedataTypeId: null,
+            basedataTypeName: null,
             TreeParantID:null,
             //当前选中角色数据
             currentRole: {
@@ -220,6 +221,7 @@ class assetsAllocation extends Component {
                             searchParmas: this.formatParmas(pane),
                             TreeParantID: res.data[0]['parentId'],
                             basedataTypeId: res.data[0]['basedataTypeId'],
+                            basedataTypeName: res.data[0]['basedataTypeName'],
                             newRoleGroup:{
                                 treeSelect:res.data[0]['parentId'],
                                 newRoleGroupVal:null,
@@ -293,6 +295,7 @@ class assetsAllocation extends Component {
             searchListName:data['name'],
             TreeParantID: data['parentId'],
             basedataTypeId: data['basedataTypeId'],
+            basedataTypeName: data['basedataTypeName'],
             tableSelecteds: [],
             tableSelectedInfo: [],
             newRoleGroup:{
@@ -359,11 +362,11 @@ class assetsAllocation extends Component {
     }
     //打开新增、编辑、查看窗口
     openModal = (roleModalType) => {
-        let {searchListID,selectData,table,tableSelectedInfo,baseData} = this.state,roleModalTitle = null;
+        let {searchListID,selectData,basedataTypeId,basedataTypeName} = this.state,roleModalTitle = null;
         this.props.form.resetFields();
         if(roleModalType == 0){
             if (searchListID == "" || searchListID == null) {
-                message.warning('请先选中左侧角色组，然后再进行角色新增。');
+                message.warning('请先选中左侧树节点！');
                 return
             }
             roleModalTitle = "新增资产配置";
@@ -374,7 +377,7 @@ class assetsAllocation extends Component {
                     roleModalTitle
                 },
                 selectData:{...selectData, productModeType:[], productLineType:[],productBrandType:[],productSkillType:[]},
-                baseData:{}
+                baseData:{basedataTypeId,basedataTypeName}
             })
         }else{
             if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
@@ -445,6 +448,7 @@ class assetsAllocation extends Component {
     editRoleSave = async () => {
         // 1 校验必填数据是否填写
         this.props.form.validateFields((err, fieldsValue) => {
+            console.log(this.state.baseData);
             if (err) {
                 return;
             }
@@ -568,7 +572,7 @@ class assetsAllocation extends Component {
                 required = len ? false : true;
             }
             //处理配置项是否可编辑
-            if(assetsList[i].key == 'basedataTypeId' && roleWindow.roleModalType){
+            if(assetsList[i].key == 'basedataTypeId'){
                 required = true;
             }
             if(roleWindow.roleModalType == 2){
