@@ -73,12 +73,7 @@ function renderDom(obj) {
         key:obj.key,
         label:obj.title,
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
+        rules:[],
         render: render,
         type:obj.inputType,
     }  
@@ -418,7 +413,7 @@ export const assetsListData = {
         rules:[{
             required: true,
             message: '该选项不能为空！',
-          },],
+          }],
         render:render,
         type:'select'
     },
@@ -526,12 +521,8 @@ export const assetsListData = {
         key:'strValue3',
         label:'备机情况',
         span:6,
-        rules:[
-            
-          ],
         render:render,
         renderDom:renderDom,
-        type:'input1'
     },
      //控制器型号
      'strValue4':{
@@ -929,7 +920,8 @@ export const columns = [
     title: '备机情况',
     dataIndex: 'strValue3',
     key:"strValue3",
-    inputType:'input1',
+    selectData:'backupStatus',
+    inputType:'select',
     align: 'center',
 },
 {
@@ -1058,8 +1050,7 @@ export const panes = [
                 align: 'center',
             }
             
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //小型机
     {
@@ -1262,8 +1253,7 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //X86
     {
@@ -1439,8 +1429,7 @@ export const panes = [
                 
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //网络安全（负载均衡）
     {
@@ -1624,8 +1613,7 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //其他（硬件）
     {
@@ -1688,8 +1676,7 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //中间件
     {
@@ -1769,8 +1756,7 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //数据库（软件）
     {
@@ -1907,7 +1893,6 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     }
 ];

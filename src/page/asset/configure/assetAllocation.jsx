@@ -580,7 +580,7 @@ class assetsAllocation extends Component {
             }
             children.push(
                 <Col span={item ? item.span : 6} key={i}>
-                <Form.Item label={item ? item.label : '修改字段'}>
+                <Form.Item label={item ? assetsList[i].title : '修改字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
                     rules: rules,
                     initialValue: initialValue
