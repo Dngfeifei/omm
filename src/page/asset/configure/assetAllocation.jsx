@@ -140,7 +140,7 @@ class assetsAllocation extends Component {
             searchX:undefined,       //联想查询输入数据
             selectData:{
                 areaData:[{id:1,name:'ahe'}],//区域下拉列表输入数据
-                customerData:[{id:1,name:'ahe'}],//客户下拉列表输入数据
+                customerData:[{id:'-1',name:'无'}],//客户下拉列表输入数据
                 maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
                 statusList:[],//状态下拉数据
                 basedataTypeList:[],//配置项下拉数据
@@ -646,12 +646,12 @@ class assetsAllocation extends Component {
         GetAllocationCustomer(projectAreaId).then(res => {
             let {selectData} = this.state;
             if (res.success != 1) {
-                selectData = Object.assign({}, selectData, { customerData: []});
+                selectData = Object.assign({}, selectData, { customerData: [{id:'-1',name:'无'}]});
                 this.setState({selectData})
                 // message.error("请求错误")
                 return
             }else{
-                selectData = Object.assign({}, selectData, { customerData: res.data ? res.data:[]});
+                selectData = Object.assign({}, selectData, { customerData: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
                 this.setState({selectData})
             }
         })
@@ -724,7 +724,7 @@ class assetsAllocation extends Component {
         info = this.setProjectHandleOk(info);
         const { roleWindow,tableSelectedInfo} = this.state;
         this.props.form.resetFields(['projectNumber','projectName','projectManagerName','custName','projectEndDate','projectStartDate','projectManagerName','projectSalesmanName']);
-         console.log(info,this.props.form.getFieldsValue())
+         console.log(info)
          let nowParams = this.props.form.getFieldsValue();
         // //  this.props.form.getFieldsValue()
         //  return 

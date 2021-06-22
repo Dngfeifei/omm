@@ -261,9 +261,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: () =>{
-            return <Input placeholder="placeholder" />;
-        },
         render:render,
         type:'input1'
     },
