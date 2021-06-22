@@ -557,7 +557,7 @@ class assetsAllocation extends Component {
             if(assetsList[i].key.indexOf('strValue')>-1 && (assetsList[i].key.split('strValue')[1]>2&&assetsList[i].key.split('strValue')[1]<5) ){
                 item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
             }
-            let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] : roleWindow.roleModalType == 2 ? tableSelectedInfo[0][assetsList[i].dataIndex] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'',rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
+            let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] :  isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'',rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
              //处理产品联动是否可编辑
             if(assetsList[i].selectData == 'productSkillType' || assetsList[i].selectData == 'productBrandType' || assetsList[i].selectData == 'productLineType' || assetsList[i].selectData == 'productModeType'){
                 const len = this.state.selectData[assetsList[i].selectData].length
@@ -568,13 +568,16 @@ class assetsAllocation extends Component {
             if(assetsList[i].key == 'basedataTypeId' && roleWindow.roleModalType){
                 required = true;
             }
+            if(roleWindow.roleModalType == 2){
+                required = true;
+            }
             children.push(
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? item.label : '修改字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
                     rules: rules,
                     initialValue: initialValue
-                    })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required) : <Input />)}
+                    })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required) : <Input />)}
                 </Form.Item>
                 </Col>
             );
