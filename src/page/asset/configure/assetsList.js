@@ -37,11 +37,11 @@ export const rules1= [
 ]
 function render(_this,type,selectData,itemCode,itemValue,selectChange,required) {
     if(type == 'input1'){
-        return <Input placeholder="请输入" />
+        return <Input disabled={required} placeholder="请输入" />
     }else if(type == 'input2'){
-        return <Input disabled placeholder="项目带入" />
+        return <Input disabled={required} disabled placeholder="项目带入" />
     }else if(type == 'input3'){
-        return <Input placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={_this.openProject} />} />
+        return <Input disabled={required} placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={_this.openProject} />} />
     }else if(type == 'select'){
         return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required}>
                     {
@@ -53,7 +53,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required) 
                     }
                 </Select>
     }else if(type == 'select1'){
-        return <Select style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value)}>
+        return <Select disabled={required} style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value)}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
@@ -63,9 +63,9 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required) 
                     }
                 </Select>
     }else if(type == 'textarea'){
-        return <TextArea placeholder="请输入" rows={4}/>
+        return <TextArea disabled={required} placeholder="请输入" rows={4}/>
     }else if(type == 'date'){
-        return <DatePicker placeholder="项目带入" showTime format="YYYY-MM-DD" />
+        return <DatePicker disabled={required} placeholder="项目带入" showTime format="YYYY-MM-DD" />
     }
 }
 function renderDom(obj) {
