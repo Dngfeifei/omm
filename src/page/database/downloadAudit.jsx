@@ -6,7 +6,9 @@
 
 import React, { Component } from 'react'
 
-import { Form, message, Button, Row, Col, Input, Table, Icon } from 'antd'
+import { Form, message, Button, Row, Col, Input, Table, Icon, Spin } from 'antd'
+import { LoadingOutlined } from '@ant-design/icons';
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 import { GetFileLibrary, PostFileDownload, FileDownloadExamine } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
@@ -15,7 +17,8 @@ import Pagination from '/components/pagination'
 
 // 标签字典对象集合
 let fileLabelData = {}
-
+// 下载队列
+let downArr = []
 class DownloadAudit extends Component {
     SortTable = () => {
         setTimeout(() => {
@@ -158,12 +161,12 @@ class DownloadAudit extends Component {
                     let status = r.reviewStatus
                     if (status == "0") {
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                            {downArr.indexOf(r.id+""+r.applyId) > -1 ? <Spin indicator={antIcon} style={{ margin: "0 6px 0 3px" }} /> : <a onClick={_ => this.downloadFile(r.id+""+r.applyId)} style={{ margin: "0 3px" }}>下载</a>}
                             <a onClick={_ => this.examineItem(r.applyId, 1)} style={{ margin: "0 3px" }}>同意</a>
                             <a onClick={_ => this.examineItem(r.applyId, 2)} style={{ margin: "0 3px" }}>驳回</a>
                         </div>
                     } else if (status == "1" || status == "2") {
-                        return <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                        return downArr.indexOf(r.id+""+r.applyId) > -1 ? <Spin indicator={antIcon} /> : <a onClick={_ => this.downloadFile(r.id+""+r.applyId)} style={{ margin: "0 3px" }}>下载</a>
                     }
                 }
             },
@@ -173,6 +176,8 @@ class DownloadAudit extends Component {
         tableData: [],
         //右侧查询关键字
         searchKey: null,
+        // 下载队列
+        downArr: []
     }
     // 获取标签字典数据
     getDictInfo = async () => {
@@ -256,12 +261,15 @@ class DownloadAudit extends Component {
 
     // 文件下载
     downloadFile = (key) => {
+        downArr.push(key)
+        this.setState({ downArr })
         let params = {
             downloadType: "downloadReview",
             fileId: key
         }
         PostFileDownload(params).then(res => {
-
+            downArr = downArr.filter(item => item != key)
+            this.setState({ downArr })
         })
     }
 

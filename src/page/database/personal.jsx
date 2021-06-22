@@ -9,9 +9,11 @@
 
 
 import React, { Component } from 'react'
-import { Form, Modal, Icon, message, Button, Row, Col, Input, Table, Tabs } from 'antd'
+import { Form, Modal, Icon, message, Button, Row, Col, Input, Table, Tabs, Spin } from 'antd'
 const { confirm } = Modal;
 const { TabPane } = Tabs;
+import { LoadingOutlined } from '@ant-design/icons';
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
@@ -40,6 +42,9 @@ const assignment = (data) => {
 }
 // 标签字典数据
 let fileLabelData = {}
+// 下载队列
+let downArr = []
+let downArr2 = []
 class Personal extends Component {
     SortTable = () => {
         setTimeout(() => {
@@ -207,7 +212,7 @@ class Personal extends Component {
                 render: (t, r) => {
                     let status = r.uploadStatus
                     if (status == "0" || status == "1") {
-                        return <a onClick={(e) => this.downloadFile(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
+                        return downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon} /> : <a onClick={e => this.downloadFile(r.id,e)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (status == "2") {
                         return <a onClick={(e) => this.deleteFile(r.id)} style={{ margin: "0 3px" }}>删除</a>
                     }
@@ -314,7 +319,7 @@ class Personal extends Component {
                     let status = r.isDownload
                     if (type == "1") {
                         if (status == "1") {
-                            return <a onClick={(e) => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
+                            return downArr2.indexOf(r.id) > -1 ? <Spin indicator={antIcon} /> : <a onClick={e => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
                         } else {
                             return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                         }
@@ -345,7 +350,10 @@ class Personal extends Component {
         //表格选中项
         tableSelecteds: [],
         tableSelectedInfo: [],
-        parentDir: []
+        parentDir: [],
+        // 下载队列
+        downArr: [],
+        downArr2: []
     }
     // 获取数据字典-产品类别数据
     getDictInfo = async () => {
@@ -732,23 +740,31 @@ class Personal extends Component {
     }
     // 文件下载
     downloadFile = (key, e) => {
+        downArr.push(key)
+        this.setState({ downArr })
         e.stopPropagation()
         let params = {
             downloadType: "upload",
             fileId: key
         }
         PostFileDownload(params).then(res => {
+            downArr = downArr.filter(item => item != key)
+            this.setState({ downArr })
             this.getTableData()
         })
     }
     // 文件下载
     downloadFile2 = (key, e) => {
+        downArr2.push(key)
+        this.setState({ downArr2 })
         e.stopPropagation()
         let params = {
             downloadType: "download",
             fileId: key
         }
         PostFileDownload(params).then(res => {
+            downArr2 = downArr2.filter(item => item != key)
+            this.setState({ downArr2 })
             this.getTableData2()
         })
     }
