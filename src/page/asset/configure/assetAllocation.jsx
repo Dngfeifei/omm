@@ -386,8 +386,8 @@ class assetsAllocation extends Component {
             
             
             let selectData = this.initSelectData();
-            console.log(tableSelectedInfo)
-            return
+            // console.log(tableSelectedInfo)
+            // return
             this.setState({
                 roleWindow: {
                     roleModal: true,
@@ -676,34 +676,35 @@ class assetsAllocation extends Component {
     }
     //服务区域选择改变
     onAreaChange = (selectChange,id)=>{
-        // console.log(selectChange,id)
+         console.log(selectChange,id)
+        // return
         if(selectChange == 'projectAreaId' ){  //服务区域
             this.getCustomer(id)
         }else if(selectChange == 'serviceClassId'){//产品类别
             this.props.form.resetFields(['skillTypeId','brandId','productLineId','productModelId'])
             let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
-            // // console.log(productSkillType)
-            // return
+            // console.log(productSkillType)
+            //  return
             let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productSkillType});
+            selectData = Object.assign({}, selectData, { productSkillType:productSkillType? productSkillType :[] });
             this.setState({selectData})
         }else if(selectChange == 'skillTypeId'){//技术方向
             this.props.form.resetFields(['brandId','productLineId','productModelId'])
             let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productBrandType});
+            selectData = Object.assign({}, selectData, { productBrandType:productBrandType?productBrandType:[]});
             this.setState({selectData})
         }else if(selectChange == 'brandId'){//品牌
             this.props.form.resetFields(['productLineId','productModelId'])
             let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productLineType});
+            selectData = Object.assign({}, selectData, { productLineType:productLineType?productLineType:[]});
             this.setState({selectData})
         }else if(selectChange == 'productLineId'){//产品线
             this.props.form.resetFields(['productModelId'])
             let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productModeType});
+            selectData = Object.assign({}, selectData, { productModeType:productModeType?productModeType:[]});
             this.setState({selectData})
         }
         // this.getCustomer(projectAreaId)
