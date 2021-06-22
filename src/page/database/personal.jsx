@@ -10,6 +10,7 @@
 
 import React, { Component } from 'react'
 import { Form, Modal, Icon, message, Button, Row, Col, Input, Table, Tabs } from 'antd'
+const { confirm } = Modal;
 const { TabPane } = Tabs;
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
@@ -21,7 +22,6 @@ import { GetDictInfo } from '/api/dictionary'  //数据字典api
 import Pagination from '/components/pagination'
 import DataUpload from './fileUpload'
 
-const { confirm } = Modal;
 const assignment = (data) => {
     data.forEach((list, i) => {
         list.key = list.id;
@@ -768,20 +768,31 @@ class Personal extends Component {
     }
     // 文件删除
     deleteFile = (key) => {
-        let params = {
-            id: key
-        }
-        DeleteFile(params).then(res => {
-            if (res.success != 1) {
-                message.error(res.message)
-            } else {
-                this.setState({
-                    tableSelecteds: [],
-                    tableSelectedInfo: [],
+        let _this = this
+        confirm({
+            title: '删除',
+            content: '您确定要删除该文件吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                let params = {
+                    id: key
+                }
+                DeleteFile(params).then(res => {
+                    if (res.success != 1) {
+                        message.error(res.message)
+                    } else {
+                        _this.setState({
+                            tableSelecteds: [],
+                            tableSelectedInfo: [],
+                        })
+                        _this.getTableData()
+                    }
                 })
-                this.getTableData()
             }
         })
+
     }
     // 文件批量删除
     batchDeleteFile = () => {
@@ -789,7 +800,7 @@ class Personal extends Component {
         this.state.tableSelectedInfo.forEach(el => {
             params.push(el.id)
         });
-        if(!params.length){
+        if (!params.length) {
             message.destroy()
             message.warning("请选中后再进行批量删除操作！")
             return
