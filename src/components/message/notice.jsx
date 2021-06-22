@@ -100,15 +100,15 @@ class Notice extends Component {
     render = _ =>
         <ModalDom title='消息通知' width={1000} destroyOnClose={true} visible={true} onOk={()=>this.handleClick(false)} onCancel={this.props.onCancel}>
             <Row className="sendBox">
-                <Col className="senBoxSon" style={{height:90,cursor:'pointer',backgroundColor:'#03bf16',fontSize:18,color:'white',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                <Col className="senBoxSon" style={{height:60,cursor:'pointer',backgroundColor:'#03bf16',fontSize:18,color:'white',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
                     <span>我接收的</span>
                     <span style={{marginLeft:15}}>10</span>
                 </Col>
-                <Col className="senBoxSon" style={{height:90,cursor:'pointer',backgroundColor:'#02a7f0',fontSize:18,color:'white',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 11, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                <Col className="senBoxSon" style={{height:60,cursor:'pointer',backgroundColor:'#02a7f0',fontSize:18,color:'white',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 11, offset: 1 }} lg={{ span: 6, offset: 2 }}>
                     <span>我发送的</span>
                     <span style={{marginLeft:15}}>10</span>
                 </Col>
-                <Col className="senBoxSon" style={{height:90,cursor:'pointer',backgroundColor:'#f2f2f2',fontSize:18,color:'#02a7f0',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                <Col className="senBoxSon" style={{height:60,cursor:'pointer',backgroundColor:'#f2f2f2',fontSize:18,color:'#02a7f0',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
                     <span>发送消息</span>
                 </Col>
             </Row>

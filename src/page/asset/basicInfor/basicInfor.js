@@ -174,7 +174,7 @@ export const assetsListData = [
                     },
                   ],
                 render: (_this,disabled) =>{
-                    return <Select disabled={disabled}  placeholder="请选择" allowClear={true} onChange={_this.onChange}>
+                    return <Select disabled={true}  placeholder="请选择" allowClear={true} onChange={_this.onChange}>
                                 {
                                     _this.state.basedataTypeList.map((items, index) => {
                                         return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
