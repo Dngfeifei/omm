@@ -442,9 +442,9 @@ class assetsAllocation extends Component {
     editRoleSave = async () => {
         // 1 校验必填数据是否填写
         this.props.form.validateFields((err, fieldsValue) => {
-            // if (err) {
-            //     return;
-            // }
+            if (err) {
+                return;
+            }
             let newParams = {...fieldsValue}
         // 当前表单编辑类型（保存或修改或者查看）
         let type = this.state.roleWindow.roleModalType
