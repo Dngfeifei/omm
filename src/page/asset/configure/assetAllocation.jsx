@@ -359,7 +359,7 @@ class assetsAllocation extends Component {
     }
     //打开新增、编辑、查看窗口
     openModal = (roleModalType) => {
-        let {searchListID,table,tableSelectedInfo,baseData} = this.state,roleModalTitle = null;
+        let {searchListID,selectData,table,tableSelectedInfo,baseData} = this.state,roleModalTitle = null;
         this.props.form.resetFields();
         if(roleModalType == 0){
             if (searchListID == "" || searchListID == null) {
@@ -373,6 +373,7 @@ class assetsAllocation extends Component {
                     roleModalType,
                     roleModalTitle
                 },
+                selectData:{...selectData, productModeType:[], productLineType:[],productBrandType:[],productSkillType:[]},
                 baseData:{}
             })
         }else{
@@ -385,6 +386,8 @@ class assetsAllocation extends Component {
             
             
             let selectData = this.initSelectData();
+            console.log(tableSelectedInfo)
+            return
             this.setState({
                 roleWindow: {
                     roleModal: true,
@@ -625,12 +628,14 @@ class assetsAllocation extends Component {
     //获取服务区域下拉列表数据
     getAreaData = (projectId) =>{
         GetAllocationArea(projectId).then(res => {
+            let {selectData} = this.state;
             if (res.success != 1) {
-                message.error("请求错误")
+                selectData = Object.assign({}, selectData, { areaData: []});
+                this.setState({selectData});
+                // message.error("请求错误")
                 return
             }else{
-                let {selectData} = this.state;
-                selectData = Object.assign({}, selectData, { areaData: res.data});
+                selectData = Object.assign({}, selectData, { areaData: res.data ? res.data : []});
                 this.setState({selectData})
             }
         })
@@ -639,12 +644,14 @@ class assetsAllocation extends Component {
     //获取客户下拉列表数据
     getCustomer = (projectAreaId) =>{
         GetAllocationCustomer(projectAreaId).then(res => {
+            let {selectData} = this.state;
             if (res.success != 1) {
-                message.error("请求错误")
+                selectData = Object.assign({}, selectData, { customerData: []});
+                this.setState({selectData})
+                // message.error("请求错误")
                 return
             }else{
-                let {selectData} = this.state;
-                selectData = Object.assign({}, selectData, { customerData: res.data});
+                selectData = Object.assign({}, selectData, { customerData: res.data ? res.data:[]});
                 this.setState({selectData})
             }
         })
