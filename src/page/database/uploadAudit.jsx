@@ -261,13 +261,14 @@ class DownloadAudit extends Component {
                     let isSave = (editingKey != "" && editingKey == r.id)    //在编辑状态 且编辑项id与行id相同时 同意按钮正常显示
                     if (status == "0") {
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            {downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon}  style={{marginRight:"10px"}}/> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>}
+                            {downArr.indexOf(r.id) > -1 ? <span style={{marginRight:"10px",color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>}
                             <a onClick={_ => this.saveItem(r.id, 1)} style={{ margin: "0 3px" }}>同意</a>
                             <a onClick={_ => this.saveItem(r.id, 2)} style={{ margin: "0 3px" }}>驳回</a>
                         </div>
                     } else if (status == "1") {
+                        
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            {downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon}  style={{marginRight:"10px"}}/> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>}
+                            {downArr.indexOf(r.id) > -1 ? <span style={{marginRight:"10px",color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>}
                             {idEdit ? <a disabled={isEditDisplay} onClick={_ => this.editItem(r.id)} style={{ margin: "0 3px" }}>编辑</a> : ""}
                             {!idEdit ? <a disabled={!isSave} onClick={_ => this.saveItem(r.id, 3)} style={{ margin: "0 3px" }}>保存</a> : ""}
                             {!idEdit ? <a onClick={_ => this.editCancel(r.id)} style={{ margin: "0 3px" }}>取消</a> : ""}

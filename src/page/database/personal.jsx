@@ -212,7 +212,7 @@ class Personal extends Component {
                 render: (t, r) => {
                     let status = r.uploadStatus
                     if (status == "0" || status == "1") {
-                        return downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon} /> : <a onClick={e => this.downloadFile(r.id,e)} style={{ margin: "0 3px" }}>下载</a>
+                        return downArr.indexOf(r.id) > -1 ? <span style={{  color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={e => this.downloadFile(r.id,e)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (status == "2") {
                         return <a onClick={(e) => this.deleteFile(r.id)} style={{ margin: "0 3px" }}>删除</a>
                     }
@@ -319,7 +319,7 @@ class Personal extends Component {
                     let status = r.isDownload
                     if (type == "1") {
                         if (status == "1") {
-                            return downArr2.indexOf(r.id) > -1 ? <Spin indicator={antIcon} /> : <a onClick={e => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
+                            return downArr2.indexOf(r.id) > -1 ?  <span style={{  color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={e => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
                         } else {
                             return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                         }
