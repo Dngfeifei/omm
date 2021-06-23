@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { Row, Col,  Input, Select,  DatePicker,Upload,Form,Icon } from 'antd'
-import { text } from 'express';
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
