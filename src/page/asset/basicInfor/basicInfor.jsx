@@ -219,7 +219,7 @@ class assetsAllocation extends Component {
     searchRoleFun = (parentId,pass) => {
         //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
         if (parentId == "" || parentId == null) {
-            message.warning('请先选中左侧角色组，然后再进行查询。');
+            message.warning('请先选中左侧树节点，然后再进行查询！');
             return
         }
         // const fieldNames = this.state.rules['rules1'].map(item => item.key)
@@ -323,7 +323,7 @@ class assetsAllocation extends Component {
         let {searchListID,table,tableSelectedInfo,baseData} = this.state,roleModalTitle = null;
         if(roleModalType == 0){
             if (searchListID == "" || searchListID == null) {
-                message.warning('请先选中左侧角色组，然后再进行角色新增。');
+                message.warning('请先选中左侧树节点！');
                 return
             }
             roleModalTitle = "新增资产配置";
