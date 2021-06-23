@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useContext } from 'react';
 import { Input } from 'antd';
 import styled from '@emotion/styled';
+import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
 
 const Container = styled.div`
   display: ${({ labelPosition }) =>
@@ -27,9 +28,8 @@ const InputBox = styled.div`
 `;
 
 const InputRender = ({ control, formConfig, inSubtable = false }) => {
+  const { updateValue } = useContext(formRenderContext);
   const { options } = control;
-
-  console.log(options, formConfig);
 
   const labelWidth = useMemo(() => {
     if (options.isLabelWidth) {
@@ -57,6 +57,10 @@ const InputRender = ({ control, formConfig, inSubtable = false }) => {
               defaultValue={options.defaultValue}
               style={{ width: options.width }}
               placeholder={options.placeholder}
+              value={options.value}
+              onChange={(e) => {
+                updateValue(control.model, e.target.value);
+              }}
             />
           ) : (
             <Input
@@ -64,12 +68,15 @@ const InputRender = ({ control, formConfig, inSubtable = false }) => {
               defaultValue={options.defaultValue}
               style={{ width: options.width }}
               placeholder={options.placeholder}
+              value={options.value}
+              onChange={(e) => {
+                updateValue(control.model, e.target.value);
+              }}
             />
           )}
         </InputBox>
       </Container>
-
-      {/* <pre>{JSON.stringify(options, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(control, null, 2)}</pre> */}
     </div>
   );
 };

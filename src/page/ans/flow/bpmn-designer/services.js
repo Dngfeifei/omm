@@ -19,7 +19,7 @@ import { Type_Script_Is, getBusinessObject } from "./utils"
 /*顶部操作按钮接口*/
 
 // 保存并发布
-function saveBpmnXml(modifyXml, modelId, modeler,deployFn) {
+function saveBpmnXml(modifyXml, modelId, modeler,deployFn,category) {
 
   return new Promise((resolve) => {
 
@@ -35,21 +35,21 @@ function saveBpmnXml(modifyXml, modelId, modeler,deployFn) {
         }
         
         FlowNewModel(modelParams).then(res => {
-           handleInside(modifyXml, res.id, modeler,deployFn)
+           handleInside(modifyXml, res.id, modeler,deployFn,category)
         })
         
      }else{
-      handleInside(modifyXml, modelId, modeler,deployFn)
+      handleInside(modifyXml, modelId, modeler,deployFn,category)
     }
   });
 }
 
-function handleInside(modifyXml, modelId, modeler,deployFn){
+function handleInside(modifyXml, modelId, modeler,deployFn,category){
   
   var root = modeler.get('canvas').getRootElement().businessObject;
 
   FLowRestModel(modelId).then(restLine => {
-    console.log(restLine)
+    
     let modelParam = {
       modeltype: 'model',
       json_xml: modifyXml,
@@ -61,7 +61,9 @@ function handleInside(modifyXml, modelId, modeler,deployFn){
       lastUpdated: restLine.lastUpdated
     }
 
+
     FlowSaveModel(modelId, modelParam).then(model => {
+
       if (model.id) {
 
         saveExtension(modeler);
@@ -71,7 +73,7 @@ function handleInside(modifyXml, modelId, modeler,deployFn){
 
             let depParams = {
               id: modelId,
-              category: '未设置'
+              category: category
             }
             FlowDeployModel(depParams).then(res => {
               //resolve()
@@ -366,8 +368,7 @@ function getPostList(param) {
 }
 
 // 根据id获取岗位信息
-function
-getPostInfoById(param) {
+function getPostInfoById(param) {
 
   return new Promise((resolve) => {
     FLowQueryByPostId(param).then(res => {

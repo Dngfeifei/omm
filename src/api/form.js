@@ -18,3 +18,5 @@ export const saveFormSourceMakeForm = (params) => http.fetchPost(REMOTE_URL + `/
 export const queryByIdMakeForm = (params) => http.fetchGet(REMOTE_URL + `/form/make/queryById`, params)
 
 export const listGenerateForm = (params) => http.fetchPost(REMOTE_URL + `/form/generate/list`, params)
+
+export const getProjitemList = (params) => http.fetchGet(REMOTE_URL + `/form/formOms/selector`, params)
