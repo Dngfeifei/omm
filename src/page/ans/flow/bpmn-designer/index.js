@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
 
+// bpmn自带样式
 import "bpmn-js/dist/assets/diagram-js.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn-codes.css";
 import "bpmn-js/dist/assets/bpmn-font/css/bpmn-embedded.css";
 
+// 国际化
 import customTranslate from "./translate/customTranslate";
 import translationsCN from "./translate/zh";
 
+// 引入描述符文件
 import flowableModdleDescriptor from "./flow.json";
 
 import "./bpmn-designer.less";
@@ -17,7 +20,7 @@ import Header from "./header";
 import ConfigPanel from "./config-panel";
 
 export default function BpmnDesigner(props) {
-  const { xml,modelId,type } = props;
+  const { xml,modelId,type,category } = props;
   const [bpmnInstance, setBpmnInstance] = useState({});
   const translate = customTranslate(translationsCN);
 
@@ -32,6 +35,7 @@ export default function BpmnDesigner(props) {
       },
     });
 
+    // 注册bpmn实例
     const instance = {
       modeler: bpmnModeler,
       modeling: bpmnModeler.get("modeling"),
@@ -64,18 +68,20 @@ export default function BpmnDesigner(props) {
     }
   }, [xml,type]);
 
+  // 设置选中元素
   function getActiveElement(instance) {
     const { modeler } = instance;
+    // 初始第一个选中元素 bpmn:Process
     initFormOnChanged(null, instance);
     modeler.on("import.done", (e) => {
       initFormOnChanged(null, instance);
     });
-    
+    // 监听选择事件，修改当前激活的元素以及表单
     modeler.on("selection.changed", ({ newSelection }) => {
       initFormOnChanged(newSelection[0] || null, instance);
     });
   }
-  
+  // 初始化数据
   function initFormOnChanged(element, instance) {
     let activatedElement = element;
     const elementRegistry = instance.modeler.get("elementRegistry");
@@ -99,7 +105,7 @@ export default function BpmnDesigner(props) {
   return (
       <div className="bpmn-designer">
         <div>
-          <Header bpmnInstance={bpmnInstance} modelId={modelId} />
+          <Header bpmnInstance={bpmnInstance} modelId={modelId} category={category} />
           <div id="flowCanvas" className="flow-canvas"></div>
         </div>
         <ConfigPanel bpmnInstance={bpmnInstance} />

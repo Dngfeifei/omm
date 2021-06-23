@@ -811,6 +811,28 @@ export const advanceComponents = [
       isSearch: false,
     },
   },
+  {
+    type: 'projitem',
+    icon: 'icon fa fa-font',
+    dsId: '',
+    tableName: '',
+    primaryKey: '',
+    foreignKey: '',
+    options: {
+      customClass: '',
+      width: '',
+      labelWidth: 100,
+      isLabelWidth: false,
+      dictType: '',
+      hidden: false,
+      dataBind: true,
+      required: false,
+      disabled: false,
+      isShow: true,
+      isSort: true,
+      isSearch: false,
+    },
+  },
 ];
 
 export const gridColumn = {

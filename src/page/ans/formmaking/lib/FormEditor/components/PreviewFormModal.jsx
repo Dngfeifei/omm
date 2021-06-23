@@ -1,9 +1,9 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Modal, Button } from 'antd';
-import JSONModal from '@/page/ans/formmaking/lib/FormEditor/components/JSONModal'
-import styled from '@emotion/styled'
+import JSONModal from '@/page/ans/formmaking/lib/FormEditor/components/JSONModal';
+import styled from '@emotion/styled';
 import allComps from '@/page/ans/formmaking/lib/controls';
-import FormRender from '@/page/ans/formmaking/lib/FormRender'
+import FormRender from '@/page/ans/formmaking/lib/FormRender';
 import { cloneDeep } from 'lodash';
 
 const Container = styled.div`
@@ -24,39 +24,25 @@ const Container = styled.div`
 `;
 
 const PreviewFormModal = ({ formData, open, onCancel }) => {
+  const modelRef = useRef();
+  const { formModel, formConfig, deviceType } = formData;
 
-  const [localData, setLocalData] = useState(cloneDeep(formData))
-  const { formModel, formConfig, deviceType } = localData
-  useEffect(() => {
-    setLocalData(cloneDeep(formData))
-  }, [formData])
+  const [json, setJson] = useState('');
+  const [isJsonOpen, setIsJsonOpen] = useState(false);
 
   const handleReset = () => {
-    formInstance.resetFields()
-    // setLocalData(cloneDeep(formData))
-  }
+    modelRef.current.resetFieldsValue();
+  };
 
-  const [disabled, setDisabled] = useState(false)
   const toggleDisabled = () => {
-    setLocalData({
-      ...localData,
-      formConfig: {
-        ...formConfig,
-        disabled: !disabled,
-      }
-    })
-    setDisabled(!disabled)
-  }
+    modelRef.current.toggleDisabled();
+  };
 
   const handleExportData = () => {
-    setJson(JSON.stringify(formInstance.getFieldsValue(), null, 2))
-    setIsJsonOpen(true)
-  }
-
-  const [json, setJson] = useState('')
-  const [isJsonOpen, setIsJsonOpen] = useState(false)
-
-  const [formInstance, setFormInstance] = useState()
+    const formVal = modelRef.current.getFieldsValue();
+    setJson(JSON.stringify(formVal, null, 2));
+    setIsJsonOpen(true);
+  };
 
   return (
     <div>
@@ -66,19 +52,25 @@ const PreviewFormModal = ({ formData, open, onCancel }) => {
         onCancel={onCancel}
         width={700}
         footer={[
-          <Button key="export" type="primary" onClick={handleExportData}>获取数据</Button>,
-          <Button key="reset" type="outlined" onClick={handleReset}>重置</Button>,
-          <Button key="disabled" type="outlined" onClick={toggleDisabled}>禁用编辑</Button>,
-          <Button key="close" type="outlined" onClick={onCancel}>关闭</Button>,
+          <Button key="export" type="primary" onClick={handleExportData}>
+            获取数据
+          </Button>,
+          <Button key="reset" type="outlined" onClick={handleReset}>
+            重置
+          </Button>,
+          <Button key="disabled" type="outlined" onClick={toggleDisabled}>
+            禁用编辑
+          </Button>,
+          <Button key="close" type="outlined" onClick={onCancel}>
+            关闭
+          </Button>,
         ]}
       >
         <FormRender
-          getForm={(form) => setFormInstance(form)}
-          formInfo={{
-            source: JSON.stringify({ list: formModel, config: formConfig })
-          }}
+          ref={modelRef}
+          formModel={formModel}
+          formConfig={formConfig}
         />
-
       </Modal>
       {isJsonOpen ? (
         <JSONModal
@@ -86,11 +78,9 @@ const PreviewFormModal = ({ formData, open, onCancel }) => {
           open={isJsonOpen}
           onCancel={() => setIsJsonOpen(false)}
         />
-      ): null}
-
-
+      ) : null}
     </div>
   );
 };
 
-export default PreviewFormModal
+export default PreviewFormModal;

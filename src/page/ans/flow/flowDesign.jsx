@@ -74,12 +74,12 @@ class DesignList extends Common{
             title: '操作',
             dataIndex: 'operator',
             width: 100,
-            render: (t,r) => <a style={{display: 'inline-block', width: 60}} onClick={ _ => this.editDesignPage(r.id)}>设计</a>
+            render: (t,r) => <a style={{display: 'inline-block', width: 60}} onClick={ _ => this.editDesignPage(r)}>设计</a>
         }],
         loading: false,
         selectedtable: true,
         pagesizechange: true,
-        modalconf: { visible: false, item: {} },
+        modalconf: { visible: false, primary: {}, category:{} },
         categoryconf: { visible: false, treeData: {},checkedKey: "" },
         filterText:''
     })
@@ -393,20 +393,22 @@ class DesignList extends Common{
 
 
     // 设计流程界面
-    editDesignPage = async (id) => {
+    editDesignPage = async (item) => {
 
-        if (!id || !id.length) {
+        if (!item.id || !item.id.length) {
             message.destroy()
             message.warning("请选中后再进行操作！")
             return
         }
-        let item = id
+        
+        
         let conf = {}
         conf["modalconf"] = {
             title: '流程设计器',
             visible: true,
             type: 'edit',
-            item: item
+            primary: item.id,
+            category: item.procDef.category
         }
         this.setState(conf)
     }

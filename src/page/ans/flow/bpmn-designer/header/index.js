@@ -3,12 +3,16 @@ import { Button, Tooltip, message } from "antd";
 import { saveBpmnXml, saveBpmnXmlDraft } from "../services";
 import { initXml } from "../initXml";
 
+/**
+ * 顶部操作栏
+ */
 export default function Header(props) {
   const { bpmnInstance } = props;
-  const { modelId } = props;
+  const { modelId,category } = props;
   let fileInputRef = null;
   const { modeler } = bpmnInstance;
 
+  // 根据所需类型进行转码并返回下载地址
   function setEncoded(type, filename = "diagram", data) {
     const encodedData = encodeURIComponent(data);
     return {
@@ -20,9 +24,10 @@ export default function Header(props) {
     };
   }
 
+  // 下载流程文件
   async function downloadFile(type, name) {
     try {
-      
+      // 按需要类型创建文件并下载
       if (type === "xml" || type === "bpmn") {
         const { err, xml } = await modeler.saveXML({ format: true });
         // 读取异常时抛出异常
@@ -55,6 +60,7 @@ export default function Header(props) {
     }
   }
 
+  //加载本地文件
   function importLocalFile() {
     const file = fileInputRef.files[0];
     const reader = new FileReader();
@@ -65,6 +71,7 @@ export default function Header(props) {
     };
   }
 
+  // 创建流程图
   async function createNewDiagram(xmlString) {
     try {
       let { warnings } = await modeler.importXML(xmlString);
@@ -79,13 +86,13 @@ export default function Header(props) {
   // 保存并发布
   async function save() {
     const { xml } = await modeler.saveXML({ format: true });
-    saveBpmnXml( xml,modelId,modeler,true).then(() => message.success("操作成功"));
+    saveBpmnXml( xml,modelId,modeler,true,category).then(() => message.success("操作成功"));
   }
 
   // 保存草稿
   async function saveDraft() {
     const { xml } = await modeler.saveXML({ format: true });
-    saveBpmnXml( xml,modelId,modeler,false).then(() => message.success("操作成功"));
+    saveBpmnXml( xml,modelId,modeler,false,category).then(() => message.success("操作成功"));
   }
 
   const btnGroup = [
