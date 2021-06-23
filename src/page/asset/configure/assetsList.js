@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Row, Col,  Input, Select,  DatePicker,Upload,Form,Icon } from 'antd'
+import { text } from 'express';
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
@@ -37,11 +38,11 @@ export const rules1= [
 ]
 function render(_this,type,selectData,itemCode,itemValue,selectChange,required) {
     if(type == 'input1'){
-        return <Input placeholder="请输入" />
+        return <Input disabled={required} placeholder="请输入" />
     }else if(type == 'input2'){
-        return <Input disabled placeholder="项目带入" />
+        return <Input disabled={required} disabled placeholder="项目带入" />
     }else if(type == 'input3'){
-        return <Input placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={_this.openProject} />} />
+        return <Input disabled={required} placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={_this.openProject} />} />
     }else if(type == 'select'){
         return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required}>
                     {
@@ -53,7 +54,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required) 
                     }
                 </Select>
     }else if(type == 'select1'){
-        return <Select style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value)}>
+        return <Select disabled={required} style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value)}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
@@ -63,9 +64,9 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required) 
                     }
                 </Select>
     }else if(type == 'textarea'){
-        return <TextArea placeholder="请输入" rows={4}/>
+        return <TextArea disabled={required} placeholder="请输入" rows={4}/>
     }else if(type == 'date'){
-        return <DatePicker placeholder="项目带入" showTime format="YYYY-MM-DD" />
+        return <DatePicker disabled={required} placeholder="项目带入" showTime format="YYYY-MM-DD" />
     }
 }
 function renderDom(obj) {
@@ -73,12 +74,7 @@ function renderDom(obj) {
         key:obj.key,
         label:obj.title,
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
+        rules:[],
         render: render,
         type:obj.inputType,
     }  
@@ -261,9 +257,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        render: () =>{
-            return <Input placeholder="placeholder" />;
-        },
         render:render,
         type:'input1'
     },
@@ -303,7 +296,8 @@ export const assetsListData = {
         rules:[
             {
               required: true,
-              message: '该选项不能为空！',
+              pattern:/^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/,
+              message: '请输入正确的联系方式！',
             },
           ],
         render: () =>{
@@ -409,10 +403,6 @@ export const assetsListData = {
               message: '该选项不能为空！',
             },
           ],
-        
-        render: _this =>{
-            return <Input placeholder="请输入" />;
-        },
         render:render,
         type:'input1'
     },
@@ -421,12 +411,10 @@ export const assetsListData = {
         label: '应用类别',
         key: 'appTypeId',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
+        rules:[{
+            required: true,
+            message: '该选项不能为空！',
+          }],
         render:render,
         type:'select'
     },
@@ -498,12 +486,7 @@ export const assetsListData = {
         label: '状态',
         key: 'status',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
+        rules:[],
         render:render,
         type:'select'
     },
@@ -539,21 +522,15 @@ export const assetsListData = {
         key:'strValue3',
         label:'备机情况',
         span:6,
-        rules:[
-            
-          ],
         render:render,
         renderDom:renderDom,
-        type:'input1'
     },
      //控制器型号
      'strValue4':{
         key:'strValue4',
         label:'控制器型号',
         span:6,
-        rules:[
-            
-          ],
+        rules:[],
         render:render,
         renderDom:renderDom,
         type:'input1'
@@ -944,7 +921,8 @@ export const columns = [
     title: '备机情况',
     dataIndex: 'strValue3',
     key:"strValue3",
-    inputType:'input1',
+    selectData:'backupStatus',
+    inputType:'select',
     align: 'center',
 },
 {
@@ -1039,7 +1017,7 @@ export const panes = [
                 dataIndex: 'isMroId',
                 key:'isMroId',
                 selectData:'maintained',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: 'raid级别',
@@ -1073,8 +1051,7 @@ export const panes = [
                 align: 'center',
             }
             
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //小型机
     {
@@ -1241,8 +1218,9 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '用途',
@@ -1276,8 +1254,7 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //X86
     {
@@ -1431,8 +1408,9 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '操作',
@@ -1452,8 +1430,7 @@ export const panes = [
                 
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //网络安全（负载均衡）
     {
@@ -1601,8 +1578,9 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '用途',
@@ -1636,8 +1614,7 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //其他（硬件）
     {
@@ -1652,6 +1629,13 @@ export const panes = [
                 selectData:'maintained',
                 key: 'strValue4',
                 align: 'center',
+                render:(text,row,index) => {
+                    if(text == 0){
+                        return '否'
+                    }else{
+                        return '是'
+                    }
+                }
             },
             {
                 title: '容量',
@@ -1664,8 +1648,9 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '用途',
@@ -1699,8 +1684,7 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //中间件
     {
@@ -1723,12 +1707,14 @@ export const panes = [
             {
                 title: '应用类别',
                 dataIndex: 'appTypeName',
+                selectData:'appType',
                 key: 'appTypeId',
                 align: 'center',
             },
             {
                 title: '状态',
                 dataIndex: 'strValue3',
+                selectData:'statusList',
                 inputType:'input1',
                 key: 'strValue3',
                 align: 'center',
@@ -1736,15 +1722,24 @@ export const panes = [
             {
                 title: '是否集群',
                 dataIndex: 'strValue4',
-                inputType:'input1',
+                selectData:'maintained',
+                inputType:'select',
                 key: 'strValue4',
                 align: 'center',
+                render:(text,row,index) => {
+                    if(text == 0){
+                        return '否'
+                    }else{
+                        return '是'
+                    }
+                }
             },
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '用途',
@@ -1762,13 +1757,11 @@ export const panes = [
             {
                 title: '操作人',
                 dataIndex: 'updaterName',
-                key: '0',
                 align: 'center',
             },
             {
                 title: '操作时间',
                 dataIndex: '48',
-                key: '48',
                 align: 'center',
             },
             {
@@ -1778,8 +1771,7 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     },
     //数据库（软件）
     {
@@ -1802,6 +1794,7 @@ export const panes = [
             {
                 title: '应用类别',
                 dataIndex: 'appTypeName',
+                selectData:'appType',
                 key: 'appTypeId',
                 align: 'center',
             },
@@ -1843,9 +1836,17 @@ export const panes = [
             {
                 title: '是否集群',
                 dataIndex: 'strValue8',
-                inputType:'input1',
+                selectData:'maintained',
+                inputType:'select',
                 key: 'strValue8',
                 align: 'center',
+                render:(text,row,index) => {
+                    if(text == 0){
+                        return '否'
+                    }else{
+                        return '是'
+                    }
+                }
             },
             {
                 title: '数据库版本',
@@ -1878,6 +1879,7 @@ export const panes = [
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
+                selectData:'maintained',
                 key: 'isMroId',
                 align: 'center',
             },
@@ -1913,7 +1915,6 @@ export const panes = [
                 width:150,
                 align: 'center',
             }
-        ],
-        assetsListData:[...assetsListData]
+        ]
     }
 ];

@@ -585,11 +585,11 @@ class basicInfor extends Component {
                 <Descriptions bordered size='small'>
                     {
                         this.state.descList.map((item, index) => {
-                            return item.init ? (
+                            return (
                                 <Descriptions.Item label={ this.setRequired(disaBled,item.label,item.special)} span={item.span ? item.span : 1} key={index}>
                                     {item.render(isEdit,formRead,node,disaBled)}
                                 </Descriptions.Item>
-                            ) : null
+                            )
                         })
                     }
                 </Descriptions>

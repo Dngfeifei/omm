@@ -117,6 +117,7 @@ class assetsAllocation extends Component {
             searchListID: null,
             searchListName: null,
             basedataTypeId: null,
+            basedataTypeName: null,
             basedataTypeIdSelect: 0,
             TreeParantID:null,
             //当前选中角色数据
@@ -200,6 +201,7 @@ class assetsAllocation extends Component {
                             searchListName:res.data[0]['name'],
                             TreeParantID: res.data[0]['parentId'],
                             basedataTypeId: res.data[0]['basedataTypeId'],
+                            basedataTypeName: res.data[0]['basedataTypeName'],
                             newRoleGroup:{
                                 treeSelect:res.data[0]['parentId'],
                                 newRoleGroupVal:null,
@@ -271,6 +273,7 @@ class assetsAllocation extends Component {
             searchListName:data['name'],
             TreeParantID: data['parentId'],
             basedataTypeId: data['basedataTypeId'],
+            basedataTypeName: data['basedataTypeName'],
             tableSelecteds: [],
             tableSelectedInfo: [],
             newRoleGroup:{
@@ -486,13 +489,13 @@ class assetsAllocation extends Component {
     //生成新增/修改/查看弹框内容
     getFields = (assetsList) => {
         // const {assetsList} = this.state;
-        let {roleWindow,tableSelectedInfo,baseData,searchListID,searchListName,basedataTypeIdSelect} = this.state;
+        let {roleWindow,tableSelectedInfo,baseData,searchListID,searchListName,basedataTypeIdSelect,basedataTypeId,basedataTypeName} = this.state;
         const { getFieldDecorator } = this.props.form;
-        baseData = Object.assign({}, baseData, { parentId:  searchListID,parentName:searchListName});
+        baseData = Object.assign({}, baseData, { parentId:  searchListID,parentName:searchListName,basedataTypeId,basedataTypeName});
         const children = [];
         for (let i = 0; i < assetsList.length; i++) {
-            let label = assetsList[i].label;
-            if(basedataTypeIdSelect == 13){
+            let label = assetsList[i].label,disabled = false;
+            if(basedataTypeId == 13){           //特殊处理
                 if(assetsList[i].key == 'code'){
                     label = '产品型号'
                 }
@@ -504,13 +507,17 @@ class assetsAllocation extends Component {
                     continue;
                 }
             }
+            //当打开窗口为修改时，数据类别字段禁止编辑
+            if(roleWindow.roleModalType == 1 && assetsList[i].key == 'basedataTypeId'){
+                disabled = true
+            }
           children.push(
             <Col span={assetsList[i].span} key={i}>
               <Form.Item label={label}>
                 {getFieldDecorator(assetsList[i].key, {
                   rules: roleWindow.roleModalType == 2 ? [] : assetsList[i].rules,
                   initialValue: !roleWindow.roleModalType ? baseData[assetsList[i].key] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+''
-                })(roleWindow.roleModalType == 2 ? <Input disabled/> : assetsList[i].render(this))}
+                })(roleWindow.roleModalType == 2 ? assetsList[i].render(this,disabled) : assetsList[i].render(this,disabled))}
               </Form.Item>
             </Col>,
           );

@@ -4,7 +4,8 @@ import { connect } from 'react-redux'
 import { TOGGLE, ADD_PANE, RESET, SET_BREADCRUMB ,GET_MENU} from '/redux/action'
 const { Header } = Layout
 import { hashHistory } from 'react-router'
-import ModalDom from '@/components/modal'
+import Notice from '@/components/message/notice'//消息通知
+import SendOut from '@/components/message/sendOut'//消息发送
 
 import {logout} from '@/api/login.js'
 
@@ -32,7 +33,9 @@ class DHeader extends Component {
 
     state = {
         username: '',
-        modalVisible: false
+        modalVisible: false,
+        notice:false,//消息通知
+        sendOut:false//消息发送
     }
 
     quit = _ => {
@@ -68,28 +71,17 @@ class DHeader extends Component {
     }
     render = _ => <Header
         className="header" style={{background:'#4876e7 url(static/images/topBG.png) 0 center no-repeat',backgroundSize: 'auto 102%'}}>
-        {/* <div className={this.props.collapsed ? 'avatar-wrapper collaps' : 'avatar-wrapper'}>
-            {<div className="logo">
-                <Icon type="question-circle" className="icon" />
-                <span className="username">LOGO</span>
-            </div>}
-        </div>
-        <Icon
-            className="trigger"
-            type={this.props.collapsed ? 'menu-unfold' : 'menu-fold'}
-            onClick={this.props.toggle} />
-            <div style={{fontSize: "24px",color:"white",paddingLeft:"25px"}}>银信运维管理系统</div> */}
-        {/* <Breadcrumb separator=">" style={{marginLeft: 25}}>
-            {
-                this.props.breadcrumb && this.props.breadcrumb.length && this.props.breadcrumb.map((item,index) => {
-                    return <Breadcrumb.Item style={{fontWeight: 600}} key={index}>{item}</Breadcrumb.Item>
-                })
-            }
-        </Breadcrumb> */}
         <div className="settingwrap">
-            <Badge count={0} style={{cursor:'pointer'}}  onClick={()=> this.handleClick(true)}>
+            {/* 消息通知 */}
+            <Badge count={0} className="messages-receiving" style={{cursor:'pointer'}}  onClick={()=> this.setState({notice:true})}>
                 <span className="head-example">
                     <Icon type="bell" theme="filled" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
+                </span>
+            </Badge>
+            {/* 消息发送 */}
+            <Badge count={0} className="messages-push" style={{cursor:'pointer'}}  onClick={()=> this.setState({sendOut:true})}>
+                <span className="head-example">
+                    <Icon type="mail" theme="outlined" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
                 </span>
             </Badge>
             <img
@@ -106,14 +98,14 @@ class DHeader extends Component {
             </Dropdown>
             <span className="settings" onClick={this.quit}>退出</span>
         </div>
-        <ModalDom title='头部对话框' width={700} destroyOnClose={true} visible={this.state.modalVisible} onOk={()=>this.handleClick(false)} onCancel={()=>this.handleClick(false)}>
-          <p>some contents...</p>
-          <p>some contents...</p>
-          <p>some contents...</p>
-          <p>some contents...</p>
-          <p>some contents...</p>
-          <p>some contents...</p>
-        </ModalDom>
+        {/* 消息通知 */}
+        {
+            this.state.notice ? <Notice onCancel={()=>{this.setState({notice:false})}}></Notice> : null
+        }
+        {/* 消息发送 */}
+        {
+            this.state.sendOut ? <SendOut onCancel={()=>{this.setState({sendOut:false})}}></SendOut> : null
+        }
     </Header>
 }
 

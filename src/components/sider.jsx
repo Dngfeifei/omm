@@ -7,7 +7,7 @@ import { ADD_PANE, GET_MENU ,TOGGLE} from '/redux/action'
 import {getPost} from '@/api/global.js'
 
 const MyIcon = Icon.createFromIconfontCN({
-	scriptUrl: '//at.alicdn.com/t/font_2410657_lro68z0supn.js', // 在 iconfont.cn 上生成
+	scriptUrl: '//at.alicdn.com/t/font_2410657_j8b1224bdw.js', // 在 iconfont.cn 上生成
 });
 //创建一个缩放控制组件
 function Trigger (props){
@@ -76,7 +76,7 @@ class DSider extends Component{
 	}
 	renderMenuTitle = (val,leva) => {
 		//工作台 93 系统配置 85 信息管理135 工作空间140
-		let icon = null,MyIco;
+		let icon = null,MyIco= () => (<MyIcon type="iconxitongpeizhi1" />);
 		if(val.id == 93){
 			icon = 'appstore'
 		}else if(val.id == 85){
@@ -87,16 +87,21 @@ class DSider extends Component{
 			icon = 'file-text'
 		}else if(val.id == 156){
 			icon = 'file-text'
-		} else {
-			icon = 'file-text'
-		}
+		}else if(val.id == 167){
+			MyIco = () => (<MyIcon type="iconyuanshujuguanli1" />)
+		}else if(val.id == 165){
+			MyIco = () => (<MyIcon type="iconbiaodanpeizhi" />)
+		}else if(val.id == 173){
+			MyIco = () => (<MyIcon type="iconliucheng" />)
+		} 
 		return (<span>
-			{icon ? <Icon type={icon} /> : leva ? <MyIco /> :null}
+			{icon ? <Icon type={icon} /> : leva ?  <MyIco /> :null}
 		<span>{val.resourceName}</span></span>)
 
 		// return (<span>
 		// 	{icon ? <Icon type={icon} /> : leva ? <Icon type="bars" /> :null}
 		// <span>{val.resourceName}</span></span>)
+
 	}
 	
 	//监听菜单缩放事件并重置collapsed触发收缩

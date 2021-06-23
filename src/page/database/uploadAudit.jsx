@@ -10,9 +10,11 @@ const { Provider, Consumer } = React.createContext()//组件之间传值
 // 引入日期格式化
 import moment from 'moment'
 
-import { Form, message, Button, Row, Col, Input, Table, Select, DatePicker } from 'antd'
+import { Form, message, Button, Row, Col, Input, Table, Select, DatePicker, Spin } from 'antd'
 const { Option } = Select
 const { Item } = Form
+import { LoadingOutlined } from '@ant-design/icons';
+const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 import { GetFileLibrary } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
@@ -27,12 +29,14 @@ let fileLevelsArr = []
 let fileLevels = {}
 // 可编辑字段标识
 let editingKey = ''
+// 下载队列
+let downArr = []
 
 // 禁选日期方法
 function disabledDate(current) {
     // Can not select days before today and today
     return current && current < moment().endOf('day');
-  }
+}
 // 表格可编辑行渲染
 class EditableCell extends React.Component {
     renderCell = ({ getFieldDecorator }) => {
@@ -73,7 +77,7 @@ class EditableCell extends React.Component {
                             // initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                             initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                         })(
-                            <DatePickers  disabledDate={disabledDate} style={{ width: 115 }} />
+                            <DatePickers disabledDate={disabledDate} style={{ width: 115 }} />
                             // <Inputs />
                         )}
                     </Item> : ""
@@ -179,7 +183,7 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">资料级别</div>,
                 dataIndex: 'fileLevelId',
                 align: 'center',
-                width: "90",
+                width: 96,
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
@@ -217,7 +221,7 @@ class DownloadAudit extends Component {
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
-                        return <DatePicker  disabledDate={disabledDate} style={{ width: 115 }} onChange={(date, dateStr) => this.getRowInput(dateStr, 'clearTime', r.id)} />
+                        return <DatePicker disabledDate={disabledDate} style={{ width: 115 }} onChange={(date, dateStr) => this.getRowInput(dateStr, 'clearTime', r.id)} />
                     } else {
                         return t
                     }
@@ -257,19 +261,18 @@ class DownloadAudit extends Component {
                     let isSave = (editingKey != "" && editingKey == r.id)    //在编辑状态 且编辑项id与行id相同时 同意按钮正常显示
                     if (status == "0") {
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            <a disabled={isEditDisplay} onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                            {downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon}  style={{marginRight:"10px"}}/> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>}
                             <a onClick={_ => this.saveItem(r.id, 1)} style={{ margin: "0 3px" }}>同意</a>
-                            <a disabled={isEditDisplay} onClick={_ => this.saveItem(r.id, 2)} style={{ margin: "0 3px" }}>驳回</a>
+                            <a onClick={_ => this.saveItem(r.id, 2)} style={{ margin: "0 3px" }}>驳回</a>
                         </div>
                     } else if (status == "1") {
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            <a disabled={isEditDisplay} onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                            {downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon}  style={{marginRight:"10px"}}/> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>}
                             {idEdit ? <a disabled={isEditDisplay} onClick={_ => this.editItem(r.id)} style={{ margin: "0 3px" }}>编辑</a> : ""}
                             {!idEdit ? <a disabled={!isSave} onClick={_ => this.saveItem(r.id, 3)} style={{ margin: "0 3px" }}>保存</a> : ""}
                             {!idEdit ? <a onClick={_ => this.editCancel(r.id)} style={{ margin: "0 3px" }}>取消</a> : ""}
                         </div>
 
-                        // '<Button type="primary">下载</Button><Button type="primary">编辑</Button>'
                     } else if (status == "2") {
                         return ""
                     }
@@ -281,6 +284,8 @@ class DownloadAudit extends Component {
         tableData: [],
         //右侧查询关键字
         searchKey: null,
+        // 下载队列
+        downArr: []
     }
     // 获取基础数据
     getBaseData = async () => {
@@ -447,11 +452,15 @@ class DownloadAudit extends Component {
     }
     // 文件下载
     downloadFile = (key) => {
+        downArr.push(key)
+        this.setState({ downArr })
         let params = {
             downloadType: "uploadReview",
             fileId: key
         }
         PostFileDownload(params).then(res => {
+            downArr = downArr.filter(item => item != key)
+            this.setState({ downArr })
             // if (res.success != 1) {
             //     message.error(res.message)
             // } else {

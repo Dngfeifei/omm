@@ -121,6 +121,7 @@ class assetsAllocation extends Component {
             searchListID: null,
             searchListName: null,
             basedataTypeId: null,
+            basedataTypeName: null,
             TreeParantID:null,
             //当前选中角色数据
             currentRole: {
@@ -140,8 +141,9 @@ class assetsAllocation extends Component {
             searchX:undefined,       //联想查询输入数据
             selectData:{
                 areaData:[{id:1,name:'ahe'}],//区域下拉列表输入数据
-                customerData:[{id:1,name:'ahe'}],//客户下拉列表输入数据
+                customerData:[{id:'-1',name:'无'}],//客户下拉列表输入数据
                 maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
+                statusList:[],//状态下拉数据
                 basedataTypeList:[],//配置项下拉数据
                 productModeType:[], //产品型号
                 productLineType:[], //产品线
@@ -219,6 +221,7 @@ class assetsAllocation extends Component {
                             searchParmas: this.formatParmas(pane),
                             TreeParantID: res.data[0]['parentId'],
                             basedataTypeId: res.data[0]['basedataTypeId'],
+                            basedataTypeName: res.data[0]['basedataTypeName'],
                             newRoleGroup:{
                                 treeSelect:res.data[0]['parentId'],
                                 newRoleGroupVal:null,
@@ -292,6 +295,7 @@ class assetsAllocation extends Component {
             searchListName:data['name'],
             TreeParantID: data['parentId'],
             basedataTypeId: data['basedataTypeId'],
+            basedataTypeName: data['basedataTypeName'],
             tableSelecteds: [],
             tableSelectedInfo: [],
             newRoleGroup:{
@@ -358,11 +362,11 @@ class assetsAllocation extends Component {
     }
     //打开新增、编辑、查看窗口
     openModal = (roleModalType) => {
-        let {searchListID,table,tableSelectedInfo,baseData} = this.state,roleModalTitle = null;
+        let {searchListID,selectData,basedataTypeId,basedataTypeName} = this.state,roleModalTitle = null;
         this.props.form.resetFields();
         if(roleModalType == 0){
             if (searchListID == "" || searchListID == null) {
-                message.warning('请先选中左侧角色组，然后再进行角色新增。');
+                message.warning('请先选中左侧树节点！');
                 return
             }
             roleModalTitle = "新增资产配置";
@@ -372,7 +376,8 @@ class assetsAllocation extends Component {
                     roleModalType,
                     roleModalTitle
                 },
-                baseData:{}
+                selectData:{...selectData, productModeType:[], productLineType:[],productBrandType:[],productSkillType:[]},
+                baseData:{basedataTypeId,basedataTypeName}
             })
         }else{
             if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
@@ -384,6 +389,8 @@ class assetsAllocation extends Component {
             
             
             let selectData = this.initSelectData();
+            // console.log(tableSelectedInfo)
+            // return
             this.setState({
                 roleWindow: {
                     roleModal: true,
@@ -441,10 +448,10 @@ class assetsAllocation extends Component {
     editRoleSave = async () => {
         // 1 校验必填数据是否填写
         this.props.form.validateFields((err, fieldsValue) => {
-            // if (err) {
-            //     return;
-            // }
-            console.log(fieldsValue);
+            console.log(this.state.baseData);
+            if (err) {
+                return;
+            }
             let newParams = {...fieldsValue}
         // 当前表单编辑类型（保存或修改或者查看）
         let type = this.state.roleWindow.roleModalType
@@ -484,7 +491,6 @@ class assetsAllocation extends Component {
                     ...this.state.tableSelectedInfo[0],
                     ...newParams
                 }
-
                 EditAllocationTable(params).then(res => {
                     if (res.success == 1) {
                         this.setState({
@@ -558,7 +564,7 @@ class assetsAllocation extends Component {
             if(assetsList[i].key.indexOf('strValue')>-1 && (assetsList[i].key.split('strValue')[1]>2&&assetsList[i].key.split('strValue')[1]<5) ){
                 item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
             }
-            let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] : roleWindow.roleModalType == 2 ? tableSelectedInfo[0][assetsList[i].dataIndex] : isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'',rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
+            let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] :  isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'',rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
              //处理产品联动是否可编辑
             if(assetsList[i].selectData == 'productSkillType' || assetsList[i].selectData == 'productBrandType' || assetsList[i].selectData == 'productLineType' || assetsList[i].selectData == 'productModeType'){
                 const len = this.state.selectData[assetsList[i].selectData].length
@@ -566,16 +572,19 @@ class assetsAllocation extends Component {
                 required = len ? false : true;
             }
             //处理配置项是否可编辑
-            if(assetsList[i].key == 'basedataTypeId' && roleWindow.roleModalType){
+            if(assetsList[i].key == 'basedataTypeId'){
+                required = true;
+            }
+            if(roleWindow.roleModalType == 2){
                 required = true;
             }
             children.push(
                 <Col span={item ? item.span : 6} key={i}>
-                <Form.Item label={item ? item.label : '修改字段'}>
+                <Form.Item label={item ? assetsList[i].title : '修改字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
                     rules: rules,
                     initialValue: initialValue
-                    })(roleWindow.roleModalType == 2 ? <Input disabled/> : item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required) : <Input />)}
+                    })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required) : <Input />)}
                 </Form.Item>
                 </Col>
             );
@@ -623,12 +632,14 @@ class assetsAllocation extends Component {
     //获取服务区域下拉列表数据
     getAreaData = (projectId) =>{
         GetAllocationArea(projectId).then(res => {
+            let {selectData} = this.state;
             if (res.success != 1) {
-                message.error("请求错误")
+                selectData = Object.assign({}, selectData, { areaData: []});
+                this.setState({selectData});
+                // message.error("请求错误")
                 return
             }else{
-                let {selectData} = this.state;
-                selectData = Object.assign({}, selectData, { areaData: res.data});
+                selectData = Object.assign({}, selectData, { areaData: res.data ? res.data : []});
                 this.setState({selectData})
             }
         })
@@ -637,12 +648,14 @@ class assetsAllocation extends Component {
     //获取客户下拉列表数据
     getCustomer = (projectAreaId) =>{
         GetAllocationCustomer(projectAreaId).then(res => {
+            let {selectData} = this.state;
             if (res.success != 1) {
-                message.error("请求错误")
+                selectData = Object.assign({}, selectData, { customerData: [{id:'-1',name:'无'}]});
+                this.setState({selectData})
+                // message.error("请求错误")
                 return
             }else{
-                let {selectData} = this.state;
-                selectData = Object.assign({}, selectData, { customerData: res.data});
+                selectData = Object.assign({}, selectData, { customerData: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
                 this.setState({selectData})
             }
         })
@@ -667,34 +680,35 @@ class assetsAllocation extends Component {
     }
     //服务区域选择改变
     onAreaChange = (selectChange,id)=>{
-        // console.log(selectChange,id)
+         console.log(selectChange,id)
+        // return
         if(selectChange == 'projectAreaId' ){  //服务区域
             this.getCustomer(id)
         }else if(selectChange == 'serviceClassId'){//产品类别
             this.props.form.resetFields(['skillTypeId','brandId','productLineId','productModelId'])
             let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
-            // // console.log(productSkillType)
-            // return
+            // console.log(productSkillType)
+            //  return
             let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productSkillType});
+            selectData = Object.assign({}, selectData, { productSkillType:productSkillType? productSkillType :[] });
             this.setState({selectData})
         }else if(selectChange == 'skillTypeId'){//技术方向
             this.props.form.resetFields(['brandId','productLineId','productModelId'])
             let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productBrandType});
+            selectData = Object.assign({}, selectData, { productBrandType:productBrandType?productBrandType:[]});
             this.setState({selectData})
         }else if(selectChange == 'brandId'){//品牌
             this.props.form.resetFields(['productLineId','productModelId'])
             let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productLineType});
+            selectData = Object.assign({}, selectData, { productLineType:productLineType?productLineType:[]});
             this.setState({selectData})
         }else if(selectChange == 'productLineId'){//产品线
             this.props.form.resetFields(['productModelId'])
             let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productModeType});
+            selectData = Object.assign({}, selectData, { productModeType:productModeType?productModeType:[]});
             this.setState({selectData})
         }
         // this.getCustomer(projectAreaId)
@@ -716,17 +730,20 @@ class assetsAllocation extends Component {
         const { roleWindow,tableSelectedInfo} = this.state;
         this.props.form.resetFields(['projectNumber','projectName','projectManagerName','custName','projectEndDate','projectStartDate','projectManagerName','projectSalesmanName']);
          console.log(info)
-        // return 
+         let nowParams = this.props.form.getFieldsValue();
+        // //  this.props.form.getFieldsValue()
+        //  return 
         if(roleWindow.roleModalType == 0){
             this.setState({
-                baseData: info ? info : {}
+                baseData: info ? {...nowParams,...info} : {...nowParams}
             },()=>{
                 this.getAreaData(this.state.baseData.projectId)
             })
         }else{
             this.setState({
-                tableSelectedInfo: info ? {...tableSelectedInfo,...info} : tableSelectedInfo
+                tableSelectedInfo: info ? {...tableSelectedInfo,...nowParams,...info} : {...tableSelectedInfo,...nowParams}
             },()=>{
+                // console.log(this.state.tableSelectedInfo[0].projectId,this.state.tableSelectedInfo[0].projectAreaId)
                 this.getAreaData(this.state.tableSelectedInfo[0].projectId)
                 this.getCustomer(this.state.tableSelectedInfo[0].projectAreaId)
             })

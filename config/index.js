@@ -7,7 +7,7 @@ var buildconfig = {
   assetsRoot: path.resolve(__dirname, '../omsweb'), //path.resolve(__dirname, '../dist'),
   assetsSubDirectory: 'static', //静态资源目录名
   assetsPublicPath: './', //入口文件引用静态资源的路径配置
-  productionSourceMap: true, //设置成false 可以加密源码，但是无法准确定位输出错误找到错误位置
+  productionSourceMap: false, //设置成false 可以加密源码，但是无法准确定位输出错误找到错误位置
   // Gzip off by default as many popular static hosts such as
   // Surge or Netlify already gzip all static assets for you.
   // Before setting to `true`, make sure to:
@@ -21,15 +21,15 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-// var target = {target: 'http://172.16.100.81/api/uat'}
+var target = {target: 'http://172.16.100.81/api/dat'}
 // var target = {target: 'http://10.0.17.214:8111'}
-var target = {target: 'http://localhost:8111'}
+// var target = {target: 'http://localhost:8111'}
 
 module.exports = {
   build: buildconfig,
   dev: {
     env: require('./dev.env'),
-    port: 8112,
+    port: 8111,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
