@@ -13,7 +13,7 @@ class Notice extends Component {
        
     }
     state = {
-        columns:[{
+        columns0:[{
             title: '消息标题',
             dataIndex: 'custNum',
             align: 'center'
@@ -35,14 +35,61 @@ class Notice extends Component {
         },
         {
             title: '手机号码',
-            dataIndex: 'projectName',
+            dataIndex: 'projectName1',
             align: 'center',
         },
         {
             title: '邮箱地址',
-            dataIndex: 'projectName',
+            dataIndex: 'projectName2',
             align: 'center',
         }],
+        columns1:[{
+            title: '消息标题',
+            dataIndex: 'custNum',
+            align: 'center'
+        },
+        {
+            title: '发送时间',
+            dataIndex: 'projectNumber1',
+            align: 'center',
+        },
+        {
+            title: '接收人姓名',
+            dataIndex: 'custName1',
+            align: 'center',
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        },
+        {
+            title: '系统账号',
+            dataIndex: 'projectName1',
+            align: 'center',
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        },
+        {
+            title: '手机号码',
+            dataIndex: 'projectName2',
+            align: 'center',
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        },
+        {
+            title: '邮箱地址',
+            dataIndex: 'projectName3',
+            align: 'center',
+            ellipsis: {
+                showTitle: false,
+            },
+            render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+        }],
+        selectType:'0',//选择查看消息的类型 0是我接收的 1是我发送的
         tableData:[],
         tableSelecteds:[],
         modalVisible: false,
@@ -97,29 +144,36 @@ class Notice extends Component {
             tableSelectedInfo: info
         })
     };
-    render = _ =>
-        <ModalDom title='消息通知' width={1000} destroyOnClose={true} visible={true} onOk={()=>this.handleClick(false)} onCancel={this.props.onCancel}>
+    render = _ =>{
+        let st = {boxShadow: '10px 10px 5px #888888'}, columns = this.state[`columns${this.state.selectType}`];
+        return (<ModalDom title='消息通知' width={1000} destroyOnClose={true} visible={true} onOk={() => this.handleClick(false)} onCancel={this.props.onCancel}>
             <Row className="sendBox">
-                <Col className="senBoxSon" style={{height:60,cursor:'pointer',backgroundColor:'#03bf16',fontSize:18,color:'white',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                <Col className="senBoxSon" onClick={()=> this.setState({selectType:'0'})} style={this.state.selectType == 0 ? st : {}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
                     <span>我接收的</span>
-                    <span style={{marginLeft:15}}>10</span>
+                    <span style={{ marginLeft: 15 }}>10</span>
                 </Col>
-                <Col className="senBoxSon" style={{height:60,cursor:'pointer',backgroundColor:'#02a7f0',fontSize:18,color:'white',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 11, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                <Col className="senBoxSon" onClick={()=> this.setState({selectType:'1'})} style={this.state.selectType == 1 ? st : {}} xs={{ span: 11, offset: 1 }} lg={{ span: 6, offset: 2 }}>
                     <span>我发送的</span>
-                    <span style={{marginLeft:15}}>10</span>
+                    <span style={{ marginLeft: 15 }}>10</span>
                 </Col>
-                <Col className="senBoxSon" style={{height:60,cursor:'pointer',backgroundColor:'#f2f2f2',fontSize:18,color:'#02a7f0',display:'flex',justifyContent:'center',alignItems:'center'}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
-                    <span>发送消息</span>
+                <Col className="senBoxSon" xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                    <span style={{marginRight:10}}>+</span><span>发送消息</span>
                 </Col>
             </Row>
-            <Tabs tabBarExtraContent={<Button>操作区</Button>}>
+            {/* <Tabs tabBarExtraContent={<Button>操作区</Button>}>
                 <TabPane tab="未读（6）" key="1"></TabPane>
                 <TabPane tab="已读（10）" key="2"></TabPane>
-            </Tabs>
+            </Tabs> */}
+            <Row style={{ marginTop: 10 }}>
+                <Col span={24} style={{ textAlign: 'right' }}>
+                    <Button type="info" onClick={this.delRoleItem}>删除</Button>
+                </Col>
+            </Row>
             <div className="tableParson">
-                <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.tableData} columns={this.state.columns} style={{ marginTop: '20px',maxHeight:'86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={{y:450}} size="small" />
+                <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.tableData} columns={columns} style={{ marginTop: 10, maxHeight: '86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={{ y: 450 }} size="small" />
                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
             </div>
-        </ModalDom>
+        </ModalDom>)
+    } 
 }
 export default Notice

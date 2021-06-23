@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Row, Col,  Input, Select,  DatePicker,Upload,Form,Icon } from 'antd'
+import { text } from 'express';
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
@@ -1016,7 +1017,7 @@ export const panes = [
                 dataIndex: 'isMroId',
                 key:'isMroId',
                 selectData:'maintained',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: 'raid级别',
@@ -1219,7 +1220,7 @@ export const panes = [
                 dataIndex: 'isMroName',
                 selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '用途',
@@ -1409,7 +1410,7 @@ export const panes = [
                 dataIndex: 'isMroName',
                 selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '操作',
@@ -1579,7 +1580,7 @@ export const panes = [
                 dataIndex: 'isMroName',
                 selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '用途',
@@ -1628,6 +1629,13 @@ export const panes = [
                 selectData:'maintained',
                 key: 'strValue4',
                 align: 'center',
+                render:(text,row,index) => {
+                    if(text == 0){
+                        return '否'
+                    }else{
+                        return '是'
+                    }
+                }
             },
             {
                 title: '容量',
@@ -1642,7 +1650,7 @@ export const panes = [
                 dataIndex: 'isMroName',
                 selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '用途',
@@ -1718,13 +1726,20 @@ export const panes = [
                 inputType:'select',
                 key: 'strValue4',
                 align: 'center',
+                render:(text,row,index) => {
+                    if(text == 0){
+                        return '否'
+                    }else{
+                        return '是'
+                    }
+                }
             },
             {
                 title: '是否维护',
                 dataIndex: 'isMroName',
                 selectData:'maintained',
                 key: 'isMroId',
-                align: 'center',
+                align: 'center'
             },
             {
                 title: '用途',
@@ -1825,6 +1840,13 @@ export const panes = [
                 inputType:'select',
                 key: 'strValue8',
                 align: 'center',
+                render:(text,row,index) => {
+                    if(text == 0){
+                        return '否'
+                    }else{
+                        return '是'
+                    }
+                }
             },
             {
                 title: '数据库版本',
