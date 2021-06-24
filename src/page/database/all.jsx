@@ -164,7 +164,7 @@ class All extends Component {
                 render: (t, r) => {
                     t.toString()
                     if (t == "1") {
-                        return downArr.indexOf(r.id) > -1 ? <Spin indicator={antIcon} /> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                        return downArr.indexOf(r.id) > -1 ? <span  style={{  color: "#1890ff" }}><Spin indicator={antIcon}/>下载中</span> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (t == "0") {
                         return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                     }
@@ -306,8 +306,20 @@ class All extends Component {
         PostFileDownload(params).then(res => {
             downArr = downArr.filter(item => item != key)
             this.setState({ downArr })
-            this.getTableData()
-            this.subpageChange()
+            if (res.success != 1) {
+                message.destroy()
+                message.error(res.message)
+            } else {
+                let a = document.createElement("a");
+                document.body.appendChild(a);
+                let url = res.data + (res.data.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
+                a.href = url;
+                a.click();
+                document.body.removeChild(a);
+                this.getTableData()
+                this.subpageChange()
+            }
+         
         })
     }
     // 申请文件下载

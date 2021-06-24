@@ -1,12 +1,23 @@
 import React, { Component, PropTypes } from 'react'
 import { Row, Col, Spin, Icon, Modal, Button, Form, Input, Select ,message } from 'antd'
-
+import { connect } from "react-redux";
 // 导入 卡片模板文件
 import Card from "@/components/card/card";
 
-
+//引入接口
+import {
+  GetworkPlatform
+} from "@/api/Workbench.js";
 import '/assets/less/pages/homeMoudle.css'
-
+import { ADD_PANE } from "/redux/action";
+@connect(
+  (state) => ({}),
+  (dispath) => ({
+    add(pane) {
+      dispath({ type: ADD_PANE, data: pane });
+    },
+  })
+)
 
 class HomeMoudle extends Component {
   // 相当于构造函数
@@ -27,7 +38,9 @@ class HomeMoudle extends Component {
                 {
                     title: '我的待办',
                     number: '0',
-                    icon: 'user-add'
+                    icon: 'user-add',
+                    url: "ServiceRequire/require.jsx",
+                    
                 }, {
                     title: '已完成的',
                     number: '0',
@@ -55,15 +68,28 @@ class HomeMoudle extends Component {
             isShow: true,
         };
     }
-
-
+    componentDidMount=()=>{
+         
+      GetworkPlatform().then((res)=>{
+        console.log(res)
+        if (res.success != 1) {
+          message.error("请求错误");
+          return;
+        } else {
+          this.setState({
+            cartList: res.data,
+           
+          });
+           
+    
+        }
+      })
+    }
     handleSiblingsClick = (index) => {
         this.setState({
             activeType: index
         })
-
     }
-
     // 用于修改卡片的显示/隐藏
     change = () => {
         this.setState({
@@ -91,7 +117,7 @@ class HomeMoudle extends Component {
     showModal = () => {
         const len = this.state.cartList.length;
         //   先判断常用模块数据是否超过或等于5(此功能要求：常用模块不能超过5个)
-        if (len >= 4) {
+        if (len >= 5) {
             message.error('常用模块数量不能超过5个！')
         } else {
             this.setState({
@@ -117,7 +143,16 @@ class HomeMoudle extends Component {
             titleStatus: 'addModules',
         });
     };
-
+ 
+  //点击按钮 显示 到其他页面
+  showContent=(i)=>{
+    let pane = {
+      title: i.title,
+      key: i.key,
+      url: i.url,
+    };
+    this.props.add(pane);
+  }
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -160,7 +195,7 @@ class HomeMoudle extends Component {
                     this.state.cartList.map((item,index) => {
                       return (
                         <div className="cart-item cart-itembg" key={item.title} style={{background:this.state.cartListImage[index],backgroundSize:'100% 100%'}}>
-                          <div className="cart-item-content">
+                          <div className="cart-item-content" style={{cursor:"pointer"}} onClick={_=>this.showContent(item)}>
                             <div className="number">{item.title}</div>
                             <div className="title">{item.number}</div>
                           </div>

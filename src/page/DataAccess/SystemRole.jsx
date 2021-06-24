@@ -20,16 +20,9 @@ import {
 import TreeParant from "@/components/tree/index.jsx";
 //引入新增弹出框
 import MyModal from './AddalertConmponent/Addalert'
-import {
-  AddRoleGroup,
-  EditRoleGroup,
-  DelRoleGroup,
-  AddRole,
-  EditRole,
-  GetResourceTree,
-} from "/api/role.js";
+
 //1:yurry渲染模糊列表树管理
-import {GetsystemTree,GetList,GetDelete,Addadd} from "/api/datajurisdiction.js"
+import { GetsystemTree, GetList, GetDelete, Addadd } from "/api/datajurisdiction.js"
 import { GetDictInfo } from "/api/dictionary";
 import Pagination from "/components/pagination";
 const { confirm } = Modal;
@@ -42,7 +35,7 @@ const assignment = (data) => {
     list.value = list.id;
     if (list.hasOwnProperty("metaCategoryName")) {
       list.title = list.metaCategoryName;
-    } 
+    }
     if (list.hasOwnProperty("children")) {
       if (list.children.length > 0) {
         assignment(list.children);
@@ -67,7 +60,7 @@ class Access extends Component {
     this.SortTable();
     //窗口变动的时候调用
     window.onresize = () => {
-       this.SortTable();
+      this.SortTable();
     };
   }
   async componentWillMount() {
@@ -76,18 +69,7 @@ class Access extends Component {
     // 获取下拉框数据
     this.getDictData();
     // 请求角色所要挂载的全量资源数据
-    GetResourceTree().then((res) => {
-      if (res.success != 1) {
-        message.error("请求错误");
-        return;
-      } else {
-        //给tree数据赋值key title
-        assignment(res.data);
-        this.setState({
-          resourceData: res.data,
-        });
-      }
-    });
+
   }
   state = {
     //新增按钮弹出框快关
@@ -126,7 +108,7 @@ class Access extends Component {
     tree: {
       //右侧角色树数据
       treeData: [],
-    }, 
+    },
     // treeDataList: [],
     //右侧table相关数据
     table: {
@@ -144,32 +126,24 @@ class Access extends Component {
           title: "权限对象",
           dataIndex: "positionName",
           align: "center",
-          render: (text, record)=> 
-          <Tooltip placement="topLeft" title={text}>
-              <span style={{ cursor: 'pointer',display:'block' }} onClick={() => this.previewing(record)}>{text}</span>
-          </Tooltip>
+          render: (text, record) =>
+            <Tooltip placement="topLeft" title={text}>
+              <span style={{ cursor: 'pointer', display: 'block' }} onClick={() => this.previewing(record)}>{text}</span>
+            </Tooltip>
         },
         {
           title: "权限点",
           dataIndex: "functionName",
           align: "center",
-          // render: (t, r) => {
-          //   t.toString();
-          //   if (t == "1") {
-          //     return "启用";
-          //   } else if (t == "0") {
-          //     return "禁用";
-          //   }
-          // },
         },
         {
           title: "配置属性",
           dataIndex: "configFieldInfo",
           align: "center",
-          render: (text, record)=> 
-          <Tooltip placement="topLeft" title={text}>
-              <span style={{ cursor: 'pointer',display:'block' }} onClick={() => this.previewing(record)}>{text}</span>
-          </Tooltip>
+          render: (text, record) =>
+            <Tooltip placement="topLeft" title={text}>
+              <span style={{ cursor: 'pointer', display: 'block' }} onClick={() => this.previewing(record)}>{text}</span>
+            </Tooltip>
         },
       ],
       //右侧角色表格数据
@@ -224,55 +198,11 @@ class Access extends Component {
           searchListID: res.data[0].id,
           tree: { treeData: res.data },
         });
-        // this.generateList(res.data)
-        // if (this.state.newEntry && res.data) {
-        //   this.setState({
-        //     searchListID: res.data[0].id,
-        //     newRoleGroup: {
-        //       treeSelect: res.data[0].id,
-        //       newRoleGroupVal: res.data[0].roleCategoryName,
-        //     },
-        //   });
-        //   this.searchRoleFun(res.data[0].id);
-        //   this.setState({ newEntry: false });
-        // }
       }
     });
   };
-  //新增角色组
-  addRoleGroup = () => {
-    // 新增内容区域内容置空 新增内容区域显示
-    let select = this.state.newRoleGroup.treeSelect;
-    this.setState({
-      newRoleGroup: {
-        treeSelect: select,
-        newRoleGroupVal: null,
-      },
-      roleGroupWindow: {
-        roleGroupModal: true,
-        roleGroupModalType: 0,
-        roleGroupModalTitle: "新增角色组",
-      },
-    });
-  };
-  //编辑角色组
-  editRoleGroup = () => {
-    let selected = this.state.newRoleGroup.treeSelect;
-    //1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
-    if (selected == "" || selected == null) {
-      message.destroy();
-      message.warning("没有选中数据,无法进行修改!");
-      return;
-    }
-    //2 编辑弹窗展示
-    this.setState({
-      roleGroupWindow: {
-        roleGroupModal: true,
-        roleGroupModalType: 1,
-        roleGroupModalTitle: "修改角色组",
-      },
-    });
-  };
+
+
   //删除角色组
   delRoleGroup = async (_) => {
     //1 判断角色组tree是否有选中 如无选中提示无选中数据无法删除
@@ -388,48 +318,14 @@ class Access extends Component {
         parentId: this.state.newRoleGroup.treeSelect,
         roleCategoryName: this.state.newRoleGroup.newRoleGroupVal,
       };
-      AddRoleGroup(params).then((res) => {
-        if (res.success != 1) {
-          message.error(res.message);
-          this.setState({ lock: false });
-          return;
-        } else {
-          // 4 请求完成后关闭弹窗并将输入框赋值为空
-          this.setState({
-            roleGroupWindow: {
-              roleGroupModal: false,
-            },
-            newRoleGroup: Object.assign({}, this.state.newRoleGroup, {
-              newRoleGroupVal: "",
-            }),
-            lock: false,
-          });
-          //5 左侧角色组tree刷新
-          this.searchTree();
-        }
-      });
+
     } else if (this.state.roleGroupWindow.roleGroupModalType == 1) {
       //修改 请求修改方法
       let params = {
         id: this.state.newRoleGroup.treeSelect,
         roleCategoryName: this.state.newRoleGroup.newRoleGroupVal,
       };
-      EditRoleGroup(params).then((res) => {
-        if (res.success != 1) {
-          message.error(res.message);
-          this.setState({ lock: false });
-          return;
-        } else {
-          // 4 请求完成后关闭弹窗并将输入框赋值为空
-          this.setState({
-            roleGroupWindow: {
-              roleGroupModal: false,
-            },
-            lock: false,
-          });
-          this.searchTree();
-        }
-      });
+
     }
   };
   //点击行选中选框
@@ -445,50 +341,10 @@ class Access extends Component {
       },
     };
   };
-  // 角色名称查询
-//   searchRoleNameFun = () => {
-//     let id = this.state.searchListID;
-//     let name = this.state.searchRoleName;
-//     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-//     if (id == "" || id == null) {
-//       message.destroy();
-//       message.warning("请先选中左侧角色组，然后再进行查询。");
-//       return;
-//     }
-//     // if (name == "" || name == null) {
-//     //     message.destroy()
-//     //     message.warning('请先输入查询内容，然后再进行查询。');
-//     //     return
-//     // }
-//     // 2 发起查询请求 查询后结构给table赋值
-//     // 选中后请求角色数据
-//     let params = Object.assign(
-//       {},
-//       {
-//         businessKey: id,
-//         roleName: name,
-//       },
-//       this.state.pageConf
-//     );
-// debugger
-//     GetList(params).then((res) => {
-//       console.log(res)
-//       if (res.success == 1) {
-//         let data = Object.assign({}, this.state.table, {
-//           rolesData: res.data.records,
-//         });
-//         let pagination = Object.assign({}, this.state.pagination, {
-//           total: res.data.total,
-//         });
-//         this.setState({ table: data, pagination: pagination });
-//       } else {
-//         message.error(res.message);
-//       }
-//     });
-//   };
-  // 角色名称查询
+
+
   searchRoleNameFun2 = (pageConf) => {
- 
+
     let id = this.state.searchListID;
     let name = this.state.searchRoleName;
     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
@@ -500,11 +356,11 @@ class Access extends Component {
     // 2 发起查询请求 查询后结构给table赋值
     // 选中后请求角色数据
     let params = Object.assign({}, {
-      businessKey:id,
+      businessKey: id,
       // roleName: name,
-  }, pageConf)
+    }, pageConf)
 
-  GetList(params).then((res) => {
+    GetList(params).then((res) => {
       console.log(res)
       if (res.success == 1) {
         let data = Object.assign({}, this.state.table, {
@@ -531,7 +387,7 @@ class Access extends Component {
   };
   // 角色列表获取
   searchRoleFun = (id) => {
-  
+
     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
     if (id == "" || id == null) {
       message.warning("请先选中左侧角色组，然后再进行查询。");
@@ -547,7 +403,7 @@ class Access extends Component {
       this.state.pageConf,
       { offset: 0 }
     );
-   
+
 
     GetList(params).then((res) => {
       if (res.success == 1) {
@@ -573,23 +429,8 @@ class Access extends Component {
       }
     });
   };
-  // 点击添加，按钮的弹出框
-  // addRoleItem = (_) => {
-    // let id = this.state.searchListID
-    // //1 判断角色组tree是否有选中 如无选中提示无选中 无法新增角色
-    // if (id == "" || id == null) {
-    //     message.warning('请先选中左侧角色组，然后再进行角色新增。');
-    //     return
-    // }
-    // this.setState({
-    //     roleWindow: {
-    //         roleModal: true,
-    //         roleModalType: 0,
-    //         roleModalTitle: "新增"
-    //     },
-    // })
-  // };
-// 点击新增按钮的弹出框yurry
+
+  // 点击新增按钮的弹出框yurry
   showModel = () => {
     let visible = this.state.visible;
     this.setState({
@@ -615,7 +456,7 @@ class Access extends Component {
     ) {
       message.destroy();
       message.warning("没有选中数据,无法进行修改!");
-   }
+    }
     let row = this.state.tableSelectedInfo[0];
     let visible = this.state.visible;
     this.setState({
@@ -815,7 +656,7 @@ class Access extends Component {
   };
   // 分页页码变化
   pageIndexChange = (current, pageSize) => {
-    
+
     let pageConf = Object.assign({}, this.state.pageConf, {
       offset: (current - 1) * pageSize,
       businessKey: this.state.searchListID,
@@ -829,7 +670,7 @@ class Access extends Component {
   };
   // 分页条数变化
   pageSizeChange = (current, pageSize) => {
-   
+
     // let pagination = Object.assign({}, this.state.pageConf, { pageSize: pageSize });
     // this.setState({
     //     pageConf: pageConf,
@@ -924,7 +765,7 @@ class Access extends Component {
   };
   render = (_) => {
     const { h } = this.state;
-    const {loading,dialog,message}=this.state;
+    const { loading, dialog, message } = this.state;
     return (
       <div
         style={{ background: " #fff", height: "100%" }}
@@ -943,8 +784,8 @@ class Access extends Component {
             <TreeParant
               treeData={this.state.tree.treeData}
               selectedKeys={[this.state.searchListID]}
-              // addTree={this.addRoleGroup}
-              // editTree={this.editRoleGroup}
+
+
               // deletetTree={this.delRoleGroup}
               onExpand={this.onExpand}
               onSelect={this.onTreeSelect} //点击树节点触发事件
@@ -997,13 +838,13 @@ class Access extends Component {
                     新增
                   </Button>
                   {
-                    this.state.visible?<MyModal
-                    title={this.state.statusModal ? this.state.updateTitle : this.state.addTitle}
-                    searchListID={this.state.searchListID}
-                    updataModal={this.state.statusModal ? this.state.updataModal : ''}
-                   onCancel={this.onCancel}            
-                   >
-               </MyModal> :null
+                    this.state.visible ? <MyModal
+                      title={this.state.statusModal ? this.state.updateTitle : this.state.addTitle}
+                      searchListID={this.state.searchListID}
+                      updataModal={this.state.statusModal ? this.state.updataModal : ''}
+                      onCancel={this.onCancel}
+                    >
+                    </MyModal> : null
                   }
                 </Col>
               </Row>

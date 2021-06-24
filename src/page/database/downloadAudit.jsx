@@ -157,16 +157,17 @@ class DownloadAudit extends Component {
                 title: '操作',
                 align: 'center',
                 editable: false,
+                width: 160,
                 render: (t, r) => {
                     let status = r.reviewStatus
                     if (status == "0") {
                         return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            {downArr.indexOf(r.id+""+r.applyId) > -1 ? <Spin indicator={antIcon} style={{ margin: "0 6px 0 3px" }} /> : <a onClick={_ => this.downloadFile(r.id+""+r.applyId)} style={{ margin: "0 3px" }}>下载</a>}
+                            {downArr.indexOf(r.applyId) > -1 ? <span style={{ margin: "0 6px 0 3px", color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={_ => this.downloadFile(r.id, r.applyId)} style={{ margin: "0 3px" }}>下载</a>}
                             <a onClick={_ => this.examineItem(r.applyId, 1)} style={{ margin: "0 3px" }}>同意</a>
                             <a onClick={_ => this.examineItem(r.applyId, 2)} style={{ margin: "0 3px" }}>驳回</a>
                         </div>
                     } else if (status == "1" || status == "2") {
-                        return downArr.indexOf(r.id+""+r.applyId) > -1 ? <Spin indicator={antIcon} /> : <a onClick={_ => this.downloadFile(r.id+""+r.applyId)} style={{ margin: "0 3px" }}>下载</a>
+                        return downArr.indexOf(r.id + "" + r.applyId) > -1 ? <Spin indicator={antIcon} /> : <a onClick={_ => this.downloadFile(r.id, r.applyId)} style={{ margin: "0 3px" }}>下载</a>
                     }
                 }
             },
@@ -260,16 +261,27 @@ class DownloadAudit extends Component {
     }
 
     // 文件下载
-    downloadFile = (key) => {
-        downArr.push(key)
+    downloadFile = (key, ID) => {
+        downArr.push(ID)
         this.setState({ downArr })
         let params = {
             downloadType: "downloadReview",
             fileId: key
         }
         PostFileDownload(params).then(res => {
-            downArr = downArr.filter(item => item != key)
+            downArr = downArr.filter(item => item != ID)
             this.setState({ downArr })
+            if (res.success != 1) {
+                message.destroy()
+                message.error(res.message)
+            } else {
+                let a = document.createElement("a");
+                document.body.appendChild(a);
+                let url = res.data + (res.data.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
+                a.href = url;
+                a.click();
+                document.body.removeChild(a);
+            }
         })
     }
 
