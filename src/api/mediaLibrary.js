@@ -39,9 +39,6 @@ export const GetFileLevels = () => {
 	return http.fetchGet(`fileLevel/list`)
 }
 
-
-
-
 // 加签验证接口
 export const GetSignResult = (params = {}) => {
 	return http.fetchGet(`fileLibrary/sign`, params)
@@ -79,7 +76,7 @@ export const GetFileApply = (params = {}) => {
 }
 // 文件下载接口
 export const PostFileDownload = (params = {}) => {
-	return http.fetchBlobPost(`fileLibrary/download`, params)
+	return http.fetchPost(`fileLibrary/download`, params)
 }
 
 // 文件删除
