@@ -306,8 +306,20 @@ class All extends Component {
         PostFileDownload(params).then(res => {
             downArr = downArr.filter(item => item != key)
             this.setState({ downArr })
-            this.getTableData()
-            this.subpageChange()
+            if (res.success != 1) {
+                message.destroy()
+                message.error(res.message)
+            } else {
+                let a = document.createElement("a");
+                document.body.appendChild(a);
+                let url = res.data + (res.data.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
+                a.href = url;
+                a.click();
+                document.body.removeChild(a);
+                this.getTableData()
+                this.subpageChange()
+            }
+         
         })
     }
     // 申请文件下载
