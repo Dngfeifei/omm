@@ -20,14 +20,6 @@ import {
 import TreeParant from "@/components/tree/index.jsx";
 //引入新增弹出框
 import MyModal from './AddalertConmponent/Addalert'
-import {
-  AddRoleGroup,
-  EditRoleGroup,
-  DelRoleGroup,
-  AddRole,
-  EditRole,
-  GetResourceTree,
-} from "/api/role.js";
 //1:yurry渲染模糊列表树管理
 import {GetsystemTree,GetList,GetDelete,Addadd} from "/api/datajurisdiction.js"
 import { GetDictInfo } from "/api/dictionary";
@@ -75,19 +67,7 @@ class Access extends Component {
     this.searchTree();
     // 获取下拉框数据
     this.getDictData();
-    // 请求角色所要挂载的全量资源数据
-    GetResourceTree().then((res) => {
-      if (res.success != 1) {
-        message.error("请求错误");
-        return;
-      } else {
-        //给tree数据赋值key title
-        assignment(res.data);
-        this.setState({
-          resourceData: res.data,
-        });
-      }
-    });
+   
   }
   state = {
     //新增按钮弹出框快关
@@ -153,14 +133,6 @@ class Access extends Component {
           title: "权限点",
           dataIndex: "functionName",
           align: "center",
-          // render: (t, r) => {
-          //   t.toString();
-          //   if (t == "1") {
-          //     return "启用";
-          //   } else if (t == "0") {
-          //     return "禁用";
-          //   }
-          // },
         },
         {
           title: "配置属性",
@@ -224,18 +196,6 @@ class Access extends Component {
           searchListID: res.data[0].id,
           tree: { treeData: res.data },
         });
-        // this.generateList(res.data)
-        // if (this.state.newEntry && res.data) {
-        //   this.setState({
-        //     searchListID: res.data[0].id,
-        //     newRoleGroup: {
-        //       treeSelect: res.data[0].id,
-        //       newRoleGroupVal: res.data[0].roleCategoryName,
-        //     },
-        //   });
-        //   this.searchRoleFun(res.data[0].id);
-        //   this.setState({ newEntry: false });
-        // }
       }
     });
   };
@@ -445,47 +405,6 @@ class Access extends Component {
       },
     };
   };
-  // 角色名称查询
-//   searchRoleNameFun = () => {
-//     let id = this.state.searchListID;
-//     let name = this.state.searchRoleName;
-//     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-//     if (id == "" || id == null) {
-//       message.destroy();
-//       message.warning("请先选中左侧角色组，然后再进行查询。");
-//       return;
-//     }
-//     // if (name == "" || name == null) {
-//     //     message.destroy()
-//     //     message.warning('请先输入查询内容，然后再进行查询。');
-//     //     return
-//     // }
-//     // 2 发起查询请求 查询后结构给table赋值
-//     // 选中后请求角色数据
-//     let params = Object.assign(
-//       {},
-//       {
-//         businessKey: id,
-//         roleName: name,
-//       },
-//       this.state.pageConf
-//     );
-// debugger
-//     GetList(params).then((res) => {
-//       console.log(res)
-//       if (res.success == 1) {
-//         let data = Object.assign({}, this.state.table, {
-//           rolesData: res.data.records,
-//         });
-//         let pagination = Object.assign({}, this.state.pagination, {
-//           total: res.data.total,
-//         });
-//         this.setState({ table: data, pagination: pagination });
-//       } else {
-//         message.error(res.message);
-//       }
-//     });
-//   };
   // 角色名称查询
   searchRoleNameFun2 = (pageConf) => {
  

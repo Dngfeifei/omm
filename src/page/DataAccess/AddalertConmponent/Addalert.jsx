@@ -78,7 +78,6 @@ class MyModal extends Component {
     window.resetStore = this.props.reset;
     console.log(this.props, "updataModal");
     if (this.props.updataModal) {
-      debugger
       defaultValue = this.props.updataModal.function.split(",");
       station = this.props.updataModal.positionName;
       this.props.updataModal.fieldList.forEach((item) => {
@@ -181,7 +180,12 @@ class MyModal extends Component {
       str.push(item.positionName);
       positionId.push(item.id);
     });
-    console.log(str, "station");
+    console.log(str,positionId, "station");
+     
+
+
+
+
     this.setState(
       {
         station: str.join(","),
@@ -257,7 +261,7 @@ class MyModal extends Component {
   };
   //4：点击复选框
   onCheckobtn = (checkedValues) => {
-    let {plainValue} = this.state;
+    let { plainValue } = this.state;
     let listValue = this.state.listOptions.filter((item) => {
       if (checkedValues.includes(item.fieldMeta)) {
         return item;
@@ -267,9 +271,9 @@ class MyModal extends Component {
     if (this.props.updataModal) {
       debugger
       plainValue.forEach(item => {
-        listValue.forEach((items,index) => {
+        listValue.forEach((items, index) => {
           if (item.fieldMeta === items.fieldMeta) {
-            listValue.splice(index, 1 , item)
+            listValue.splice(index, 1, item)
           }
         })
       })
@@ -281,14 +285,14 @@ class MyModal extends Component {
         }
       );
     } else {
-      
+
       console.log(listValue, "listValue");
       this.setState(
         {
           plainValue: listValue,
         },
         () => {
-          console.log(plainValue);
+          // console.log(plainValue);
         }
       );
     }
@@ -303,7 +307,10 @@ class MyModal extends Component {
           fieldMeta: id,
         },
       });
+       //fieldDate数组的长度为真，每项id匹配则复选框为真
+      
     } else {
+      let { fieldDate } = this.state;
       GetFieldsRange({ fieldMeta: id }).then((res) => {
         if (res.success != 1) {
           message.error("请求错误");
@@ -334,6 +341,19 @@ class MyModal extends Component {
             });
             console.log(arr, "======");
           }
+          //fieldDate数组的长度为真，每项id匹配则复选框为真
+          if (fieldDate.length) {
+            fieldDate.forEach(item => {
+              if (item.fieldMeta === id) {
+                arr.forEach(items => {
+                  if (item.fieldData.includes(items.value)) {
+                    items.checked = true
+                  }
+                })
+              }
+            })
+          }
+
           this.setState({
             attriteValue: arr,
             attriteId: id,
@@ -382,7 +402,7 @@ class MyModal extends Component {
     // }
 
     // let newArr = plainValue;
-    
+
     console.log(checkedLabel, "params");
 
     this.setState(
@@ -444,25 +464,24 @@ class MyModal extends Component {
         EngineerInputname += item.realName;
       }
     });
-    
+
     plainValue.forEach((item) => {
       if (item.fieldMeta == selector.fieldMeta) {
         if (item.fieldName === undefined) {
           item.fieldData = EngineerInputId;
           item.fieldName = EngineerInputname;
         } else {
-          debugger
           item.fieldName = item.fieldName.split(',')
           item.fieldData = item.fieldData.split(',')
           EngineerInputId = EngineerInputId.split(',')
           EngineerInputname = EngineerInputname.split(',')
 
-          EngineerInputname.forEach((items,index) => {
+          EngineerInputname.forEach((items, index) => {
             if (item.fieldName.indexOf(items) === -1) {
               item.fieldName.push(items)
             }
           })
-          EngineerInputId.forEach((items,index) => {
+          EngineerInputId.forEach((items, index) => {
             if (item.fieldData.indexOf(items) === -1) {
               item.fieldData.push(items)
             }
@@ -507,48 +526,57 @@ class MyModal extends Component {
       //     oldplainValue,
       //   },
       //   () => {
-          let arr = [];
-          let num = [];
-          plainValue.forEach((item, index) => {
-            if (item.isUser === "1") {
-              if (item.fieldName === undefined) {
-                arr = username;
-                item.fieldName = arr;
-              } else {
-                arr = item.fieldName.split(",");
-                arr.push(username);
-                item.fieldName = arr.join(',');
+      let arr = [];
+      let num = [];
+      plainValue.forEach((item, index) => {
+        if (item.isUser === "1") {
+            if (item.fieldName === undefined) {
+              arr = username;
+              item.fieldName = arr;
+      
+            } else {
+             
+              arr = item.fieldName.split(",");
+              
+              arr.push(username);
+              //去除空字符串
+              for(var i=0;i<arr.length;i++){
+                if(arr[i]==''||arr[i]==null){
+                     arr.splice(i,1);
+                     i=i-1
+                }
               }
+              item.fieldName = arr.join(',');
+           }
+          
+          if (item.fieldData === undefined) {
+            num = userid;
+            item.fieldData = num;
+          } else {
+            num = item.fieldData.split(",");
+            num.push(userid);
+            item.fieldData = num.join(',');
+          }
+          let obj = {
+            fieldMeta: item.fieldMeta,
+            fieldData: item.fieldData,
+          };
+          fieldDate.push(obj);
+        }
 
-              if (item.fieldData === undefined) {
-                num = userid;
-                item.fieldData = num;
-              } else {
-                num = item.fieldData.split(",");
-                num.push(userid);
-                item.fieldData = num.join(',');
-              }
-              let obj = {
-                fieldMeta: item.fieldMeta,
-                fieldData: item.fieldData,
-              };
-              fieldDate.push(obj);
-            }
-            
-          });
-        // }
-      // );
+      });
+      
     } else {
       plainValue.forEach((item, index) => {
         if (item.isUser === "1") {
           item.fieldName = item.fieldName.split(',')
           item.fieldData = item.fieldData.split(',')
-          item.fieldName.forEach((its,index) => {
+          item.fieldName.forEach((its, index) => {
             if (its === username) {
               item.fieldName.splice(index, 1)
             }
           })
-          item.fieldData.forEach((its,index) => {
+          item.fieldData.forEach((its, index) => {
             if (its === userid) {
               item.fieldData.splice(index, 1)
             }
@@ -567,14 +595,26 @@ class MyModal extends Component {
       plainValue,
     });
   };
-//input 删除字母
-  inputChange = (event)=>{
-    console.log(event)  // 通过target获取dom节点
-    this.setState({
-      station:event.target.value,//  结构函数的username赋值dom节点val
-    })
-}
-
+  //清空数组的字
+  Cleatinput=(e)=>{
+    const {station}=this.state
+     if(e.target.value){
+       this.setState({
+        station:e.target.value
+       })
+     }else{
+       let clearinput= document.getElementsByClassName("clearInput").value = "";
+       console.log(clearinput)
+        this.myInput.focus()
+     }
+   
+    //  //第二种方式
+    //  this.setState({
+    //   station:null
+    //  })
+    //  this.myInput.focus()
+  
+  }
   render = (_) => {
     var AttriteData = this.state.AttributeData;
     // const { getFieldDecorator, getFieldValue } = this.props.form;
@@ -598,7 +638,7 @@ class MyModal extends Component {
                 <Form.Item label={"岗位"} required={false}>
                   {this.state.AllOff ? (
                     <Input
-                    ref="inputModelRef"
+                      ref="inputModelRef"
                       disabled
                       suffix={
                         <Icon
@@ -608,21 +648,23 @@ class MyModal extends Component {
                         />
                       }
                       value={this.state.Allname}
-                      onChange = {this.inputChange}
+                      
                     />
                   ) : (
-                    <Input
-                    ref={myInput=>this.myInput=myInput}
-                      suffix={
-                        <Icon
-                          type="solution"
-                          style={{ cursor: "pointer", fontSize: "24px" }}
-                          onClick={this.showConnet}
-                        />
-                      }
-                      value={this.state.station}
-                    />
-                  )}
+                      <Input
+                        ref={myInput => this.myInput = myInput}
+                        suffix={
+                          <Icon
+                            type="solution"
+                            style={{ cursor: "pointer", fontSize: "24px" }}
+                            onClick={this.showConnet}
+                          />
+                        }
+                        className="clearInput"
+                        value={this.state.station}
+                        onChange={this.Cleatinput}
+                      />
+                    )}
                 </Form.Item>
                 <Checkbox
                   style={{ marginLeft: "12px" }}
@@ -733,10 +775,11 @@ class MyModal extends Component {
             onCancel={this.onSelectorCancel}
           />
         ) : (
-          ""
-        )}
+            ""
+          )}
       </div>
     );
   };
 }
+
 export default Form.create()(MyModal);
