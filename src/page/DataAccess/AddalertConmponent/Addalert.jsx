@@ -180,8 +180,8 @@ class MyModal extends Component {
       str.push(item.positionName);
       positionId.push(item.id);
     });
-    console.log(str,positionId, "station");
-     
+    console.log(str, positionId, "station");
+
 
 
 
@@ -307,8 +307,8 @@ class MyModal extends Component {
           fieldMeta: id,
         },
       });
-       //fieldDate数组的长度为真，每项id匹配则复选框为真
-      
+      //fieldDate数组的长度为真，每项id匹配则复选框为真
+
     } else {
       let { fieldDate } = this.state;
       GetFieldsRange({ fieldMeta: id }).then((res) => {
@@ -530,25 +530,25 @@ class MyModal extends Component {
       let num = [];
       plainValue.forEach((item, index) => {
         if (item.isUser === "1") {
-            if (item.fieldName === undefined) {
-              arr = username;
-              item.fieldName = arr;
-      
-            } else {
-             
-              arr = item.fieldName.split(",");
-              
-              arr.push(username);
-              //去除空字符串
-              for(var i=0;i<arr.length;i++){
-                if(arr[i]==''||arr[i]==null){
-                     arr.splice(i,1);
-                     i=i-1
-                }
+          if (item.fieldName === undefined) {
+            arr = username;
+            item.fieldName = arr;
+
+          } else {
+
+            arr = item.fieldName.split(",");
+
+            arr.push(username);
+            //去除空字符串
+            for (var i = 0; i < arr.length; i++) {
+              if (arr[i] == '' || arr[i] == null) {
+                arr.splice(i, 1);
+                i = i - 1
               }
-              item.fieldName = arr.join(',');
-           }
-          
+            }
+            item.fieldName = arr.join(',');
+          }
+
           if (item.fieldData === undefined) {
             num = userid;
             item.fieldData = num;
@@ -565,7 +565,7 @@ class MyModal extends Component {
         }
 
       });
-      
+
     } else {
       plainValue.forEach((item, index) => {
         if (item.isUser === "1") {
@@ -596,24 +596,24 @@ class MyModal extends Component {
     });
   };
   //清空数组的字
-  Cleatinput=(e)=>{
-    const {station}=this.state
-     if(e.target.value){
-       this.setState({
-        station:e.target.value
-       })
-     }else{
-       let clearinput= document.getElementsByClassName("clearInput").value = "";
-       console.log(clearinput)
-        this.myInput.focus()
-     }
-   
+  Cleatinput = (e) => {
+    const { station } = this.state
+    if (e.target.value) {
+      this.setState({
+        station: e.target.value
+      })
+    } else {
+      let clearinput = document.getElementsByClassName("clearInput").value = "";
+      console.log(clearinput)
+      this.myInput.focus()
+    }
+
     //  //第二种方式
     //  this.setState({
     //   station:null
     //  })
     //  this.myInput.focus()
-  
+
   }
   render = (_) => {
     var AttriteData = this.state.AttributeData;
@@ -648,7 +648,7 @@ class MyModal extends Component {
                         />
                       }
                       value={this.state.Allname}
-                      
+
                     />
                   ) : (
                       <Input
