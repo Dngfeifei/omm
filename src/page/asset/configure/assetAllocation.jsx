@@ -487,10 +487,14 @@ class assetsAllocation extends Component {
         } else {
         //     {
                 // 修改保存
+                newParams = this.setEditPost(newParams);
                 let params = {
                     ...this.state.tableSelectedInfo[0],
                     ...newParams
                 }
+                
+                // console.log(params)
+                // return
                 EditAllocationTable(params).then(res => {
                     if (res.success == 1) {
                         this.setState({
@@ -513,6 +517,18 @@ class assetsAllocation extends Component {
                 })
             }
          })
+    }
+    //处理编辑修改后要提交的数据，下拉数据为空的，还原为空
+    setEditPost = (newParams) => {
+        const {columns} = this.state.panes,reg = /^[0-9]*[1-9][0-9]*$/,{form} = this.props;
+        columns.forEach(item => {
+            if(item.key != item.dataIndex){
+                if(!reg.test(newParams[item.key])){
+                    newParams[item.key] = '';
+                }
+            }
+        })
+        return newParams;
     }
     // 分页页码变化
     pageIndexChange = (current, pageSize) => {
@@ -564,7 +580,11 @@ class assetsAllocation extends Component {
             if(assetsList[i].key.indexOf('strValue')>-1 && (assetsList[i].key.split('strValue')[1]>2&&assetsList[i].key.split('strValue')[1]<5) ){
                 item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
             }
+            //处理初始化显示值
             let initialValue = !roleWindow.roleModalType ? baseData[assetsList[i].key] :  isNaN(tableSelectedInfo[0][assetsList[i].key]) ? tableSelectedInfo[0][assetsList[i].key] : tableSelectedInfo[0][assetsList[i].key]+'',rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
+            if(roleWindow.roleModalType && assetsList[i].key !== assetsList[i].dataIndex && !initialValue){
+                initialValue = tableSelectedInfo[0][assetsList[i].dataIndex];
+            }
              //处理产品联动是否可编辑
             if(assetsList[i].selectData == 'productSkillType' || assetsList[i].selectData == 'productBrandType' || assetsList[i].selectData == 'productLineType' || assetsList[i].selectData == 'productModeType'){
                 const len = this.state.selectData[assetsList[i].selectData].length

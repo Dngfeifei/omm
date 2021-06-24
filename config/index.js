@@ -91,6 +91,7 @@ module.exports = {
       '/fileCollect': target, //介质库文件收藏
       '/fileLevel': target, //介质文件级别数据
       '/fileApply': target, //介质文件下载审核
+      '/sysMessage': target, //系统消息接口
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
