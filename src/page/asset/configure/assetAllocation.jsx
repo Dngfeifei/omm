@@ -826,7 +826,13 @@ class assetsAllocation extends Component {
     };
     // 文件上传
     beforeUpload = (file) => {
-        console.log(file.size,file.size / 1024 / 1024)
+        console.log(file)
+        let reg = /.(xlsx)|(xls)$/;
+        if (!reg.test(file.name)) {
+            message.error('只能上传文件名后缀为 xlsx/xls 的文件！');
+            return false;
+        }
+        // console.log(file.size,file.size / 1024 / 1024)
         const isLt2M = file.size / 1024 / 1024 < 30;
         if (!isLt2M) {
             message.error('上传文件大小不能超过30MB!');
@@ -925,12 +931,12 @@ class assetsAllocation extends Component {
                             </Row> : null
                         } */}
                         <Row>
-                            <Col span={8} style={{ textAlign: 'left'}}>
+                            <Col span={4} style={{ textAlign: 'left'}}>
                                 {/* <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
                                 <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>*/}
                                 
                             </Col>
-                            <Col span={16} style={{ textAlign: 'right' }}>
+                            <Col span={20} style={{ textAlign: 'right' }}>
                                 <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ClienttChange} showUploadList={false}>
                                     {/* <Button style={{ marginRight: '10px' }}>
                                         <Icon type="upload" /> 导入文件
@@ -942,7 +948,7 @@ class assetsAllocation extends Component {
                                         loading={this.state.uploadLoading}
                                         // onClick={this.enterIconLoading}
                                     >
-                                        导入文件
+                                        导入老OMM数据
                                     </Button>
                                 </Upload> 
                                 <Button type="primary" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(2)}>查看</Button>
