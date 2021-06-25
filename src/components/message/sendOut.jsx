@@ -52,7 +52,7 @@ class SendOut extends Component {
             return {key:item.id,label:item.realName,userId:item.id,email:item.email}
         })
         // msgUsers = msgUsers.length ? [...msgUsers,...newSelectedItems] : newSelectedItems;
-        let newParams = Object.assign({}, params, { msgUsers: msgUsers.length ? [...msgUsers,...newSelectedItems] : newSelectedItems});
+        params = Object.assign({}, params, { msgUsers: msgUsers.length ? [...msgUsers,...newSelectedItems] : newSelectedItems});
         this.setState({params});
     }
     //saveData

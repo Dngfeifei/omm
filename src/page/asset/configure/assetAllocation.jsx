@@ -47,6 +47,12 @@ const assignment = (data) => {
 class assetsAllocation extends Component {
     constructor (props){
         super(props)
+        let tokenName='token',header = {},actionUrl = '';
+        if(process.env.NODE_ENV == 'production'){
+		    tokenName = `${process.env.ENV_NAME}_${tokenName}`
+            actionUrl = process.env.API_URL
+        }
+        header.authorization = `Bearer ${localStorage.getItem(tokenName) || ''}`;
         this.state = {
             // 表格默认滚动高度
             h: { x:true,y: 240 },
@@ -56,6 +62,17 @@ class assetsAllocation extends Component {
             expandedKeys: [],
             searchValue: '',
             autoExpandParent: true,
+            uploadConf: {
+                // 发到后台的文件参数名
+                name: 'file', 
+                action:`${actionUrl}/biConfiguration/importOldData`,
+                // 接受的文件类型
+                // accept: '.xls,.xlsx,.doc,.txt,.PPT,.DOCS,.XLSX,.PPTX',
+                headers: header,
+                multiple: true,
+            },
+            fileList:[],//导入文件使用
+            uploadLoading:false,
             // 分页参数
             pageConf: {
                 limit: 10,
@@ -592,7 +609,7 @@ class assetsAllocation extends Component {
                 required = len ? false : true;
             }
             //处理配置项是否可编辑
-            if(assetsList[i].key == 'basedataTypeId'){
+            if(assetsList[i].key == 'basedataTypeId'||assetsList[i].key == 'productLevel'){
                 required = true;
             }
             if(roleWindow.roleModalType == 2){
@@ -700,12 +717,11 @@ class assetsAllocation extends Component {
     }
     //服务区域选择改变
     onAreaChange = (selectChange,id)=>{
-         console.log(selectChange,id)
         // return
         if(selectChange == 'projectAreaId' ){  //服务区域
             this.getCustomer(id)
         }else if(selectChange == 'serviceClassId'){//产品类别
-            this.props.form.resetFields(['skillTypeId','brandId','productLineId','productModelId'])
+            this.props.form.resetFields(['skillTypeId','brandId','productLineId','productModelId','productLevel'])
             let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             // console.log(productSkillType)
             //  return
@@ -713,23 +729,30 @@ class assetsAllocation extends Component {
             selectData = Object.assign({}, selectData, { productSkillType:productSkillType? productSkillType :[] });
             this.setState({selectData})
         }else if(selectChange == 'skillTypeId'){//技术方向
-            this.props.form.resetFields(['brandId','productLineId','productModelId'])
+            this.props.form.resetFields(['brandId','productLineId','productModelId','productLevel'])
             let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
             selectData = Object.assign({}, selectData, { productBrandType:productBrandType?productBrandType:[]});
             this.setState({selectData})
         }else if(selectChange == 'brandId'){//品牌
-            this.props.form.resetFields(['productLineId','productModelId'])
+            this.props.form.resetFields(['productLineId','productModelId','productLevel'])
             let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
             selectData = Object.assign({}, selectData, { productLineType:productLineType?productLineType:[]});
             this.setState({selectData})
         }else if(selectChange == 'productLineId'){//产品线
-            this.props.form.resetFields(['productModelId'])
+            this.props.form.resetFields(['productModelId','productLevel'])
             let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
             let {selectData} = this.state;
             selectData = Object.assign({}, selectData, { productModeType:productModeType?productModeType:[]});
             this.setState({selectData})
+        }
+        else if(selectChange == 'productModelId'){//产品型号
+            // console.log(selectChange,id)
+           const {productModeType} = this.state.selectData;
+           let productLevel = productModeType.filter(item => item.id == id );
+           console.log(selectChange,id,productLevel)
+           this.props.form.setFieldsValue({productLevel:productLevel[0]['intValue1']});
         }
         // this.getCustomer(projectAreaId)
     }
@@ -801,6 +824,52 @@ class assetsAllocation extends Component {
     handleChange = searchX => {
         this.setState({ searchX });
     };
+    // 文件上传
+    beforeUpload = (file) => {
+        console.log(file.size,file.size / 1024 / 1024)
+        const isLt2M = file.size / 1024 / 1024 < 30;
+        if (!isLt2M) {
+            message.error('上传文件大小不能超过30MB!');
+        }
+        this.setState({uploadLoading:true})
+        return isLt2M;
+    }
+    // 文件导入
+    ClienttChange=(info)=>{
+        // console.log(info)
+        if (info.file.status !== 'uploading') {
+            console.log(info.file, info.fileList);
+          }
+          if (info.file.status === 'done') {
+            console.log(info)
+            if(info.file.response.success == 1){
+                message.success(`${info.file.response.message}`);
+            }else{
+                message.error(`${info.file.response.message}`);
+            }
+            this.setState({uploadLoading:false})
+          } else if (info.file.status === 'error') {
+            message.error(`${info.file.name} 导入失败！`);
+          }
+        // let fileList = [...info.fileList];
+        // fileList = fileList.slice(-1);
+        // // 2.读取响应并显示文件链接
+        // fileList = fileList.map(file => {
+        //     if (file.response) {
+        //         if (file.response.success == 1) {
+        //             // let number = Math.random().toString().slice(-6);
+        //             // file.uid = number;
+        //             file.fileName = file.response.data.fileName,
+        //             file.fileUrl= file.response.data.fileUrl;
+        //         } else if (file.response.success == 0) {
+        //             file.status = 'error';
+        //         }
+        //     }
+        //     return file;
+        // });
+        // // let data = Object.assign({}, this.state.PerformanceData, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
+        // this.setState({fileList});
+    }
     render = _ => {
         const { h,panes } = this.state;
         const { getFieldDecorator } = this.props.form;
@@ -856,16 +925,26 @@ class assetsAllocation extends Component {
                             </Row> : null
                         } */}
                         <Row>
-                            <Col span={12} style={{ textAlign: 'left'}}>
+                            <Col span={8} style={{ textAlign: 'left'}}>
                                 {/* <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
-                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>
-                                <Upload>
-                                    <Button>
-                                    <Icon type="upload" /> Click to Upload
-                                    </Button>
-                                </Upload> */}
+                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>*/}
+                                
                             </Col>
-                            <Col span={12} style={{ textAlign: 'right' }}>
+                            <Col span={16} style={{ textAlign: 'right' }}>
+                                <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ClienttChange} showUploadList={false}>
+                                    {/* <Button style={{ marginRight: '10px' }}>
+                                        <Icon type="upload" /> 导入文件
+                                    </Button> */}
+                                    <Button
+                                        style={{ marginRight: '10px' }}
+                                        type="primary"
+                                        icon="upload"
+                                        loading={this.state.uploadLoading}
+                                        // onClick={this.enterIconLoading}
+                                    >
+                                        导入文件
+                                    </Button>
+                                </Upload> 
                                 <Button type="primary" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(2)}>查看</Button>
                                 <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
                                 <Button type="info" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(1)}>修改</Button>
