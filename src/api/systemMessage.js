@@ -17,8 +17,8 @@ export const getUnreadNum = () => {
 }
 
 //删除消息接口
-export const getDelete = () => {
-	return http.fetchGet(`/sysMessage/delete`)
+export const getDelete = (params = {}) => {
+	return http.fetchGet(`/sysMessage/delete`,params)
 }
 
 //消息发送接口

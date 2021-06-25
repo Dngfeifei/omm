@@ -151,6 +151,7 @@ class Notice extends Component {
                     detailsVisible:true,
                     detailsMessage:msgContent
                 })
+                this.searchTable();
             }else{
                 message.error(res.message)
             }
@@ -287,7 +288,7 @@ class Notice extends Component {
     }
     render = _ =>{
         let st = {boxShadow: '10px 10px 5px #888888'}, columns = this.state[`columns${this.state.selectType}`];
-        return (<ModalDom title='消息通知' bodyStyle={{height:500}} width={1000} destroyOnClose={true} visible={true} onOk={() => this.handleClick(false)} onCancel={this.props.onCancel}>
+        return (<ModalDom footer={null} title='消息通知' bodyStyle={{height:550}} width={1000} destroyOnClose={true} visible={true} onOk={() => this.handleClick(false)} onCancel={this.props.onCancel}>
             <Row className="sendBox">
                 <Col className="senBoxSon" onClick={()=> this.switch('receive')} style={this.state.selectType == 'receive' ? st : {}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
                     <span>我接收的</span>
@@ -311,13 +312,13 @@ class Notice extends Component {
                 </Col>
             </Row>
             <div className="tableParson">
-                <Table loading={this.state.tableLoading} bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkBox" }} dataSource={this.state.tableData} columns={columns} style={{ marginTop: 10, maxHeight: '86%' }} rowKey='id' pagination={false} scroll={{ y: 350 }} size="small" />
+                <Table loading={this.state.tableLoading} bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkBox" }} dataSource={this.state.tableData} columns={columns} style={{ marginTop: 10, maxHeight: '86%' }} rowKey='id' pagination={false} scroll={{ y: 330 }} size="small" />
                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
             </div>
             {/* 打开消息详情页面 */}
             {
                 this.state.detailsVisible ? <ModalDom title='消息内容详情' width={700} footer={null} destroyOnClose={true} visible={true} onCancel={() => this.setState({detailsVisible:false,detailsMessage:''})}>
-                    <TextArea rows={6} disabled value={this.state.detailsMessage}/>
+                    <TextArea rows={10} disabled value={this.state.detailsMessage}/>
                 </ModalDom> : null
             }
         </ModalDom>)

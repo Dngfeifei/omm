@@ -495,8 +495,9 @@ class assetsAllocation extends Component {
         const children = [];
         for (let i = 0; i < assetsList.length; i++) {
             let label = assetsList[i].label,disabled = false;
-            if(basedataTypeId == 13){           //特殊处理
+            if(basedataTypeIdSelect == 13){           //特殊处理
                 if(assetsList[i].key == 'code'){
+                    console.log(assetsList[i])
                     label = '产品型号'
                 }
                 if(assetsList[i].key == 'name'){
