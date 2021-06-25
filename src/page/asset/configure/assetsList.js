@@ -830,6 +830,7 @@ const columnsBase = [{
     title: '机房地址',
     dataIndex: 'projectAreaAddress',
     key:"projectAreaAddress",
+    ellipsis:true,
     align: 'center',
 },
 {
@@ -925,6 +926,7 @@ export const columns = [
     title: '风险等级',
     dataIndex: 'riskLevelName',
     selectData:'riskLevel',
+    ellipsis:true,
     key:"riskLevelId",
     align: 'center',
 }]
