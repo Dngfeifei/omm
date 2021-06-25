@@ -85,8 +85,10 @@ class DSider extends Component{
 			icon="unordered-list"
 		}else if(val.id == 140){
 			icon = 'file-text'
-		}else if(val.id == 156){
-			icon = 'file-text'
+		}else if(val.id == 156){ //配置库
+			icon = 'setting'
+		}else if(val.id == 175 || val.id == 152){ //资料库
+			icon = 'save'
 		}else if(val.id == 167){
 			MyIco = () => (<MyIcon type="iconyuanshujuguanli1" />)
 		}else if(val.id == 165){
@@ -95,7 +97,7 @@ class DSider extends Component{
 			MyIco = () => (<MyIcon type="iconliucheng" />)
 		} 
 		return (<span>
-			{icon ? <Icon type={icon} /> : leva ?  <MyIco /> :null}
+			{leva ? icon ? <Icon type={icon} /> :  <MyIco /> :null}
 		<span>{val.resourceName}</span></span>)
 
 		// return (<span>
