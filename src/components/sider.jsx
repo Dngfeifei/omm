@@ -87,7 +87,7 @@ class DSider extends Component{
 			icon = 'file-text'
 		}else if(val.id == 156){ //配置库
 			icon = 'setting'
-		}else if(val.id == 175){ //资料库
+		}else if(val.id == 175 || val.id == 152){ //资料库
 			icon = 'save'
 		}else if(val.id == 167){
 			MyIco = () => (<MyIcon type="iconyuanshujuguanli1" />)
