@@ -1,10 +1,12 @@
 import React, { useEffect, useMemo, useState, useRef } from 'react';
 import { Button, Table, Modal, message } from 'antd';
 import styled from '@emotion/styled';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import {
   queryByIdMakeForm,
   listGenerateForm,
   saveGenerateFormApi,
+  deleteGenerateFormApi,
 } from '/api/form';
 import FormRender from '@/page/ans/formmaking/lib/FormRender';
 import SearchTools from './FormPreview/SearchTools';
@@ -38,11 +40,10 @@ const FormPreview = ({ params }) => {
   const [dataSource, setDataSource] = useState([]);
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState('');
+  const [recordId, setRecordId] = useState(undefined);
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
-      // console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-      console.log(selectedRowKeys);
       setSelectedRowKeys(selectedRowKeys);
     },
     selectedRowKeys,
@@ -87,13 +88,18 @@ const FormPreview = ({ params }) => {
     return formModel.filter((item) => item.type === 'input');
   }, [formModel]);
 
-  const handleAddData = () => {
+  const handleUpdateData = () => {
+    if (modalType === 'check') {
+      setVisible(false);
+      return;
+    }
     const values = modelRef.current.getFieldsValue();
-    const prams = {
+    if (modalType === 'edit') values.id = recordId;
+    const params = {
       formId,
       data: JSON.stringify(values),
     };
-    saveGenerateFormApi(prams).then((res) => {
+    saveGenerateFormApi(params).then((res) => {
       if (res.code === 200) {
         message.success(res.msg);
         handleSearch();
@@ -105,10 +111,19 @@ const FormPreview = ({ params }) => {
   const formatModel = (record) => {
     const { list, config } = JSON.parse(formInfo.source);
     if (!record) return { list, config };
+    setRecordId(record.id);
     const newList = [...list];
     for (const item of newList) {
+      if (typeof item !== 'object') continue;
       if (item.model && record[item.model]) {
         item.options.value = record[item.model];
+      }
+      for (const key in item) {
+        if (Object.hasOwnProperty.call(item, key)) {
+          if (Array.isArray(item[key])) {
+            newList.push(...item[key]);
+          }
+        }
       }
     }
     return { list, config };
@@ -121,6 +136,23 @@ const FormPreview = ({ params }) => {
     setFormModel([...list]);
     setFormConfig({ ...config });
     setVisible(true);
+  };
+
+  const handleDelete = (ids) => {
+    if (!ids.length) return;
+    Modal.confirm({
+      title: '确定要删除所选项吗?',
+      icon: <ExclamationCircleOutlined />,
+      onOk: async () => {
+        return deleteGenerateFormApi({
+          formId,
+          ids: ids.join(','),
+        }).then((res) => {
+          message.success(res.msg);
+          handleSearch();
+        });
+      },
+    });
   };
 
   return (
@@ -137,11 +169,17 @@ const FormPreview = ({ params }) => {
                 新建
               </Button>
             </span>
-            <span>
+            {/* <span>
               <Button type="default">修改</Button>
-            </span>
+            </span> */}
             <span>
-              <Button type="danger">删除</Button>
+              <Button
+                type="danger"
+                disabled={!selectedRowKeys.length}
+                onClick={() => handleDelete(selectedRowKeys)}
+              >
+                删除
+              </Button>
             </span>
           </TableToolLeft>
         </TableTool>
@@ -175,7 +213,11 @@ const FormPreview = ({ params }) => {
                       </Button>
                     </span>
                     <span>
-                      <Button size="small" type="link">
+                      <Button
+                        size="small"
+                        type="link"
+                        onClick={() => handleDelete([record.id])}
+                      >
                         删除
                       </Button>
                     </span>
@@ -215,7 +257,7 @@ const FormPreview = ({ params }) => {
         width={720}
         maskClosable={false}
         visible={visible}
-        onOk={handleAddData}
+        onOk={handleUpdateData}
         onCancel={() => setVisible(false)}
       >
         {visible && (
