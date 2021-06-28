@@ -7,8 +7,8 @@ export const getNoticeTable = (params = {}) => {
 
 
 //读取消息接口
-export const getDoRead = () => {
-	return http.fetchGet(`/sysMessage/doRead`)
+export const getDoRead = (params = {}) => {
+	return http.fetchGet(`/sysMessage/doRead`,params)
 }
 
 //查询未读消息接口

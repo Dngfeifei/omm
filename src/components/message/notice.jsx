@@ -286,6 +286,11 @@ class Notice extends Component {
         })
         
     }
+    //打开消息发送窗口
+    openSendOut = () => {
+        // console.log(this.props.openSendOut)
+        if(this.props.openSendOut) this.props.openSendOut();
+    }
     render = _ =>{
         let st = {boxShadow: '10px 10px 5px #888888'}, columns = this.state[`columns${this.state.selectType}`];
         return (<ModalDom footer={null} title='消息通知' bodyStyle={{height:550}} width={1000} destroyOnClose={true} visible={true} onOk={() => this.handleClick(false)} onCancel={this.props.onCancel}>
@@ -299,7 +304,7 @@ class Notice extends Component {
                     {/* <span style={{ marginLeft: 15 }}>10</span> */}
                 </Col>
                 <Col className="senBoxSon" xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
-                    <span style={{marginRight:10}}>+</span><span>发送消息</span>
+                    <a href="#" onClick={this.openSendOut}><span style={{marginRight:10}}>+</span><span>发送消息</span></a>
                 </Col>
             </Row>
             {/* <Tabs tabBarExtraContent={<Button>操作区</Button>}>
