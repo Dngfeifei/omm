@@ -466,9 +466,9 @@ class assetsAllocation extends Component {
         // 1 校验必填数据是否填写
         this.props.form.validateFields((err, fieldsValue) => {
             console.log(this.state.baseData);
-            if (err) {
-                return;
-            }
+            // if (err) {
+            //     return;
+            // }
             let newParams = {...fieldsValue}
         // 当前表单编辑类型（保存或修改或者查看）
         let type = this.state.roleWindow.roleModalType
@@ -481,6 +481,8 @@ class assetsAllocation extends Component {
                 parentId:searchListID,
                 ...newParams
             }
+            console.log(params)
+            // return
             AddAllocationTable(params).then(res => {
                 if (res.success == 1) {
                     this.setState({
@@ -615,6 +617,7 @@ class assetsAllocation extends Component {
             if(roleWindow.roleModalType == 2){
                 required = true;
             }
+            
             children.push(
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? assetsList[i].title : '修改字段'}>
@@ -776,6 +779,7 @@ class assetsAllocation extends Component {
          let nowParams = this.props.form.getFieldsValue();
         // //  this.props.form.getFieldsValue()
         //  return 
+        
         if(roleWindow.roleModalType == 0){
             this.setState({
                 baseData: info ? {...nowParams,...info} : {...nowParams}
@@ -783,8 +787,9 @@ class assetsAllocation extends Component {
                 this.getAreaData(this.state.baseData.projectId)
             })
         }else{
+            console.log(info,tableSelectedInfo)
             this.setState({
-                tableSelectedInfo: info ? {...tableSelectedInfo,...nowParams,...info} : {...tableSelectedInfo,...nowParams}
+                tableSelectedInfo: info ? [{...tableSelectedInfo[0],...nowParams,...info}] : [{...tableSelectedInfo[0],...nowParams}]
             },()=>{
                 // console.log(this.state.tableSelectedInfo[0].projectId,this.state.tableSelectedInfo[0].projectAreaId)
                 this.getAreaData(this.state.tableSelectedInfo[0].projectId)
@@ -971,11 +976,8 @@ class assetsAllocation extends Component {
                 visible={this.state.roleWindow.roleModal}
                 onCancel={_ => this.setState({
                     roleWindow: { roleModal: false },
-                    currentRole: {
-                        roleCode: null,
-                        roleName: null,
-                        status: null,
-                    }
+                    tableSelecteds: [],
+                    tableSelectedInfo: []
                 })}
                 onOk={_ => this.editRoleSave()}
                 width={1200}
