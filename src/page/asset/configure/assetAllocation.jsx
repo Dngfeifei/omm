@@ -465,10 +465,10 @@ class assetsAllocation extends Component {
     editRoleSave = async () => {
         // 1 校验必填数据是否填写
         this.props.form.validateFields((err, fieldsValue) => {
-            console.log(this.state.baseData);
-            // if (err) {
-            //     return;
-            // }
+            // console.log(this.state.baseData);
+            if (err) {
+                return;
+            }
             let newParams = {...fieldsValue}
         // 当前表单编辑类型（保存或修改或者查看）
         let type = this.state.roleWindow.roleModalType
@@ -481,7 +481,7 @@ class assetsAllocation extends Component {
                 parentId:searchListID,
                 ...newParams
             }
-            console.log(params)
+            // console.log(params)
             // return
             AddAllocationTable(params).then(res => {
                 if (res.success == 1) {
