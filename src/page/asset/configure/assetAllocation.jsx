@@ -773,23 +773,24 @@ class assetsAllocation extends Component {
     //项目选择器回传参数
     projecthandleOk = (info) => {
         info = this.setProjectHandleOk(info);
-        const { roleWindow,tableSelectedInfo} = this.state;
+        const { roleWindow,tableSelectedInfo,baseData} = this.state;
         this.props.form.resetFields(['projectNumber','projectName','projectManagerName','custName','projectEndDate','projectStartDate','projectManagerName','projectSalesmanName']);
-         console.log(info)
+         console.log(info,this.state.baseData)
          let nowParams = this.props.form.getFieldsValue();
         // //  this.props.form.getFieldsValue()
         //  return 
-        
+        let resetParams = {projectAreaId:undefined,projectAreaAddress:undefined,custUserId:undefined,custUserMobile:undefined};
         if(roleWindow.roleModalType == 0){
             this.setState({
-                baseData: info ? {...nowParams,...info} : {...nowParams}
+                baseData: info ? {...baseData,...nowParams,...info,...resetParams} : {...baseData,...nowParams,...resetParams}
             },()=>{
+                console.log(this.state.baseData)
                 this.getAreaData(this.state.baseData.projectId)
             })
         }else{
             console.log(info,tableSelectedInfo)
             this.setState({
-                tableSelectedInfo: info ? [{...tableSelectedInfo[0],...nowParams,...info}] : [{...tableSelectedInfo[0],...nowParams}]
+                tableSelectedInfo: info ? [{...tableSelectedInfo[0],...nowParams,...info,...resetParams}] : [{...tableSelectedInfo[0],...nowParams,...resetParams}]
             },()=>{
                 // console.log(this.state.tableSelectedInfo[0].projectId,this.state.tableSelectedInfo[0].projectAreaId)
                 this.getAreaData(this.state.tableSelectedInfo[0].projectId)
