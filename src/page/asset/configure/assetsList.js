@@ -247,7 +247,7 @@ export const assetsListData = {
     },
     //客户方管理员
     'custUserName':{
-        key:'custUserName',
+        key:'custUserId',
         label:'客户方管理员',
         span:6,
         rules:[
@@ -275,7 +275,7 @@ export const assetsListData = {
     },
     //客户管理员
     'custUserId':{
-        key:'custUserName',
+        key:'custUserId',
         label:'客户管理员',
         span:6,
         rules:[
