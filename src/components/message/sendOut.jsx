@@ -74,6 +74,7 @@ class SendOut extends Component {
             if (res.success == 1) {
                 message.success(res.message);
                 this.props.onCancel();
+                if(this.props.resetData) this.props.resetData();
             }else{
                 message.error(res.message);
             }
