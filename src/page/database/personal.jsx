@@ -797,7 +797,8 @@ class Personal extends Component {
         }
         GetFileApply(params).then(res => {
             if (res.success != 1) {
-                message.error(res.message)
+                message.destroy()
+                message.warning(res.message)
             } else {
                 message.success("该文件的下载申请已提交。")
                 this.getTableData2()
@@ -895,11 +896,11 @@ class Personal extends Component {
                                 {/* *******************************************table表格自适应高度有误****************************************** */}
                                 <Row>
                                     <Col span={12}>
-                                        <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px' }} />
+                                        <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px',marginRight:"10px" }} />
                                         <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                                     </Col>
                                     <Col span={12} style={{ textAlign: 'right' }}>
-                                        <Button type="primary" style={{ marginRight: '10px' }} onClick={this.batchDeleteFile}>批量删除</Button>
+                                        <Button type="primary" style={{marginRight:"10px"}} onClick={this.batchDeleteFile}>批量删除</Button>
                                     </Col>
                                 </Row>
                             </Form>
@@ -912,7 +913,7 @@ class Personal extends Component {
                             <Form style={{ width: '100%' }}>
                                 <Row>
                                     <Col span={12}>
-                                        <Input placeholder="请输入关键字" value={this.state.searchKey2} onChange={this.getSearchKey2} style={{ width: '200px' }} />
+                                        <Input placeholder="请输入关键字" value={this.state.searchKey2} onChange={this.getSearchKey2} style={{ width: '200px',marginRight:"10px" }} />
                                         <Button type="primary" onClick={_ => this.getTableData2(0)}>查询</Button>
                                     </Col>
                                 </Row>
