@@ -7,6 +7,7 @@ import { getFormList, deletMakeForm } from '/api/form'
 import Common from '/page/common.jsx'
 import ReactMkForming from '/page/ans/formmaking/lib/Container.jsx'
 import FormMeta from '/page/ans/formmaking/lib/FormMeta'
+import FormRelease from '/page/ans/formmaking/lib/FormRelease'
 
 class FormList extends Common {
   componentWillMount() {
@@ -31,6 +32,7 @@ class FormList extends Common {
 
   state = Object.assign({}, this.state, {
     isFormMetaOpen: false,
+    isFormReleaseOpen: false,
     selectedFormId: '',
     search: Object.assign({
       name: ''
@@ -71,7 +73,7 @@ class FormList extends Common {
         <a key='1' style={{ display: 'inline-block', width: 60 }} onClick={_ => this.design(r.id)}>设计</a>,
         <Button key='2' type="link" onClick={() => this.handleDelete(r.id)}>删除</Button>,
         <Button key='3' type="link" onClick={() => this.add(r)}>预览</Button>,
-        <Button key='4' type="link" onClick={() => this.handleDelete(r.id)}>发布</Button>,
+        <Button key='4' type="link" onClick={() => this.handleRelease(r.id)}>发布</Button>,
       ]
     }],
     loading: false,
@@ -91,6 +93,13 @@ class FormList extends Common {
     })
   }
 
+  handleReleaseForm = formId => {
+    this.setState({
+      selectedFormId: formId,
+      isFormReleaseOpen: true,
+    })
+  }
+
   search = async _ => {
     await this.setState({ loading: true, selected: {} })
     let search = Object.assign({}, this.state.search)
@@ -102,7 +111,6 @@ class FormList extends Common {
           let baseItem = Object.assign({}, val, { key: val.id })
           return baseItem
         }))(res.page.list)
-        console.log(data)
         this.setState({
           tabledata: data,
           loading: false,
@@ -129,6 +137,20 @@ class FormList extends Common {
         })
       },
     });
+  }
+  handleRelease = (id) => {
+    const form = this.state.tabledata.find(item => {
+      return item.id === id
+    })
+    console.log(form);
+    if (!form.source) {
+      message.warn('请先设计表单')
+      return
+    }
+    this.setState({
+      selectedFormId: id,
+      isFormReleaseOpen: true,
+    })
   }
 
   renderSearch = _ => (
@@ -167,6 +189,7 @@ class FormList extends Common {
         isFormMetaOpen: false,
         selectedFormId: '',
       })
+      this.search()
     }
     return (
       <React.Fragment>
@@ -178,6 +201,16 @@ class FormList extends Common {
             id={this.state.selectedFormId}
           />
         ) : null}
+
+        {this.state.isFormReleaseOpen ? (
+          <FormRelease
+            open={this.state.isFormReleaseOpen}
+            id={this.state.selectedFormId}
+            onOk={() => { this.setState({ isFormReleaseOpen: false }) }}
+            onCancel={() => { this.setState({ isFormReleaseOpen: false }) }}
+          />
+        ) : null}
+
 
         <Modal title="表单设计" visible={this.state.formingVisible}
           onCancel={_ => this.setState({ formingVisible: false })}

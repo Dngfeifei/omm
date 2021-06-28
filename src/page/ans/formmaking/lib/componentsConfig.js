@@ -148,12 +148,15 @@ export const basicComponents = [
       options: [
         {
           value: 'Option 1',
+          label: 'Option 1',
         },
         {
           value: 'Option 2',
+          label: 'Option 2',
         },
         {
           value: 'Option 3',
+          label: 'Option 3',
         },
       ],
       required: false,
@@ -311,12 +314,15 @@ export const basicComponents = [
       options: [
         {
           value: 'Option 1',
+          label: 'Option 1',
         },
         {
           value: 'Option 2',
+          label: 'Option 2',
         },
         {
           value: 'Option 3',
+          label: 'Option 3',
         },
       ],
       remote: 1,
@@ -797,28 +803,6 @@ export const advanceComponents = [
     foreignKey: '',
     options: {
       defaultType: 'String',
-      customClass: '',
-      width: '',
-      labelWidth: 100,
-      isLabelWidth: false,
-      dictType: '',
-      hidden: false,
-      dataBind: true,
-      required: false,
-      disabled: false,
-      isShow: true,
-      isSort: true,
-      isSearch: false,
-    },
-  },
-  {
-    type: 'projitem',
-    icon: 'icon fa fa-font',
-    dsId: '',
-    tableName: '',
-    primaryKey: '',
-    foreignKey: '',
-    options: {
       customClass: '',
       width: '',
       labelWidth: 100,
