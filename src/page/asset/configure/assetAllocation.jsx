@@ -624,7 +624,7 @@ class assetsAllocation extends Component {
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
                     rules: rules,
                     initialValue: initialValue
-                    })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required) : <Input />)}
+                    })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required,assetsList[i].dataIndex) : <Input />)}
                 </Form.Item>
                 </Col>
             );
@@ -719,8 +719,8 @@ class assetsAllocation extends Component {
         }
     }
     //服务区域选择改变
-    onAreaChange = (selectChange,id)=>{
-        // return
+    onAreaChange = (selectChange,id,selectData,dataIndex,itemValue)=>{
+        const { roleWindow,tableSelectedInfo,baseData} = this.state;
         if(selectChange == 'projectAreaId' ){  //服务区域
             this.getCustomer(id)
         }else if(selectChange == 'serviceClassId'){//产品类别
@@ -756,6 +756,19 @@ class assetsAllocation extends Component {
            let productLevel = productModeType.filter(item => item.id == id );
            console.log(selectChange,id,productLevel)
            this.props.form.setFieldsValue({productLevel:productLevel[0]['intValue1']});
+        }
+        if(roleWindow.roleModalType == 0){
+            let getData = this.state.selectData[selectData].filter(item => item.id == id );
+            baseData[dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
+            this.setState({baseData})
+            // let obj = {};
+            // obj[dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
+            // console.log(obj,getData,itemValue)
+            // this.props.form.setFieldsValue(obj);
+        }else{
+            let getData = this.state.selectData[selectData].filter(item => item.id == id );
+            tableSelectedInfo[0][dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
+            this.setState({tableSelectedInfo})
         }
         // this.getCustomer(projectAreaId)
     }
