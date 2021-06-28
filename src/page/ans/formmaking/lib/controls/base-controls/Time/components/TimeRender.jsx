@@ -1,59 +1,57 @@
-import React, { useMemo } from 'react'
-import { Input } from 'antd';
+import React, { useMemo, useContext} from 'react'
+import { TimePicker } from 'antd';
 import styled from '@emotion/styled'
+import TimeRangePicker from "@/page/ans/formmaking/lib/controls/components/TimeRangePicker";
+import moment from 'moment'
+import Label from '@/page/ans/formmaking/lib/controls/common/Label'
+import { Container } from '@/page/ans/formmaking/lib/controls/components/styles'
+import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
+import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
 
-const Container = styled.div`
-  display: ${({ labelPosition }) => (labelPosition === 'top' ? 'block' : 'flex')};
-`
-const Label = styled.div`
-  width: ${({ labelWidth }) => labelWidth}px;
-  text-align: ${({ labelPosition }) => labelPosition};
-  vertical-align: middle;
-  float: left;
-  font-size: 14px;
-  color: #606266;
-  line-height: 32px;
-  padding: 0 12px 0 0;
-  box-sizing: border-box;
-  > span{
-    color: #f56c6c;
-    margin-right: 2px;
-    font-size: 14px;
-  }
-`
 const InputBox = styled.div`
   flex: 1;
 `
 
 const TimeRender = ({ control, formConfig }) => {
   const { options } = control
+  const baseProps = useFieldBaseProps(control, formConfig, true)
+  const { updateValue } = useContext(formRenderContext);
 
-  const labelWidth = useMemo(() => {
-    if (options.isLabelWidth) {
-      return options.labelWidth
-    }
-    return formConfig.labelWidth
-  }, [options, formConfig])
+  const onRangeChange = (v) => { updateValue(control.model, v) }
+  const onChange =  (_, v) => { updateValue(control.model, v) }
 
   return <div className={options.customClass}>
-    <Container labelPosition={formConfig.labelPosition}>
-      {!options.hideLabel && <Label
-        labelPosition={formConfig.labelPosition}
-        labelWidth={labelWidth}
-      >
-        {options.required && <span>*</span>}
-        {control.name}
-      </Label>
-      }
+    <Container formConfig={formConfig}>
+      <Label control={control} formConfig={formConfig} />
+
       <InputBox>
         {
-          options.showPassword ? <Input.Password disabled={options.disabled} defaultValue={options.defaultValue} style={{ width: options.width }} placeholder={options.placeholder} />
-            : <Input disabled={options.disabled} defaultValue={options.defaultValue} style={{ width: options.width }} placeholder={options.placeholder} />
+          options.isRange ?
+            (<TimeRangePicker
+              {...baseProps}
+              allowClear={options.clearable}
+              format={options.format}
+              defaultValue={options.defaultValue}
+              value={options.value}
+              options={options}
+              onChange={onRangeChange}
+            />)
+            :
+            (<TimePicker
+              {...baseProps}
+              disabled={options.disabled}
+              allowClear={options.clearable}
+              defaultValue={options.defaultValue ? moment(options.defaultValue, options.format) : null}
+              format={options.format}
+              value={options.value ? moment(options.value, options.format) : null}
+              placeholder={options.placeholder}
+              onChange={onChange}
+            />)
         }
+
       </InputBox>
     </Container>
 
-    {/* <pre>{JSON.stringify(options, null, 2)}</pre> */}
   </div>
 }
 

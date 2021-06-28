@@ -13,7 +13,7 @@ const OfficeDesign = ({ control, formConfig }) => {
   }, [options, formConfig])
 
   return <div className={options.customClass}>
-    <Container labelPosition={formConfig.labelPosition}>
+    <Container formConfig={formConfig}>
       {!options.hideLabel && <Label
         labelPosition={formConfig.labelPosition}
         labelWidth={labelWidth}

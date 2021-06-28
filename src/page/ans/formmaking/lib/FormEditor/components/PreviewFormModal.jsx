@@ -25,7 +25,8 @@ const Container = styled.div`
 
 const PreviewFormModal = ({ formData, open, onCancel }) => {
   const modelRef = useRef();
-  const { formModel, formConfig, deviceType } = formData;
+  const [formModel, setFormModel] = useState(formData.formModel)
+  const [formConfig, setFormConfig] = useState(formData.formConfig)
 
   const [json, setJson] = useState('');
   const [isJsonOpen, setIsJsonOpen] = useState(false);
@@ -33,6 +34,14 @@ const PreviewFormModal = ({ formData, open, onCancel }) => {
   const handleReset = () => {
     modelRef.current.resetFieldsValue();
   };
+
+  useEffect(() => {
+    setFormModel(formData.formModel)
+    setFormConfig(formData.formConfig)
+    if (modelRef.current) {
+      handleReset()
+    }
+  }, [formData])
 
   const toggleDisabled = () => {
     modelRef.current.toggleDisabled();

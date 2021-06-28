@@ -1,31 +1,25 @@
 import React, { useMemo } from 'react'
-import { Label, Container } from '../../../components/styles'
 import { Checkbox } from 'antd'
+import useDictTypeItemList from '@/page/ans/formmaking/hooks/useDictTypeItemList'
+import Label from '@/page/ans/formmaking/lib/controls/common/Label'
+import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/styles'
 
 const CheckboxDesign = ({ control, formConfig }) => {
   const { options } = control
 
-  const labelWidth = useMemo(() => {
-    if (options.isLabelWidth) {
-      return options.labelWidth
-    }
-    return formConfig.labelWidth
-  }, [options, formConfig])
-  const checkboxOptions = options.options.map(t => ({...t, label: t.value}))
+  const optionList = useDictTypeItemList(options)
 
   return <div className={options.customClass}>
-    <Container labelPosition={formConfig.labelPosition}>
-      {!options.hideLabel && <Label
-        labelPosition={formConfig.labelPosition}
-        labelWidth={labelWidth}
-      >
-        {options.required && <span>*</span>}
-        {control.name}
-      </Label>
-      }
-      <Checkbox.Group
-          options={checkboxOptions}
-      />
+    <Container formConfig={formConfig}>
+      <Label control={control} formConfig={formConfig} />
+
+      <Checkbox.Group defaultValue={[control.defaultValue]}>
+        <Space control={control}>
+          {optionList.map((option, index) => {
+            return (<Checkbox value={option.value} key={index}>{option.label}</Checkbox>)
+          })}
+        </Space>
+      </Checkbox.Group>
     </Container>
   </div>
 }
