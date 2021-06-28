@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
 import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import OptionsSetting from '@/page/ans/formmaking/components/OptionsSetting.jsx';
 
 const WrapFlex = styled.div`
   display: flex;
@@ -111,7 +112,7 @@ const SelectSetting = ({ control, updateFormModel }) => {
       </FormAttrItem>
 
       <FormAttrItem label="选项">
-        todo
+        <OptionsSetting options={options} updateOptions={updateOptions} />
       </FormAttrItem>
 
       <FormAttrItem label="自定义Class">

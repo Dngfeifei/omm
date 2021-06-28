@@ -2,27 +2,10 @@ import React, { useMemo, Fragment } from 'react';
 import { Input } from 'antd';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
+import Label from '@/page/ans/formmaking/lib/controls/common/Label'
+import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/styles'
 
-const Container = styled.div`
-  display: ${({ labelPosition }) =>
-    labelPosition === 'top' ? 'block' : 'flex'};
-`;
-const Label = styled.div`
-  width: ${({ labelWidth }) => labelWidth}px;
-  text-align: ${({ labelPosition }) => labelPosition};
-  vertical-align: middle;
-  float: left;
-  font-size: 14px;
-  color: #606266;
-  line-height: 32px;
-  padding: 0 12px 0 0;
-  box-sizing: border-box;
-  > span {
-    color: #f56c6c;
-    margin-right: 2px;
-    font-size: 14px;
-  }
-`;
+
 const InputBox = styled.div`
   flex: 1;
 `;
@@ -44,13 +27,6 @@ const TableCellCls = css`
 
 const InputDesign = ({ control, formConfig, inSubtable }) => {
   const { options } = control;
-
-  const labelWidth = useMemo(() => {
-    if (options.isLabelWidth) {
-      return options.labelWidth;
-    }
-    return formConfig.labelWidth;
-  }, [options, formConfig]);
 
   const inputProps = {
     disabled: options.disabled,
@@ -74,16 +50,8 @@ const InputDesign = ({ control, formConfig, inSubtable }) => {
         </div>
       ) : (
         <div className={options.customClass}>
-          <Container labelPosition={formConfig.labelPosition}>
-            {!options.hideLabel && (
-              <Label
-                labelPosition={formConfig.labelPosition}
-                labelWidth={labelWidth}
-              >
-                {options.required && <span>*</span>}
-                {control.name}
-              </Label>
-            )}
+            <Container formConfig={formConfig}>
+            <Label control={control} formConfig={formConfig} />
             <InputBox>
               {options.showPassword ? (
                 <Input.Password {...inputProps} />

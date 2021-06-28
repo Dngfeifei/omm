@@ -10,7 +10,7 @@ import {
   Select,
 } from 'antd';
 import { getFormItem, saveFormItem } from '/api/form'
-// import { getDataSource } from '/api/database'
+import { getDataSource } from '/api/database'
 import { getTableList } from '/api/form'
 
 
@@ -96,12 +96,12 @@ export default function FormMeta(props) {
   }, [props.id])
 
   // 获取数据源
-  // useEffect(() => {
-  //   getDataSource()
-  //     .then(resp => {
-  //       setDataSourceTree(resp.treeData)
-  //     })
-  // }, [])
+  useEffect(() => {
+    getDataSource()
+      .then(resp => {
+        setDataSourceTree(resp.treeData)
+      })
+  }, [])
 
   const handleDataSourceChange = (sourceId) => {
     let sources = []
@@ -156,6 +156,30 @@ export default function FormMeta(props) {
           label="表单Key"
         >
           <Input value={formMeta.code} onChange={(e) => updateFormMeta('code', e.target.value)}/>
+        </Form.Item>
+
+        <Form.Item
+          label="所属数据库"
+        >
+          <TreeSelect
+            style={{ width: '100%' }}
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+            allowClear
+            onChange={value => handleDataSourceChange(value)}
+            value={formMeta.dataSource.id}
+          >
+            {dataSourceTree.map(node => {
+              return (
+                <TreeNode title={node.label} selectable={false} key={node.id} value={node.id}>
+                  {node.children.map(leaf => {
+                    return (
+                      <TreeNode title={leaf.label} value={leaf.id} key={leaf.id} />
+                    )
+                  })}
+                </TreeNode>
+              )
+            })}
+          </TreeSelect>
         </Form.Item>
 
         <Form.Item
