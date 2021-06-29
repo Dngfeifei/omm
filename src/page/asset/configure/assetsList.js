@@ -35,7 +35,7 @@ export const rules1= [
         }
     }
 ]
-function render(_this,type,selectData,itemCode,itemValue,selectChange,required) {
+function render(_this,type,selectData,itemCode,itemValue,selectChange,required,dataIndex) {
     if(type == 'input1'){
         return <Input disabled={required} placeholder="请输入" />
     }else if(type == 'input2'){
@@ -43,7 +43,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required) 
     }else if(type == 'input3'){
         return <Input disabled={required} placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={_this.openProject} />} />
     }else if(type == 'select'){
-        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required}>
+        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required} onChange={(value) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue)}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
@@ -53,7 +53,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required) 
                     }
                 </Select>
     }else if(type == 'select1'){
-        return <Select disabled={required} style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value)}>
+        return <Select disabled={required} style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue)}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
@@ -217,6 +217,7 @@ export const assetsListData = {
     //服务区域
     'projectAreaId':{
         key:'projectAreaId',
+        setValue:'projectAreaName',
         label:'服务区域',
         span:6,
         rules:[
@@ -247,8 +248,9 @@ export const assetsListData = {
     },
     //客户方管理员
     'custUserName':{
-        key:'custUserName',
+        key:'custUserId',
         label:'客户方管理员',
+        setValue:'custUserName',
         span:6,
         rules:[
             {
@@ -275,8 +277,9 @@ export const assetsListData = {
     },
     //客户管理员
     'custUserId':{
-        key:'custUserName',
+        key:'custUserId',
         label:'客户管理员',
+        setValue:'custUserName',
         span:6,
         rules:[
             {
@@ -308,6 +311,7 @@ export const assetsListData = {
     //产品类别
     'serviceClassId':{
         key:'serviceClassId',
+        setValue:'serviceClassName',
         label:'产品类别',
         span:6,
         rules:[
@@ -322,6 +326,7 @@ export const assetsListData = {
     //技术方向
     'skillTypeId':{
         key:'skillTypeId',
+        setValue:'skillTypeName',
         label:'技术方向',
         span:6,
         rules:[
@@ -336,6 +341,7 @@ export const assetsListData = {
     //品牌
     'brandId':{
         key:'brandId',
+        setValue:'brandName',
         label:'品牌',
         span:6,
         rules:[
@@ -350,6 +356,7 @@ export const assetsListData = {
     //产品线
     'productLineId':{
         key:'productLineId',
+        setValue:'productLineName',
         label:'产品线',
         span:6,
         rules:[
@@ -364,6 +371,7 @@ export const assetsListData = {
     //产品型号
     'productModelId':{
         key:'productModelId',
+        setValue:'productModelName',
         label:'产品型号',
         span:6,
         rules:[
@@ -379,6 +387,7 @@ export const assetsListData = {
     //产品等级
     'productLevel':{
         key:'productLevel',
+        setValue:'productLevelName',
         label:'产品等级',
         span:6,
         rules:[],
@@ -403,6 +412,7 @@ export const assetsListData = {
     'appTypeId':{
         label: '应用类别',
         key: 'appTypeId',
+        setValue:'appTypeName',
         span:6,
         rules:[{
             required: true,
@@ -819,7 +829,7 @@ const columnsBase = [{
 },
 {
     title: '服务区域',
-    dataIndex: 'projectArea',
+    dataIndex: 'projectAreaArea',
     key:"projectAreaId",
     selectData:'areaData',
     itemValue:'area',
@@ -1012,7 +1022,7 @@ export const panes = [
             },
             {
                 title: '是否维护',
-                dataIndex: 'isMroId',
+                dataIndex: 'isMroName',
                 key:'isMroId',
                 selectData:'maintained',
                 align: 'center'

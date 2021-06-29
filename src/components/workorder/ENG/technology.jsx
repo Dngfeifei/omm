@@ -312,6 +312,7 @@ class People extends Component {
     }
     //获取富文本数据
     getContent = (content, key) => {
+        console.log(content, key)
         let cases = this.state.cases;
         cases[key].caseDesc = content;
         this.setState({
@@ -369,6 +370,8 @@ class People extends Component {
             return
         }
         let params = Object.assign({}, this.state, { cases: newCase })
+        console.log(params)
+        return
         // 专业能力数据提交
         PostAssessProable(params).then((res) => {
             if (res.success != 1) {

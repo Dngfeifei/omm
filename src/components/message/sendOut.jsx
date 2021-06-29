@@ -9,6 +9,8 @@ import { Select,Icon,Input,Checkbox,message} from 'antd'
 import ModalDom from '@/components/modal'
 import PostArea from '@/components/selector/engineerSelector.jsx'//人员选择器
 import { addMessage} from '/api/systemMessage.js'
+// 引入 富文本编辑器组件
+import Editor from "@/components/editor"
 let {Option} = Select
 let {TextArea} = Input
 
@@ -69,14 +71,25 @@ class SendOut extends Component {
         }else if(!params.msgContent){
             message.warning('请填写消息内容');
         }
-        console.log(params,params.isAll);
+        // console.log(params,params.isAll);
+        // return
         addMessage(params).then(res => {
             if (res.success == 1) {
                 message.success(res.message);
                 this.props.onCancel();
+                if(this.props.resetData) this.props.resetData();
             }else{
                 message.error(res.message);
             }
+        })
+    }
+    //获取富文本数据
+    getContent = (content, key) => {
+        let {params} = this.state;
+        params[key] = content;
+        console.log(content)
+        this.setState({
+            params
         })
     }
     render = _ =>
@@ -87,20 +100,21 @@ class SendOut extends Component {
                 {this.state.params.isAll == 0 ? <Icon style={{position:'absolute',right: '15%',top: '50%',transform: 'translateY(-50%)' , cursor: 'pointer'}} onClick={this.handleClick} type="appstore" /> : null}
                 <Checkbox style={{marginLeft:15}} onChange={this.onChecked}>所有人</Checkbox>
             </div>
-            <div className="operation_area" style={{display:'flex',alignItems:'center',marginBottom:15}}>
+            <div className="operation_send" style={{display:'flex',alignItems:'center',marginBottom:15}}>
                 <span className="ant-form-item-required" style={{width:100,display:'inline-block'}}>消息分类：</span>
                 <Select placeholder="请选择" value={this.state.params.msgType} style={{ width: '100%' }} onChange={(msgType) => this.setState({params:{...this.state.params,msgType}}) }>
                     <Option value="1">系统消息</Option>
                     <Option value="2">邮件消息</Option>
                 </Select>
             </div>
-            <div className="operation_area" style={{display:'flex',alignItems:'center',marginBottom:15}}>
+            <div className="operation_send" style={{display:'flex',alignItems:'center',marginBottom:15}}>
                 <span className="ant-form-item-required" style={{width:100,display:'inline-block'}}>消息标题：</span>
                 <Input placeholder="请输入标题" value={this.state.params.msgTitle} onChange={({target:{value}}) => this.setState({params:{...this.state.params,msgTitle:value}})}/>
             </div>
-            <div className="operation_area" style={{display:'flex',alignItems:'center',marginBottom:15}}>
+            <div className="operation_send" style={{display:'flex',alignItems:'center',marginBottom:15}}>
                 <span className="ant-form-item-required" style={{width:100,display:'inline-block'}}>消息内容：</span>
-                <TextArea rows={6} value={this.state.params.msgContent} onChange={({target:{value}}) => this.setState({params:{...this.state.params,msgContent:value}})}/>
+                {/* <TextArea rows={6} value={this.state.params.msgContent} onChange={({target:{value}}) => this.setState({params:{...this.state.params,msgContent:value}})}/> */}
+                <Editor disabled={ false} name={'msgContent'} value={this.state.params.msgContent} getContent={this.getContent} />
             </div>
             {/* 人员选择器 */}
             {this.state.myVisible ? <PostArea type={'checkbox'} title="人员选择器" onOk={this.postSave} onCancel={()=>this.setState({myVisible:false})} /> : null}
