@@ -295,7 +295,7 @@ class DesignList extends Common{
         let key = this.state.selected.selectedKeys[0];
         // window.open(`/flow/app/rest/models/`+key+`/bpmn20?version=` + new Date().getTime())
         // window.open(`http://localhost:8111/app/rest/models/`+key+`/bpmn20?version=` + new Date().getTime())
-        window.open(`http://localhost:8111/app/rest/models/`+key+`/bpmn20`)
+        window.open(`http://172.16.100.81/api/dat/app/rest/models/`+key+`/bpmn20`)
     }
 
 
