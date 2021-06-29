@@ -11,8 +11,8 @@ const { TextArea } = Input;
 import { LoadingOutlined } from '@ant-design/icons';
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
-import { GetSignResult, PostFilePublish } from '/api/mediaLibrary.js'  
-import { uploadCOSFile } from '/api/cloudUpload.js'  
+import { GetSignResult, PostFilePublish } from '/api/mediaLibrary.js'
+import { uploadCOSFile } from '/api/cloudUpload.js'
 
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
@@ -75,7 +75,7 @@ class fileUpload extends Component {
     }
     // 文件上传前
     beforeUpload = (file) => {
-      
+
         let params = Object.assign({}, this.state.params, { fileUrl: "", size: file.size })
         this.setState({
             file,
@@ -83,7 +83,7 @@ class fileUpload extends Component {
             params,
         }, _ => {
             message.destroy()
-            if(file.size>1024*1024*1024){
+            if (file.size > 1024 * 1024 * 1024) {
                 message.info("文件查重校验中，请稍等...")
             }
             this.get_filemd5sum(file)
@@ -100,7 +100,9 @@ class fileUpload extends Component {
                     if (res.status != 200) {
                         message.error(res.message)
                     } else {
-                        message.info("即将上传，请稍等...")
+                        if (file.size > 1024 * 1024 * 1024) {
+                            message.info("即将上传，请稍等...")
+                        }
                         uploadCOSFile(this.state.file, this.setProgress, this.uploadOk)
                     }
                 }
@@ -170,7 +172,7 @@ class fileUpload extends Component {
             }
             if (!err) {
                 let param = this.props.form.getFieldsValue()
-                let data = Object.assign({}, this.state.params, param,{fileName:this.state.file.name})
+                let data = Object.assign({}, this.state.params, param, { fileName: this.state.file.name })
                 PostFilePublish(data)
                     .then(res => {
                         if (res.success != 1) {
@@ -190,7 +192,7 @@ class fileUpload extends Component {
         return <Modal
             title='介质资料上传'
             visible={this.props.visible}
-            onCancel={_=>{
+            onCancel={_ => {
                 this.props.onCancel()
             }}
             onOk={this.publishFile}
