@@ -100,7 +100,7 @@ class fileUpload extends Component {
                     if (res.status != 200) {
                         message.error(res.message)
                     } else {
-                        if (file.size > 1024 * 1024 * 1024) {
+                        if (this.state.file.size > 1024 * 1024 * 1024) {
                             message.info("即将上传，请稍等...")
                         }
                         uploadCOSFile(this.state.file, this.setProgress, this.uploadOk)
@@ -250,16 +250,4 @@ class fileUpload extends Component {
 }
 const fileUploads = Form.create()(fileUpload)
 export default fileUploads
-
-
-
-
-
-
-
-
-
-
-
-
 
