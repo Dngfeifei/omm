@@ -292,7 +292,7 @@ class Notice extends Component {
         if(this.props.openSendOut) this.props.openSendOut();
     }
     render = _ =>{
-        let st = {boxShadow: '10px 10px 5px #888888'}, columns = this.state[`columns${this.state.selectType}`];
+        let st = {boxShadow: '10px 10px 5px #888888',backgroundColor:'#4876e7',color:'white'}, columns = this.state[`columns${this.state.selectType}`];
         return (<ModalDom footer={null} title='消息通知' bodyStyle={{height:550}} width={1000} destroyOnClose={true} visible={true} onOk={() => this.handleClick(false)} onCancel={this.props.onCancel}>
             <Row className="sendBox">
                 <Col className="senBoxSon" onClick={()=> this.switch('receive')} style={this.state.selectType == 'receive' ? st : {}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
@@ -317,7 +317,7 @@ class Notice extends Component {
                 </Col>
             </Row>
             <div className="tableParson">
-                <Table loading={this.state.tableLoading} bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkBox" }} dataSource={this.state.tableData} columns={columns} style={{ marginTop: 10, maxHeight: '86%' }} rowKey='id' pagination={false} scroll={{ y: 330 }} size="small" />
+                <Table loading={this.state.tableLoading} bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkBox" }} dataSource={this.state.tableData} columns={columns} style={{ marginTop: 10, maxHeight: '86%' }} rowKey='id' pagination={false} scroll={{ y: 320 }} size="small" />
                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
             </div>
             {/* 打开消息详情页面 */}
