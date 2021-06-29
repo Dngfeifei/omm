@@ -13,6 +13,7 @@ import {getUnreadNum} from '@/api/systemMessage.js'
 @connect(state => ({
     collapsed: state.global.collapsed,
     breadcrumb: state.global.breadcrumb,
+    loginStatus: state.global.loginStatus
 }), dispath => ({
     toggle(key) {dispath({ type: TOGGLE })},
     add(pane) { dispath({type: ADD_PANE, data: pane})},
@@ -26,7 +27,7 @@ class DHeader extends Component {
         if (process.env.NODE_ENV == 'production') {
             name=`${process.env.ENV_NAME}_realName`
         }
-        console.log(!(process.env.NODE_ENV == 'production'))
+        // console.log(!(process.env.NODE_ENV == 'production'))
         let username = localStorage.getItem(name)
         this.setState({ username })
         window.resetStore = this.props.reset;
@@ -41,7 +42,13 @@ class DHeader extends Component {
         noticeNUm:0 //未读消息数量
     }
     getSysMessage = () => {
-        if(!this.state.notice){
+        let name =  '';
+        if(process.env.NODE_ENV == 'production'){
+            name = process.env.ENV_NAME+'_'
+        }
+        let status = localStorage.getItem(`${name}token`) //判断token是否存在验证是否已经登录
+        // console.log(status)
+        if( status && !this.state.notice){
             getUnreadNum().then(res => {
                 if(res.success == 1){
                     let {noticeNUm} = this.state;
@@ -52,7 +59,7 @@ class DHeader extends Component {
                 }
             })
         }
-        setTimeout(this.getSysMessage,6000);//60000
+        setTimeout(this.getSysMessage,60000);//60000
     }
     quit = _ => {
         
