@@ -5,7 +5,10 @@ import React, { Component } from 'react'
 import { Row,Col,Table,Tabs,Button,Tooltip,message,Input,Modal} from 'antd'
 import ModalDom from '@/components/modal'
 import Pagination from '/components/pagination'//分页组件
-import { getNoticeTable,getDelete,getDoRead} from '/api/systemMessage.js'
+import { getNoticeTable,getDelete,getDoRead,getReadNum} from '/api/systemMessage.js'
+
+// 引入 富文本编辑器组件
+import Editor from "@/components/editor"
 // const { TabPane } = Tabs;
 const {TextArea} = Input;
 const { confirm } = Modal;
@@ -67,7 +70,7 @@ class Notice extends Component {
                 align: 'center',
                 render: (text,row,index) => {
                     return (<span>
-                                <a onClick={(e) => this.onRead(e,row.id,row.msgContent)} >点击查看消息详情内容</a>
+                                <a onClick={(e) => this.onRead(e,row.id,row.msgContent,row.msgType)} >点击查看消息详情内容</a>
                             </span>)
                 }
             },
@@ -132,15 +135,38 @@ class Notice extends Component {
                 current: 1,
                 total: 0,
             },
+            //我发送的消息已读未读人数参数
+            readParams:{
+                type:undefined,
+                readName: "",
+                readNum: 0,
+                unreadName: "杨晓峰,郭立",
+                unreadNum: 0
+            }
         }
     }
     //点击查看消息详情
-    onRead = (e,id,msgContent) => {
+    onRead = (e,id,msgContent,msgType) => {
         const {selectType} = this.state;
         e.stopPropagation();
         e.nativeEvent.stopImmediatePropagation();
         if(selectType == 'send'){
+            let {readParams} = this.state;
+            readParams.type = msgType;
+            if(msgType == 1) return getReadNum({id}).then(res => {
+                if (res.success == 1) {
+                    readParams = Object.assign({}, readParams, res.data);
+                    this.setState({
+                        readParams,
+                        detailsVisible:true,
+                        detailsMessage:msgContent
+                    })
+                }else{
+                    message.error(res.message)
+                }
+            })
             return this.setState({
+                readParams,
                 detailsVisible:true,
                 detailsMessage:msgContent
             })
@@ -295,15 +321,15 @@ class Notice extends Component {
         let st = {boxShadow: '10px 10px 5px #888888',backgroundColor:'#4876e7',color:'white'}, columns = this.state[`columns${this.state.selectType}`];
         return (<ModalDom footer={null} title='消息通知' bodyStyle={{height:550}} width={1000} destroyOnClose={true} visible={true} onOk={() => this.handleClick(false)} onCancel={this.props.onCancel}>
             <Row className="sendBox">
-                <Col className="senBoxSon" onClick={()=> this.switch('receive')} style={this.state.selectType == 'receive' ? st : {}} xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                <Col className="senBoxSon" onClick={()=> this.switch('receive')} style={this.state.selectType == 'receive' ? st : {}} span={4}>
                     <span>我接收的</span>
                     {/* <span style={{ marginLeft: 15 }}>10</span> */}
                 </Col>
-                <Col className="senBoxSon" onClick={()=> this.switch('send')} style={this.state.selectType == 'send' ? st : {}} xs={{ span: 11, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                <Col className="senBoxSon" onClick={()=> this.switch('send')} style={this.state.selectType == 'send' ? st : {}} xs={{ span: 4, offset: 1 }}>
                     <span>我发送的</span>
                     {/* <span style={{ marginLeft: 15 }}>10</span> */}
                 </Col>
-                <Col className="senBoxSon" xs={{ span: 5, offset: 1 }} lg={{ span: 6, offset: 2 }}>
+                <Col className="senBoxSon" xs={{ span: 4, offset: 1 }}>
                     <a href="#" onClick={this.openSendOut}><span style={{marginRight:10}}>+</span><span>发送消息</span></a>
                 </Col>
             </Row>
@@ -322,8 +348,23 @@ class Notice extends Component {
             </div>
             {/* 打开消息详情页面 */}
             {
-                this.state.detailsVisible ? <ModalDom title='消息内容详情' width={700} footer={null} destroyOnClose={true} visible={true} onCancel={() => this.setState({detailsVisible:false,detailsMessage:''})}>
-                    <TextArea rows={10} disabled value={this.state.detailsMessage}/>
+                this.state.detailsVisible ? <ModalDom className="operation_notice" title='消息内容详情' width={700} footer={null} destroyOnClose={true} visible={true} onCancel={() => this.setState({detailsVisible:false,detailsMessage:''})}>
+                    {/* <TextArea rows={10} disabled value={this.state.detailsMessage}/> */}
+                    <Editor disabled value={this.state.detailsMessage} />
+                    {this.state.selectType == "send" && this.state.readParams.type == 1? <Row className="sendBox" style={{ marginTop: 10 }}>
+                        <Col className="senBoxSon2" xs={{ span: 4, offset: 15 }}>
+                            <Tooltip placement="topLeft" title={this.state.readParams.unreadName}>
+                                <span>未读人数</span>
+                                <span style={{ marginLeft: 8 }}>{this.state.readParams.unreadNum}</span>    
+                            </Tooltip>
+                        </Col>
+                        <Col className="senBoxSon2" xs={{ span: 4, offset: 1 }}>
+                            <Tooltip placement="topLeft" title={this.state.readParams.readName}>
+                                <span>已读人数</span>
+                                <span style={{ marginLeft: 8 }}>{this.state.readParams.readNum}</span>
+                            </Tooltip>
+                        </Col>
+                    </Row> : null}
                 </ModalDom> : null
             }
         </ModalDom>)
