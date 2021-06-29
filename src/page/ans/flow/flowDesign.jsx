@@ -294,7 +294,8 @@ class DesignList extends Common{
         }
         let key = this.state.selected.selectedKeys[0];
         // window.open(`/flow/app/rest/models/`+key+`/bpmn20?version=` + new Date().getTime())
-        window.open(`http://152.136.121.201:8080/jeeplus-vue/app/rest/models/`+key+`/bpmn20?version=` + new Date().getTime())
+        // window.open(`http://localhost:8111/app/rest/models/`+key+`/bpmn20?version=` + new Date().getTime())
+        window.open(`http://localhost:8111/app/rest/models/`+key+`/bpmn20`)
     }
 
 
