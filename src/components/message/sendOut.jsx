@@ -63,20 +63,20 @@ class SendOut extends Component {
         // 验证
         // console.log(params,params.isAll);
         if(params.isAll == 0 && !params.msgUsers.length){
-            message.warning('请选择发送人员');
+            return message.warning('请选择发送人员');
         }else if(!params.msgType){
-            message.warning('请选择消息类型');
+            return message.warning('请选择消息类型');
         }else if(!params.msgTitle){
-            message.warning('请填写消息标题');
+            return message.warning('请填写消息标题');
         }else if(!params.msgContent){
-            message.warning('请填写消息内容');
+            return message.warning('请填写消息内容');
         }
         // console.log(params,params.isAll);
         // return
         message.loading('发送中...', 0);
         addMessage(params).then(res => {
+            message.destroy();
             if (res.success == 1) {
-                message.destroy();
                 message.success(res.message);
                 this.props.onCancel();
                 if(this.props.resetData) this.props.resetData();
