@@ -21,18 +21,24 @@ class Notice extends Component {
             columnsreceive:[{
                 title: '消息标题',
                 dataIndex: 'msgTitle',
-                width:200,
+                width:130,
                 align: 'center',
                 render: (text,row,index) => {
                     let st = {};
-                    if(!row.isRead){
+                    if(row.isRead == 0){
                         // st['fontWeight'] = 600;
                         st['color'] = 'red';
                     }
                     return (<span>
-                                <a onClick={(e) => this.onRead(e,row.id,row.msgContent)} style={st}>点击查看消息详情内容</a>
+                                <a onClick={(e) => this.onRead(e,row.id,row.msgContent)} style={st}>点击查看消息详情</a>
                             </span>)
                 }
+            },
+            {
+                title: '消息分类',
+                dataIndex: 'msgType',
+                align: 'center',
+                render: text => {if(text == 1){return '系统消息'}else{return '邮件消息'}}
             },
             {
                 title: '接收时间',
@@ -62,18 +68,25 @@ class Notice extends Component {
                 title: '邮箱地址',
                 dataIndex: 'email',
                 align: 'center',
+                ellipsis: true,
                 render: this.fomatterRead
             }],
             columnssend:[{
                 title: '消息标题',
                 dataIndex: 'msgTitle',
-                width:200,
+                width:130,
                 align: 'center',
                 render: (text,row,index) => {
                     return (<span>
-                                <a onClick={(e) => this.onRead(e,row.id,row.msgContent,row.msgType)} >点击查看消息详情内容</a>
+                                <a onClick={(e) => this.onRead(e,row.id,row.msgContent,row.msgType)} >点击查看消息详情</a>
                             </span>)
                 }
+            },
+            {
+                title: '消息分类',
+                dataIndex: 'msgType',
+                align: 'center',
+                render: text => {if(text == 1){return '系统消息'}else{return '邮件消息'}}
             },
             {
                 title: '发送时间',

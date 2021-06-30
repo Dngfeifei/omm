@@ -73,8 +73,10 @@ class SendOut extends Component {
         }
         // console.log(params,params.isAll);
         // return
+        message.loading('发送中...', 0);
         addMessage(params).then(res => {
             if (res.success == 1) {
+                message.destroy();
                 message.success(res.message);
                 this.props.onCancel();
                 if(this.props.resetData) this.props.resetData();
