@@ -16,7 +16,7 @@ export default function UserTable(props) {
   const {
     setSelectUser,
     companyId,
-    officeId,
+    // officeId,
     setCompanyId,
     setOfficeId,
     selectUser,
@@ -25,7 +25,7 @@ export default function UserTable(props) {
   // 监听查询条件变化查询数据
   useEffect(() => {
     updateDataSource();
-  }, [pageNo, pageSize, orderBy, companyId, officeId]);
+  }, [pageNo, pageSize, orderBy, companyId]);
 
   // 更新列表数据源
   function updateDataSource() {
@@ -35,7 +35,7 @@ export default function UserTable(props) {
       pageSize,
       orderBy,
       "company.id": companyId,
-      "office.id": officeId,
+      // "office.id": officeId,
     };
     getUserList(param).then((data) => {
       const { list, count } = data;
@@ -43,10 +43,10 @@ export default function UserTable(props) {
       setDataSource(
         list.map((item) => {
           const obj = { ...item, key: item.id };
-          if (item.company && item.company.name)
-            obj.companyName = item.company.name;
-          if (item.office && item.office.name)
-            obj.officeName = item.office.name;
+          if (item.officeOrg_full_name)
+            obj.companyName = item.officeOrg_full_name;
+          // if (item.office && item.office.name)
+          //   obj.officeName = item.office.name;
           return obj;
         })
       );
