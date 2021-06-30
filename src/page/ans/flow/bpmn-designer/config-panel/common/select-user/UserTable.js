@@ -112,13 +112,13 @@ export default function UserTable(props) {
       width: 120,
       sorter: true,
     },
-    {
-      title: "所属部门",
-      dataIndex: "officeName",
-      key: "officeName",
-      width: 120,
-      sorter: true,
-    },
+    // {
+    //   title: "所属部门",
+    //   dataIndex: "officeName",
+    //   key: "officeName",
+    //   width: 120,
+    //   sorter: true,
+    // },
   ];
   return (
     <div className="user-table">

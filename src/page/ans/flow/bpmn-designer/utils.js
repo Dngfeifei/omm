@@ -58,7 +58,8 @@ export const assignInfo = {
     getInfoById: getPostInfoById,
   },
   depart: {
-    name: "部门",
+    // name: "部门",
+    name: "机构",
     getList: getDepartList,
     getInfoById: getDepartInfoById,
   },
