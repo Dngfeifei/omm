@@ -26,7 +26,8 @@ class Notice extends Component {
                 render: (text,row,index) => {
                     let st = {};
                     if(!row.isRead){
-                        st['fontWeight'] = 600;
+                        // st['fontWeight'] = 600;
+                        st['color'] = 'red';
                     }
                     return (<span>
                                 <a onClick={(e) => this.onRead(e,row.id,row.msgContent)} style={st}>点击查看消息详情内容</a>
