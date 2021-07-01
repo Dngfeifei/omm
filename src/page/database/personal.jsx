@@ -9,19 +9,19 @@
 
 
 import React, { Component } from 'react'
-import { Form, Modal, Icon, message, Button, Row, Col, Input, Table, Tabs } from 'antd'
+import { Form, Modal, Icon, message, Button, Row, Col, Input, Table, Tabs, Spin, Progress } from 'antd'
+const { confirm } = Modal;
 const { TabPane } = Tabs;
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
-
-import { GetFileCategories, AddTreeNode, EditTreeNode, DelTreeNode, GetFileLibrary, PostFileDownload, DeleteFile, BatchDeleteFile, GetFileApply } from '/api/mediaLibrary.js'
+import { GetCOSFile } from '/api/cloudUpload.js'
+import { GetFileCategories, AddTreeNode, EditTreeNode, DelTreeNode, GetFileLibrary, GetFileDownloadPower , DeleteFile, BatchDeleteFile, GetFileApply } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
 import Pagination from '/components/pagination'
 import DataUpload from './fileUpload'
 
-const { confirm } = Modal;
 const assignment = (data) => {
     data.forEach((list, i) => {
         list.key = list.id;
@@ -40,32 +40,39 @@ const assignment = (data) => {
 }
 // 标签字典数据
 let fileLabelData = {}
+// 下载队列集合
+let downObj = {}
+let downObj2 = {}
 class Personal extends Component {
     SortTable = () => {
         setTimeout(() => {
             if (this.tableDom) {
-                let h = this.tableDom.clientHeight - 180 < 0 ? 180 : this.tableDom.clientHeight - 180 ;
+                let h = this.tableDom.clientHeight - 160;
                 this.setState({
                     h: {
                         y: (h)
                     },
                 });
             }
+
+        }, 0)
+        setTimeout(() => {
             if (this.tableDom2) {
-                let h2 = this.tableDom2.clientHeight - 120 < 0 ? 120 : this.tableDom2.clientHeight - 120 ;
+                let h2 = this.tableDom2.clientHeight - 160;
                 this.setState({
                     h2: {
                         y: (h2)
                     }
                 });
             }
+
         }, 0)
     }
     componentDidMount() {
         this.SortTable();
         //窗口变动的时候调用
         window.onresize = () => {
-            if(this.props.activeKey == this.props.type) this.SortTable();
+            this.SortTable();
         }
         this.props.onRef(this);
     }
@@ -203,7 +210,7 @@ class Personal extends Component {
                 render: (t, r) => {
                     let status = r.uploadStatus
                     if (status == "0" || status == "1") {
-                        return <a onClick={(e) => this.downloadFile(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
+                        return downObj[r.id] ? <Progress type="circle" percent={downObj[r.id].percent} width={40} /> : <a onClick={(e)=> this.downloadFile(r, e)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (status == "2") {
                         return <a onClick={(e) => this.deleteFile(r.id)} style={{ margin: "0 3px" }}>删除</a>
                     }
@@ -310,7 +317,7 @@ class Personal extends Component {
                     let status = r.isDownload
                     if (type == "1") {
                         if (status == "1") {
-                            return <a onClick={(e) => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
+                            return downObj2[r.id] ? <Progress type="circle" percent={downObj2[r.id].percent} width={40} /> : <a onClick={(e) => this.downloadFile2(r, e)} style={{ margin: "0 3px" }}>下载</a>
                         } else {
                             return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                         }
@@ -341,7 +348,10 @@ class Personal extends Component {
         //表格选中项
         tableSelecteds: [],
         tableSelectedInfo: [],
-        parentDir: []
+        parentDir: [],
+        // 下载队列集合
+        downObj: {},
+        downObj2: {},
     }
     // 获取数据字典-产品类别数据
     getDictInfo = async () => {
@@ -578,18 +588,6 @@ class Personal extends Component {
         }
         this.setState({ uploadWindow: { visible: true } })
     }
-    //点击行选中选框
-    // onRow = (record) => {
-    //     return {
-    //         onClick: () => {
-    //             let selectedKeys = [record.id], selectedItems = [record];
-    //             this.setState({
-    //                 tableSelecteds: selectedKeys,
-    //                 tableSelectedInfo: selectedItems
-    //             })
-    //         }
-    //     }
-    // }
     // 获取上传文件列表数据
     getTableData = (obj = 1) => {
         let id = this.state.treeSelectInfo ? this.state.treeSelectInfo.id : ""
@@ -727,25 +725,107 @@ class Personal extends Component {
         this.getTableData()
     }
     // 文件下载
-    downloadFile = (key, e) => {
+    downloadFile = (row, e) => {
         e.stopPropagation()
-        let params = {
-            downloadType: "upload",
-            fileId: key
+        let name = row.fileName
+        let key = row.id
+        downObj[key] = {
+            percent: 0,//上传进度
+            speed: 0,//上传速率
         }
-        PostFileDownload(params).then(res => {
+        this.setState({ downObj })
+        GetCOSFile(name, key, this.getProgress).then((res) => {
+            if (!res.success) {
+                message.destroy()
+                message.warning("下载失败!")
+                delete downObj[key]
+                this.setState({ downObj })
+                return
+            }
+            let blobObj = new Blob([res.data], {
+                type: res.data.headers.contentType
+            });
+            let url = window.URL.createObjectURL(blobObj);
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = decodeURI(name);
+
+            delete downObj[key]
+            this.setState({ downObj })
+            message.destroy()
+            message.info("下载成功!")
+            a.click();
+            document.body.removeChild(a);
             this.getTableData()
         })
     }
+    // 文件前校验下载
+    downloadFile2 = (row, e) => {
+        let key = row.id
+        GetFileDownloadPower({ fileId: key, downloadType: "download" }).then(res => {
+            if (!res.success) {
+                message.destroy()
+                message.error(res.message)
+            } else {
+                this.starDownloadFile(row, e)
+            }
+        })
+    }
     // 文件下载
-    downloadFile2 = (key, e) => {
+    starDownloadFile = (row,e) => {
         e.stopPropagation()
-        let params = {
-            downloadType: "download",
-            fileId: key
+        let name = row.fileName
+        let key = row.id
+        downObj2[key] = {
+            percent: 0,//上传进度
+            speed: 0,//上传速率
         }
-        PostFileDownload(params).then(res => {
-            this.getTableData2()
+        this.setState({ downObj2 })
+        GetCOSFile(name, key, this.getProgress2).then((res) => {
+            if (!res.success) {
+                message.destroy()
+                message.warning("下载失败!")
+                delete downObj2[key]
+                this.setState({ downObj2 })
+                return
+            }
+            let blobObj = new Blob([res.data], {
+                type: res.data.headers.contentType
+            });
+            let url = window.URL.createObjectURL(blobObj);
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = decodeURI(name);
+
+            delete downObj2[key]
+            this.setState({ downObj2 })
+            message.destroy()
+            message.info("下载成功!")
+            a.click();
+            document.body.removeChild(a);
+            this.getTableData()
+        })
+    }
+    // 获取文件下载进度-个人上传
+    getProgress = (key, progressData) => {
+        downObj[key] = {
+            percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
+            speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
+        }
+        this.setState({
+            downObj
+        })
+    }
+     // 获取文件下载进度-个人下载
+     getProgress2 = (key, progressData) => {
+        downObj2[key] = {
+            percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
+            speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
+        }
+        this.setState({
+            downObj2
         })
     }
     // 申请文件下载
@@ -755,7 +835,8 @@ class Personal extends Component {
         }
         GetFileApply(params).then(res => {
             if (res.success != 1) {
-                message.error(res.message)
+                message.destroy()
+                message.warning(res.message)
             } else {
                 message.success("该文件的下载申请已提交。")
                 this.getTableData2()
@@ -764,18 +845,28 @@ class Personal extends Component {
     }
     // 文件删除
     deleteFile = (key) => {
-        let params = {
-            id: key
-        }
-        DeleteFile(params).then(res => {
-            if (res.success != 1) {
-                message.error(res.message)
-            } else {
-                this.setState({
-                    tableSelecteds: [],
-                    tableSelectedInfo: [],
+        let _this = this
+        confirm({
+            title: '删除',
+            content: '您确定要删除该文件吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                let params = {
+                    id: key
+                }
+                DeleteFile(params).then(res => {
+                    if (res.success != 1) {
+                        message.error(res.message)
+                    } else {
+                        _this.setState({
+                            tableSelecteds: [],
+                            tableSelectedInfo: [],
+                        })
+                        _this.getTableData()
+                    }
                 })
-                this.getTableData()
             }
         })
     }
@@ -785,23 +876,37 @@ class Personal extends Component {
         this.state.tableSelectedInfo.forEach(el => {
             params.push(el.id)
         });
-        if(!params.length){
+        if (!params.length) {
             message.destroy()
             message.warning("请选中后再进行批量删除操作！")
             return
         }
-        BatchDeleteFile({ ids: params.join() }).then(res => {
-            if (res.success != 1) {
-                message.destroy()
-                message.error(res.message)
-            } else {
-                this.setState({
-                    tableSelecteds: [],
-                    tableSelectedInfo: [],
+        let _this = this
+        confirm({
+            title: '删除',
+            content: '您确定要批量删除选中的数据吗？',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+
+                BatchDeleteFile({ ids: params.join() }).then(res => {
+                    if (res.success != 1) {
+                        message.destroy()
+                        message.error(res.message)
+                    } else {
+                        _this.setState({
+                            tableSelecteds: [],
+                            tableSelectedInfo: [],
+                        })
+                        _this.getTableData()
+                    }
                 })
-                this.getTableData()
             }
         })
+
+
+
     }
     render = _ => {
         const { h, h2 } = this.state;
@@ -829,11 +934,11 @@ class Personal extends Component {
                                 {/* *******************************************table表格自适应高度有误****************************************** */}
                                 <Row>
                                     <Col span={12}>
-                                        <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px' }} />
+                                        <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
                                         <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                                     </Col>
                                     <Col span={12} style={{ textAlign: 'right' }}>
-                                        <Button type="primary" style={{ marginRight: '10px' }} onClick={this.batchDeleteFile}>批量删除</Button>
+                                        <Button type="primary" style={{ marginRight: "10px" }} onClick={this.batchDeleteFile}>批量删除</Button>
                                     </Col>
                                 </Row>
                             </Form>
@@ -846,7 +951,7 @@ class Personal extends Component {
                             <Form style={{ width: '100%' }}>
                                 <Row>
                                     <Col span={12}>
-                                        <Input placeholder="请输入关键字" value={this.state.searchKey2} onChange={this.getSearchKey2} style={{ width: '200px' }} />
+                                        <Input placeholder="请输入关键字" value={this.state.searchKey2} onChange={this.getSearchKey2} style={{ width: '200px', marginRight: "10px" }} />
                                         <Button type="primary" onClick={_ => this.getTableData2(0)}>查询</Button>
                                     </Col>
                                 </Row>

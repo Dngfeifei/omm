@@ -10,14 +10,10 @@ const { TabPane } = Tabs;
 import Personal from "./personal"
 // 引入 全部文件组件
 import All from "./all"
-import { connect } from 'react-redux'
+
 //引入api接口
 import { GetFilePonints } from '/api/mediaLibrary.js'
 
-@connect(state => ({
-    activeKey: state.global.activeKey,
-}), dispath => ({
-}))
 class Medium extends Component {
     async componentWillMount() {
         // 获取币值数据
@@ -59,7 +55,7 @@ class Medium extends Component {
             <Tabs defaultActiveKey="1" animated={false}>
                 <TabPane tab="个人文件管理" key="1">
                     <p style={{ marginLeft: "12px" }}>我的币值：{monetaryValue}</p>
-                    <Personal activeKey={this.props.activeKey} type={this.props.params.type} onRef={c => this.Personal = c} listUpdate={this.allListUpdate}></Personal>
+                    <Personal onRef={c => this.Personal = c} listUpdate={this.allListUpdate}></Personal>
                 </TabPane>
                 <TabPane tab="全部文件" key="2">
                     <p style={{ marginLeft: "12px" }}>我的币值：{monetaryValue}</p>

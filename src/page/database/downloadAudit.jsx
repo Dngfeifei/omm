@@ -6,16 +6,18 @@
 
 import React, { Component } from 'react'
 
-import { Form, message, Button, Row, Col, Input, Table, Icon } from 'antd'
+import { Form, message, Button, Row, Col, Input, Table, Icon, Spin, Progress } from 'antd'
 
-import { GetFileLibrary, PostFileDownload, FileDownloadExamine } from '/api/mediaLibrary.js'
+import { GetCOSFile } from '/api/cloudUpload.js'
+import { GetFileLibrary, FileDownloadExamine } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
 import Pagination from '/components/pagination'
 
 // 标签字典对象集合
 let fileLabelData = {}
-
+// 下载队列集合
+let downObj = {}
 class DownloadAudit extends Component {
     SortTable = () => {
         setTimeout(() => {
@@ -154,16 +156,17 @@ class DownloadAudit extends Component {
                 title: '操作',
                 align: 'center',
                 editable: false,
+                width: 160,
                 render: (t, r) => {
                     let status = r.reviewStatus
                     if (status == "0") {
-                        return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                        return <div>
+                            {downObj[r.applyId] ? <Progress type="circle" percent={downObj[r.applyId].percent} width={40} /> : <a onClick={_ => this.downloadFile(r)} style={{ margin: "0 3px" }}>下载</a>}
                             <a onClick={_ => this.examineItem(r.applyId, 1)} style={{ margin: "0 3px" }}>同意</a>
                             <a onClick={_ => this.examineItem(r.applyId, 2)} style={{ margin: "0 3px" }}>驳回</a>
                         </div>
                     } else if (status == "1" || status == "2") {
-                        return <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                        return downObj[r.applyId] ? <Progress type="circle" percent={downObj[r.applyId].percent} width={40} /> : <a onClick={_ => this.downloadFile(r)} style={{ margin: "0 3px" }}>下载</a>
                     }
                 }
             },
@@ -173,6 +176,8 @@ class DownloadAudit extends Component {
         tableData: [],
         //右侧查询关键字
         searchKey: null,
+        // 下载队列集合
+        downObj: {}
     }
     // 获取标签字典数据
     getDictInfo = async () => {
@@ -254,17 +259,54 @@ class DownloadAudit extends Component {
         })
     }
 
-    // 文件下载
-    downloadFile = (key) => {
-        let params = {
-            downloadType: "downloadReview",
-            fileId: key
-        }
-        PostFileDownload(params).then(res => {
 
+    // 文件下载
+    downloadFile = (row) => {
+        let name = row.fileName
+        let key = row.applyId
+        downObj[key] = {
+            percent: 0,//上传进度
+            speed: 0,//上传速率
+        }
+        this.setState({ downObj })
+        GetCOSFile(name, key, this.getProgress).then((res) => {
+            if (!res.success) {
+                message.destroy()
+                message.warning("下载失败!")
+                delete downObj[key]
+                this.setState({ downObj })
+                return
+            }
+            let blobObj = new Blob([res.data], {
+                type: res.data.headers.contentType
+            });
+            let url = window.URL.createObjectURL(blobObj);
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = decodeURI(name);
+
+            delete downObj[key]
+            this.setState({ downObj })
+            message.destroy()
+            message.info("下载成功!")
+            a.click();
+            document.body.removeChild(a);
+            this.getTableData()
         })
     }
-
+    // 获取文件下载进度
+    getProgress = (key, progressData) => {
+        downObj[key] = {
+            percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
+            speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
+        }
+        console.log(key, progressData)
+        console.log(downObj)
+        this.setState({
+            downObj
+        })
+    }
     render = _ => {
         const { h } = this.state;
         return <div style={{ height: "100%", padding: '20px 10px', }}>
@@ -272,7 +314,7 @@ class DownloadAudit extends Component {
                 <Form style={{ width: '100%' }}>
                     <Row>
                         <Col span={12}>
-                            <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px' }} />
+                            <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
                             <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                         </Col>
                     </Row>
