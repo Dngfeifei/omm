@@ -15,7 +15,7 @@
         }
     }
 }
-#assetsBoxFrom{
+#assetsBoxFrom,#assetsBoxFrom2{
     .ant-row.ant-form-item{
         width: 100%;
         display: flex;
@@ -37,7 +37,7 @@
         min-width: auto !important;
     }
 }
-#assetsBoxFrom.AllocationForm{
+#assetsBoxFrom.AllocationForm,#assetsBoxFrom2.AllocationForm{
     .ant-form-item-label{
         width: 100px;
     }
@@ -70,5 +70,51 @@
 .seeModal{
     .ant-btn-primary{
         display: none;
+    }
+}
+
+//tab标签样式
+.ViewModal{
+    .ant-tabs-bar{
+        border-bottom: 0;
+    }
+    .ant-tabs-tab{
+        font-weight: bolder!important;
+    }
+    .ant-tabs-tab-active{
+        color: #02a7f0;
+    }
+    .ant-tabs-tab:before{
+        content: " ";
+        display: block;
+        left: 3px;
+        top: 16px;
+        bottom: 10px;
+        width: 4px;
+        background: #797979;
+        position: absolute;
+        height: 19px;
+    }
+    .ant-tabs-tab-active:before{
+        background: #02a7f0;
+    }
+    .ant-tabs-nav .ant-tabs-tab{
+        font-size: 17px;
+        position: relative;
+    }
+    .ant-tabs-nav .ant-tabs-ink-bar{
+        display: none!important;
+    }
+    .commTop{
+        min-height: 50px;
+    }
+    .commTop .navTitle {
+        font-family: PingFangSC-Semibold,PingFang SC Semibold,PingFang SC;
+        font-weight: 650;
+        font-style: normal;
+        font-size: 16px;
+        color: #02a7f0;
+        margin-bottom: 10px;
+        padding-left: 13px;
     }
 }

@@ -95,7 +95,7 @@ class SendOut extends Component {
         })
     }
     render = _ =>
-        <ModalDom title='消息发送' width={800} destroyOnClose={true} visible={true} onOk={this.saveData} onCancel={this.props.onCancel}>
+        <ModalDom title='消息发送' width={800} destroyOnClose={true} visible={true} onOk={this.saveData} onCancel={this.props.onCancel} okText="发送">
             <div className="operation_area" style={{display:'flex',alignItems:'center',marginBottom:15,position:'relative'}}>
                 <span className="ant-form-item-required" style={{width:88,display:'inline-block'}}>发送人：</span>
                 <Select disabled={this.state.params.isAll == 0 ? false : true} mode="multiple" dropdownStyle={{display:'none'}} placeholder="请选择人员" labelInValue value={this.state.params.msgUsers} onChange={(msgUsers)=>this.setState({params:{...this.state.params,msgUsers}})} style={{width:'75%'}}></Select>

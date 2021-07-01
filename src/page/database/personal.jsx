@@ -44,32 +44,28 @@ class Personal extends Component {
     SortTable = () => {
         setTimeout(() => {
             if (this.tableDom) {
-                let h = this.tableDom.clientHeight - 160;
+                let h = this.tableDom.clientHeight - 180 < 0 ? 180 : this.tableDom.clientHeight - 180 ;
                 this.setState({
                     h: {
                         y: (h)
                     },
                 });
             }
-
-        }, 0)
-        setTimeout(() => {
             if (this.tableDom2) {
-                let h2 = this.tableDom2.clientHeight - 160;
+                let h2 = this.tableDom2.clientHeight - 120 < 0 ? 120 : this.tableDom2.clientHeight - 120 ;
                 this.setState({
                     h2: {
                         y: (h2)
                     }
                 });
             }
-
         }, 0)
     }
     componentDidMount() {
         this.SortTable();
         //窗口变动的时候调用
         window.onresize = () => {
-            this.SortTable();
+            if(this.props.activeKey == this.props.type) this.SortTable();
         }
         this.props.onRef(this);
     }
