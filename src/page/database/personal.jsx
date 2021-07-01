@@ -46,19 +46,18 @@ let downObj2 = {}
 class Personal extends Component {
     SortTable = () => {
         setTimeout(() => {
+            // console.log(this.tableDom,this.tableDom2)
             if (this.tableDom) {
-                let h = this.tableDom.clientHeight - 160;
+                let h = this.tableDom.clientHeight - 170 < 0 ? 170 : this.tableDom.clientHeight - 180;
+                console.log(this.tableDom.clientHeight,h)
                 this.setState({
                     h: {
                         y: (h)
                     },
                 });
             }
-
-        }, 0)
-        setTimeout(() => {
             if (this.tableDom2) {
-                let h2 = this.tableDom2.clientHeight - 160;
+                let h2 = this.tableDom2.clientHeight - 170 < 0 ? 170 : this.tableDom2.clientHeight - 180;
                 this.setState({
                     h2: {
                         y: (h2)
@@ -942,7 +941,7 @@ class Personal extends Component {
                                     </Col>
                                 </Row>
                             </Form>
-                            <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
+                            <div className="tableParson" style={{ flex: 'auto',height: 10 }} ref={(el) => this.tableDom = el}>
                                 <Table bordered rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkbox" }} dataSource={this.state.tableData} columns={this.state.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h} size="small" />
                                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                             </div>
@@ -956,7 +955,7 @@ class Personal extends Component {
                                     </Col>
                                 </Row>
                             </Form>
-                            <div className="tableParson2" style={{ flex: 'auto' }} ref={(el2) => this.tableDom2 = el2}>
+                            <div className="tableParson2" style={{ flex: 'auto',height: 10 }} ref={(el2) => this.tableDom2 = el2}>
                                 <Table bordered dataSource={this.state.tableData2} columns={this.state.columns2} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h2} size="small" />
 
                                 <Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} size="small" />

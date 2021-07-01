@@ -37,9 +37,11 @@ let fileLabelData = {}
 let downObj = {}
 class All extends Component {
     SortTable = () => {
+        console.log(this.tableDom3)
         setTimeout(() => {
             if (this.tableDom3) {
-                let h3 = this.tableDom3.clientHeight - 155;
+                let h3 = this.tableDom3.clientHeight - 170 < 0 ? 170 : this.tableDom3.clientHeight - 170;
+                // console.log(h3)
                 this.setState({
                     h3: {
                         y: (h3)
@@ -433,7 +435,7 @@ class All extends Component {
                             </div>
                         </Row>
                     </Form>
-                    <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom3 = el}>
+                    <div className="tableParson" style={{ flex: 'auto',height: 10 }} ref={(el) => this.tableDom3 = el}>
                         <Table bordered dataSource={this.state.tableData} columns={this.state.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h3} size="small" />
                         <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                     </div>

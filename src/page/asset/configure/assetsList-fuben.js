@@ -41,7 +41,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required,d
     }else if(type == 'input2'){
         return <Input disabled={required} disabled placeholder="项目带入" />
     }else if(type == 'input3'){
-        return <Input disabled={required} placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={() => _this.openProject(dataIndex)} />} />
+        return <Input disabled={required} placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={_this.openProject} />} />
     }else if(type == 'select'){
         return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required} onChange={(value) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue)}>
                     {
@@ -382,7 +382,7 @@ export const assetsListData = {
           ],
         
         render:render,
-        type:'input3',
+        type:'select1'
     },
     //产品等级
     'productLevel':{
@@ -879,7 +879,9 @@ const columnsBase = [{
     selectData:'productBrandType',
     key:"brandId",
     align: 'center',
-},
+}]
+export const columns = [
+    ...columnsBase,
 {
     title: '产品线',
     dataIndex: 'productLineName',
@@ -902,9 +904,7 @@ const columnsBase = [{
     selectData:'productLevel',
     key:"productLevel",
     align: 'center',
-}]
-export const columns = [
-    ...columnsBase,
+},
 {
     title: 'MODEL型号',
     dataIndex: 'strValue1',
@@ -947,7 +947,6 @@ export const panes = [
     {
         type:[23],
         rules:[...rules1],
-        subColumns:[],
         columns:[
            ...columns,
             {
@@ -1066,7 +1065,6 @@ export const panes = [
     {
         type:[24],
         rules:[...rules1],
-        subColumns:[],
         columns:[
             ...columns,
             {
@@ -1270,7 +1268,6 @@ export const panes = [
     {
         type:[25],
         rules:[...rules1],
-        subColumns:[],
         columns:[
             ...columns,
             {
@@ -1447,7 +1444,6 @@ export const panes = [
     {
         type:[26],
         rules:[...rules1],
-        subColumns:[],
         columns:[
             ...columns,
             {
@@ -1632,7 +1628,6 @@ export const panes = [
     {
         type:[27],
         rules:[...rules1],
-        subColumns:[],
         columns:[
             ...columns,
             {
@@ -1703,7 +1698,6 @@ export const panes = [
     {
         type:[29],
         rules:[...rules1],
-        subColumns:[],
         columns:[
             ...columnsBase,
             {
@@ -1791,7 +1785,6 @@ export const panes = [
     {
         type:[28],
         rules:[...rules1],
-        subColumns:[],
         columns:[
             ...columnsBase,
             {
@@ -1933,144 +1926,3 @@ export const panes = [
         ]
     }
 ];
-
-//新增配置管理基础数据-项目信息
-export const columnsBasic = [{
-    title: '配置项',
-    dataIndex: 'basedataTypeName',
-    ellipsis:true,
-    key:"basedataTypeId",
-    itemCode:'id',
-    itemValue:'basedataTypeName',
-    selectData:'basedataTypeList',
-    align: 'center',
-},
-{
-    title: '客户编号',
-    dataIndex: 'custNum',
-    width:100,
-    selectData:'customerData',
-    align: 'center'
-},
-{
-    title: '项目编号',
-    dataIndex: 'projectNumber',
-    key:"projectNumber",
-    align: 'center',
-},
-{
-    title: '客户名称',
-    dataIndex: 'custName',
-    ellipsis:true,
-    key:"custName",
-    align: 'center',
-},
-{
-    title: '项目名称',
-    dataIndex: 'projectName',
-    ellipsis: true,
-    width:200,
-    key:"projectName",
-    align: 'center',
-},
-{
-    title: '项目经理',
-    dataIndex: 'projectManagerName',
-    key:"projectManagerName",
-    width:90,
-    align: 'center',
-},
-{
-    title: '开始时间',
-    dataIndex: 'projectStartDate',
-    key:"projectStartDate",
-    align: 'center',
-},
-{
-    title: '结束时间',
-    dataIndex: 'projectEndDate',
-    key:"projectEndDate",
-    align: 'center',
-},
-{
-    title: '项目销售',
-    dataIndex: 'projectSalesmanName',
-    key:"projectSalesmanName",
-    align: 'center',
-},
-{
-    title: '服务区域',
-    dataIndex: 'projectAreaArea',
-    key:"projectAreaId",
-    selectData:'areaData',
-    itemValue:'area',
-    selectChange: 'projectAreaId',
-    align: 'center',
-},
-{
-    title: '机房地址',
-    dataIndex: 'projectAreaAddress',
-    key:"projectAreaAddress",
-    ellipsis:true,
-    align: 'center',
-},
-{
-    title: '客户方管理员',
-    dataIndex: 'custUserName',
-    selectData:'customerData',
-    key:"custUserId",
-    align: 'center',
-},
-{
-    title: '联系方式',
-    dataIndex: 'custUserMobile',
-    key:"custUserMobile",
-    align: 'center',
-}]
-//新增配置管理基础数据-设备信息
-export const columnsDevice = [{
-    title: '产品型号',
-    dataIndex: 'productModelName',
-    selectData:'productModeType',
-    key:"productModelId",
-    selectChange: 'productModelId',
-    align: 'center',
-},{
-    title: '产品类别',
-    dataIndex: 'serviceClassName',
-    key:"serviceClassId",
-    selectChange: 'serviceClassId',
-    selectData:'productType',
-    align: 'center',
-},
-{
-    title: '技术方向',
-    dataIndex: 'skillTypeName',
-    selectChange: 'skillTypeId',
-    selectData:'productSkillType',
-    key:"skillTypeId",
-    align: 'center',
-},
-{
-    title: '品牌',
-    dataIndex: 'brandName',
-    selectChange: 'brandId',
-    selectData:'productBrandType',
-    key:"brandId",
-    align: 'center',
-},
-{
-    title: '产品线',
-    dataIndex: 'productLineName',
-    selectData:'productLineType',
-    key:"productLineId",
-    selectChange: 'productLineId',
-    align: 'center',
-},
-{
-    title: '产品等级',
-    dataIndex: 'productLevel',
-    selectData:'productLevel',
-    key:"productLevel",
-    align: 'center',
-}]
