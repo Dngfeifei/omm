@@ -15,6 +15,7 @@ export const updateFormRenderModelReducer = (state, action) => {
       const schema = state.formModel;
       const newSchema = [...schema];
       for (const item of newSchema) {
+        if (typeof item !== 'object') continue;
         if (item.model && item.model === field) {
           item.options.value = value;
           break;

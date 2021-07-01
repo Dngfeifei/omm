@@ -247,7 +247,7 @@ export const assetsListData = {
     },
     //客户方管理员
     'custUserName':{
-        key:'custUserName',
+        key:'custUserId',
         label:'客户方管理员',
         span:6,
         rules:[
@@ -275,7 +275,7 @@ export const assetsListData = {
     },
     //客户管理员
     'custUserId':{
-        key:'custUserName',
+        key:'custUserId',
         label:'客户管理员',
         span:6,
         rules:[
@@ -381,13 +381,7 @@ export const assetsListData = {
         key:'productLevel',
         label:'产品等级',
         span:6,
-        rules:[
-            {
-              required: true,
-              message: '该选项不能为空！',
-            },
-          ],
-        
+        rules:[],
         render:render,
         type:'select'
     },
@@ -768,12 +762,12 @@ const columnsBase = [{
     itemCode:'id',
     itemValue:'basedataTypeName',
     selectData:'basedataTypeList',
-    width:200,
     align: 'center',
 },
 {
     title: '客户编号',
     dataIndex: 'custNum',
+    width:100,
     selectData:'customerData',
     align: 'center'
 },
@@ -793,6 +787,8 @@ const columnsBase = [{
 {
     title: '项目名称',
     dataIndex: 'projectName',
+    ellipsis: true,
+    width:200,
     key:"projectName",
     align: 'center',
 },
@@ -800,6 +796,7 @@ const columnsBase = [{
     title: '项目经理',
     dataIndex: 'projectManagerName',
     key:"projectManagerName",
+    width:90,
     align: 'center',
 },
 {
@@ -833,6 +830,7 @@ const columnsBase = [{
     title: '机房地址',
     dataIndex: 'projectAreaAddress',
     key:"projectAreaAddress",
+    ellipsis:true,
     align: 'center',
 },
 {
@@ -928,6 +926,7 @@ export const columns = [
     title: '风险等级',
     dataIndex: 'riskLevelName',
     selectData:'riskLevel',
+    ellipsis:true,
     key:"riskLevelId",
     align: 'center',
 }]

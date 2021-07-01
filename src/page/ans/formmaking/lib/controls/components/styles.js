@@ -1,14 +1,14 @@
 import styled from "@emotion/styled";
 
 export const Container = styled.div`
-  display: ${({ labelPosition }) => (labelPosition === 'top' ? 'block' : 'flex')};
+  display: ${({ formConfig }) => (formConfig.labelPosition === 'top' ? 'block' : 'flex')};
 `
 
 export const Label = styled.div`
   width: ${({ labelWidth }) => labelWidth}px;
   text-align: ${({ labelPosition }) => labelPosition};
   vertical-align: middle;
-  float: left;
+  float: ${({ labelPosition }) => (labelPosition === 'top' ? 'none' : 'left')};
   font-size: 14px;
   color: #606266;
   line-height: 32px;
@@ -19,4 +19,12 @@ export const Label = styled.div`
     margin-right: 2px;
     font-size: 14px;
   }
+`
+
+export const Space = styled.div`
+  display: flex;
+  flex-direction: ${props => {
+    console.log(props);
+    return props.control.options.inline ? 'row' : 'column'
+  }};
 `

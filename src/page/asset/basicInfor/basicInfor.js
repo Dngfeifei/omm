@@ -174,7 +174,7 @@ export const assetsListData = [
                     },
                   ],
                 render: (_this,disabled) =>{
-                    return <Select disabled={true}  placeholder="请选择" allowClear={true} onChange={_this.onChange}>
+                    return <Select disabled={disabled}  placeholder="请选择" allowClear={true} onChange={_this.onChange}>
                                 {
                                     _this.state.basedataTypeList.map((items, index) => {
                                         return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
@@ -371,6 +371,7 @@ export const columns = [
             {
                 title: '编码',
                 dataIndex: 'code',
+                width:80,
                 align: 'center',
             },{
                 title: '名称',
@@ -379,6 +380,10 @@ export const columns = [
             },{
                 title: '分类',
                 dataIndex: 'basedataTypeName',
+                ellipsis: {
+                    showTitle: false,
+                },
+                width:200,
                 align: 'center',
             },{
                 title: '所属',
@@ -399,6 +404,7 @@ export const columns = [
             {
                 title: '创建时间',
                 dataIndex: 'createTime',
+                width:150,
                 align: 'center',
             }
         ]

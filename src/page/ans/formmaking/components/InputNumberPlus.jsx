@@ -21,6 +21,7 @@ const InputNumberPlus = ({
   value,
   onChange,
   disabled,
+  defaultValue = 0,
   step,
   min = 0,
   max = 100000 * 10000,
@@ -70,6 +71,7 @@ const InputNumberPlus = ({
         }
         onChange={handleChange}
         value={value}
+        defaultValue={defaultValue}
       />
     </div>
   );
