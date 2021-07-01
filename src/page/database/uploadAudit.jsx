@@ -10,15 +10,14 @@ const { Provider, Consumer } = React.createContext()//组件之间传值
 // 引入日期格式化
 import moment from 'moment'
 
-import { Form, message, Button, Row, Col, Input, Table, Select, DatePicker, Spin } from 'antd'
+import { Form, message, Button, Row, Col, Input, Table, Select, DatePicker, Spin, Progress } from 'antd'
 const { Option } = Select
 const { Item } = Form
-import { LoadingOutlined } from '@ant-design/icons';
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
+import { GetCOSFile } from '/api/cloudUpload.js'
 import { GetFileLibrary } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
-import { FileUpdateExamine, PostFileDownload, GetFileLevels } from '/api/mediaLibrary'  //介质库api
+import { FileUpdateExamine, GetFileLevels } from '/api/mediaLibrary'  //介质库api
 
 
 import Pagination from '/components/pagination'
@@ -29,8 +28,8 @@ let fileLevelsArr = []
 let fileLevels = {}
 // 可编辑字段标识
 let editingKey = ''
-// 下载队列
-let downArr = []
+// 下载队列集合
+let downObj = {}
 
 // 禁选日期方法
 function disabledDate(current) {
@@ -260,15 +259,14 @@ class DownloadAudit extends Component {
 
                     let isSave = (editingKey != "" && editingKey == r.id)    //在编辑状态 且编辑项id与行id相同时 同意按钮正常显示
                     if (status == "0") {
-                        return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            {downArr.indexOf(r.id) > -1 ? <span style={{ marginRight: "10px", color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>}
+                        return <div>
+                            {downObj[r.id] ? <Progress style={{ marginRight: "10px" }} type="circle" percent={downObj[r.id].percent} width={40} /> : <a onClick={_ => this.downloadFile(r)} style={{ margin: "0 3px" }}>下载</a>}
                             <a onClick={_ => this.saveItem(r.id, 1)} style={{ margin: "0 3px" }}>同意</a>
                             <a onClick={_ => this.saveItem(r.id, 2)} style={{ margin: "0 3px" }}>驳回</a>
                         </div>
                     } else if (status == "1") {
-
-                        return <div style={{ display: "flex", flexFlow: "wrap" }}>
-                            {downArr.indexOf(r.id) > -1 ? <span style={{ marginRight: "10px", color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>}
+                        return <div>
+                            {downObj[r.id] ? <Progress style={{ marginRight: "10px" }} type="circle" percent={downObj[r.id].percent} width={40} /> : <a onClick={_ => this.downloadFile(r)} style={{ margin: "0 3px" }}>下载</a>}
                             {idEdit ? <a disabled={isEditDisplay} onClick={_ => this.editItem(r.id)} style={{ margin: "0 3px" }}>编辑</a> : ""}
                             {!idEdit ? <a disabled={!isSave} onClick={_ => this.saveItem(r.id, 3)} style={{ margin: "0 3px" }}>保存</a> : ""}
                             {!idEdit ? <a onClick={_ => this.editCancel(r.id)} style={{ margin: "0 3px" }}>取消</a> : ""}
@@ -285,8 +283,8 @@ class DownloadAudit extends Component {
         tableData: [],
         //右侧查询关键字
         searchKey: null,
-        // 下载队列
-        downArr: []
+        // 下载队列集合
+        downObj: {}
     }
     // 获取基础数据
     getBaseData = async () => {
@@ -452,30 +450,52 @@ class DownloadAudit extends Component {
         });
     }
     // 文件下载
-    downloadFile = (key) => {
-        downArr.push(key)
-        this.setState({ downArr })
-        let params = {
-            downloadType: "uploadReview",
-            fileId: key
+    downloadFile = (row) => {
+        let name = row.fileName
+        let key = row.id
+        downObj[key] = {
+            percent: 0,//上传进度
+            speed: 0,//上传速率
         }
-        PostFileDownload(params).then(res => {
-            downArr = downArr.filter(item => item != key)
-            this.setState({ downArr })
-            if (res.success != 1) {
+        this.setState({ downObj })
+        GetCOSFile(name, key, this.getProgress).then((res) => {
+            if (!res.success) {
                 message.destroy()
-                message.error(res.message)
-            } else {
-                let a = document.createElement("a");
-                document.body.appendChild(a);
-                let url = res.data + (res.data.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
-                a.href = url;
-                a.click();
-                document.body.removeChild(a);
+                message.warning("下载失败!")
+                delete downObj[key]
+                this.setState({ downObj })
+                return
             }
+            let blobObj = new Blob([res.data], {
+                type: res.data.headers.contentType
+            });
+            let url = window.URL.createObjectURL(blobObj);
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = decodeURI(name);
+
+            delete downObj[key]
+            this.setState({ downObj })
+            message.destroy()
+            message.info("下载成功!")
+            a.click();
+            document.body.removeChild(a);
+            this.getTableData()
         })
     }
-
+    // 获取文件下载进度
+    getProgress = (key, progressData) => {
+        downObj[key] = {
+            percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
+            speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
+        }
+        console.log(key, progressData)
+        console.log(downObj)
+        this.setState({
+            downObj
+        })
+    }
     render = _ => {
         const { h } = this.state;
 

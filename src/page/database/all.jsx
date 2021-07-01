@@ -4,13 +4,13 @@
 */
 
 import React, { Component } from 'react'
-import { Modal, Tree, message, Button, Row, Col, Form, Input, Table, Icon, Spin } from 'antd'
-import { LoadingOutlined } from '@ant-design/icons';
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+import { Modal, Tree, message, Button, Row, Col, Form, Input, Table, Icon, Progress } from 'antd'
+
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
-import { GetFileCategories, GetFileLibrary, PostFileDownload, GetFileApply, GetFileLike, GetFileCollect } from '/api/mediaLibrary.js'
+import { GetCOSFile } from '/api/cloudUpload.js'
+import { GetFileCategories, GetFileLibrary, GetFileDownloadPower, GetFileApply, GetFileLike, GetFileCollect } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
 import Pagination from '/components/pagination'
@@ -33,8 +33,8 @@ const assignment = (data) => {
 }
 // 标签集合
 let fileLabelData = {}
-// 下载队列
-let downArr = []
+// 下载队列集合
+let downObj = {}
 class All extends Component {
     SortTable = () => {
         setTimeout(() => {
@@ -87,11 +87,13 @@ class All extends Component {
                 dataIndex: 'fileName',
                 align: 'center',
                 render: (t, r) => {
+                    let style1 = r.isLike ? { margin: "0 3px 0 0", cursor: "pointer", color: "#7777f7" } : { margin: "0 3px 0 0", cursor: "pointer" }
+                    let style2 = r.isCollect ? { margin: "0 3px 0 5px", cursor: "pointer", color: "#f56464" } : { margin: "0 3px 0 5px", cursor: "pointer" }
                     return <div>
                         <div>{t}</div>
                         <div style={{ color: "#bfb8b8" }}>
-                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={{ margin: "0 3px 0 0", cursor: "pointer" }} />{r.likeNum ? r.likeNum : 0}
-                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={{ margin: "0 3px 0 5px", cursor: "pointer" }} />{r.collectNum ? r.collectNum : 0}
+                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={style1} />{r.likeNum ? r.likeNum : 0}
+                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={style2} />{r.collectNum ? r.collectNum : 0}
                         </div>
                     </div>
                 }
@@ -164,11 +166,12 @@ class All extends Component {
                 render: (t, r) => {
                     t.toString()
                     if (t == "1") {
-                        return downArr.indexOf(r.id) > -1 ? <span  style={{  color: "#1890ff" }}><Spin indicator={antIcon}/>下载中</span> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                        return downObj[r.id] ? <Progress type="circle" percent={downObj[r.id].percent} width={40} /> : <a onClick={_ => this.downloadFile(r)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (t == "0") {
                         return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                     }
                 }
+
             },
 
         ],
@@ -179,8 +182,8 @@ class All extends Component {
         //表格选中项
         tableSelecteds: [],
         tableSelectedInfo: [],
-        // 下载队列
-        downArr: []
+        // 下载队列集合
+        downObj: {}
     }
     // 获取数据字典-产品类别数据
     getDictInfo = async () => {
@@ -295,31 +298,51 @@ class All extends Component {
     }
 
 
-    // 文件下载
-    downloadFile = (key) => {
-        downArr.push(key)
-        this.setState({ downArr })
-        let params = {
-            downloadType: "all",
-            fileId: key
-        }
-        PostFileDownload(params).then(res => {
-            downArr = downArr.filter(item => item != key)
-            this.setState({ downArr })
-            if (res.success != 1) {
+    // 文件下载校验
+    downloadFile = (row) => {
+        let key = row.id
+        GetFileDownloadPower({ fileId: key, downloadType: "all" }).then(res => {
+            if (!res.success) {
                 message.destroy()
                 message.error(res.message)
             } else {
-                let a = document.createElement("a");
-                document.body.appendChild(a);
-                let url = res.data + (res.data.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
-                a.href = url;
-                a.click();
-                document.body.removeChild(a);
-                this.getTableData()
-                this.subpageChange()
+                this.starDownloadFile(row)
             }
-         
+        })
+    }
+    // 文件下载
+    starDownloadFile = (row) => {
+        let name = row.fileName
+        let key = row.id
+        downObj[key] = {
+            percent: 0,//上传进度
+            speed: 0,//上传速率
+        }
+        this.setState({ downObj })
+        GetCOSFile(name, key, this.getProgress).then((res) => {
+            if (!res.success) {
+                message.destroy()
+                message.warning("下载失败!")
+                delete downObj[key]
+                this.setState({ downObj })
+                return
+            }
+            let blobObj = new Blob([res.data], {
+                type: res.data.headers.contentType
+            });
+            let url = window.URL.createObjectURL(blobObj);
+            var a = document.createElement("a");
+            document.body.appendChild(a);
+            a.href = url;
+            a.download = decodeURI(name);
+
+            delete downObj[key]
+            this.setState({ downObj })
+            message.destroy()
+            message.info("下载成功!")
+            a.click();
+            document.body.removeChild(a);
+            this.getTableData()
         })
     }
     // 申请文件下载
@@ -370,6 +393,18 @@ class All extends Component {
     subpageChange = _ => {
         this.props.listUpdate()
     }
+    // 获取文件下载进度
+    getProgress = (key, progressData) => {
+        downObj[key] = {
+            percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
+            speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
+        }
+        console.log(key, progressData)
+        console.log(downObj)
+        this.setState({
+            downObj
+        })
+    }
     render = _ => {
         const { h3 } = this.state;
         return <div style={{ height: '100%' }} >
@@ -384,8 +419,8 @@ class All extends Component {
                     <Form style={{ width: '100%' }}>
                         <Row>
                             <Col span={12}>
-                                <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px',marginRight:"10px" }} />
-                                <Button type="primary"  onClick={_ => this.getTableData(0)}>查询</Button>
+                                <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
+                                <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                             </Col>
                         </Row>
                         <Row style={{ paddingTop: "20px" }}>
