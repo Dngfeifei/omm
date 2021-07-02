@@ -1,56 +1,42 @@
-import React, { useMemo } from 'react'
-import styled from '@emotion/styled'
-import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import React, { useState, useContext } from 'react'
+import { Container } from '@/page/ans/formmaking/lib/controls/components/styles'
+import Label from '@/page/ans/formmaking/lib/controls/common/Label'
+import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
+import styled from "@emotion/styled";
+import {EditorModules, EditorFormats} from "./editor-config";
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 
-const Container = styled.div`
-  display: ${({ labelPosition }) => (labelPosition === 'top' ? 'block' : 'flex')};
-`
-const Label = styled.div`
-  width: ${({ labelWidth }) => labelWidth}px;
-  text-align: ${({ labelPosition }) => labelPosition};
-  vertical-align: middle;
-  float: left;
-  font-size: 14px;
-  color: #606266;
-  line-height: 32px;
-  padding: 0 12px 0 0;
-  box-sizing: border-box;
-  > span{
-    color: #f56c6c;
-    margin-right: 2px;
-    font-size: 14px;
-  }
-`
-const InputBox = styled.div`
+const Wrapper = styled.div`
   flex: 1;
 `
 
 const EditorRender = ({ control, formConfig }) => {
   const { options } = control
+  const { updateValue } = useContext(formRenderContext);
+  const [value, setValue] = useState('')
 
-  const labelWidth = useMemo(() => {
-    if (options.isLabelWidth) {
-      return options.labelWidth
-    }
-    return formConfig.labelWidth
-  }, [options, formConfig])
+  const handleChange = (val) => {
+    setValue(val)
+    updateValue(control.model, val);
+  }
 
   return <div className={options.customClass}>
-    <Container labelPosition={formConfig.labelPosition}>
-      {!options.hideLabel && <Label
-        labelPosition={formConfig.labelPosition}
-        labelWidth={labelWidth}
-      >
-        {options.required && <span>*</span>}
-        {control.name}
-      </Label>
-      }
-      <InputBox>
-        <InputNumberPlus disabled={options.disabled} defaultValue={options.defaultValue} style={{ width: options.width }} />
-      </InputBox>
+    <Container formConfig={formConfig}>
+      {/* <Label control={control} formConfig={formConfig} /> */}
+      <Wrapper>
+        <ReactQuill theme="snow"
+                    value={value}
+                    modules={EditorModules}
+                    formats={EditorFormats}
+                    onChange={handleChange}
+                    readOnly={formConfig.disabled || options.disabled}
+                    placeholder={options.placeholder}
+                    >
+        </ReactQuill>
+      </Wrapper>
     </Container>
 
-     {/*<pre>{JSON.stringify(options, null, 2)}</pre>*/}
   </div>
 }
 

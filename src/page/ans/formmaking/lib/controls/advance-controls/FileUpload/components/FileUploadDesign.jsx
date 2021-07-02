@@ -1,6 +1,11 @@
 import React, { useMemo } from 'react'
 import { Label, Container } from '../../../components/styles'
-import FileUpload from '@/page/ans/formmaking/components/FileUpload.jsx';
+import { Upload, Button } from 'antd'
+import styled from "@emotion/styled";
+
+const Wrapper = styled.div`
+  flex: 1;
+`
 
 const FileUploadDesign = ({ control, formConfig }) => {
   const { options } = control
@@ -22,7 +27,11 @@ const FileUploadDesign = ({ control, formConfig }) => {
         {control.name}
       </Label>
       }
-      <FileUpload />
+      <Wrapper>
+        <Upload>
+          <Button>点击上传</Button>
+        </Upload>
+      </Wrapper>
     </Container>
   </div>
 }

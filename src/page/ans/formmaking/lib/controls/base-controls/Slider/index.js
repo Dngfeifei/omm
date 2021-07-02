@@ -3,7 +3,7 @@ import SliderSetting from './components/SliderSetting'
 import SliderRender from './components/SliderRender'
 
 export default {
-  'slider-design': SliderDesign,
+  'slider-design': SliderRender,
   'slider-setting': SliderSetting,
   'slider-render': SliderRender,
 }

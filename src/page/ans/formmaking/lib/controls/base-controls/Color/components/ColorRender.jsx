@@ -1,56 +1,55 @@
-import React, { useMemo } from 'react'
-import styled from '@emotion/styled'
-import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import React, { useMemo, useContext } from 'react'
+import 'rc-color-picker/assets/index.css';
+import ColorPicker from 'rc-color-picker'
 
-const Container = styled.div`
-  display: ${({ labelPosition }) => (labelPosition === 'top' ? 'block' : 'flex')};
-`
-const Label = styled.div`
-  width: ${({ labelWidth }) => labelWidth}px;
-  text-align: ${({ labelPosition }) => labelPosition};
-  vertical-align: middle;
-  float: left;
-  font-size: 14px;
-  color: #606266;
-  line-height: 32px;
-  padding: 0 12px 0 0;
-  box-sizing: border-box;
-  > span{
-    color: #f56c6c;
-    margin-right: 2px;
-    font-size: 14px;
-  }
-`
-const InputBox = styled.div`
-  flex: 1;
-`
+import Label from '@/page/ans/formmaking/lib/controls/common/Label'
+import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/styles'
+import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
+import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
+import { color2rgba, rgba2color } from '@/page/ans/formmaking/lib/controls/base-controls/Color/utils';
 
 const ColorRender = ({ control, formConfig }) => {
   const { options } = control
 
-  const labelWidth = useMemo(() => {
-    if (options.isLabelWidth) {
-      return options.labelWidth
+  const baseProps = useFieldBaseProps(control, formConfig, true)
+  const { updateValue } = useContext(formRenderContext);
+
+  const handleOnChange = (color) => {
+    if (!options.disabled) {
+      if (options.showAlpha) {
+        updateValue(control.model, color2rgba(color))
+      } else {
+        updateValue(control.model, color.color)
+      }
     }
-    return formConfig.labelWidth
-  }, [options, formConfig])
+
+  }
+
+  const color = useMemo(() => {
+    const value = options.value || options.defaultValue
+    if (options.showAlpha) {
+      return rgba2color(value)
+    } else {
+      return {
+        color: value,
+        alpha: 100,
+      }
+    }
+  }, [options.showAlpha, options.value, options.defaultValue])
 
   return <div className={options.customClass}>
-    <Container labelPosition={formConfig.labelPosition}>
-      {!options.hideLabel && <Label
-        labelPosition={formConfig.labelPosition}
-        labelWidth={labelWidth}
-      >
-        {options.required && <span>*</span>}
-        {control.name}
-      </Label>
-      }
-      <InputBox>
-        <InputNumberPlus disabled={options.disabled} defaultValue={options.defaultValue} style={{ width: options.width }} />
-      </InputBox>
-    </Container>
+    <Container formConfig={formConfig}>
+      <Label control={control} formConfig={formConfig} />
 
-     {/*<pre>{JSON.stringify(options, null, 2)}</pre>*/}
+
+      <ColorPicker
+        {...baseProps}
+        style={{ width: 32, height: 32 }}
+        color={color.color}
+        alpha={color.alpha}
+        onChange={handleOnChange}
+        enableAlpha={options.showAlpha} />
+    </Container>
   </div>
 }
 

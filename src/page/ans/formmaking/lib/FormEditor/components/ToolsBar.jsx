@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Tooltip, Modal, Button } from 'antd';
 import styled from '@emotion/styled';
 
@@ -141,11 +141,14 @@ const ToolsBar = () => {
         </span>
       </div>
 
-      <JSONModal
-        json={JSON.stringify({ list: state.formModel, config: state.formConfig }, null, 2)}
-        open={isJsonModalOpen}
-        onCancel={() => setIsJsonModalOpen(false)}
-      />
+      {isJsonModalOpen ? (
+        <JSONModal
+          json={JSON.stringify({ list: state.formModel, config: state.formConfig }, null, 2)}
+          open={isJsonModalOpen}
+          onCancel={() => setIsJsonModalOpen(false)}
+        />
+      ) : null}
+
 
       <PreviewFormModal formData={{
         formModel,

@@ -3,7 +3,7 @@ import ColorSetting from './components/ColorSetting'
 import ColorRender from './components/ColorRender'
 
 export default {
-  'color-design': ColorDesign,
+  'color-design': ColorRender,
   'color-setting': ColorSetting,
   'color-render': ColorRender,
 }
