@@ -46,10 +46,10 @@ let downObj2 = {}
 class Personal extends Component {
     SortTable = () => {
         setTimeout(() => {
-             console.log(this.tableDom,this.tableDom2)
+            //  console.log(this.tableDom,this.tableDom2)
             if (this.tableDom) {
                 let h = this.tableDom.clientHeight - 170 < 0 ? 170 : this.tableDom.clientHeight - 180;
-                console.log(this.tableDom.clientHeight,h)
+                // console.log(this.tableDom.clientHeight,h)
                 this.setState({
                     h: {
                         y: (h)

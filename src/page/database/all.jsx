@@ -37,7 +37,7 @@ let fileLabelData = {}
 let downObj = {}
 class All extends Component {
     SortTable = () => {
-        console.log(this.tableDom3)
+        // console.log(this.tableDom3)
         setTimeout(() => {
             if (this.tableDom3) {
                 let h3 = this.tableDom3.clientHeight - 170 < 0 ? 170 : this.tableDom3.clientHeight - 170;
