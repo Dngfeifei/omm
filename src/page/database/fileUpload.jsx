@@ -116,15 +116,15 @@ class fileUpload extends Component {
     }
     // 文件加签提交接口
     getSignResult = async (data) => {
-         GetSignResult({ fileSignature: data, fileName: this.state.file.name })
+        GetSignResult({ fileSignature: data, fileName: this.state.file.name })
             .then(res => {
                 if (res.success != 1) {
                     message.error(res.message)
-                    this.setState({uploadStatus:0})
+                    this.setState({ uploadStatus: 0, file: null })
                 } else {
                     if (res.status != 200) {
                         message.error(res.message)
-                        this.setState({uploadStatus:0})
+                        this.setState({ uploadStatus: 0, file: null })
                     } else {
 
                         if (this.state.taskId) {
