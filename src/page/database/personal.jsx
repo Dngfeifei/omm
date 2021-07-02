@@ -46,7 +46,7 @@ let downObj2 = {}
 class Personal extends Component {
     SortTable = () => {
         setTimeout(() => {
-            // console.log(this.tableDom,this.tableDom2)
+             console.log(this.tableDom,this.tableDom2)
             if (this.tableDom) {
                 let h = this.tableDom.clientHeight - 170 < 0 ? 170 : this.tableDom.clientHeight - 180;
                 console.log(this.tableDom.clientHeight,h)
@@ -69,10 +69,6 @@ class Personal extends Component {
     }
     componentDidMount() {
         this.SortTable();
-        //窗口变动的时候调用
-        window.onresize = () => {
-            this.SortTable();
-        }
         this.props.onRef(this);
     }
     async componentWillMount() {
@@ -924,6 +920,7 @@ class Personal extends Component {
                 <Col span={19} className="gutter-row " style={{ height: "100%" }}>
                     <Button type="primary" style={{ width: '90px' }} onClick={this.openUploadModal}>上传文件</Button>
                     <Tabs onTabClick={(key, event) => {
+                        this.SortTable();
                         this.setState({
                             tabKey: key
                         })

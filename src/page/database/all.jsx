@@ -53,10 +53,6 @@ class All extends Component {
     }
     componentDidMount() {
         this.SortTable();
-        //窗口变动的时候调用
-        window.onresize = () => {
-            this.SortTable();
-        }
         this.props.onRef(this);
     }
     async componentWillMount() {
