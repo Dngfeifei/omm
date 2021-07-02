@@ -5,7 +5,7 @@ import http from './index'
 export const getFormList = (params = {}) =>
     http.fetchGet(REMOTE_URL + `/form/make/list`, params)
 
-export const deletMakeForm = (params) => http.fetchDeleteWithKey(REMOTE_URL + `/form/make/delete`, params)
+export const deletMakeForm = (params) => http.fetchPost(REMOTE_URL + `/form/make/delete`, params)
 
 export const getFormItem = (params) => http.fetchGet(REMOTE_URL + `/form/make/queryById`, params)
 
