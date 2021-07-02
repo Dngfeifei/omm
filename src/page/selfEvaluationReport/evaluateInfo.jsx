@@ -767,66 +767,15 @@ class AssessmentReport extends Component {
         }}
       >
         <div style={{ width: "100%", margin: "0 auto" }}>
-          <Form>
-            <Row>
-              <Col span={14}>
-                <Input
-                  addonBefore="大区"
-                  placeholder="请输入"
-                  value={this.state.regionalName}
-                  onChange={this.inputChange.bind(this, "regionalName")}
-                  style={{ width: "170px", margin: "0 15px" }}
-                />
-                <Input
-                  addonBefore="部门"
-                  placeholder="请输入"
-                  value={this.state.departmentName}
-                  onChange={this.inputChange.bind(this, "departmentName")}
-                  style={{ width: "170px", margin: "0 5px" }}
-                />
-                <Input
-                  addonBefore="姓名"
-                  placeholder="请输入"
-                  value={this.state.userName}
-                  onChange={this.inputChange.bind(this, "userName")}
-                  style={{ width: "170px", margin: "0 5px" }}
-                />
-                <Button type="primary" style={{ margin: "0 5px" }} onClick={() => this.search()}>
-                  查询
-                </Button>
-                <Button type="primary" style={{ margin: "0 5px" }} onClick={() => this.search()}>
-                  导出
-                </Button>
-                <Button
-                  type="primary"
-                  style={{ margin: "0 5px" }}
-                  onClick={() => this.reset()}
-                >
-                  重置
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-          <Button
-            type="primary"
-            onClick={this.downFile}
-            style={{
-              marginLeft: "30px",
-              position: "fixed",
-              right: "62px",
-              top: "125px",
-            }}
-          >
-            导出工程师评定结果
-          </Button>
-          {/* //202171 */}
-          <div className="formRow" style={{ display: "flex", padding: "25px", justifyContent: "space-evenly" }}>
-            <div className="formCol" style={{}}>
-              <div style={{ background: "#fafafa", height: "26px", display: "inline-block", borderRight: "1px solid #ccc", }}>
-                <span style={{ padding: "6px 6px" }}>产品类别</span>
-              </div>
 
-              <Select className="formVal" bordered={false} style={{ width: "170px" }} value={this.state.productCategory} onSelect={this.onSelect0} addonBefore="产品类别">
+          {/* //202171 */}
+          <div className="formRow" style={{ display: "flex", }}>
+            <div className="formCol" style={{ margin: "0 15px" }}>
+
+              <span >产品类别:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
+
+              <Select className="formVal" bordered={false} style={{ width: "170px", }} value={this.state.productCategory} onSelect={this.onSelect0} addonBefore="产品类别">
 
                 <Option value="" style={{ outline: "none" }}>请选择</Option>
                 {
@@ -836,11 +785,11 @@ class AssessmentReport extends Component {
                 }
               </Select>
             </div>
-            <div className="formCol">
+            <div className="formCol" style={{ margin: "0 15px" }}>
 
-              <div style={{ background: "#fafafa", height: "26px", display: "inline-block", borderRight: "1px solid #ccc", }}>
-                <span style={{ padding: "6px 6px" }}>技术方向</span>
-              </div>
+
+              <span >技术方向:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
 
 
               <Select className="formVal" style={{ width: "170px" }} value={this.state.skillTypeCode} onSelect={this.onSelect1}
@@ -859,10 +808,10 @@ class AssessmentReport extends Component {
                 }
               </Select>
             </div>
-            <div className="formCol" >
-              <div style={{ background: "#fafafa", height: "26px", display: "inline-block", borderRight: "1px solid #ccc", }}>
-                <span style={{ padding: "6px 6px" }}>品牌</span>
-              </div>
+            <div className="formCol" style={{ margin: "0 15px" }} >
+
+              <span >品牌:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
 
 
               <Select className="formVal" style={{ width: "170px" }} value={this.state.brandCode} onSelect={this.onSelect2}
@@ -883,10 +832,10 @@ class AssessmentReport extends Component {
             </div>
             {
               this.state.productCategory == "" || this.state.productCategory == 1 ? "" : <div className="formRow">
-                <div className="formCol" >
-                  <div style={{ background: "#fafafa", height: "26px", display: "inline-block", borderRight: "1px solid #ccc", }}>
-                    <span style={{ padding: "6px 6px" }}>产品线级别</span>
-                  </div>
+                <div className="formCol" style={{ margin: "0 15px" }} >
+
+                  <span >产品线级别:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
                   <Select className="formVal" style={{ width: "170px" }} value={this.state.productLineLevelCode} onSelect={this.onSelect3}>
                     <Option value="">请选择</Option>
                     {
@@ -903,10 +852,10 @@ class AssessmentReport extends Component {
               </div>
             }
             <div className="formRow">
-              <div className="formCol" >
-                <div style={{ background: "#fafafa", height: "26px", display: "inline-block", borderRight: "1px solid #ccc", }}>
-                  <span style={{ padding: "6px 6px" }}>专业能力级别</span>
-                </div>
+              <div className="formCol" style={{ margin: "0 15px" }} >
+
+                <span>专业能力级别:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+
 
 
                 <Select className="formVal" style={{ width: "170px" }} value={this.state.proableLevel} onSelect={this.onSelect5}>
@@ -924,6 +873,120 @@ class AssessmentReport extends Component {
 
 
           </div>
+          {/* 202172大区 */}
+          <div className="formRow" style={{ display: "flex", margin: "15px 0" }}>
+            <div className="formCol" style={{ margin: "0 15px" }}>
+              <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;大区:&nbsp;</span>
+              <Input
+
+                placeholder="请输入"
+                value={this.state.regionalName}
+                onChange={this.inputChange.bind(this, "regionalName")}
+                style={{ width: "170px", margin: "0 15px" }}
+              />
+            </div>
+            <div className="formCol" style={{ margin: "0 15px" }}>
+              <span>&nbsp;&nbsp;&nbsp;部门:</span>
+
+              <Input
+
+                placeholder="请输入"
+                value={this.state.departmentName}
+                onChange={this.inputChange.bind(this, "departmentName")}
+                style={{ width: "170px", margin: "0 15px" }}
+              />
+            </div>
+            <div className="formCol" >
+              <span>姓名:</span>
+              <Input
+
+                placeholder="请输入"
+                value={this.state.userName}
+                onChange={this.inputChange.bind(this, "userName")}
+                style={{ width: "170px", margin: "0 15px" }}
+              />
+            </div>
+            <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.search()}>
+              查询
+                </Button>
+            <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.search()}>
+              导出
+                </Button>
+            <Button
+              type="primary"
+              style={{ margin: "0 15px" }}
+              onClick={() => this.reset()}
+            >
+              重置
+                </Button>
+            <Button
+              type="primary"
+              onClick={this.downFile}
+              style={{
+                margin: "0 15px"
+              }}
+            >
+              导出工程师评定结果
+                 </Button>
+          </div>
+
+          {/* <Form>
+            <Row>
+              <Col span={24}>
+                <span>大区:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <Input
+
+                  placeholder="请输入"
+                  value={this.state.regionalName}
+                  onChange={this.inputChange.bind(this, "regionalName")}
+                  style={{ width: "170px", margin: "0 15px" }}
+                />
+                <span>部门:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <Input
+
+                  placeholder="请输入"
+                  value={this.state.departmentName}
+                  onChange={this.inputChange.bind(this, "departmentName")}
+                  style={{ width: "170px", margin: "0 5px" }}
+                />
+                <span>姓名:&nbsp;&nbsp;&nbsp;&nbsp;</span>
+                <Input
+
+                  placeholder="请输入"
+                  value={this.state.userName}
+                  onChange={this.inputChange.bind(this, "userName")}
+                  style={{ width: "170px", margin: "0 5px" }}
+                />
+                <Button type="primary" style={{ margin: "0 5px" }} onClick={() => this.search()}>
+                  查询
+                </Button>
+                <Button type="primary" style={{ margin: "0 5px" }} onClick={() => this.search()}>
+                  导出
+                </Button>
+                <Button
+                  type="primary"
+                  style={{ margin: "0 5px" }}
+                  onClick={() => this.reset()}
+                >
+                  重置
+                </Button>
+                <Button
+                  type="primary"
+                  onClick={this.downFile}
+                  style={{
+                    // marginLeft: "30px",
+                    // position: "fixed",
+                    // right: "62px",
+                    // top: "125px",
+                  }}
+                >
+                  导出工程师评定结果
+                 </Button>
+              </Col>
+            </Row>
+          </Form> */}
+
+
           {/* 选中品牌展示复选框数据 */}
           <div style={{ margin: '0 15px' }}>
             {productLineDatas.length ? <Card>
