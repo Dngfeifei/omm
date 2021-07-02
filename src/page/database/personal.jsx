@@ -16,9 +16,10 @@ const { TabPane } = Tabs;
 import TreeParant from "@/components/tree/index.jsx"
 
 import { GetCOSFile } from '/api/cloudUpload.js'
-import { GetFileCategories, AddTreeNode, EditTreeNode, DelTreeNode, GetFileLibrary, GetFileDownloadPower , DeleteFile, BatchDeleteFile, GetFileApply } from '/api/mediaLibrary.js'
+import { GetFileCategories, AddTreeNode, EditTreeNode, DelTreeNode, GetFileLibrary, GetFileDownloadPower, DeleteFile, BatchDeleteFile, GetFileApply } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
+import Details from "./details"
 import Pagination from '/components/pagination'
 import DataUpload from './fileUpload'
 
@@ -46,10 +47,8 @@ let downObj2 = {}
 class Personal extends Component {
     SortTable = () => {
         setTimeout(() => {
-            //  console.log(this.tableDom,this.tableDom2)
             if (this.tableDom) {
                 let h = this.tableDom.clientHeight - 170 < 0 ? 170 : this.tableDom.clientHeight - 180;
-                // console.log(this.tableDom.clientHeight,h)
                 this.setState({
                     h: {
                         y: (h)
@@ -111,7 +110,7 @@ class Personal extends Component {
                 align: 'center',
                 render: (t, r) => {
                     return <div>
-                        <div>{t}</div>
+                        <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
                         {
                             r.uploadStatus == 1 ? <div style={{ color: "#bfb8b8" }}>
                                 <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
@@ -141,49 +140,49 @@ class Personal extends Component {
                 dataIndex: 'fileSize',
                 align: 'center',
             },
-            {
-                title: '标签',
-                dataIndex: 'fileLabel',
-                align: 'center',
-                render: (t, r) => {
-                    return fileLabelData[t]
-                }
-            },
-            {
-                title: '资料类型',
-                dataIndex: 'categorieName',
-                align: 'center',
-            },
-            {
-                title: '上传时间',
-                dataIndex: 'uploadTime',
-                align: 'center',
-            },
-            {
-                title: '发布时间',
-                dataIndex: 'publishTime',
-                align: 'center',
-            },
-            {
-                title: '资料级别',
-                dataIndex: 'levelName',
-                align: 'center',
-            },
+            // {
+            //     title: '标签',
+            //     dataIndex: 'fileLabel',
+            //     align: 'center',
+            //     render: (t, r) => {
+            //         return fileLabelData[t]
+            //     }
+            // },
+            // {
+            //     title: '资料类型',
+            //     dataIndex: 'categorieName',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '上传时间',
+            //     dataIndex: 'uploadTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '发布时间',
+            //     dataIndex: 'publishTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '资料级别',
+            //     dataIndex: 'levelName',
+            //     align: 'center',
+            // },
             {
                 title: '币值',
                 dataIndex: 'points',
                 align: 'center',
             },
-            {
-                title: '资料下架日期',
-                dataIndex: 'clearTime',
-                align: 'center',
-            },
-            {
-                title: '描述',
-                dataIndex: 'description',
-                align: 'center',
-            },
+            // {
+            //     title: '下架日期',
+            //     dataIndex: 'clearTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '描述',
+            //     dataIndex: 'description',
+            //     align: 'center',
+            // },
             {
                 title: '上传审核状态',
                 dataIndex: 'uploadStatus',
@@ -205,7 +204,7 @@ class Personal extends Component {
                 render: (t, r) => {
                     let status = r.uploadStatus
                     if (status == "0" || status == "1") {
-                        return downObj[r.id] ? <Progress type="circle" percent={downObj[r.id].percent} width={40} /> : <a onClick={(e)=> this.downloadFile(r, e)} style={{ margin: "0 3px" }}>下载</a>
+                        return downObj[r.id] ? <Progress type="circle" percent={downObj[r.id].percent} width={40} /> : <a onClick={(e) => this.downloadFile(r, e)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (status == "2") {
                         return <a onClick={(e) => this.deleteFile(r.id)} style={{ margin: "0 3px" }}>删除</a>
                     }
@@ -221,7 +220,7 @@ class Personal extends Component {
                 align: 'center',
                 render: (t, r) => {
                     return <div>
-                        <div>{t}</div>
+                        <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
                         <div style={{ color: "#bfb8b8" }}>
                             <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
                             <Icon type="heart" theme="outlined" style={{ margin: "0 3px 0 5px" }} />{r.collectNum ? r.collectNum : 0}
@@ -246,49 +245,49 @@ class Personal extends Component {
                 dataIndex: 'fileSize',
                 align: 'center',
             },
-            {
-                title: '标签',
-                dataIndex: 'fileLabel',
-                align: 'center',
-                render: (t, r) => {
-                    return fileLabelData[t]
-                }
-            },
-            {
-                title: '资料类型',
-                dataIndex: 'categorieName',
-                align: 'center',
-            },
-            {
-                title: '上传时间',
-                dataIndex: 'uploadTime',
-                align: 'center',
-            },
-            {
-                title: '发布时间',
-                dataIndex: 'publishTime',
-                align: 'center',
-            },
-            {
-                title: '资料级别',
-                dataIndex: 'levelName',
-                align: 'center',
-            },
+            // {
+            //     title: '标签',
+            //     dataIndex: 'fileLabel',
+            //     align: 'center',
+            //     render: (t, r) => {
+            //         return fileLabelData[t]
+            //     }
+            // },
+            // {
+            //     title: '资料类型',
+            //     dataIndex: 'categorieName',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '上传时间',
+            //     dataIndex: 'uploadTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '发布时间',
+            //     dataIndex: 'publishTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '资料级别',
+            //     dataIndex: 'levelName',
+            //     align: 'center',
+            // },
             {
                 title: '币值',
                 dataIndex: 'points',
                 align: 'center',
             },
-            {
-                title: '资料下架日期',
-                dataIndex: 'clearTime',
-                align: 'center',
-            },
-            {
-                title: '描述',
-                dataIndex: 'description',
-                align: 'center',
-            },
+            // {
+            //     title: '下架日期',
+            //     dataIndex: 'clearTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '描述',
+            //     dataIndex: 'description',
+            //     align: 'center',
+            // },
             {
                 title: '下载审核状态',
                 dataIndex: 'reviewStatus',
@@ -347,6 +346,9 @@ class Personal extends Component {
         // 下载队列集合
         downObj: {},
         downObj2: {},
+        // 当前要展示的详情数据
+        details: {},
+        detailsModalvisible: false
     }
     // 获取数据字典-产品类别数据
     getDictInfo = async () => {
@@ -768,7 +770,7 @@ class Personal extends Component {
         })
     }
     // 文件下载
-    starDownloadFile = (row,e) => {
+    starDownloadFile = (row, e) => {
         e.stopPropagation()
         let name = row.fileName
         let key = row.id
@@ -813,8 +815,8 @@ class Personal extends Component {
             downObj
         })
     }
-     // 获取文件下载进度-个人下载
-     getProgress2 = (key, progressData) => {
+    // 获取文件下载进度-个人下载
+    getProgress2 = (key, progressData) => {
         downObj2[key] = {
             percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
             speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
@@ -899,9 +901,20 @@ class Personal extends Component {
                 })
             }
         })
-
-
-
+    }
+    // 展示详情
+    showDetails = (r) => {
+        this.setState({
+            details: r,
+            detailsModalvisible: true
+        })
+    }
+    // 关闭详情
+    closeDetails = () => {
+        this.setState({
+            details: {},
+            detailsModalvisible: false
+        })
     }
     render = _ => {
         const { h, h2 } = this.state;
@@ -925,12 +938,11 @@ class Personal extends Component {
                             tabKey: key
                         })
                     }}>
-                        <TabPane tab="个人上传" key="1" style={{ display: "flex", flexDirection: "column", padding: "20px", boxSizing: "border-box" }}>
-                            <Form style={{ width: '100%', height: "33px" }}>
-                                {/* *******************************************table表格自适应高度有误****************************************** */}
+                        <TabPane tab="个人上传" key="1" style={{ display: "flex", flexDirection: "column", padding: "0 20px 20px", boxSizing: "border-box" }}>
+                            <Form style={{ width: '100%', paddingTop: "20px" }}>
                                 <Row>
                                     <Col span={12}>
-                                        <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
+                                        <Input allowClear placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
                                         <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                                     </Col>
                                     <Col span={12} style={{ textAlign: 'right' }}>
@@ -938,22 +950,22 @@ class Personal extends Component {
                                     </Col>
                                 </Row>
                             </Form>
-                            <div className="tableParson" style={{ flex: 'auto',height: 10 }} ref={(el) => this.tableDom = el}>
-                                <Table bordered rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkbox" }} dataSource={this.state.tableData} columns={this.state.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h} size="small" />
+                            <div className="tableParson" style={{ flex: 'auto', height: 10, paddingTop: "20px" }} ref={(el) => this.tableDom = el}>
+                                <Table bordered rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkbox" }} dataSource={this.state.tableData} columns={this.state.columns} rowKey={"id"} pagination={false} scroll={h} size="small" />
                                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                             </div>
                         </TabPane>
-                        <TabPane tab="个人下载" key="2" style={{ display: "flex", flexDirection: "column", padding: "20px", boxSizing: "border-box" }}>
-                            <Form style={{ width: '100%' }}>
+                        <TabPane tab="个人下载" key="2" style={{ display: "flex", flexDirection: "column", padding: "0 20px 20px", boxSizing: "border-box" }}>
+                            <Form style={{ width: '100%', paddingTop: "20px" }}>
                                 <Row>
                                     <Col span={12}>
-                                        <Input placeholder="请输入关键字" value={this.state.searchKey2} onChange={this.getSearchKey2} style={{ width: '200px', marginRight: "10px" }} />
+                                        <Input allowClear placeholder="请输入关键字" value={this.state.searchKey2} onChange={this.getSearchKey2} style={{ width: '200px', marginRight: "10px" }} />
                                         <Button type="primary" onClick={_ => this.getTableData2(0)}>查询</Button>
                                     </Col>
                                 </Row>
                             </Form>
-                            <div className="tableParson2" style={{ flex: 'auto',height: 10 }} ref={(el2) => this.tableDom2 = el2}>
-                                <Table bordered dataSource={this.state.tableData2} columns={this.state.columns2} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h2} size="small" />
+                            <div className="tableParson2" style={{ flex: 'auto', height: 10, paddingTop: "20px" }} ref={(el2) => this.tableDom2 = el2}>
+                                <Table bordered dataSource={this.state.tableData2} columns={this.state.columns2} rowKey={"id"} pagination={false} scroll={h2} size="small" />
 
                                 <Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} size="small" />
                             </div>
@@ -984,6 +996,9 @@ class Personal extends Component {
                     data={{ type: this.state.treeSelectInfo, parentDir: this.state.parentDir }}
                 >
                 </DataUpload> : ""}
+            {/* 详情 */}
+            {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details}></Details> : ""}
+
         </div>
     }
 
