@@ -459,36 +459,12 @@ class DownloadAudit extends Component {
     downloadFile = (row) => {
         let name = row.fileName
         let key = row.id
-        downObj[key] = {
-            percent: 0,//上传进度
-            speed: 0,//上传速率
-        }
-        this.setState({ downObj })
-        GetCOSFile(name, key, this.getProgress).then((res) => {
-            if (!res.success) {
-                message.destroy()
-                message.warning("下载失败!")
-                delete downObj[key]
-                this.setState({ downObj })
-                return
-            }
-            let blobObj = new Blob([res.data], {
-                type: res.data.headers.contentType
-            });
-            let url = window.URL.createObjectURL(blobObj);
-            var a = document.createElement("a");
-            document.body.appendChild(a);
-            a.href = url;
-            a.download = decodeURI(name);
-
-            delete downObj[key]
-            this.setState({ downObj })
-            message.destroy()
-            message.info("下载成功!")
-            a.click();
-            document.body.removeChild(a);
-            this.getTableData()
-        })
+        // downObj[key] = {
+        //     percent: 0,//上传进度
+        //     speed: 0,//上传速率
+        // }
+        // this.setState({ downObj })
+        GetCOSFile(name, key, this.getProgress)
     }
     // 获取文件下载进度
     getProgress = (key, progressData) => {
