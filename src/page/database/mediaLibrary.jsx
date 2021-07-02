@@ -21,6 +21,14 @@ class Medium extends Component {
         setInterval(() => {
             this.GetFilePonint()
         }, 300000);
+        window.onresize = () => {
+            this.SortTable();
+        }
+    }
+    //resetView
+    SortTable = () => {
+        if(this.Personal)this.Personal.SortTable();
+        if(this.All)this.All.SortTable();
     }
     state = {
         monetaryValue: 0   //币值
@@ -52,7 +60,9 @@ class Medium extends Component {
     render = _ => {
         let { monetaryValue } = this.state
         return <div style={{ height: '100%', padding: "0 10px" }} >
-            <Tabs defaultActiveKey="1" animated={false}>
+            <Tabs defaultActiveKey="1" animated={false} onTabClick={(key, event) => {
+                        this.SortTable();
+                    }}>
                 <TabPane tab="个人文件管理" key="1">
                     <p style={{ marginLeft: "12px" }}>我的币值：{monetaryValue}</p>
                     <Personal onRef={c => this.Personal = c} listUpdate={this.allListUpdate}></Personal>

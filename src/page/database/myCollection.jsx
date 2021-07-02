@@ -6,20 +6,19 @@
 
 import React, { Component } from 'react'
 
-import { Form, message, Button, Row, Col, Input, Table, Icon, Spin } from 'antd'
-import { LoadingOutlined } from '@ant-design/icons';
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+import { Form, message, Button, Row, Col, Input, Table, Icon, Spin, Progress } from 'antd'
 
-
-import { GetFileLibrary, PostFileDownload, GetFileApply, GetFileLike, GetFileCollect } from '/api/mediaLibrary.js'
+import { GetCOSFile } from '/api/cloudUpload.js'
+import { GetFileLibrary, GetFileDownloadPower, GetFileApply, GetFileLike, GetFileCollect } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
+import Details from "./details"
 import Pagination from '/components/pagination'
 
 // 标签字典对象集合
 let fileLabelData = {}
-// 下载队列
-let downArr = []
+// 下载队列集合
+let downObj = {}
 class DownloadAudit extends Component {
     SortTable = () => {
         setTimeout(() => {
@@ -59,11 +58,14 @@ class DownloadAudit extends Component {
                 dataIndex: 'fileName',
                 align: 'center',
                 render: (t, r) => {
+                    let style1 = r.isLike ? { margin: "0 3px 0 0", cursor: "pointer", color: "#7777f7" } : { margin: "0 3px 0 0", cursor: "pointer" }
+                    let style2 = r.isCollect ? { margin: "0 3px 0 5px", cursor: "pointer", color: "#f56464" } : { margin: "0 3px 0 5px", cursor: "pointer" }
+
                     return <div>
-                        <div>{t}</div>
+                        <div><a onClick={_=>{this.showDetails(r)}}>{t}</a></div>
                         <div style={{ color: "#bfb8b8" }}>
-                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={{ margin: "0 3px 0 0", cursor: "pointer" }} />{r.likeNum ? r.likeNum : 0}
-                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={{ margin: "0 3px 0 5px", cursor: "pointer" }} />{r.collectNum ? r.collectNum : 0}
+                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={style1} />{r.likeNum ? r.likeNum : 0}
+                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={style2} />{r.collectNum ? r.collectNum : 0}
                         </div>
                     </div>
                 }
@@ -85,49 +87,49 @@ class DownloadAudit extends Component {
                 dataIndex: 'fileSize',
                 align: 'center',
             },
-            {
-                title: '标签',
-                dataIndex: 'fileLabel',
-                align: 'center',
-                render: (t, r) => {
-                    return fileLabelData[t]
-                }
-            },
-            {
-                title: '资料类型',
-                dataIndex: 'categorieName',
-                align: 'center',
-            },
-            {
-                title: '上传时间',
-                dataIndex: 'uploadTime',
-                align: 'center',
-            },
-            {
-                title: '发布时间',
-                dataIndex: 'publishTime',
-                align: 'center',
-            },
+            // {
+            //     title: '标签',
+            //     dataIndex: 'fileLabel',
+            //     align: 'center',
+            //     render: (t, r) => {
+            //         return fileLabelData[t]
+            //     }
+            // },
+            // {
+            //     title: '资料类型',
+            //     dataIndex: 'categorieName',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '上传时间',
+            //     dataIndex: 'uploadTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '发布时间',
+            //     dataIndex: 'publishTime',
+            //     align: 'center',
+            // },
             {
                 title: '资料级别',
                 dataIndex: 'levelName',
                 align: 'center',
             },
-            {
-                title: '币值',
-                dataIndex: 'points',
-                align: 'center',
-            },
-            {
-                title: '资料下架日期',
-                dataIndex: 'clearTime',
-                align: 'center',
-            },
-            {
-                title: '描述',
-                dataIndex: 'description',
-                align: 'center',
-            },
+            // {
+            //     title: '币值',
+            //     dataIndex: 'points',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '下架日期',
+            //     dataIndex: 'clearTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '描述',
+            //     dataIndex: 'description',
+            //     align: 'center',
+            // },
             {
                 title: '操作',
                 align: 'center',
@@ -135,7 +137,7 @@ class DownloadAudit extends Component {
                 render: (t, r) => {
                     t.toString()
                     if (t == "1") {
-                        return downArr.indexOf(r.id) > -1 ? <span style={{ color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={_ => this.downloadFile(r.id)} style={{ margin: "0 3px" }}>下载</a>
+                        return downObj[r.id] ? <Progress type="circle" percent={downObj[r.id].percent} width={40} /> : <a onClick={_ => this.downloadFile(r)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (t == "0") {
                         return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                     }
@@ -147,8 +149,11 @@ class DownloadAudit extends Component {
         tableData: [],
         //右侧查询关键字
         searchKey: null,
-        // 下载队列
-        downArr: []
+        // 下载队列集合
+        downObj: {},
+        // 当前要展示的详情数据
+        details: {},
+        detailsModalvisible: false
     }
     // 获取标签字典数据
     getDictInfo = async () => {
@@ -242,30 +247,29 @@ class DownloadAudit extends Component {
                 this.getTableData()
             }
         })
-    }// 文件下载
-    downloadFile = (key) => {
-        downArr.push(key)
-        this.setState({ downArr })
-        let params = {
-            downloadType: "collect",
-            fileId: key
-        }
-        PostFileDownload(params).then(res => {
-            downArr = downArr.filter(item => item != key)
-            this.setState({ downArr })
-            if (res.success != 1) {
+    }
+    // 文件下载校验
+    downloadFile = (row) => {
+        let key = row.id
+        GetFileDownloadPower({ fileId: key, downloadType: "collect" }).then(res => {
+            if (!res.success) {
                 message.destroy()
                 message.error(res.message)
             } else {
-                let a = document.createElement("a");
-                document.body.appendChild(a);
-                let url = res.data + (res.data.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
-                a.href = url;
-                a.click();
-                document.body.removeChild(a);
-                this.getTableData()
+                this.starDownloadFile(row)
             }
         })
+    }
+    // 文件下载
+    starDownloadFile = (row) => {
+        let name = row.fileName
+        let key = row.id
+        // downObj[key] = {
+        //     percent: 0,//上传进度
+        //     speed: 0,//上传速率
+        // }
+        // this.setState({ downObj })
+        GetCOSFile(name, key, this.getProgress)
     }
     // 申请文件下载
     applyFileDownload = (key) => {
@@ -274,8 +278,35 @@ class DownloadAudit extends Component {
         }
         GetFileApply(params).then(res => {
             if (res.success != 1) {
-                message.error(res.message)
+                message.destroy()
+                message.warning(res.message)
+            } else {
+                message.success("该文件的下载申请已提交。")
             }
+        })
+    }
+    // 获取文件下载进度
+    getProgress = (key, progressData) => {
+        downObj[key] = {
+            percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
+            speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
+        }
+        this.setState({
+            downObj
+        })
+    }
+    // 展示详情
+    showDetails = (r) => {
+        this.setState({
+            details: r,
+            detailsModalvisible: true
+        })
+    }
+    // 关闭详情
+    closeDetails = () => {
+        this.setState({
+            details: {},
+            detailsModalvisible: false
         })
     }
     render = _ => {
@@ -285,7 +316,7 @@ class DownloadAudit extends Component {
                 <Form style={{ width: '100%' }}>
                     <Row>
                         <Col span={12}>
-                            <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px' }} />
+                            <Input allowClear placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
                             <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                         </Col>
                     </Row>
@@ -295,6 +326,8 @@ class DownloadAudit extends Component {
                     <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                 </div>
             </div>
+            {/* 详情 */}
+            {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details}></Details> : ""}
         </div>
     }
 
