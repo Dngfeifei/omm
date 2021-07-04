@@ -28,16 +28,25 @@ const handleRequest = (url, method, body = {}, json = false) => {
 		'Authorization': `Bearer ${token}`
 	})
 
+	if (body instanceof FormData) {
+		header = Object.assign({}, {'Content-Type': 'multipart/form-data'}, { 'Authorization': `Bearer ${token}` })
+	}
 
 	let req = {
 		method,
 		headers: new Headers(header)
 	}
 	if (method == 'POST' || method == 'PUT') {
-		req = Object.assign({
-			body: json ? JSON.stringify(body) : body,
-			bodyUsed: true
-		}, req)
+		if (body instanceof FormData) {
+			req = Object.assign({
+				body
+			}, req)
+		} else  {
+			req = Object.assign({
+				body: json ? JSON.stringify(body) : body,
+				bodyUsed: true
+			}, req)
+		}
 	}
 	return new Request(wholeUrl, req)
 }

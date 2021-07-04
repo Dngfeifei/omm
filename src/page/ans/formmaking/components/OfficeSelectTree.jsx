@@ -1,64 +1,44 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TreeSelect } from 'antd';
-import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
+import { getDepartList } from '@/page/ans/flow/bpmn-designer/services'
 
-let treeData = [
-  {
-    title: '风行软件公司',
-    value: '0-0',
-    key: '0-0',
-    children: [
-      {
-        title: '开发一部',
-        value: '0-0-1',
-        key: '0-0-1',
-      },
-      {
-        title: '开发二部',
-        value: '0-0-2',
-        key: '0-0-2',
-      },
-      {
-        title: '开发三部',
-        value: '0-0-3',
-        key: '0-0-3',
-      },
-      {
-        title: '行政部',
-        value: '0-0-4',
-        key: '0-0-4',
-      },
-      {
-        title: '财务部',
-        value: '0-0-5',
-        key: '0-0-5',
-      },
-    ],
-  },
-];
+const { TreeNode } = TreeSelect;
 
-const OfficeSelectTree = ({ control, formConfig }) => {
+const OfficeSelectTree = ({ control, formConfig, onChange }) => {
   const { options } = control;
-  const { updateValue } = useContext(formRenderContext);
+  const [treeData, setTreeData] = useState([])
 
-  const [value, setValue] = useState(undefined)
-
-  const onChange = value => {
-    setValue(value)
-    updateValue(control.model, value);
-  };
+  useEffect(() => {
+    // 查询部门数据
+    getDepartList().then((data) => {
+      setTreeData(data)
+    });
+  }, []);
 
   return (
     <TreeSelect
       style={{ width: '100%' }}
-      value={value}
+      value={options.value}
       dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-      treeData={treeData}
-      placeholder="请选择"
-      treeDefaultExpandAll
+      placeholder={options.placeholder||"请选择"}
       disabled={formConfig.disabled || options.disabled}
       onChange={onChange}
-    />
+    >
+      <TreeNode
+        title={treeData.name}
+        key={treeData.id}
+        value={treeData.id}
+      >
+        {treeData.children &&
+          treeData.children.map((item) => (
+            <TreeNode
+              title={item.name}
+              key={item.id}
+              value={item.id}
+            />
+          ))}
+      </TreeNode>
+    </TreeSelect>
   );
 }
 export default OfficeSelectTree

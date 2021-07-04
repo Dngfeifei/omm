@@ -25,7 +25,7 @@ const InputBox = styled.div`
   flex: 1;
 `
 
-const TextRender = ({ control, formConfig }) => {
+const TextRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
   const labelWidth = useMemo(() => {

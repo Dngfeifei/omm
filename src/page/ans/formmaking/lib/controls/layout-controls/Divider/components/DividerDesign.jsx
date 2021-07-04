@@ -8,7 +8,7 @@ const BlankWrapper = styled.div`
   background-color: #eeeeee;
 `
 
-const DividerDesign = ({ control, formConfig }) => {
+const DividerDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
   const labelWidth = useMemo(() => {

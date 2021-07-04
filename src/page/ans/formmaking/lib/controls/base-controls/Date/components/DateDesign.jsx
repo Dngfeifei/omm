@@ -9,7 +9,7 @@ const InputBox = styled.div`
   flex: 1;
 `
 
-const DateDesign = ({ control, formConfig }) => {
+const DateDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
   return <div className={options.customClass}>

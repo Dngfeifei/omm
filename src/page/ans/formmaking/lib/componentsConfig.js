@@ -489,7 +489,7 @@ export const advanceComponents = [
       token: '',
       domain: '',
       tip: '',
-      action: '',
+      action: '/sys/file/webupload/upload?uploadPath=/formbuilder',
       customClass: '',
       disabled: false,
       required: false,
@@ -531,7 +531,7 @@ export const advanceComponents = [
       isDelete: true,
       min: 0,
       isEdit: true,
-      action: '',
+      action: '/sys/file/webupload/upload?uploadPath=/formbuilder',
       customClass: '',
       labelWidth: 100,
       isLabelWidth: false,
@@ -597,6 +597,7 @@ export const advanceComponents = [
       placeholder: 'xxx',
       disabled: false,
       required: false,
+      requiredMessage: '',
       clearable: false,
       options: [
         {
@@ -723,6 +724,7 @@ export const advanceComponents = [
       disabled: false,
       required: false,
     },
+    tableRows:[],
     tableColumns: [],
   },
   {
@@ -736,7 +738,8 @@ export const advanceComponents = [
       defaultType: 'String',
       customClass: '',
       defaultValue: '',
-      width: '',
+      placeholder: '',
+      width: '200px',
       limit: 1,
       labelWidth: 100,
       isLabelWidth: false,

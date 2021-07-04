@@ -4,6 +4,8 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
 import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import useDictTypeList from "@/page/ans/formmaking/hooks/useDictTypeList";
+const {Option} = Select
 
 const WrapFlex = styled.div`
   display: flex;
@@ -19,6 +21,8 @@ const rowDiv = css`
 
 const DictBlankSetting = ({ control, updateFormModel }) => {
   const { options } = control;
+
+  const dictTypeList = useDictTypeList()
 
   const defaultClass = useMemo(
     () => (options.customClass ? options.customClass.split(' ') : []),
@@ -87,12 +91,14 @@ const DictBlankSetting = ({ control, updateFormModel }) => {
         />
       </FormAttrItem>
 
-        <FormAttrItem label="最大值">
-            <InputNumberPlus
-                value={options.max}
-                step={1}
-                onChange={(value) => updateOptions({ max: value })}
-            />
+        <FormAttrItem label="字典类型">
+          <Select style={{width: '100%'}}
+                  value={options.dictType}
+                  onChange={(value) => updateOptions({dictType: value})}>
+            {dictTypeList.map((item, key) =>
+              <Option value={item.value} key={key}>{item.label}:{item.value}</Option>
+            )}
+          </Select>
         </FormAttrItem>
 
       <FormAttrItem label="自定义Class">
@@ -102,7 +108,7 @@ const DictBlankSetting = ({ control, updateFormModel }) => {
           placeholder="请选择"
           value={defaultClass}
           onChange={(value) => updateOptions({ customClass: value.join(' ') })}
-        ></Select>
+        />
       </FormAttrItem>
 
       <FormAttrItem label="操作属性">

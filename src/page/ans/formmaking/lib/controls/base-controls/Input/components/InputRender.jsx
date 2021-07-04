@@ -10,14 +10,15 @@ const InputBox = styled.div`
   flex: 1;
 `;
 
-const InputRender = ({ control, formConfig, inSubtable = false }) => {
+const InputRender = ({ control, formConfig, inTable = false, onChange }) => {
   const { updateValue } = useContext(formRenderContext);
   const { options } = control;
+  const handleChange = evt => (inTable ? onChange: updateValue)(control.model, evt.target.value)
 
   return (
     <div className={options.customClass}>
       <Container formConfig={formConfig}>
-        {!inSubtable && <Label control={control} formConfig={formConfig} />}
+        {!inTable && <Label control={control} formConfig={formConfig} />}
         <InputBox>
           {options.showPassword ? (
             <Input.Password
@@ -26,9 +27,7 @@ const InputRender = ({ control, formConfig, inSubtable = false }) => {
               style={{ width: options.width }}
               placeholder={options.placeholder}
               value={options.value}
-              onChange={(e) => {
-                updateValue(control.model, e.target.value);
-              }}
+              onChange={handleChange}
             />
           ) : (
             <Input
@@ -37,9 +36,7 @@ const InputRender = ({ control, formConfig, inSubtable = false }) => {
               style={{ width: options.width }}
               placeholder={options.placeholder}
               value={options.value}
-              onChange={(e) => {
-                updateValue(control.model, e.target.value);
-              }}
+              onChange={handleChange}
             />
           )}
         </InputBox>

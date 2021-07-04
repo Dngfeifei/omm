@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useMemo,useState  } from 'react';
 import {Input, Switch, Select, Checkbox, Cascader} from 'antd';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
 import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import CustomOptions from '@/page/ans/formmaking/lib/controls/components/CustomOptions.jsx';
 
 const WrapFlex = styled.div`
   display: flex;
@@ -19,6 +20,11 @@ const rowDiv = css`
 
 const CascaderSetting = ({ control, updateFormModel }) => {
   const { options } = control;
+
+
+  const [json, setJson] = useState('');
+  const [isJsonOpen, setIsJsonOpen] = useState(false);
+
 
   const defaultClass = useMemo(
     () => (options.customClass ? options.customClass.split(' ') : []),
@@ -95,11 +101,21 @@ const CascaderSetting = ({ control, updateFormModel }) => {
                 }}
             />
         </FormAttrItem>
+        
+        <FormAttrItem label="选项">
+          <CustomOptions 
+          options={JSON.stringify(options.options)} 
+          onChange={value => updateOptions({options: value})} />
+            
+        </FormAttrItem>
+
         <FormAttrItem label="默认值">
-            <Cascader options={options.options}
-                      placeholder={options.placeholder}
-                      onChange={defaultValue => updateOptions({defaultValue})}
-                      defaultValue={options.defaultValue} />
+          <Cascader 
+          options={options.options} 
+          placeholder={options.placeholder} 
+          value={options.defaultValue}
+          onChange={(value) => updateOptions({ defaultValue: value})}
+          />
         </FormAttrItem>
 
       <FormAttrItem label="自定义Class">
@@ -158,6 +174,17 @@ const CascaderSetting = ({ control, updateFormModel }) => {
           >
             必填
           </Checkbox>
+          {
+          options.required &&
+            <Input
+                value={options.requiredMessage}
+                placeholder="自定义错误提示"
+                
+                onChange={(e) => {
+                  updateOptions({ requiredMessage: e.target.value });
+                }}
+            />
+          }    
         </div>
       </FormAttrItem>
     </div>

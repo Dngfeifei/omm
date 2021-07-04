@@ -1,28 +1,20 @@
-import React, { useMemo, useContext } from 'react'
+import React, { useMemo } from 'react'
 import 'rc-color-picker/assets/index.css';
 import ColorPicker from 'rc-color-picker'
 
 import Label from '@/page/ans/formmaking/lib/controls/common/Label'
-import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/styles'
+import { Container } from '@/page/ans/formmaking/lib/controls/components/styles'
 import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
-import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
 import { color2rgba, rgba2color } from '@/page/ans/formmaking/lib/controls/base-controls/Color/utils';
 
-const ColorRender = ({ control, formConfig }) => {
+const ColorRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
-  const baseProps = useFieldBaseProps(control, formConfig, true)
-  const { updateValue } = useContext(formRenderContext);
-
-  const handleOnChange = (color) => {
-    if (!options.disabled) {
-      if (options.showAlpha) {
-        updateValue(control.model, color2rgba(color))
-      } else {
-        updateValue(control.model, color.color)
-      }
-    }
-
+  const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
+  const handleChange = baseProps.onChange
+  const props = {
+    ...baseProps,
+    onChange: color => handleChange(options.showAlpha ? color2rgba(color): color.color)
   }
 
   const color = useMemo(() => {
@@ -40,14 +32,11 @@ const ColorRender = ({ control, formConfig }) => {
   return <div className={options.customClass}>
     <Container formConfig={formConfig}>
       <Label control={control} formConfig={formConfig} />
-
-
       <ColorPicker
-        {...baseProps}
+        {...props}
         style={{ width: 32, height: 32 }}
         color={color.color}
         alpha={color.alpha}
-        onChange={handleOnChange}
         enableAlpha={options.showAlpha} />
     </Container>
   </div>

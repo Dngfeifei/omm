@@ -1,6 +1,6 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Upload, Icon, Modal } from 'antd';
-import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
+const REMOTE_URL = 'http://152.136.121.201:8080/jeeplus-vue'
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {
@@ -10,35 +10,12 @@ function getBase64(file) {
     reader.onerror = error => reject(error);
   });
 }
-const defaultFileList = [
-  {
-    uid: '-1',
-    name: 'image.png',
-    status: 'done',
-    url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  },
-  {
-    uid: '-2',
-    name: 'image.png',
-    status: 'done',
-    url: 'https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png',
-  },
-  {
-    uid: '-3',
-    name: 'image.png',
-    status: 'error',
-  },
-]
-const ImageUpload = ({ control, formConfig }) => {
+const ImageUpload = ({ control, formConfig, onChange }) => {
   const { options } = control;
-  const { updateValue } = useContext(formRenderContext);
-
+  const [fileList, setFileList] = useState([]);
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewImage, setPreviewImage] = useState('');
-  const [fileList, setFileList] = useState(defaultFileList);
-
   const handleCancel = () => setPreviewVisible(false)
-
   const handlePreview = async file => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
@@ -47,10 +24,34 @@ const ImageUpload = ({ control, formConfig }) => {
     setPreviewVisible(true)
   };
 
-  const handleChange = ({ fileList }) => {
-    setFileList(fileList)
-    updateValue(control.model, fileList);
+  const onChange2 = (evt) => {
+    setFileList(evt.fileList.map(t => ({
+      name: t.name,
+      percent: t.percent,
+      status: t.status,
+      uid: t.uid,
+      url: t.response && t.response.url ? REMOTE_URL + t.response.url: ''
+    })));
+    onChange(evt.fileList.filter(t => t.status === 'done').map(t => ({
+      key: t.key,
+      percent: t.percent,
+      status: t.status,
+      name: t.name,
+      ...t.response,
+    })))
+  };
+  const action = REMOTE_URL + options.action
+  const extraData = file => {
+    const key = (new Date().getTime()) + '_' + Math.ceil(Math.random() * 99999)
+    const fname = file.name
+    file.key = key
+    file.fname = fname
+    return {
+      key,
+      fname
+    }
   }
+
   const uploadButton = (
     <div>
       <Icon type="plus" />
@@ -61,11 +62,12 @@ const ImageUpload = ({ control, formConfig }) => {
   return (
     <div className="clearfix">
       <Upload
-        action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
         listType="picture-card"
         fileList={fileList}
+        onChange={onChange2}
+        data={extraData}
+        action={action}
         onPreview={handlePreview}
-        onChange={handleChange}
         disabled={formConfig.disabled || options.disabled}
       >
         {fileList.length >= 8 ? null : uploadButton}

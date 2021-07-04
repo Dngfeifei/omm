@@ -4,7 +4,7 @@ import useDictTypeItemList from '@/page/ans/formmaking/hooks/useDictTypeItemList
 import Label from '@/page/ans/formmaking/lib/controls/common/Label'
 import { Container } from '@/page/ans/formmaking/lib/controls/components/styles'
 
-const SelectDesign = ({ control, formConfig }) => {
+const SelectDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
   const optionList = useDictTypeItemList(options)
 

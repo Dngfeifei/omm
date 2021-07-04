@@ -9,9 +9,9 @@ const SliderWrapper = styled.div`
   flex: 1;
 `
 
-const SliderRender = ({ control, formConfig }) => {
+const SliderRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
-  const baseProps = useFieldBaseProps(control, formConfig, true)
+  const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
 
 
   return <div className={options.customClass}>

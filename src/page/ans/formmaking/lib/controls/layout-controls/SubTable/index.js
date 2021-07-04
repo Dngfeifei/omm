@@ -3,7 +3,7 @@ import SubtableSetting from './components/SubtableSetting';
 import SubtableRender from './components/SubtableRender';
 
 export default {
-  'table-design': SubtableDesign,
-  'table-setting': SubtableSetting,
-  'table-render': SubtableRender,
+  'report-design': SubtableDesign,
+  'report-setting': SubtableSetting,
+  'report-render': SubtableRender,
 };
