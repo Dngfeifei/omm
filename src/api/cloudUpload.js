@@ -5,7 +5,7 @@
 
 import {
 	message
-} from '_antd@3.26.20@antd';
+} from 'antd';
 
 let COS = require('cos-js-sdk-v5');
 let cos = new COS({
@@ -90,7 +90,7 @@ export const RestartCOSFile = (taskId) => {
 
 /***
  *  腾讯云 获取已上传文件列表
- * 
+ *
  */
 export const GetFileList = () => {
 	cos.getBucket({
