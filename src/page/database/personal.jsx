@@ -9,18 +9,17 @@
 
 
 import React, { Component } from 'react'
-import { Form, Modal, Icon, message, Button, Row, Col, Input, Table, Tabs, Spin } from 'antd'
+import { Form, Modal, Icon, message, Button, Row, Col, Input, Table, Tabs, Spin, Progress } from 'antd'
 const { confirm } = Modal;
 const { TabPane } = Tabs;
-import { LoadingOutlined } from '@ant-design/icons';
-const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
-
-import { GetFileCategories, AddTreeNode, EditTreeNode, DelTreeNode, GetFileLibrary, PostFileDownload, DeleteFile, BatchDeleteFile, GetFileApply } from '/api/mediaLibrary.js'
+import { GetCOSFile } from '/api/cloudUpload.js'
+import { GetFileCategories, AddTreeNode, EditTreeNode, DelTreeNode, GetFileLibrary, GetFileDownloadPower, DeleteFile, BatchDeleteFile, GetFileApply } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
+import Details from "./details"
 import Pagination from '/components/pagination'
 import DataUpload from './fileUpload'
 
@@ -42,25 +41,22 @@ const assignment = (data) => {
 }
 // 标签字典数据
 let fileLabelData = {}
-// 下载队列
-let downArr = []
-let downArr2 = []
+// 下载队列集合
+let downObj = {}
+let downObj2 = {}
 class Personal extends Component {
     SortTable = () => {
         setTimeout(() => {
             if (this.tableDom) {
-                let h = this.tableDom.clientHeight - 160;
+                let h = this.tableDom.clientHeight - 170 < 0 ? 170 : this.tableDom.clientHeight - 180;
                 this.setState({
                     h: {
                         y: (h)
                     },
                 });
             }
-
-        }, 0)
-        setTimeout(() => {
             if (this.tableDom2) {
-                let h2 = this.tableDom2.clientHeight - 160;
+                let h2 = this.tableDom2.clientHeight - 170 < 0 ? 170 : this.tableDom2.clientHeight - 180;
                 this.setState({
                     h2: {
                         y: (h2)
@@ -72,10 +68,6 @@ class Personal extends Component {
     }
     componentDidMount() {
         this.SortTable();
-        //窗口变动的时候调用
-        window.onresize = () => {
-            this.SortTable();
-        }
         this.props.onRef(this);
     }
     async componentWillMount() {
@@ -118,7 +110,7 @@ class Personal extends Component {
                 align: 'center',
                 render: (t, r) => {
                     return <div>
-                        <div>{t}</div>
+                        <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
                         {
                             r.uploadStatus == 1 ? <div style={{ color: "#bfb8b8" }}>
                                 <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
@@ -148,49 +140,49 @@ class Personal extends Component {
                 dataIndex: 'fileSize',
                 align: 'center',
             },
-            {
-                title: '标签',
-                dataIndex: 'fileLabel',
-                align: 'center',
-                render: (t, r) => {
-                    return fileLabelData[t]
-                }
-            },
-            {
-                title: '资料类型',
-                dataIndex: 'categorieName',
-                align: 'center',
-            },
-            {
-                title: '上传时间',
-                dataIndex: 'uploadTime',
-                align: 'center',
-            },
-            {
-                title: '发布时间',
-                dataIndex: 'publishTime',
-                align: 'center',
-            },
-            {
-                title: '资料级别',
-                dataIndex: 'levelName',
-                align: 'center',
-            },
+            // {
+            //     title: '标签',
+            //     dataIndex: 'fileLabel',
+            //     align: 'center',
+            //     render: (t, r) => {
+            //         return fileLabelData[t]
+            //     }
+            // },
+            // {
+            //     title: '资料类型',
+            //     dataIndex: 'categorieName',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '上传时间',
+            //     dataIndex: 'uploadTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '发布时间',
+            //     dataIndex: 'publishTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '资料级别',
+            //     dataIndex: 'levelName',
+            //     align: 'center',
+            // },
             {
                 title: '币值',
                 dataIndex: 'points',
                 align: 'center',
             },
-            {
-                title: '资料下架日期',
-                dataIndex: 'clearTime',
-                align: 'center',
-            },
-            {
-                title: '描述',
-                dataIndex: 'description',
-                align: 'center',
-            },
+            // {
+            //     title: '下架日期',
+            //     dataIndex: 'clearTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '描述',
+            //     dataIndex: 'description',
+            //     align: 'center',
+            // },
             {
                 title: '上传审核状态',
                 dataIndex: 'uploadStatus',
@@ -212,7 +204,7 @@ class Personal extends Component {
                 render: (t, r) => {
                     let status = r.uploadStatus
                     if (status == "0" || status == "1") {
-                        return downArr.indexOf(r.id) > -1 ? <span style={{  color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={e => this.downloadFile(r.id,e)} style={{ margin: "0 3px" }}>下载</a>
+                        return downObj[r.id] ? <Progress type="circle" percent={downObj[r.id].percent} width={40} /> : <a onClick={(e) => this.downloadFile(r, e)} style={{ margin: "0 3px" }}>下载</a>
                     } else if (status == "2") {
                         return <a onClick={(e) => this.deleteFile(r.id)} style={{ margin: "0 3px" }}>删除</a>
                     }
@@ -228,7 +220,7 @@ class Personal extends Component {
                 align: 'center',
                 render: (t, r) => {
                     return <div>
-                        <div>{t}</div>
+                        <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
                         <div style={{ color: "#bfb8b8" }}>
                             <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
                             <Icon type="heart" theme="outlined" style={{ margin: "0 3px 0 5px" }} />{r.collectNum ? r.collectNum : 0}
@@ -253,49 +245,49 @@ class Personal extends Component {
                 dataIndex: 'fileSize',
                 align: 'center',
             },
-            {
-                title: '标签',
-                dataIndex: 'fileLabel',
-                align: 'center',
-                render: (t, r) => {
-                    return fileLabelData[t]
-                }
-            },
-            {
-                title: '资料类型',
-                dataIndex: 'categorieName',
-                align: 'center',
-            },
-            {
-                title: '上传时间',
-                dataIndex: 'uploadTime',
-                align: 'center',
-            },
-            {
-                title: '发布时间',
-                dataIndex: 'publishTime',
-                align: 'center',
-            },
-            {
-                title: '资料级别',
-                dataIndex: 'levelName',
-                align: 'center',
-            },
+            // {
+            //     title: '标签',
+            //     dataIndex: 'fileLabel',
+            //     align: 'center',
+            //     render: (t, r) => {
+            //         return fileLabelData[t]
+            //     }
+            // },
+            // {
+            //     title: '资料类型',
+            //     dataIndex: 'categorieName',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '上传时间',
+            //     dataIndex: 'uploadTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '发布时间',
+            //     dataIndex: 'publishTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '资料级别',
+            //     dataIndex: 'levelName',
+            //     align: 'center',
+            // },
             {
                 title: '币值',
                 dataIndex: 'points',
                 align: 'center',
             },
-            {
-                title: '资料下架日期',
-                dataIndex: 'clearTime',
-                align: 'center',
-            },
-            {
-                title: '描述',
-                dataIndex: 'description',
-                align: 'center',
-            },
+            // {
+            //     title: '下架日期',
+            //     dataIndex: 'clearTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '描述',
+            //     dataIndex: 'description',
+            //     align: 'center',
+            // },
             {
                 title: '下载审核状态',
                 dataIndex: 'reviewStatus',
@@ -319,7 +311,7 @@ class Personal extends Component {
                     let status = r.isDownload
                     if (type == "1") {
                         if (status == "1") {
-                            return downArr2.indexOf(r.id) > -1 ?  <span style={{  color: "#1890ff" }}><Spin size="small" indicator={antIcon} />下载中</span> : <a onClick={e => this.downloadFile2(r.id, e)} style={{ margin: "0 3px" }}>下载</a>
+                            return downObj2[r.id] ? <Progress type="circle" percent={downObj2[r.id].percent} width={40} /> : <a onClick={(e) => this.downloadFile2(r, e)} style={{ margin: "0 3px" }}>下载</a>
                         } else {
                             return <a onClick={_ => this.applyFileDownload(r.id)} style={{ margin: "0 3px" }}>申请下载</a>
                         }
@@ -351,9 +343,12 @@ class Personal extends Component {
         tableSelecteds: [],
         tableSelectedInfo: [],
         parentDir: [],
-        // 下载队列
-        downArr: [],
-        downArr2: []
+        // 下载队列集合
+        downObj: {},
+        downObj2: {},
+        // 当前要展示的详情数据
+        details: {},
+        detailsModalvisible: false
     }
     // 获取数据字典-产品类别数据
     getDictInfo = async () => {
@@ -590,18 +585,6 @@ class Personal extends Component {
         }
         this.setState({ uploadWindow: { visible: true } })
     }
-    //点击行选中选框
-    // onRow = (record) => {
-    //     return {
-    //         onClick: () => {
-    //             let selectedKeys = [record.id], selectedItems = [record];
-    //             this.setState({
-    //                 tableSelecteds: selectedKeys,
-    //                 tableSelectedInfo: selectedItems
-    //             })
-    //         }
-    //     }
-    // }
     // 获取上传文件列表数据
     getTableData = (obj = 1) => {
         let id = this.state.treeSelectInfo ? this.state.treeSelectInfo.id : ""
@@ -739,55 +722,59 @@ class Personal extends Component {
         this.getTableData()
     }
     // 文件下载
-    downloadFile = (key, e) => {
-        downArr.push(key)
-        this.setState({ downArr })
+    downloadFile = (row, e) => {
         e.stopPropagation()
-        let params = {
-            downloadType: "upload",
-            fileId: key
-        }
-        PostFileDownload(params).then(res => {
-            downArr = downArr.filter(item => item != key)
-            this.setState({ downArr })
-            if (res.success != 1) {
+        let name = row.fileName
+        let key = row.id
+        // downObj[key] = {
+        //     percent: 0,//上传进度
+        //     speed: 0,//上传速率
+        // }
+        // this.setState({ downObj })
+        GetCOSFile(name, key, this.getProgress)
+    }
+    // 文件前校验下载
+    downloadFile2 = (row, e) => {
+        let key = row.id
+        GetFileDownloadPower({ fileId: key, downloadType: "download" }).then(res => {
+            if (!res.success) {
                 message.destroy()
                 message.error(res.message)
             } else {
-                let a = document.createElement("a");
-                document.body.appendChild(a);
-                let url = res.data + (res.data.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
-                a.href = url;
-                a.click();
-                document.body.removeChild(a);
-                this.getTableData()
+                this.starDownloadFile(row, e)
             }
         })
     }
     // 文件下载
-    downloadFile2 = (key, e) => {
-        downArr2.push(key)
-        this.setState({ downArr2 })
+    starDownloadFile = (row, e) => {
         e.stopPropagation()
-        let params = {
-            downloadType: "download",
-            fileId: key
+        let name = row.fileName
+        let key = row.id
+        // downObj2[key] = {
+        //     percent: 0,//上传进度
+        //     speed: 0,//上传速率
+        // }
+        // this.setState({ downObj2 })
+        GetCOSFile(name, key, this.getProgress2)
+    }
+    // 获取文件下载进度-个人上传
+    getProgress = (key, progressData) => {
+        downObj[key] = {
+            percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
+            speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
         }
-        PostFileDownload(params).then(res => {
-            downArr2 = downArr2.filter(item => item != key)
-            this.setState({ downArr2 })
-            if (res.success != 1) {
-                message.destroy()
-                message.error(res.message)
-            } else {
-                let a = document.createElement("a");
-                document.body.appendChild(a);
-                let url = res.data + (res.data.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
-                a.href = url;
-                a.click();
-                document.body.removeChild(a);
-                this.getTableData2()
-            }
+        this.setState({
+            downObj
+        })
+    }
+    // 获取文件下载进度-个人下载
+    getProgress2 = (key, progressData) => {
+        downObj2[key] = {
+            percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
+            speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
+        }
+        this.setState({
+            downObj2
         })
     }
     // 申请文件下载
@@ -797,7 +784,8 @@ class Personal extends Component {
         }
         GetFileApply(params).then(res => {
             if (res.success != 1) {
-                message.error(res.message)
+                message.destroy()
+                message.warning(res.message)
             } else {
                 message.success("该文件的下载申请已提交。")
                 this.getTableData2()
@@ -865,9 +853,20 @@ class Personal extends Component {
                 })
             }
         })
-
-
-
+    }
+    // 展示详情
+    showDetails = (r) => {
+        this.setState({
+            details: r,
+            detailsModalvisible: true
+        })
+    }
+    // 关闭详情
+    closeDetails = () => {
+        this.setState({
+            details: {},
+            detailsModalvisible: false
+        })
     }
     render = _ => {
         const { h, h2 } = this.state;
@@ -886,39 +885,39 @@ class Personal extends Component {
                 <Col span={19} className="gutter-row " style={{ height: "100%" }}>
                     <Button type="primary" style={{ width: '90px' }} onClick={this.openUploadModal}>上传文件</Button>
                     <Tabs onTabClick={(key, event) => {
+                        this.SortTable();
                         this.setState({
                             tabKey: key
                         })
                     }}>
-                        <TabPane tab="个人上传" key="1" style={{ display: "flex", flexDirection: "column", padding: "20px", boxSizing: "border-box" }}>
-                            <Form style={{ width: '100%', height: "33px" }}>
-                                {/* *******************************************table表格自适应高度有误****************************************** */}
+                        <TabPane tab="个人上传" key="1" style={{ display: "flex", flexDirection: "column", padding: "0 20px 20px", boxSizing: "border-box" }}>
+                            <Form style={{ width: '100%', paddingTop: "20px" }}>
                                 <Row>
                                     <Col span={12}>
-                                        <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px' }} />
+                                        <Input allowClear placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
                                         <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                                     </Col>
                                     <Col span={12} style={{ textAlign: 'right' }}>
-                                        <Button type="primary" style={{ marginRight: '10px' }} onClick={this.batchDeleteFile}>批量删除</Button>
+                                        <Button type="primary" style={{ marginRight: "10px" }} onClick={this.batchDeleteFile}>批量删除</Button>
                                     </Col>
                                 </Row>
                             </Form>
-                            <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
-                                <Table bordered rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkbox" }} dataSource={this.state.tableData} columns={this.state.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h} size="small" />
+                            <div className="tableParson" style={{ flex: 'auto', height: 10, paddingTop: "20px" }} ref={(el) => this.tableDom = el}>
+                                <Table bordered rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkbox" }} dataSource={this.state.tableData} columns={this.state.columns} rowKey={"id"} pagination={false} scroll={h} size="small" />
                                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                             </div>
                         </TabPane>
-                        <TabPane tab="个人下载" key="2" style={{ display: "flex", flexDirection: "column", padding: "20px", boxSizing: "border-box" }}>
-                            <Form style={{ width: '100%' }}>
+                        <TabPane tab="个人下载" key="2" style={{ display: "flex", flexDirection: "column", padding: "0 20px 20px", boxSizing: "border-box" }}>
+                            <Form style={{ width: '100%', paddingTop: "20px" }}>
                                 <Row>
                                     <Col span={12}>
-                                        <Input placeholder="请输入关键字" value={this.state.searchKey2} onChange={this.getSearchKey2} style={{ width: '200px' }} />
+                                        <Input allowClear placeholder="请输入关键字" value={this.state.searchKey2} onChange={this.getSearchKey2} style={{ width: '200px', marginRight: "10px" }} />
                                         <Button type="primary" onClick={_ => this.getTableData2(0)}>查询</Button>
                                     </Col>
                                 </Row>
                             </Form>
-                            <div className="tableParson2" style={{ flex: 'auto' }} ref={(el2) => this.tableDom2 = el2}>
-                                <Table bordered dataSource={this.state.tableData2} columns={this.state.columns2} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h2} size="small" />
+                            <div className="tableParson2" style={{ flex: 'auto', height: 10, paddingTop: "20px" }} ref={(el2) => this.tableDom2 = el2}>
+                                <Table bordered dataSource={this.state.tableData2} columns={this.state.columns2} rowKey={"id"} pagination={false} scroll={h2} size="small" />
 
                                 <Pagination current={this.state.pagination2.current} pageSize={this.state.pagination2.pageSize} total={this.state.pagination2.total} onChange={this.pageIndexChange2} onShowSizeChange={this.pageSizeChange2} size="small" />
                             </div>
@@ -949,6 +948,9 @@ class Personal extends Component {
                     data={{ type: this.state.treeSelectInfo, parentDir: this.state.parentDir }}
                 >
                 </DataUpload> : ""}
+            {/* 详情 */}
+            {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details}></Details> : ""}
+
         </div>
     }
 
