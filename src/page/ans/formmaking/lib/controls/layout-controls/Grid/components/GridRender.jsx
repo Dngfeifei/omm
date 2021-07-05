@@ -15,13 +15,12 @@ const GridRender = ({ control, formConfig }) => {
     {control.columns.map((item,key) =>
       <Col
         key={key}
-        xs={options.responsive ? item.xs||0: item.span || 0}
-        sm={options.responsive ? item.sm||0: item.span || 0}
-        md={options.responsive ? item.md||0: item.span || 0}
-        lg={options.responsive ? item.lg||0: item.span || 0}
-        xl={options.responsive ? item.xl||0: item.span || 0}
+        xs={options.responsive ? item.options.xs||0: item.options.span || 0}
+        sm={options.responsive ? item.options.sm||0: item.options.span || 0}
+        md={options.responsive ? item.options.md||0: item.options.span || 0}
+        lg={options.responsive ? item.options.lg||0: item.options.span || 0}
+        xl={options.responsive ? item.options.xl||0: item.options.span || 0}
       >
-        <div>test</div>
         {item.list.map((col, k2) => React.createElement(allComps[`${col.type}-render`], {
           control: col,
           formConfig,

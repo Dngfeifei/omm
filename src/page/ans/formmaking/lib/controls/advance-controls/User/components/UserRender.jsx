@@ -1,20 +1,13 @@
-import React, { useState,useMemo } from 'react'
+import React, { useMemo } from 'react'
 import { Label, Container } from '../../../components/styles'
-import { Select, Modal } from 'antd'
-import {SearchOutlined} from '@ant-design/icons';
+import UserSelectModal from '@/page/ans/formmaking/components/UserSelectModal.jsx';
 
 const UserRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
+  const handleOk = (e) => {
+      //done
+  }
 
- const [visible, setVisible] = useState(false)
-
-  const handleOk = () => {
-
-    setVisible(false)
-}
-const handleCancel = () => {
-    setVisible(false)
-}
 
   const labelWidth = useMemo(() => {
     if (options.isLabelWidth) {
@@ -34,21 +27,12 @@ const handleCancel = () => {
         {control.name}
       </Label>
       }
-      <Select
-       showSearch
-       placeholder={options.placeholder}
-       defaultValue={options.defaultValue}
-       style={{ width: options.width }}
-       suffixIcon={
-            <SearchOutlined onClick={()=> setVisible(true) } />
-       }
-       />
-      <Modal title="用户选择"
-         visible={visible}
-         onOk={handleOk}
-         onCancel={handleCancel}>
-            用户选择弹窗
-        </Modal>
+    
+      <UserSelectModal 
+         options={options}
+         onOk={()=>handleOk()}
+         >
+      </UserSelectModal>
     </Container>
   </div>
 }
