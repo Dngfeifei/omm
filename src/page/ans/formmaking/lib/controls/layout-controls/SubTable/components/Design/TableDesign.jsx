@@ -77,7 +77,7 @@ const TableDesign = ({ control }) => {
                   itemList={control.tableColumns}
                   itemControl={item}
                   dataIndex={index}
-                  inSubtable
+                  inTable
                 />
               );
             })}

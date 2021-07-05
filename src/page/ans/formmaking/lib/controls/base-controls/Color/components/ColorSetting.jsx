@@ -97,7 +97,9 @@ const ColorSetting = ({ control, updateFormModel }) => {
         <FormAttrItem label="默认值">
             <ColorPicker color={options.defaultValue}
                          enableAlpha={options.showAlpha}
-                         onChange={color => updateOptions({defaultValue: color})} />
+                         onChange={color => {
+                           updateOptions({ defaultValue: color.color })
+                         }} />
         </FormAttrItem>
 
       <FormAttrItem label="自定义Class">

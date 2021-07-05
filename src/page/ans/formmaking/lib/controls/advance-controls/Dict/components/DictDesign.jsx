@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import { Label, Container } from '../../../components/styles'
 import {Select} from "antd";
 
-const DictDesign = ({ control, formConfig }) => {
+const DictDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
   const labelWidth = useMemo(() => {

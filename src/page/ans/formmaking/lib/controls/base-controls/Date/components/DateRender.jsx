@@ -1,59 +1,36 @@
-import React, { useMemo } from 'react'
-import { Input } from 'antd';
+import React, { useMemo, useContext } from 'react'
+import { DatePicker } from 'antd';
 import styled from '@emotion/styled'
+import moment from 'moment'
+import Label from '@/page/ans/formmaking/lib/controls/common/Label'
+import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/styles'
+import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
+import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
 
-const Container = styled.div`
-  display: ${({ labelPosition }) => (labelPosition === 'top' ? 'block' : 'flex')};
-`
-const Label = styled.div`
-  width: ${({ labelWidth }) => labelWidth}px;
-  text-align: ${({ labelPosition }) => labelPosition};
-  vertical-align: middle;
-  float: left;
-  font-size: 14px;
-  color: #606266;
-  line-height: 32px;
-  padding: 0 12px 0 0;
-  box-sizing: border-box;
-  > span{
-    color: #f56c6c;
-    margin-right: 2px;
-    font-size: 14px;
-  }
-`
 const InputBox = styled.div`
   flex: 1;
 `
 
-const DateRender = ({ control, formConfig }) => {
+const DateRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
-
-  const labelWidth = useMemo(() => {
-    if (options.isLabelWidth) {
-      return options.labelWidth
-    }
-    return formConfig.labelWidth
-  }, [options, formConfig])
+  const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
+  const handleChange = (_, v) => { baseProps.onChange(options.timestamp ? _.valueOf() : v) }
 
   return <div className={options.customClass}>
-    <Container labelPosition={formConfig.labelPosition}>
-      {!options.hideLabel && <Label
-        labelPosition={formConfig.labelPosition}
-        labelWidth={labelWidth}
-      >
-        {options.required && <span>*</span>}
-        {control.name}
-      </Label>
-      }
+    <Container formConfig={formConfig}>
+      <Label control={control} formConfig={formConfig} />
+
       <InputBox>
-        {
-          options.showPassword ? <Input.Password disabled={options.disabled} defaultValue={options.defaultValue} style={{ width: options.width }} placeholder={options.placeholder} />
-            : <Input disabled={options.disabled} defaultValue={options.defaultValue} style={{ width: options.width }} placeholder={options.placeholder} />
-        }
+        <DatePicker
+          {...baseProps}
+          allowClear={options.clearable}
+          defaultValue={options.value ? moment(options.value) : null}
+          format={options.format}
+          onChange={handleChange}
+        />
       </InputBox>
     </Container>
 
-    {/* <pre>{JSON.stringify(options, null, 2)}</pre> */}
   </div>
 }
 

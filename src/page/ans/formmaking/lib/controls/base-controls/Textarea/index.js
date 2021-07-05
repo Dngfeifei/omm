@@ -3,7 +3,7 @@ import TextareaSetting from './components/TextareaSetting'
 import TextareaRender from './components/TextareaRender'
 
 export default {
-  'textarea-design': TextareaDesign,
+  'textarea-design': TextareaRender,
   'textarea-render': TextareaRender,
   'textarea-setting': TextareaSetting,
 }

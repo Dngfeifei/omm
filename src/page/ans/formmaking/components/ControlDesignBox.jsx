@@ -98,7 +98,7 @@ const ControlDesignBox = ({
   itemList,
   itemControl,
   dataIndex,
-  inSubtable = false,
+  inTable = false,
 }) => {
   const { state, dispatch } = useContext(FormDesignContenxt);
   const { formConfig } = state;
@@ -110,7 +110,7 @@ const ControlDesignBox = ({
   const controlProps = {
     control: itemControl,
     formConfig,
-    inSubtable,
+    inTable,
   };
 
   const handleControlSelect = (e, control, index) => {
@@ -136,6 +136,10 @@ const ControlDesignBox = ({
     console.log(id);
   };
 
+  //添加table 布局行
+  const handleAddRow =(control)=>{
+    console.log('addRow:',control);
+  }
   return (
     <div>
       <ControlBox
@@ -164,6 +168,11 @@ const ControlDesignBox = ({
           <ButtonsBox isLayout={isLayout}>
             {itemControl.type === 'grid' && (
               <span onClick={() => handleAddColumn(itemControl.id)}>
+                <Icon type="plus" />
+              </span>
+            )}
+            {itemControl.type === 'table' && (
+              <span onClick={() => handleAddRow(itemControl)}>
                 <Icon type="plus" />
               </span>
             )}

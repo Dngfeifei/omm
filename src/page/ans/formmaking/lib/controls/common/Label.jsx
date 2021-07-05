@@ -2,7 +2,7 @@ import React, { useMemo } from 'react'
 import styled from '@emotion/styled'
 import { Label as LabelDiv } from '@/page/ans/formmaking/lib/controls/components/styles'
 
-const Label = ({ control, formConfig }) => {
+const Label = ({ control, formConfig, inTable = false }) => {
   const { options } = control
 
   const labelWidth = useMemo(() => {
@@ -11,7 +11,7 @@ const Label = ({ control, formConfig }) => {
 
   return (
     <React.Fragment>
-      {!options.hideLabel && <LabelDiv
+      {!options.hideLabel && !inTable && <LabelDiv
         labelPosition={formConfig.labelPosition}
         labelWidth={labelWidth}
       >

@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Modal, Button, Table } from 'antd';
+
 import allComps from '@/page/ans/formmaking/lib/controls';
 
 const TableDefaultValue = ({ control }) => {
@@ -23,7 +24,7 @@ const TableDefaultValue = ({ control }) => {
               {React.createElement(allComps[`${item.type}-render`], {
                 control: item,
                 formConfig: {},
-                inSubtable: true,
+                inTable: true,
               })}
             </div>
           );
@@ -32,6 +33,12 @@ const TableDefaultValue = ({ control }) => {
     });
     return cols;
   }, [control]);
+
+
+  const addRow = () => {
+      //done
+
+  };
 
   return (
     <div>
@@ -46,7 +53,11 @@ const TableDefaultValue = ({ control }) => {
         onCancel={() => setVisible(false)}
         footer={null}
       >
-        <Table columns={columns} dataSource={[{ key: '1' }]} />
+        <Table
+        columns={columns}
+        dataSource={[{ key: '1' }]}
+        pagination = {false}
+       />
       </Modal>
     </div>
   );

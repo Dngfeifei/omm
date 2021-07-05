@@ -8,10 +8,12 @@ import Notice from '@/components/message/notice'//消息通知
 import SendOut from '@/components/message/sendOut'//消息发送
 
 import {logout} from '@/api/login.js'
+import {getUnreadNum} from '@/api/systemMessage.js'
 
 @connect(state => ({
     collapsed: state.global.collapsed,
     breadcrumb: state.global.breadcrumb,
+    loginStatus: state.global.loginStatus
 }), dispath => ({
     toggle(key) {dispath({ type: TOGGLE })},
     add(pane) { dispath({type: ADD_PANE, data: pane})},
@@ -25,19 +27,40 @@ class DHeader extends Component {
         if (process.env.NODE_ENV == 'production') {
             name=`${process.env.ENV_NAME}_realName`
         }
-        console.log(!(process.env.NODE_ENV == 'production'))
+        // console.log(!(process.env.NODE_ENV == 'production'))
         let username = localStorage.getItem(name)
         this.setState({ username })
         window.resetStore = this.props.reset;
+        this.getSysMessage()
     }
 
     state = {
         username: '',
         modalVisible: false,
         notice:false,//消息通知
-        sendOut:false//消息发送
+        sendOut:false,//消息发送
+        noticeNUm:0 //未读消息数量
     }
-
+    getSysMessage = () => {
+        let name =  '';
+        if(process.env.NODE_ENV == 'production'){
+            name = process.env.ENV_NAME+'_'
+        }
+        let status = localStorage.getItem(`${name}token`) //判断token是否存在验证是否已经登录
+        // console.log(status)
+        if( status && !this.state.notice){
+            getUnreadNum().then(res => {
+                if(res.success == 1){
+                    let {noticeNUm} = this.state;
+                    noticeNUm = res.data.msgCount ? res.data.msgCount - 0 : 0;
+                    this.setState({noticeNUm});
+                }else{
+                    message.error(res.message);
+                }
+            })
+        }
+        setTimeout(this.getSysMessage,60000);//60000
+    }
     quit = _ => {
         
         logout().then(res=>{
@@ -69,11 +92,16 @@ class DHeader extends Component {
         let modalVisible = pa;
         this.setState({modalVisible});
     }
+    //刷新消息通知数据
+    resetNotice = () => {
+        // console.log(this.noticeRef)
+        if(this.noticeRef) this.noticeRef.searchTable();
+    }
     render = _ => <Header
         className="header" style={{background:'#4876e7 url(static/images/topBG.png) 0 center no-repeat',backgroundSize: 'auto 102%'}}>
         <div className="settingwrap">
             {/* 消息通知 */}
-            <Badge count={0} className="messages-receiving" style={{cursor:'pointer'}}  onClick={()=> this.setState({notice:true})}>
+            <Badge count={this.state.noticeNUm} className="messages-receiving" style={{cursor:'pointer'}}  onClick={()=> this.setState({notice:true,noticeNUm:0})}>
                 <span className="head-example">
                     <Icon type="bell" theme="filled" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
                 </span>
@@ -81,7 +109,7 @@ class DHeader extends Component {
             {/* 消息发送 */}
             <Badge count={0} className="messages-push" style={{cursor:'pointer'}}  onClick={()=> this.setState({sendOut:true})}>
                 <span className="head-example">
-                    <Icon type="mail" theme="outlined" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
+                    <Icon type="message" theme="outlined" style={{ fontSize: 30, color: '#eee',cursor:'pointer'}} />
                 </span>
             </Badge>
             <img
@@ -100,11 +128,11 @@ class DHeader extends Component {
         </div>
         {/* 消息通知 */}
         {
-            this.state.notice ? <Notice onCancel={()=>{this.setState({notice:false})}}></Notice> : null
+            this.state.notice ? <Notice ref={ref => this.noticeRef = ref} onCancel={()=>{this.setState({notice:false})}} openSendOut={()=> this.setState({sendOut:true})}></Notice> : null
         }
         {/* 消息发送 */}
         {
-            this.state.sendOut ? <SendOut onCancel={()=>{this.setState({sendOut:false})}}></SendOut> : null
+            this.state.sendOut ? <SendOut onCancel={()=>{this.setState({sendOut:false})}} resetData={this.resetNotice}></SendOut> : null
         }
     </Header>
 }

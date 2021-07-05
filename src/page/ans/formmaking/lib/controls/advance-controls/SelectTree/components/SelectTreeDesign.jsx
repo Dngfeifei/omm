@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   flex: 1;
 `
 
-const SelectTreeDesign = ({ control, formConfig }) => {
+const SelectTreeDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
   const labelWidth = useMemo(() => {
