@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Input, Switch, Select, Checkbox } from 'antd';
+import { Input, Switch, Select, Checkbox, AutoComplete } from 'antd';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
@@ -17,8 +17,38 @@ const rowDiv = css`
   margin-bottom: 4px;
 `;
 
+const recommendList = [{
+  title: "姓名",
+  value: "${user.name}"
+}, {
+  title: "用户id",
+  value: "${user.id}"
+}, {
+  title: "登录名",
+  value: "${user.loginName}"
+}, {
+  title: "工号",
+  value: "${user.no}"
+}, {
+  title: "公司",
+  value: "${user.company.name}"
+}, {
+  title: "公司id",
+  value: "${user.company.id}"
+}, {
+  title: "部门",
+  value: "${user.office.name}"
+}, {
+  title: "部门id",
+  value: "${user.office.id}"
+}, {
+  title: "当前日期",
+  value: "${new Date()}"
+}]
+
 const TextSetting = ({ control, updateFormModel }) => {
   const { options } = control;
+
 
   const defaultClass = useMemo(
     () => (options.customClass ? options.customClass.split(' ') : []),
@@ -79,11 +109,14 @@ const TextSetting = ({ control, updateFormModel }) => {
       </FormAttrItem>
 
         <FormAttrItem label="默认值">
-          <Input
+          <AutoComplete
             value={options.defaultValue}
-            onChange={(e) => updateOptions({ defaultValue: e.target.value })}
-            allowClear
-          />
+            onChange={(value) => updateOptions({ defaultValue: value })}
+          >
+            {recommendList.map(item => {
+              return <AutoComplete.Option key={item.value} value={item.value}>{item.value}</AutoComplete.Option>
+            })}
+          </AutoComplete>
         </FormAttrItem>
 
       <FormAttrItem label="自定义Class">

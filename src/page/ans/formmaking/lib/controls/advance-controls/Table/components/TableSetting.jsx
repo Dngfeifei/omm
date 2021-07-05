@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
 import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import TableDefaultValue from './Setting/TableDefaultValue';
 
 const WrapFlex = styled.div`
   display: flex;
@@ -56,15 +57,6 @@ const TableSetting = ({ control, updateFormModel }) => {
         />
       </FormAttrItem>
 
-      <FormAttrItem label="宽度">
-        <Input
-          value={options.width}
-          onChange={(e) => {
-            updateOptions({ width: e.target.value });
-          }}
-        />
-      </FormAttrItem>
-
       <FormAttrItem label="标签宽度">
         <Checkbox
           style={{ lineHeight: '32px', float: 'left' }}
@@ -87,13 +79,9 @@ const TableSetting = ({ control, updateFormModel }) => {
         />
       </FormAttrItem>
 
-        <FormAttrItem label="最大值">
-            <InputNumberPlus
-                value={options.max}
-                step={1}
-                onChange={(value) => updateOptions({ max: value })}
-            />
-        </FormAttrItem>
+      <FormAttrItem label="默认值">
+        <TableDefaultValue control={control} />
+      </FormAttrItem>
 
       <FormAttrItem label="自定义Class">
         <Select
@@ -102,7 +90,7 @@ const TableSetting = ({ control, updateFormModel }) => {
           placeholder="请选择"
           value={defaultClass}
           onChange={(value) => updateOptions({ customClass: value.join(' ') })}
-        ></Select>
+        />
       </FormAttrItem>
 
       <FormAttrItem label="操作属性">
@@ -132,14 +120,6 @@ const TableSetting = ({ control, updateFormModel }) => {
               禁用
             </Checkbox>
           </div>
-            <div>
-                <Checkbox
-                    checked={options.showScore}
-                    onChange={(e) => updateOptions({ showScore: e.target.checked })}
-                >
-                    显示分数
-                </Checkbox>
-            </div>
         </WrapFlex>
       </FormAttrItem>
 

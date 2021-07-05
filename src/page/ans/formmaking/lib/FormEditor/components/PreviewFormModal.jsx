@@ -25,8 +25,8 @@ const Container = styled.div`
 
 const PreviewFormModal = ({ formData, open, onCancel }) => {
   const modelRef = useRef();
-  const [formModel, setFormModel] = useState(formData.formModel)
-  const [formConfig, setFormConfig] = useState(formData.formConfig)
+  const [formModel, setFormModel] = useState(cloneDeep(formData.formModel))
+  const [formConfig, setFormConfig] = useState(cloneDeep(formData.formConfig))
 
   const [json, setJson] = useState('');
   const [isJsonOpen, setIsJsonOpen] = useState(false);
@@ -36,8 +36,8 @@ const PreviewFormModal = ({ formData, open, onCancel }) => {
   };
 
   useEffect(() => {
-    setFormModel(formData.formModel)
-    setFormConfig(formData.formConfig)
+    setFormModel(cloneDeep(formData.formModel))
+    setFormConfig(cloneDeep(formData.formConfig))
     if (modelRef.current) {
       handleReset()
     }

@@ -24,7 +24,7 @@ const RightCls = css`
   overflow-x: auto;
 `;
 
-const TableDesign = ({ control }) => {
+const TableDesignWrap = ({ control }) => {
   const { state, dispatch } = useContext(FormDesignContenxt);
 
   return (
@@ -88,4 +88,4 @@ const TableDesign = ({ control }) => {
   );
 };
 
-export default TableDesign;
+export default TableDesignWrap;

@@ -36,7 +36,7 @@ const TableDefaultValue = ({ control }) => {
 
 
   const addRow = () => {
-      //done
+    //done
 
   };
 
@@ -54,10 +54,10 @@ const TableDefaultValue = ({ control }) => {
         footer={null}
       >
         <Table
-        columns={columns}
-        dataSource={[{ key: '1' }]}
-        pagination = {false}
-       />
+          columns={columns}
+          dataSource={[{ key: '1' }]}
+          pagination = {false}
+        />
       </Modal>
     </div>
   );

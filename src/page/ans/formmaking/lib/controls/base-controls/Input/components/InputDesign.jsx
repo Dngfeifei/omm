@@ -25,7 +25,7 @@ const TableCellCls = css`
   padding: 10px;
 `;
 
-const InputDesign = ({ control, formConfig, inSubtable }) => {
+const InputDesign = ({ control, formConfig, inTable }) => {
   const { options } = control;
 
   const inputProps = {
@@ -37,7 +37,7 @@ const InputDesign = ({ control, formConfig, inSubtable }) => {
 
   return (
     <Fragment>
-      {inSubtable ? (
+      {inTable ? (
         <div>
           <div className={TableHeaderCls}>{control.name}</div>
           <div className={TableCellCls}>

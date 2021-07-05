@@ -5,10 +5,9 @@ import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/
 import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
 
 
-const TextareaRender = ({ control, formConfig }) => {
+const TextareaRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
-  const baseProps = useFieldBaseProps(control, formConfig)
-
+  const baseProps = useFieldBaseProps(control, formConfig, false, inTable, onChange)
 
   return <div className={options.customClass}>
     <Container formConfig={formConfig}>

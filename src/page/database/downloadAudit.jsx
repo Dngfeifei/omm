@@ -12,6 +12,7 @@ import { GetCOSFile } from '/api/cloudUpload.js'
 import { GetFileLibrary, FileDownloadExamine } from '/api/mediaLibrary.js'
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
 
+import Details from "./details"
 import Pagination from '/components/pagination'
 
 // 标签字典对象集合
@@ -58,7 +59,7 @@ class DownloadAudit extends Component {
                 align: 'center',
                 render: (t, r) => {
                     return <div>
-                        <div>{t}</div>
+                        <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
                         <div style={{ color: "#bfb8b8" }}>
                             <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
                             <Icon type="heart" theme="outlined" style={{ margin: "0 3px 0 5px" }} />{r.collectNum ? r.collectNum : 0}
@@ -82,15 +83,15 @@ class DownloadAudit extends Component {
                 dataIndex: 'fileSize',
                 align: 'center',
             },
-            {
-                title: '标签',
-                dataIndex: 'fileLabel',
-                align: 'center',
-                editable: false,
-                render: (t, r) => {
-                    return fileLabelData[t]
-                }
-            },
+            // {
+            //     title: '标签',
+            //     dataIndex: 'fileLabel',
+            //     align: 'center',
+            //     editable: false,
+            //     render: (t, r) => {
+            //         return fileLabelData[t]
+            //     }
+            // },
             {
                 title: '上传用户',
                 dataIndex: 'uploadUserName',
@@ -101,41 +102,41 @@ class DownloadAudit extends Component {
                 dataIndex: 'downUserName',
                 align: 'center',
             },
-            {
-                title: '资料类型',
-                dataIndex: 'categorieName',
-                align: 'center',
-            },
-            {
-                title: '上传时间',
-                dataIndex: 'uploadTime',
-                align: 'center',
-            },
-            {
-                title: '发布时间',
-                dataIndex: 'publishTime',
-                align: 'center',
-            },
+            // {
+            //     title: '资料类型',
+            //     dataIndex: 'categorieName',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '上传时间',
+            //     dataIndex: 'uploadTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '发布时间',
+            //     dataIndex: 'publishTime',
+            //     align: 'center',
+            // },
             {
                 title: '资料级别',
                 dataIndex: 'levelName',
                 align: 'center',
             },
-            {
-                title: '币值',
-                dataIndex: 'points',
-                align: 'center',
-            },
-            {
-                title: '资料下架日期',
-                dataIndex: 'clearTime',
-                align: 'center',
-            },
-            {
-                title: '描述',
-                dataIndex: 'description',
-                align: 'center',
-            },
+            // {
+            //     title: '币值',
+            //     dataIndex: 'points',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '下架日期',
+            //     dataIndex: 'clearTime',
+            //     align: 'center',
+            // },
+            // {
+            //     title: '描述',
+            //     dataIndex: 'description',
+            //     align: 'center',
+            // },
             {
                 title: '审核状态',
                 dataIndex: 'reviewStatus',
@@ -177,7 +178,10 @@ class DownloadAudit extends Component {
         //右侧查询关键字
         searchKey: null,
         // 下载队列集合
-        downObj: {}
+        downObj: {},
+        // 当前要展示的详情数据
+        details: {},
+        detailsModalvisible: false
     }
     // 获取标签字典数据
     getDictInfo = async () => {
@@ -264,36 +268,12 @@ class DownloadAudit extends Component {
     downloadFile = (row) => {
         let name = row.fileName
         let key = row.applyId
-        downObj[key] = {
-            percent: 0,//上传进度
-            speed: 0,//上传速率
-        }
-        this.setState({ downObj })
-        GetCOSFile(name, key, this.getProgress).then((res) => {
-            if (!res.success) {
-                message.destroy()
-                message.warning("下载失败!")
-                delete downObj[key]
-                this.setState({ downObj })
-                return
-            }
-            let blobObj = new Blob([res.data], {
-                type: res.data.headers.contentType
-            });
-            let url = window.URL.createObjectURL(blobObj);
-            var a = document.createElement("a");
-            document.body.appendChild(a);
-            a.href = url;
-            a.download = decodeURI(name);
-
-            delete downObj[key]
-            this.setState({ downObj })
-            message.destroy()
-            message.info("下载成功!")
-            a.click();
-            document.body.removeChild(a);
-            this.getTableData()
-        })
+        // downObj[key] = {
+        //     percent: 0,//上传进度
+        //     speed: 0,//上传速率
+        // }
+        // this.setState({ downObj })
+        GetCOSFile(name, key, this.getProgress)
     }
     // 获取文件下载进度
     getProgress = (key, progressData) => {
@@ -301,10 +281,22 @@ class DownloadAudit extends Component {
             percent: Number((progressData.percent * 100).toFixed(0)),//上传进度
             speed: Number((progressData.speed / 1024).toFixed(0)),//上传速率
         }
-        console.log(key, progressData)
-        console.log(downObj)
         this.setState({
             downObj
+        })
+    }
+    // 展示详情
+    showDetails = (r) => {
+        this.setState({
+            details: r,
+            detailsModalvisible: true
+        })
+    }
+    // 关闭详情
+    closeDetails = () => {
+        this.setState({
+            details: {},
+            detailsModalvisible: false
         })
     }
     render = _ => {
@@ -314,7 +306,7 @@ class DownloadAudit extends Component {
                 <Form style={{ width: '100%' }}>
                     <Row>
                         <Col span={12}>
-                            <Input placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
+                            <Input allowClear placeholder="请输入关键字" value={this.state.searchKey} onChange={this.getSearchKey} style={{ width: '200px', marginRight: "10px" }} />
                             <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                         </Col>
                     </Row>
@@ -324,6 +316,8 @@ class DownloadAudit extends Component {
                     <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                 </div>
             </div>
+            {/* 详情 */}
+            {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details}  info={[{name:"上传用户",value:this.state.details.uploadUserName},{name:"下载用户",value:this.state.details.downUserName}]}></Details> : ""}
         </div>
     }
 

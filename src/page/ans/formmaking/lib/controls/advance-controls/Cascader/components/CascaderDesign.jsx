@@ -28,7 +28,12 @@ const CascaderDesign = ({ control, formConfig }) => {
       </Label>
       }
       <Wrapper>
-        <Cascader options={options.options} placeholder={options.placeholder} value={options.defaultValue} />
+        <Cascader 
+        options={options.options} 
+        placeholder={options.placeholder} 
+        defaultValue={options.defaultValue}
+        style={{ width: options.width }}
+         />
       </Wrapper>
     </Container>
   </div>

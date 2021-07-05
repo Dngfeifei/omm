@@ -11,12 +11,10 @@ const InputBox = styled.div`
   flex: 1;
 `
 
-const DateRender = ({ control, formConfig }) => {
+const DateRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
-  const baseProps = useFieldBaseProps(control, formConfig, true)
-
-  const { updateValue } = useContext(formRenderContext)
-  const onChange = (_, v) => { updateValue(control.model, options.timestamp ? _.valueOf() : v) }
+  const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
+  const handleChange = (_, v) => { baseProps.onChange(options.timestamp ? _.valueOf() : v) }
 
   return <div className={options.customClass}>
     <Container formConfig={formConfig}>
@@ -26,10 +24,9 @@ const DateRender = ({ control, formConfig }) => {
         <DatePicker
           {...baseProps}
           allowClear={options.clearable}
-          defaultValue={options.defaultValue ? moment(options.defaultValue) : null}
           defaultValue={options.value ? moment(options.value) : null}
           format={options.format}
-          onChange={onChange}
+          onChange={handleChange}
         />
       </InputBox>
     </Container>

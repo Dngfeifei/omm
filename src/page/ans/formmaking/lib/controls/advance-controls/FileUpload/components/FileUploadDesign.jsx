@@ -7,7 +7,7 @@ const Wrapper = styled.div`
   flex: 1;
 `
 
-const FileUploadDesign = ({ control, formConfig }) => {
+const FileUploadDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
   const labelWidth = useMemo(() => {

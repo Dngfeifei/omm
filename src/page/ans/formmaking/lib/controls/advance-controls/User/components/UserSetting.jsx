@@ -86,14 +86,17 @@ const UserSetting = ({ control, updateFormModel }) => {
           onChange={(checked) => updateOptions({ hideLabel: checked })}
         />
       </FormAttrItem>
+        
+      <FormAttrItem label="占位内容">
+        <Input
+          value={options.placeholder}
+          onChange={(e) => {
+            updateOptions({ placeholder: e.target.value });
+          }}
+        />
+      </FormAttrItem>
 
-        <FormAttrItem label="最大值">
-            <InputNumberPlus
-                value={options.max}
-                step={1}
-                onChange={(value) => updateOptions({ max: value })}
-            />
-        </FormAttrItem>
+     
 
       <FormAttrItem label="自定义Class">
         <Select
@@ -132,14 +135,6 @@ const UserSetting = ({ control, updateFormModel }) => {
               禁用
             </Checkbox>
           </div>
-            <div>
-                <Checkbox
-                    checked={options.showScore}
-                    onChange={(e) => updateOptions({ showScore: e.target.checked })}
-                >
-                    显示分数
-                </Checkbox>
-            </div>
         </WrapFlex>
       </FormAttrItem>
 

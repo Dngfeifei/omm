@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react'
 import { Label, Container } from '../../../components/styles'
 import { Select } from 'antd'
-
-const UserDesign = ({ control, formConfig }) => {
+import {SearchOutlined} from '@ant-design/icons';
+const UserDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
   const labelWidth = useMemo(() => {
@@ -22,7 +22,15 @@ const UserDesign = ({ control, formConfig }) => {
         {control.name}
       </Label>
       }
-      <Select style={{width: '100%'}} />
+      <Select
+       showSearch
+       placeholder={options.placeholder}
+       defaultValue={options.defaultValue}
+       style={{ width: options.width }}
+       suffixIcon={
+            <SearchOutlined />
+       }
+       />
     </Container>
   </div>
 }

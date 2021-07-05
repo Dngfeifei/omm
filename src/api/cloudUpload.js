@@ -3,6 +3,10 @@
  * @auth yyp
  */
 
+import {
+	message
+} from 'antd';
+
 let COS = require('cos-js-sdk-v5');
 let cos = new COS({
 	SecretId: 'AKIDZZOwINWfQ6jqjnOqWy93OWaYGm0Co2iR',
@@ -57,65 +61,7 @@ export const DelCOSFile = (fileName) => {
 		console.log(err || data);
 	});
 }
-/***
- *  腾讯云	下载方法
- * fileName 下载文件名称
- */
-//  export const GetCOSFile = (fileName) => {
-// 	cos.getObject({
-// 		Bucket: 'omm-1259568603',
-// 		/* 桶名 必须 */
-// 		Region: 'ap-nanjing',
-// 		/* 存储桶所在地域，必须字段 */
-// 		Key: directory + fileName,
-// 	}, function (err, response) {
-// 		console.log(err || response);
-// 		if(!err){
-// 			// data.Body.arrayBuffer().then(response => {
-// 				let blobObj = new Blob([response], {
-// 					// type: "application/vnd.ms-excel"
-// 					type: response.headers.contentType
-// 				});
-// 				let url = window.URL.createObjectURL(blobObj);
-// 				var a = document.createElement("a");
-// 				document.body.appendChild(a);
-// 				a.href = url;
-// 				a.download = decodeURI(fileName);
-// 				a.click();
-// 				document.body.removeChild(a);
-// 			// });
-// 		}
 
-// 	});
-// }
-export const GetCOSFile = (name,key, getProgress = () => {}, ) => {
-	console.log(name,key,"方法中")
-	return new Promise((rsl, rej) => {
-		cos.getObject({
-			Bucket: 'omm-1259568603',
-			/* 桶名 必须 */
-			Region: 'ap-nanjing',
-			/* 存储桶所在地域，必须字段 */
-			Key: directory + name,
-			onProgress: function (progressData) { //文件上传进度
-				getProgress(key,progressData)
-			},
-		}, function (err, response) {
-			if(err){
-				let data={
-					success:0,
-				}
-				rsl(data)
-			}else{
-				let data={
-					success:1,
-					data:response
-				}
-				rsl(data)
-			}
-		});
-	})
-}
 /***
  *  腾讯云	暂停上传方法
  * taskId 唯一标识上传任务，可用于上传任务的取消
@@ -142,7 +88,10 @@ export const RestartCOSFile = (taskId) => {
 	cos.restartTask(taskId)
 }
 
-
+/***
+ *  腾讯云 获取已上传文件列表
+ *
+ */
 export const GetFileList = () => {
 	cos.getBucket({
 		Bucket: 'omm-1259568603',
@@ -153,4 +102,41 @@ export const GetFileList = () => {
 	}, function (err, data) {
 		console.log(err || data.Contents);
 	});
+}
+
+/***
+ *  腾讯云 下载文件
+ *  name  要下载的文件名称
+ */
+export const GetCOSFile = (name) => {
+	cos.headObject({
+		Bucket: 'omm-1259568603',
+		/* 桶名 必须 */
+		Region: 'ap-nanjing',
+		/* 存储桶所在地域，必须字段 */
+		Key: directory + name,
+	}, function (err, data) {
+		if (err) {
+			message.destroy()
+			message.error("文件不存在！")
+		} else {
+			cos.getObjectUrl({
+				Bucket: 'omm-1259568603',
+				/* 桶名 必须 */
+				Region: 'ap-nanjing',
+				/* 存储桶所在地域，必须字段 */
+				Key: directory + name,
+				Expires: 60,
+				Sign: true,
+			}, function (err, data) {
+				var a = document.createElement("a");
+				document.body.appendChild(a);
+				a.href = data.Url + (data.Url.indexOf('?') > -1 ? '&' : '?') + 'response-content-disposition=attachment';
+				a.click();
+				document.body.removeChild(a);
+			});
+		}
+	});
+
+
 }

@@ -1,6 +1,8 @@
 import React, { useMemo } from 'react'
+import { Cascader } from 'antd'
 import styled from '@emotion/styled'
-import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import useFieldBaseProps from "@/page/ans/formmaking/hooks/useFieldBaseProps";
+
 
 const Container = styled.div`
   display: ${({ labelPosition }) => (labelPosition === 'top' ? 'block' : 'flex')};
@@ -21,12 +23,13 @@ const Label = styled.div`
     font-size: 14px;
   }
 `
-const InputBox = styled.div`
+const Wrapper = styled.div`
   flex: 1;
 `
 
-const CascaderRender = ({ control, formConfig }) => {
+const CascaderRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
+  const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
 
   const labelWidth = useMemo(() => {
     if (options.isLabelWidth) {
@@ -45,12 +48,13 @@ const CascaderRender = ({ control, formConfig }) => {
         {control.name}
       </Label>
       }
-      <InputBox>
-        <InputNumberPlus disabled={options.disabled} defaultValue={options.defaultValue} style={{ width: options.width }} />
-      </InputBox>
+      <Wrapper>
+        <Cascader
+          {...baseProps}
+          options={options.options}
+         />
+      </Wrapper>
     </Container>
-
-     {/*<pre>{JSON.stringify(options, null, 2)}</pre>*/}
   </div>
 }
 
