@@ -603,7 +603,7 @@ class AssessmentReport extends Component {
   //导出按钮
   exportObtn = () => {
     let currentDay = moment().format("YYYYMMDD");
-    let fileName = "工程师技能评价报告_" + currentDay + ".xlsx";
+    let fileName = "工程师评定信息表" + currentDay + ".xlsx";
     const hide = message.loading("报表数据正在检索中,请耐心等待。。。", 0);
     GetexportAssessReportList().then((res) => {
       console.log(res.data)
