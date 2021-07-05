@@ -44,24 +44,28 @@ class Notice extends Component {
                 title: '接收时间',
                 dataIndex: 'receiveTime',
                 align: 'center',
-                render: this.fomatterRead
+                ellipsis: true,
+                render: (text,row,index) => <Tooltip placement="topLeft" title={text}>{this.fomatterRead(text,row,index)}</Tooltip>
             },
             {
                 title: '发送人姓名',
                 dataIndex: 'realName',
                 align: 'center',
+                ellipsis: true,
                 render: this.fomatterRead
             },
             {
                 title: '系统账号',
                 dataIndex: 'userName',
                 align: 'center',
+                ellipsis: true,
                 render: this.fomatterRead
             },
             {
                 title: '手机号码',
                 dataIndex: 'mobilePhone',
                 align: 'center',
+                ellipsis: true,
                 render: this.fomatterRead
             },
             {
@@ -69,7 +73,7 @@ class Notice extends Component {
                 dataIndex: 'email',
                 align: 'center',
                 ellipsis: true,
-                render: this.fomatterRead
+                render: (text,row,index) => <Tooltip placement="topLeft" title={text}>{this.fomatterRead(text,row,index)}</Tooltip>
             }],
             columnssend:[{
                 title: '消息标题',
@@ -119,9 +123,7 @@ class Notice extends Component {
                 title: '手机号码',
                 dataIndex: 'mobilePhone',
                 align: 'center',
-                ellipsis: {
-                    showTitle: false,
-                },
+                ellipsis: true,
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             },
             {

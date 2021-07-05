@@ -29,7 +29,8 @@ class SendOut extends Component {
             msgContent:undefined,
             //所有人
             isAll:'0',//是否发送所有人，1-是，0-否   
-        }
+        },
+        confirmLoading:false
     }
     //打开人员选择器
     handleClick = (pa) => {
@@ -74,6 +75,9 @@ class SendOut extends Component {
         // console.log(params,params.isAll);
         // return
         message.loading('发送中...', 0);
+        this.setState({
+            confirmLoading:true
+        })
         addMessage(params).then(res => {
             message.destroy();
             if (res.success == 1) {
@@ -95,7 +99,7 @@ class SendOut extends Component {
         })
     }
     render = _ =>
-        <ModalDom title='消息发送' width={800} destroyOnClose={true} visible={true} onOk={this.saveData} onCancel={this.props.onCancel} okText="发送">
+        <ModalDom title='消息发送' width={800} confirmLoading={this.state.confirmLoading} destroyOnClose={true} visible={true} onOk={this.saveData} onCancel={this.props.onCancel} okText="发送">
             <div className="operation_area" style={{display:'flex',alignItems:'center',marginBottom:15,position:'relative'}}>
                 <span className="ant-form-item-required" style={{width:88,display:'inline-block'}}>发送人：</span>
                 <Select disabled={this.state.params.isAll == 0 ? false : true} mode="multiple" dropdownStyle={{display:'none'}} placeholder="请选择人员" labelInValue value={this.state.params.msgUsers} onChange={(msgUsers)=>this.setState({params:{...this.state.params,msgUsers}})} style={{width:'75%'}}></Select>
