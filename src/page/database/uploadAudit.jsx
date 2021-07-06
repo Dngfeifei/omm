@@ -130,6 +130,7 @@ class DownloadAudit extends Component {
             {
                 title: '文件名',
                 dataIndex: 'fileName',
+                width: 400,
                 align: 'center',
                 editable: false,
                 render: (t, r) => {
@@ -139,12 +140,14 @@ class DownloadAudit extends Component {
             {
                 title: '版本',
                 dataIndex: 'fileVersion',
+                width: 200,
                 align: 'center',
                 editable: false,
             },
             {
                 title: '文件大小',
                 dataIndex: 'fileSize',
+                width: 150,
                 align: 'center',
                 editable: false,
             },
@@ -160,6 +163,7 @@ class DownloadAudit extends Component {
             {
                 title: '上传用户',
                 dataIndex: 'uploadUserName',
+                width: 150,
                 align: 'center',
                 editable: false,
             },
@@ -185,7 +189,7 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">资料级别</div>,
                 dataIndex: 'fileLevelId',
                 align: 'center',
-                width: 96,
+                width: 150,
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
@@ -204,6 +208,7 @@ class DownloadAudit extends Component {
             {
                 title: <div className="ant-form-item-required">币值</div>,
                 dataIndex: 'points',
+                width: 100,
                 align: 'center',
                 editable: true,
                 render: (t, r) => {
@@ -238,6 +243,7 @@ class DownloadAudit extends Component {
             {
                 title: '审核状态',
                 dataIndex: 'uploadStatus',
+                width: 150,
                 align: 'center',
                 editable: false,
                 render: (t, r) => {
@@ -254,6 +260,7 @@ class DownloadAudit extends Component {
             {
                 title: '操作',
                 align: 'center',
+                width: 150,
                 editable: false,
                 render: (t, r) => {
                     let status = r.uploadStatus

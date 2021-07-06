@@ -107,6 +107,7 @@ class Personal extends Component {
             {
                 title: '文件名',
                 dataIndex: 'fileName',
+                width: 400,
                 align: 'center',
                 render: (t, r) => {
                     return <div>
@@ -115,6 +116,7 @@ class Personal extends Component {
                             r.uploadStatus == 1 ? <div style={{ color: "#bfb8b8" }}>
                                 <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
                                 <Icon type="heart" theme="outlined" style={{ margin: "0 3px 0 5px" }} />{r.collectNum ? r.collectNum : 0}
+                                <span style={{ color: "#bfb8b8",marginLeft:"10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
                             </div> : ""
                         }
 
@@ -125,15 +127,6 @@ class Personal extends Component {
                 title: '版本',
                 dataIndex: 'fileVersion',
                 align: 'center',
-                render: (t, r) => {
-                    return <div>
-                        <div>{t}</div>
-                        {
-                            r.uploadStatus == 1 ? <div style={{ color: "#bfb8b8" }}>{r.downloadNum ? r.downloadNum : 0}次下载</div> : ""
-                        }
-
-                    </div>
-                }
             },
             {
                 title: '文件大小',
@@ -170,6 +163,7 @@ class Personal extends Component {
             // },
             {
                 title: '币值',
+                width: 100,
                 dataIndex: 'points',
                 align: 'center',
             },
@@ -200,6 +194,7 @@ class Personal extends Component {
             },
             {
                 title: '操作',
+                width: 150,
                 align: 'center',
                 render: (t, r) => {
                     let status = r.uploadStatus
@@ -218,12 +213,14 @@ class Personal extends Component {
                 title: '文件名',
                 dataIndex: 'fileName',
                 align: 'center',
+                width: 400,
                 render: (t, r) => {
                     return <div>
                         <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
                         <div style={{ color: "#bfb8b8" }}>
                             <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
                             <Icon type="heart" theme="outlined" style={{ margin: "0 3px 0 5px" }} />{r.collectNum ? r.collectNum : 0}
+                            <span style={{ color: "#bfb8b8", marginLeft: "10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
                         </div>
                     </div>
                 }
@@ -232,13 +229,6 @@ class Personal extends Component {
                 title: '版本',
                 dataIndex: 'fileVersion',
                 align: 'center',
-                render: (t, r) => {
-                    return <div>
-                        <div>{t}</div>
-                        <div style={{ color: "#bfb8b8" }}>{r.downloadNum ? r.downloadNum : 0}次下载</div>
-
-                    </div>
-                }
             },
             {
                 title: '文件大小',
@@ -275,6 +265,7 @@ class Personal extends Component {
             // },
             {
                 title: '币值',
+                width: 100,
                 dataIndex: 'points',
                 align: 'center',
             },
@@ -305,6 +296,7 @@ class Personal extends Component {
             },
             {
                 title: '操作',
+                width: 150,
                 align: 'center',
                 render: (t, r) => {
                     let type = r.reviewStatus

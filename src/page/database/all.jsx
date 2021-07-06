@@ -83,6 +83,7 @@ class All extends Component {
                 title: '文件名',
                 dataIndex: 'fileName',
                 align: 'center',
+                width:500,
                 render: (t, r) => {
                     let style1 = r.isLike ? { margin: "0 3px 0 0", cursor: "pointer", color: "#7777f7" } : { margin: "0 3px 0 0", cursor: "pointer" }
                     let style2 = r.isCollect ? { margin: "0 3px 0 5px", cursor: "pointer", color: "#f56464" } : { margin: "0 3px 0 5px", cursor: "pointer" }
@@ -91,6 +92,7 @@ class All extends Component {
                         <div style={{ color: "#bfb8b8" }}>
                             <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={style1} />{r.likeNum ? r.likeNum : 0}
                             <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={style2} />{r.collectNum ? r.collectNum : 0}
+                            <span style={{ color: "#bfb8b8",marginLeft:"10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
                         </div>
                     </div>
                 }
@@ -100,12 +102,7 @@ class All extends Component {
                 title: '版本',
                 dataIndex: 'fileVersion',
                 align: 'center',
-                render: (t, r) => {
-                    return <div>
-                        <div>{t}</div>
-                        <div style={{ color: "#bfb8b8" }}>{r.downloadNum ? r.downloadNum : 0}次下载</div>
-                    </div>
-                }
+              
             },
             {
                 title: '文件大小',
