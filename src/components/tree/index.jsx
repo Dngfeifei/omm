@@ -149,13 +149,13 @@ class TreeList extends Component {
     render = () => {
 
         const { treeData, autoExpandParent, checkable, defaultCheckedKeys, defaultExpandAll, defaultExpandedKeys, defaultSelectedKeys, draggable, multiple, selectable, showIcon,
-            showLine, onCheck, onDragEnd, onDrop, onRightClick, onSelect, selectedKeys, search, edit
+            showLine, onCheck, onDragEnd, onDrop, onRightClick, onSelect, selectedKeys, search, edit,style
 
         } = this.props;
         // 进行数组扁平化处理
         generateList(treeData);
         return (
-            <div className="TreeContent">
+            <div className="TreeContent" style={style}>
                 <Spin tip="Loading..." spinning={this.state.visible}>
                     <Row>
                         {
