@@ -940,18 +940,20 @@ class Personal extends Component {
                 </div>
             </Modal>
             {/* 文件上传弹窗 */}
-            {this.state.uploadWindow.visible ?
-                <DataUpload
-                    visible={this.state.uploadWindow.visible}
-                    onCancel={_ => this.setState({ uploadWindow: { visible: false } })}
-                    onOk={this.uploadOk}
-                    data={{ type: this.state.treeSelectInfo, parentDir: this.state.parentDir }}
-                >
-                </DataUpload> : ""}
+            {
+                this.state.uploadWindow.visible ?
+                    <DataUpload
+                        visible={this.state.uploadWindow.visible}
+                        onCancel={_ => this.setState({ uploadWindow: { visible: false } })}
+                        onOk={this.uploadOk}
+                        data={{ type: this.state.treeSelectInfo, parentDir: this.state.parentDir }}
+                    >
+                    </DataUpload> : ""
+            }
             {/* 详情 */}
             {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details}></Details> : ""}
 
-        </div>
+        </div >
     }
 
 }
