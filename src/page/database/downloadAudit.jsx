@@ -56,7 +56,7 @@ class DownloadAudit extends Component {
             {
                 title: '文件名',
                 dataIndex: 'fileName',
-                width: 400,
+                width: 40,
                 align: 'center',
                 render: (t, r) => {
                     return <div>
@@ -72,12 +72,12 @@ class DownloadAudit extends Component {
             {
                 title: '版本',
                 dataIndex: 'fileVersion',
-                width: 200,
+                width: 20,
                 align: 'center',
             },
             {
                 title: '文件大小',
-                width: 150,
+                width: 15,
                 dataIndex: 'fileSize',
                 align: 'center',
             },
@@ -92,56 +92,26 @@ class DownloadAudit extends Component {
             // },
             {
                 title: '上传用户',
-                width: 120,
+                width: 12,
                 dataIndex: 'uploadUserName',
                 align: 'center',
             },
             {
                 title: '下载用户',
-                width: 120,
+                width: 12,
                 dataIndex: 'downUserName',
                 align: 'center',
             },
-            // {
-            //     title: '资料类型',
-            //     dataIndex: 'categorieName',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '上传时间',
-            //     dataIndex: 'uploadTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '发布时间',
-            //     dataIndex: 'publishTime',
-            //     align: 'center',
-            // },
             {
                 title: '资料级别',
-                width: 120,
+                width: 12,
                 dataIndex: 'levelName',
                 align: 'center',
             },
-            // {
-            //     title: '币值',
-            //     dataIndex: 'points',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '下架日期',
-            //     dataIndex: 'clearTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '描述',
-            //     dataIndex: 'description',
-            //     align: 'center',
-            // },
             {
                 title: '审核状态',
                 dataIndex: 'reviewStatus',
-                width: 140,
+                width: 14,
                 align: 'center',
                 editable: false,
                 render: (t, r) => {
@@ -159,7 +129,7 @@ class DownloadAudit extends Component {
                 title: '操作',
                 align: 'center',
                 editable: false,
-                width: 160,
+                width: 16,
                 render: (t, r) => {
                     let status = r.reviewStatus
                     if (status == "0") {
