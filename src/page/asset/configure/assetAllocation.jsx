@@ -142,10 +142,10 @@ class assetsAllocation extends Component {
                     name:'部件信息',
                     child: require('./component.jsx').default
                 },
-                // {
-                //     name:'子表信息',
-                //     child: require('./information.jsx').default
-                // }
+                {
+                    name:'风险排查',
+                    child: require('./riskInvestigation.jsx').default
+                }
             ]
         }
     }
@@ -316,15 +316,7 @@ class assetsAllocation extends Component {
             autoExpandParent: false,
         });
     };
-    //获取新增或修改后的资源树名称
-    getNewRoleGroupVal = (type,val) => {
-        let obj = {};
-        obj[type] = val;
-        let newRoleGroup = Object.assign({}, this.state.newRoleGroup, obj)
-        this.setState({
-            newRoleGroup: newRoleGroup
-        })
-    }
+
     //点击行选中选框
     onRow = (record,index) => {
         return {
@@ -377,9 +369,6 @@ class assetsAllocation extends Component {
                 return
             }
             roleModalTitle = roleModalType == 1 ? "修改资产配置" : "查看资产配置";
-            
-            
-            let selectData = this.initSelectData();
             // console.log(tableSelectedInfo)
             // return
             this.setState({
@@ -387,22 +376,9 @@ class assetsAllocation extends Component {
                     roleModal: true,
                     roleModalType,
                     roleModalTitle
-                },
-                selectData
+                }
             })
         }
-    }
-    //编辑的时候初始化下拉框数据
-    initSelectData =() => {
-        let {selectData} = this.state;
-        let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].productLineId);
-        let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].serviceClassId);
-        let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].skillTypeId);
-        let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].brandId);
-        this.getAreaData(this.state.tableSelectedInfo[0].projectId)
-        this.getCustomer(this.state.tableSelectedInfo[0].projectAreaId)
-        selectData = Object.assign({}, selectData, { productModeType:productModeType? productModeType :[],productSkillType:productSkillType? productSkillType :[],productBrandType:productBrandType? productBrandType :[],productLineType:productLineType? productLineType :[]});
-        return selectData;
     }
     //表格单项删除
     delRoleItem = async (arr) => {
@@ -744,7 +720,7 @@ class assetsAllocation extends Component {
                     tableSelectedInfo: []
                 })}
                 onOk={_ => this.editRoleSave()}
-                width={1000}
+                width={1200}
                 style={{ top: 50, marginBottom: 100 }}
                 bodyStyle={{paddingTop:0,height:500}}
                 okText="保存"

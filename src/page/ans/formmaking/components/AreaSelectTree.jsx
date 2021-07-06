@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { TreeSelect } from 'antd';
-import { getAreaList } from '@/page/ans/formmaking/services'
+import { getAreaList } from '@/page/ans/flow/bpmn-designer/services'
 
 const { TreeNode } = TreeSelect;
 

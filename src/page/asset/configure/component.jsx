@@ -14,7 +14,16 @@ class Component extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            data: [], //数据包
+            data: [
+                {
+                    1:"2323",
+                    2:"2323",
+                    3:"2323",
+                    4:"2323",
+                    5:"2323",
+                    6:"2323",
+                }
+            ], //数据包
             selectedRowKeys:null,  //选中的table表格的id
         }
     }
@@ -61,44 +70,93 @@ class Component extends React.Component {
                 dataIndex: 'key',
                 editable: false,
                 align:'center',
-                width:'80px',
+                width:'60px',
                 //每一页都从1开始
                 render:(text,record,index)=> `${index+1}`
             },
             {
-                title: <div className="ant-form-item-required">服务区域</div>,
-                dataIndex: 'area',
-                editable: true,
+                title: <div className="ant-form-item-required1">fc</div>,
+                dataIndex: '1',
+                align:'center',
+                width:'100px',
                 render:(text,record,index) => {
-                   let value = text.split("/"),parentedit = this.props.isEdit ? 0 : 1;;
-                   return <Cascader disabled={parentedit ? false : true} options={this.state.computerRegion} value={value} onChange={(value) => this.onAreaChange(index,'area',value)} placeholder="请选择区域" />
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'1',value)} />
+                },
+                editable: true,
+            },
+            {
+                title: <div className="ant-form-item-required1">部件号</div>,
+                dataIndex: '2',
+                width:'100px',
+                align:'center',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'2',value)} />
+                },
+                editable: true,
+            },
+            {
+                title: <div className="ant-form-item-required1">部件位置</div>,
+                dataIndex: '3',
+                align:'center',
+                width:'100px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'3',value)} />
+                },
+                editable: true,
+            },
+            {
+                title: <div className="ant-form-item-required1">部件类别</div>,
+                dataIndex: '4',
+                align:'center',
+                editable: true,
+                width:'100px',
+                render:(text,record,index) => {
+                   return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => this.onFormChange(index,'4',value)}>
+                                {
+                                    [].map((items, index) => {
+                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
+                                    })
+                                }
+                            </Select>
                 }
             },
             {
-                title: <div className="ant-form-item-required">是否是主责区域</div>,
-                dataIndex: 'isMainDutyArea',
-                // render: t => t == '1' ? '是' : '否',
-                render:(text,record,index)=>{
-                    let parentedit = this.props.isEdit ? 0 : 1;
-                    return (<Radio.Group value={text} onChange={({target:{value}}) => this.onAreaChange(index,'isMainDutyArea',value)}>
-                        <Radio value='1' disabled={parentedit ? false : true}>是</Radio>
-                        <Radio value='0' disabled={parentedit ? false : true}>否</Radio>
-                    </Radio.Group>)
+                title: <div className="ant-form-item-required1">数量</div>,
+                dataIndex: '5',
+                align:'center',
+                width:'80px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'5',value)} />
                 },
                 editable: true,
-               
-            },{
-                title: <div className="ant-form-item-required">客户地址</div>,
-                dataIndex: 'address',
+            },
+            {
+                title: <div className="ant-form-item-required1">描述</div>,
+                dataIndex: '6',
+                align:'center',
+                width:'200px',
                 render:(text,record,index) => {
-                    let node = this.setJurisdiction(this.props.isEdit,this.props.formRead,this.props.node);
-                    return <Input disabled={node} onChange={({target:{value}}) => this.onAreaChange(index,'address',value)} />
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) =>this.onFormChange(index,'6',value)} />
+                },
+                editable: true,
+            },{
+                title: <div className="ant-form-item-required1">备注</div>,
+                dataIndex: '7',
+                align:'center',
+                width:'280px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'7',value)} />
                 },
                 editable: true,
             }
         ]
     }
-
+    //表格表单写入
+    onFormChange = (index,type,value) => {
+        const {data} = this.state;
+        data[index][type] = value;
+        this.setState({data})
+    }
     // 删除--系统参数（单个删除）
     handlerDelete=()=>{
         var _this = this
@@ -125,20 +183,17 @@ class Component extends React.Component {
 
     // 单选框按钮---选中事件
     selectChangeArea = (selectedRowKeys, selectedRows) => {
-        // console.log('selectedRowKeys changed: ',selectedRowKeys, selectedRows);
         this.setState({ 
             selectedRowKeys:selectedRowKeys,
         });
     }
     // 选中行时就选中单选框按钮
-    onRow = (record) => {
+    onRow = (record,index) => {
         return {
             onClick: () => {
-                // let selectedKeys = [record.id];
-                let selectedKeys = [record.key];
-                this.setState({
-                    selectedRowKeys: selectedKeys,
-                })
+                console.log(record,index)
+                let selectedKeys = [index];
+                this.selectChangeArea(selectedKeys,record);
             }
         }
     }
@@ -163,11 +218,10 @@ class Component extends React.Component {
                     rowSelection={rowSelectionArea}  
                     dataSource={this.state.data}
                     columns={this.columns}
-                    scroll={this.props.scroll}
-                    // rowClassName="editable-row"
+                    scroll={{y:450}}
                     pagination={false}
                     size={'small'}
-                    style={{ marginTop: '16px', overflowY: 'auto' }}
+                    style={{marginTop:16}}
                 />
             </div>
            

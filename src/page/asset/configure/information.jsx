@@ -34,6 +34,22 @@ class BasicInformation extends Component {
     componentWillMount(){
         //初始化下拉列表数据
         this.init();
+        if(this.props.roleWindow.roleModalType){
+            let selectData = this.initSelectData();
+            this.setState({selectData});
+        }
+    }
+    //编辑的时候初始化下拉框数据
+    initSelectData =() => {
+        let {selectData} = this.state;
+        let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].productLineId);
+        let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].serviceClassId);
+        let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].skillTypeId);
+        let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].brandId);
+        this.getAreaData(this.state.tableSelectedInfo[0].projectId)
+        this.getCustomer(this.state.tableSelectedInfo[0].projectAreaId)
+        selectData = Object.assign({}, selectData, { productModeType:productModeType? productModeType :[],productSkillType:productSkillType? productSkillType :[],productBrandType:productBrandType? productBrandType :[],productLineType:productLineType? productLineType :[]});
+        return selectData;
     }
     //生成新增/修改/查看弹框内容
     getFields = (assetsList) => {

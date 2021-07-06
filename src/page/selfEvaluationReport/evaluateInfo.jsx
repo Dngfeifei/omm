@@ -28,7 +28,8 @@ import { getAssessLeaderReport } from "/api/selfEvaluationReport";
 import {
   GetselectAssessReportList,
   GetselectAssessProableReportList,
-  Getbasedata
+  Getbasedata,
+  GetexportAssessReportList
 } from "/api/evaluateInfo.js";
 // 引入页面CSS
 import "@/assets/less/pages/evalutateinfo.less";
@@ -410,6 +411,10 @@ class AssessmentReport extends Component {
     this.setState({
       // skillTypeId, brandId, competenceLevelId
     })
+
+
+
+
   };
   // 1：产品类别选中方法
   onSelect0 = (val, option) => {
@@ -594,12 +599,34 @@ class AssessmentReport extends Component {
       visible: false,
     });
   };
+
+  //导出按钮
+  exportObtn = () => {
+    let currentDay = moment().format("YYYYMMDD");
+    let fileName = "工程师评定信息表" + currentDay + ".xlsx";
+    const hide = message.loading("报表数据正在检索中,请耐心等待。。。", 0);
+    GetexportAssessReportList().then((res) => {
+      console.log(res.data)
+      if (res.success == 1) {
+        message.destroy();
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.href = res.data + "?filename=" + fileName;
+        a.click();
+        document.body.removeChild(a);
+      } else if (res.success == 0) {
+        message.destroy();
+        message.error(res.message);
+      }
+    });
+  };
   // 导出工程师技能评价报告
   downFile = () => {
     let currentDay = moment().format("YYYYMMDD");
     let fileName = "工程师技能评价报告_" + currentDay + ".xlsx";
     const hide = message.loading("报表数据正在检索中,请耐心等待。。。", 0);
     getAssessLeaderReport().then((res) => {
+      console.log(res.data)
       if (res.success == 1) {
         message.destroy();
         var a = document.createElement("a");
@@ -708,6 +735,10 @@ class AssessmentReport extends Component {
     this.getTable(0);
   };
 
+
+
+
+
   //清空高级搜索
   reset = async (regionalName, departmentName, userName, productCategory, skillTypeCode, brandCode, productLineLevelCode, productLineCodes, proableLevel) => {
     // productType: this.state.productCategory,	//产品类别
@@ -731,6 +762,9 @@ class AssessmentReport extends Component {
     })
 
     // this.getTable();
+
+
+
 
   };
   render = (_) => {
@@ -771,10 +805,7 @@ class AssessmentReport extends Component {
           {/* //202171 */}
           <div className="formRow" style={{ display: "flex", }}>
             <div className="formCol" style={{ margin: "0 15px" }}>
-
               <span >产品类别:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-
-
               <Select className="formVal" bordered={false} style={{ width: "170px", }} value={this.state.productCategory} onSelect={this.onSelect0} addonBefore="产品类别">
 
                 <Option value="" style={{ outline: "none" }}>请选择</Option>
@@ -786,12 +817,7 @@ class AssessmentReport extends Component {
               </Select>
             </div>
             <div className="formCol" style={{ margin: "0 15px" }}>
-
-
               <span >技术方向:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-
-
-
               <Select className="formVal" style={{ width: "170px" }} value={this.state.skillTypeCode} onSelect={this.onSelect1}
                 showSearch
                 optionFilterProp="children"
@@ -809,11 +835,7 @@ class AssessmentReport extends Component {
               </Select>
             </div>
             <div className="formCol" style={{ margin: "0 15px" }} >
-
               <span >品牌:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-
-
-
               <Select className="formVal" style={{ width: "170px" }} value={this.state.brandCode} onSelect={this.onSelect2}
                 showSearch
                 optionFilterProp="children"
@@ -870,6 +892,41 @@ class AssessmentReport extends Component {
               {/* <div className="formCol"></div>
               <div className="formCol"></div> */}
             </div>
+          </div>
+          {/* 选中品牌展示复选框数据 */}
+          <div style={{ margin: '15px 15px' }}>
+            {productLineDatas.length ? <Card>
+              <Checkbox.Group style={{ width: '100%' }} value={this.state.productLineCodes} onChange={this.onChange4} >
+                <Row>
+                  {
+                    this.state.productCategory == 1 ? (this.state.brandId ? (productLineDatas.map((item, index) => {
+                      return <Col span={6} key={index} >
+                        <Tooltip title={item.name}>
+                          <Checkbox value={item.code} style={{
+                            width: "100%",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap"
+                          }}>{item.name}</Checkbox>
+                        </Tooltip>
+                      </Col>
+                    })) : "") : (this.state.brandId && this.state.productLineLevelCode ? (productLineDatas.map((item, index) => {
+                      return <Col span={6} key={index} >
+                        <Tooltip title={item.name}>
+                          <Checkbox value={item.code} style={{
+                            width: "100%",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                            whiteSpace: "nowrap"
+                          }}>{item.name}</Checkbox>
+                        </Tooltip>
+                      </Col>
+                    })) : "")
+
+                  }
+                </Row>
+              </Checkbox.Group>
+            </Card> : ""}
 
           </div>
           {/* 202172大区 */}
@@ -908,7 +965,7 @@ class AssessmentReport extends Component {
             <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.search()}>
               查询
                 </Button>
-            <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.search()}>
+            <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.exportObtn()}>
               导出
                 </Button>
             <Button
@@ -928,101 +985,6 @@ class AssessmentReport extends Component {
               导出工程师评定结果
                  </Button>
           </div>
-
-          {/* <Form>
-            <Row>
-              <Col span={24}>
-                <span>大区:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <Input
-
-                  placeholder="请输入"
-                  value={this.state.regionalName}
-                  onChange={this.inputChange.bind(this, "regionalName")}
-                  style={{ width: "170px", margin: "0 15px" }}
-                />
-                <span>部门:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <Input
-
-                  placeholder="请输入"
-                  value={this.state.departmentName}
-                  onChange={this.inputChange.bind(this, "departmentName")}
-                  style={{ width: "170px", margin: "0 5px" }}
-                />
-                <span>姓名:&nbsp;&nbsp;&nbsp;&nbsp;</span>
-                <Input
-
-                  placeholder="请输入"
-                  value={this.state.userName}
-                  onChange={this.inputChange.bind(this, "userName")}
-                  style={{ width: "170px", margin: "0 5px" }}
-                />
-                <Button type="primary" style={{ margin: "0 5px" }} onClick={() => this.search()}>
-                  查询
-                </Button>
-                <Button type="primary" style={{ margin: "0 5px" }} onClick={() => this.search()}>
-                  导出
-                </Button>
-                <Button
-                  type="primary"
-                  style={{ margin: "0 5px" }}
-                  onClick={() => this.reset()}
-                >
-                  重置
-                </Button>
-                <Button
-                  type="primary"
-                  onClick={this.downFile}
-                  style={{
-                    // marginLeft: "30px",
-                    // position: "fixed",
-                    // right: "62px",
-                    // top: "125px",
-                  }}
-                >
-                  导出工程师评定结果
-                 </Button>
-              </Col>
-            </Row>
-          </Form> */}
-
-
-          {/* 选中品牌展示复选框数据 */}
-          <div style={{ margin: '0 15px' }}>
-            {productLineDatas.length ? <Card>
-              <Checkbox.Group style={{ width: '100%' }} value={this.state.productLineCodes} onChange={this.onChange4} >
-                <Row>
-                  {
-                    this.state.productCategory == 1 ? (this.state.brandId ? (productLineDatas.map((item, index) => {
-                      return <Col span={6} key={index} >
-                        <Tooltip title={item.name}>
-                          <Checkbox value={item.code} style={{
-                            width: "100%",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap"
-                          }}>{item.name}</Checkbox>
-                        </Tooltip>
-                      </Col>
-                    })) : "") : (this.state.brandId && this.state.productLineLevelCode ? (productLineDatas.map((item, index) => {
-                      return <Col span={6} key={index} >
-                        <Tooltip title={item.name}>
-                          <Checkbox value={item.code} style={{
-                            width: "100%",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                            whiteSpace: "nowrap"
-                          }}>{item.name}</Checkbox>
-                        </Tooltip>
-                      </Col>
-                    })) : "")
-
-                  }
-                </Row>
-              </Checkbox.Group>
-            </Card> : ""}
-
-          </div>
-
         </div>
         {/* //表格 */}
         <div

@@ -18,3 +18,11 @@ export const GetselectAssessProableReportList = (params = {}) => {
 export const Getbasedata = () => {
 	return http.fetchGet(`/basedata`)
 }
+
+//导出按钮接口
+
+
+
+export const GetexportAssessReportList = () => {
+	return http.fetchGet(`/biStatisticalReport/exportAssessReportList`)
+}

@@ -34,6 +34,7 @@ const FormContent = ({ state, form }) => {
                   {React.createElement(allComps[`${item.type}-render`], {
                     control: item,
                     formConfig: state.formConfig,
+                    form,
                   })}
                 </div>
               )}
@@ -57,6 +58,20 @@ const FormRender = forwardRef(({ formModel, formConfig }, ref) => {
       const formValues = {};
       state.formModel.forEach((item) => {
         formValues[item.model] = item.options.value;
+        if (item.type === 'grid') {
+          item.columns.forEach((column) => {
+            column.list.forEach((t) => {
+              formValues[t.model] = t.options.value || '';
+            });
+          });
+        }
+        if (item.type === 'tabs') {
+          item.tabs.forEach((column) => {
+            column.list.forEach((t) => {
+              formValues[t.model] = t.options.value || '';
+            });
+          });
+        }
       });
       return formValues;
     },
