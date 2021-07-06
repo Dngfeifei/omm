@@ -62,7 +62,6 @@ class SendOut extends Component {
     saveData = () => {
         const {params} = this.state;
         // 验证
-        // console.log(params,params.isAll);
         if(params.isAll == 0 && !params.msgUsers.length){
             return message.warning('请选择发送人员');
         }else if(!params.msgType){
