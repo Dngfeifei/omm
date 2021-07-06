@@ -30,8 +30,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       compress: {
         warnings: false
       },
-      sourceMap: false,//优化不再设置sourceMap为true
-      parallel: true
+      sourceMap: true
     }),
     // extract css into its own file
     new ExtractTextPlugin({
