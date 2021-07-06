@@ -6,27 +6,10 @@ import allComps from '@/page/ans/formmaking/lib/controls';
 import FormRender from '@/page/ans/formmaking/lib/FormRender';
 import { cloneDeep } from 'lodash';
 
-const Container = styled.div`
-  position: absolute;
-  left: 0;
-  top: 46px;
-  right: 0;
-  bottom: 0;
-  margin: 10px;
-  ${({ type }) => {
-    if (type === 'pc') return ``;
-    return `
-      margin-left: auto;
-      margin-right: auto;
-      width:${type === 'pad' ? '568px' : '375px'}
-    `;
-  }};
-`;
-
 const PreviewFormModal = ({ formData, open, onCancel }) => {
   const modelRef = useRef();
-  const [formModel, setFormModel] = useState(formData.formModel)
-  const [formConfig, setFormConfig] = useState(formData.formConfig)
+  const [formModel, setFormModel] = useState(cloneDeep(formData.formModel))
+  const [formConfig, setFormConfig] = useState(cloneDeep(formData.formConfig))
 
   const [json, setJson] = useState('');
   const [isJsonOpen, setIsJsonOpen] = useState(false);
@@ -36,8 +19,8 @@ const PreviewFormModal = ({ formData, open, onCancel }) => {
   };
 
   useEffect(() => {
-    setFormModel(formData.formModel)
-    setFormConfig(formData.formConfig)
+    setFormModel(cloneDeep(formData.formModel))
+    setFormConfig(cloneDeep(formData.formConfig))
     if (modelRef.current) {
       handleReset()
     }

@@ -3,7 +3,7 @@ import DividerSetting from './components/DividerSetting'
 import DividerRender from './components/DividerRender'
 
 export default {
-  'divider-design': DividerDesign,
+  'divider-design': DividerRender,
   'divider-setting': DividerSetting,
   'divider-render': DividerRender,
 }

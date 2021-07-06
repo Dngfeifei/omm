@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Input, Switch, Select, Checkbox } from 'antd';
+import { Input, Switch, Select, Checkbox, Radio} from 'antd';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
@@ -56,66 +56,17 @@ const DividerSetting = ({ control, updateFormModel }) => {
         />
       </FormAttrItem>
 
-      <FormAttrItem label="宽度">
-        <Input
-          value={options.width}
-          onChange={(e) => {
-            updateOptions({ width: e.target.value });
-          }}
-        />
-      </FormAttrItem>
 
-      <FormAttrItem label="标签宽度">
-        <Checkbox
-          style={{ lineHeight: '32px', float: 'left' }}
-          checked={options.isLabelWidth}
-          onChange={(e) => updateOptions({ isLabelWidth: e.target.checked })}
-        >
-          自定义
-        </Checkbox>
-        <InputNumberPlus
-          value={options.labelWidth}
-          disabled={!options.isLabelWidth}
-          onChange={(value) => updateOptions({ labelWidth: value })}
-        />
-      </FormAttrItem>
-
-      <FormAttrItem label="隐藏标签">
-        <Switch
-          checked={options.hideLabel}
-          onChange={(checked) => updateOptions({ hideLabel: checked })}
-        />
-      </FormAttrItem>
-
-        <FormAttrItem label="最大值">
-            <InputNumberPlus
-                value={options.max}
-                step={1}
-                onChange={(value) => updateOptions({ max: value })}
-            />
-        </FormAttrItem>
-
-      <FormAttrItem label="自定义Class">
-        <Select
-          mode="tags"
-          style={{ width: '100%' }}
-          placeholder="请选择"
-          value={defaultClass}
-          onChange={(value) => updateOptions({ customClass: value.join(' ') })}
-        ></Select>
+      <FormAttrItem label="布局方式">
+        <Radio.Group defaultValue={options.contentPosition} buttonStyle="solid" onChange={(e) => updateOptions({ contentPosition: e.target.value })}>
+          <Radio.Button value="left">左侧</Radio.Button>
+          <Radio.Button value="center">居中</Radio.Button>
+          <Radio.Button value="right">右侧</Radio.Button>
+        </Radio.Group>
       </FormAttrItem>
 
       <FormAttrItem label="操作属性">
         <WrapFlex>
-          <div>
-            <Checkbox
-              checked={options.dataBind}
-              onChange={(e) => updateOptions({ dataBind: e.target.checked })}
-              disabled
-            >
-              数据绑定
-            </Checkbox>
-          </div>
           <div>
             <Checkbox
               checked={options.hidden}
@@ -124,35 +75,10 @@ const DividerSetting = ({ control, updateFormModel }) => {
               隐藏
             </Checkbox>
           </div>
-          <div>
-            <Checkbox
-              checked={options.disabled}
-              onChange={(e) => updateOptions({ disabled: e.target.checked })}
-            >
-              禁用
-            </Checkbox>
-          </div>
-            <div>
-                <Checkbox
-                    checked={options.showScore}
-                    onChange={(e) => updateOptions({ showScore: e.target.checked })}
-                >
-                    显示分数
-                </Checkbox>
-            </div>
+
         </WrapFlex>
       </FormAttrItem>
 
-      <FormAttrItem label="校验">
-        <div className={rowDiv}>
-          <Checkbox
-            checked={options.required}
-            onChange={(e) => updateOptions({ required: e.target.checked })}
-          >
-            必填
-          </Checkbox>
-        </div>
-      </FormAttrItem>
     </div>
   );
 };

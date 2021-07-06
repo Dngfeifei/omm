@@ -347,12 +347,8 @@ class Access extends Component {
 
     let id = this.state.searchListID;
     let name = this.state.searchRoleName;
-    //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-    if (id == "" || id == null) {
-      message.destroy();
-      message.warning("请先选中左侧角色组，然后再进行查询。");
-      return;
-    }
+
+
     // 2 发起查询请求 查询后结构给table赋值
     // 选中后请求角色数据
     let params = Object.assign({}, {
@@ -457,6 +453,7 @@ class Access extends Component {
       message.destroy();
       message.warning("没有选中数据,无法进行修改!");
     }
+    debugger
     let row = this.state.tableSelectedInfo[0];
     let visible = this.state.visible;
     this.setState({
@@ -465,6 +462,7 @@ class Access extends Component {
       searchListID: row.businessKey,
       visible: !visible,
     })
+
   };
 
   //角色表格单项删除
@@ -806,18 +804,7 @@ class Access extends Component {
           >
             <Form style={{ width: "100%" }}>
               <Row>
-                {/* <Col span={12}>
-                  <Input
-                    addonBefore="角色名称"
-                    placeholder="请输入"
-                    value={this.state.searchRoleName}
-                    onChange={this.getSearchRoleName}
-                    style={{ width: "200px" }}
-                  />
-                  <Button type="primary" onClick={this.searchRoleNameFun}>
-                    查询
-                  </Button>
-                </Col> */}
+
                 <Col span={24} style={{ textAlign: "right" }}>
                   <Button
                     type="info"

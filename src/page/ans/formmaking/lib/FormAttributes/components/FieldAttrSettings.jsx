@@ -13,7 +13,10 @@ const FieldAttributes = () => {
   // 嵌套组件赋值  zgf...
   const updateFormModel = useCallback(
     (ctrl) => {
+      
       const flatFormModel = [formModel];
+
+
       for (const iterator of flatFormModel) {
         for (const [index, item] of iterator.entries()) {
           if (item.id === ctrl.id) {

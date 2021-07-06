@@ -1,5 +1,15 @@
 import http from './index'
 
+const REMOTE_URL = 'http://152.136.121.201:8080/jeeplus-vue';
+
+export const getDictTypeList = (params = {}) => {
+	return http.fetchGet(REMOTE_URL + `/sys/dict/type/list`, params)
+}
+
+export const getDictMap = (params = {}) => {
+	return http.fetchGet(REMOTE_URL + `/sys/dict/getDictMap`, params)
+}
+
 export const getDictList = (params = {}) => {
 	return http.fetchPost(`/dict/list`, params)
 }

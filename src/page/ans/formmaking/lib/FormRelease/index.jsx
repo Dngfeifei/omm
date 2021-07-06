@@ -16,6 +16,8 @@ import { getDataSource } from '/api/database'
 import { getTableList } from '/api/form'
 import { getMenuTreeData } from '/api/menu'
 import styled from "@emotion/styled";
+import IconModal from '/page/ans/formmaking/components/IconModal';
+import DataRuleModal from '/page/ans/formmaking/lib/FormRelease/DataRuleModal'
 
 export const Info = styled.div`
   padding: 8px 16px;
@@ -54,56 +56,6 @@ function mapTreeData(treeData) {
 }
 
 
-const columns = [
-  {
-    title: '规则名称',
-    dataIndex: 'name',
-    key: 'name',
-  },
-  {
-    title: '表名',
-    dataIndex: 'className',
-    key: 'className',
-  },
-  {
-    title: '规则字段',
-    dataIndex: 'field',
-    key: 'field',
-  },
-  {
-    title: '规则条件',
-    dataIndex: 'express',
-    key: 'express',
-  },
-
-  {
-    title: '规则值',
-    dataIndex: 'value',
-    key: 'value',
-  },
-  {
-    title: '自定义sql',
-    dataIndex: 'sqlSegment',
-    key: 'sqlSegment',
-  },
-  {
-    title: '备注',
-    dataIndex: 'remarks',
-    key: 'remarks',
-  },
-
-  {
-    title: '操作',
-    key: 'action',
-    render: (text, record) => (
-      <div>
-        <Button>修改</Button>
-        <Divider type="vertical" />
-        <Button>删除</Button>
-      </div>
-    ),
-  },
-];
 /**
  * 表单基本型信息编辑
  */
@@ -116,16 +68,85 @@ export default function FormRelease(props) {
       })
   }, [])
 
-  const [inputForm, setInputForm] = useState({
-    parent: {
-      id: ''
+
+  const columns = [
+    {
+      title: '规则名称',
+      dataIndex: 'name',
+      key: 'name',
     },
+    {
+      title: '表名',
+      dataIndex: 'className',
+      key: 'className',
+    },
+    {
+      title: '规则字段',
+      dataIndex: 'field',
+      key: 'field',
+    },
+    {
+      title: '规则条件',
+      dataIndex: 'express',
+      key: 'express',
+    },
+
+    {
+      title: '规则值',
+      dataIndex: 'value',
+      key: 'value',
+    },
+    {
+      title: '自定义sql',
+      dataIndex: 'sqlSegment',
+      key: 'sqlSegment',
+    },
+    {
+      title: '备注',
+      dataIndex: 'remarks',
+      key: 'remarks',
+    },
+
+    {
+      title: '操作',
+      key: 'action',
+      render: (text, record, index) => (
+        <div>
+          <Button onClick={() => {
+            setSelectedDataRuleIndex(index)
+            setIsDataRuleModalOpen(true)
+          }}>修改</Button>
+          <Divider type="vertical" />
+          <Button onClick={() => {
+            console.log(index);
+            setInputForm({
+              ...inputForm,
+              dataRuleList: inputForm.dataRuleList.filter((d, i) => {
+                return i !== index
+              })
+            })
+          }}>删除</Button>
+        </div>
+      ),
+    },
+  ];
+
+  const [inputForm, setInputForm] = useState({
+    parentId: '',
     name: '',
     id: '',
     icon: '',
     dataRuleList: [],
     formId: props.id
   })
+
+  const [tableInfo, setTableInfo] = useState(null)
+
+  const [isIconModalOpen, setIsIconModalOpen] = useState(false)
+
+
+  const [isDataRuleModalOpen, setIsDataRuleModalOpen] = useState(false)
+  const [selectedDataRuleIndex, setSelectedDataRuleIndex] = useState(null)
 
   // 获取表单数据
   useEffect(() => {
@@ -138,6 +159,10 @@ export default function FormRelease(props) {
         setInputForm({
           ...inputForm,
           name: form.name
+        })
+        setTableInfo({
+          name: form.tableName,
+          'dataSource.enName': form.dataSource.enName,
         })
       })
     }
@@ -176,7 +201,7 @@ export default function FormRelease(props) {
             allowClear
             onChange={value => { setInputForm({
               ...inputForm,
-              parent: { id: value }
+              parentId: value
             })}}
             treeData={menuList}
           />
@@ -196,21 +221,59 @@ export default function FormRelease(props) {
         <Form.Item
           label="菜单图标"
         >
-          <Input value={inputForm.icon} onChange={(e) => setInputForm({
-            ...inputForm,
-            icon: e.target.value,
-          })} />
+          <Input
+            value={inputForm.icon}
+            onFocus={() => setIsIconModalOpen(true)}
+          />
         </Form.Item>
 
         <Info>如需对动态表单创建数据权限，请添加数据规则。添加后的规则，可在[菜单管理->数据规则]中查看。</Info>
 
         <div className="mt10 mb10">
-          <Button type="primary">添加数据规则</Button>
+          <Button type="primary" onClick={() => setIsDataRuleModalOpen(true)}>添加数据规则</Button>
         </div>
         <Table columns={columns} dataSource={inputForm.dataRuleList} />
 
 
       </Form>
+
+      {isIconModalOpen ? (
+        <IconModal
+          icon={inputForm.icon}
+          open={isIconModalOpen}
+          onChange={icon => setInputForm({
+            ...inputForm,
+            icon: icon,
+          })}
+          onOk={() => setIsIconModalOpen(false)}
+          onCancel={() => setIsIconModalOpen(false)}
+        />
+      ) : null}
+
+      {isDataRuleModalOpen ? (
+        <DataRuleModal
+          tableInfo={tableInfo}
+          dataRule={selectedDataRuleIndex === null ? null : inputForm.dataRuleList[selectedDataRuleIndex]}
+          open={isDataRuleModalOpen}
+          onOk={(dataRule) => {
+            var dataRuleList = null
+            if (selectedDataRuleIndex === null) {
+              dataRuleList = [...inputForm.dataRuleList, dataRule]
+            } else {
+              dataRuleList = inputForm.dataRuleList.map((d, i) => {
+                return i === selectedDataRuleIndex ? dataRule : d
+              })
+            }
+            setInputForm({
+              ...inputForm,
+              dataRuleList
+            })
+            setSelectedDataRuleIndex(null)
+            setIsDataRuleModalOpen(false)
+          }}
+          onCancel={() => setIsDataRuleModalOpen(false)}
+        />
+      ) : null}
     </Modal>
   );
 };

@@ -24,7 +24,19 @@ export const Label = styled.div`
 export const Space = styled.div`
   display: flex;
   flex-direction: ${props => {
-    console.log(props);
     return props.control.options.inline ? 'row' : 'column'
+  }};
+`
+
+export const Flex = styled.div`
+  display: flex;
+  flex-direction: ${props => {
+    return props.flexDirection ? props.flexDirection : 'row'
+  }};
+  align-items:${props => {
+    return props.alignItems ? props.alignItems : "center"
+  }};
+  justify-content: ${props => {
+    return props.justifyContent ? props.justifyContent : 'center'
   }};
 `

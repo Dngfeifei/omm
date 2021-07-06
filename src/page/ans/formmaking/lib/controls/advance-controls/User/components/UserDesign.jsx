@@ -1,8 +1,9 @@
 import React, { useMemo } from 'react'
 import { Label, Container } from '../../../components/styles'
-import { Select } from 'antd'
+import { Input } from 'antd'
+const { Search } = Input;
 
-const UserDesign = ({ control, formConfig }) => {
+const UserDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
 
   const labelWidth = useMemo(() => {
@@ -11,6 +12,7 @@ const UserDesign = ({ control, formConfig }) => {
     }
     return formConfig.labelWidth
   }, [options, formConfig])
+
 
   return <div className={options.customClass}>
     <Container formConfig={formConfig}>
@@ -22,7 +24,13 @@ const UserDesign = ({ control, formConfig }) => {
         {control.name}
       </Label>
       }
-      <Select style={{width: '100%'}} />
+      <Search 
+    
+        placeholder={options.placeholder}
+        defaultValue={options.defaultValue}
+        style={{ width: options.width }}
+       />
+     
     </Container>
   </div>
 }

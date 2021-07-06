@@ -115,4 +115,11 @@ export const FlowNewModel = (params = {}) => {
 	return http.fetchPost(REMOTE_URL + `/app/rest/models`, params,true)
 }
 
+//获取区域列表
+export const FLowAreaList = (params = {}) =>
+	http.fetchGet(`${REMOTE_URL}/sys/area/treeData`, params)
+
+// 文件/图片上传接口
+export const FlowUpload = (params = {}) =>
+	http.fetchPost(`${REMOTE_URL}/sys/file/webupload/upload?uploadPath=/formbuilder`, params)
 

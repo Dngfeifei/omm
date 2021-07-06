@@ -5,7 +5,7 @@ import http from './index'
 export const getFormList = (params = {}) =>
     http.fetchGet(REMOTE_URL + `/form/make/list`, params)
 
-export const deletMakeForm = (params) => http.fetchDeleteWithKey(REMOTE_URL + `/form/make/delete`, params)
+export const deletMakeForm = (params) => http.fetchPost(REMOTE_URL + `/form/make/delete`, params)
 
 export const getFormItem = (params) => http.fetchGet(REMOTE_URL + `/form/make/queryById`, params)
 
@@ -20,3 +20,15 @@ export const queryByIdMakeForm = (params) => http.fetchGet(REMOTE_URL + `/form/m
 export const listGenerateForm = (params) => http.fetchPost(REMOTE_URL + `/form/generate/list`, params)
 
 export const getProjitemList = (params) => http.fetchGet(REMOTE_URL + `/form/formOms/selector`, params)
+
+export const getTableColumnList = (params) =>
+  http.fetchGet(REMOTE_URL + `/form/make/getTableColumnList`, params);
+
+export const saveGenerateFormApi = (params) =>
+  http.fetchPost(REMOTE_URL + `/form/generate/save`, params);
+
+export const deleteGenerateFormApi = (params) =>
+  http.fetchPost(REMOTE_URL + `/form/generate/delete`, params);
+
+export const createMenu = (params, isJson) =>
+  http.fetchPost(REMOTE_URL + `/form/make/createMenu`, params, isJson);

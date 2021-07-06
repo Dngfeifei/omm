@@ -1,32 +1,13 @@
 import React, { useMemo } from 'react'
-import styled from '@emotion/styled'
-import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import { Label, Container } from '../../../components/styles'
+import UserSelectModal from '@/page/ans/formmaking/components/UserSelectModal.jsx';
 
-const Container = styled.div`
-  display: ${({ labelPosition }) => (labelPosition === 'top' ? 'block' : 'flex')};
-`
-const Label = styled.div`
-  width: ${({ labelWidth }) => labelWidth}px;
-  text-align: ${({ labelPosition }) => labelPosition};
-  vertical-align: middle;
-  float: left;
-  font-size: 14px;
-  color: #606266;
-  line-height: 32px;
-  padding: 0 12px 0 0;
-  box-sizing: border-box;
-  > span{
-    color: #f56c6c;
-    margin-right: 2px;
-    font-size: 14px;
-  }
-`
-const InputBox = styled.div`
-  flex: 1;
-`
-
-const UserRender = ({ control, formConfig }) => {
+const UserRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
+  const handleOk = (e) => {
+      //done
+  }
+
 
   const labelWidth = useMemo(() => {
     if (options.isLabelWidth) {
@@ -35,8 +16,9 @@ const UserRender = ({ control, formConfig }) => {
     return formConfig.labelWidth
   }, [options, formConfig])
 
+
   return <div className={options.customClass}>
-    <Container labelPosition={formConfig.labelPosition}>
+    <Container formConfig={formConfig}>
       {!options.hideLabel && <Label
         labelPosition={formConfig.labelPosition}
         labelWidth={labelWidth}
@@ -45,12 +27,13 @@ const UserRender = ({ control, formConfig }) => {
         {control.name}
       </Label>
       }
-      <InputBox>
-        <InputNumberPlus disabled={options.disabled} defaultValue={options.defaultValue} style={{ width: options.width }} />
-      </InputBox>
+    
+      <UserSelectModal 
+         options={options}
+         onOk={()=>handleOk()}
+         >
+      </UserSelectModal>
     </Container>
-
-     {/*<pre>{JSON.stringify(options, null, 2)}</pre>*/}
   </div>
 }
 

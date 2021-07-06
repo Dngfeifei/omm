@@ -28,16 +28,25 @@ const handleRequest = (url, method, body = {}, json = false) => {
 		'Authorization': `Bearer ${token}`
 	})
 
+	if (body instanceof FormData) {
+		header = Object.assign({}, {'Content-Type': 'multipart/form-data'}, { 'Authorization': `Bearer ${token}` })
+	}
 
 	let req = {
 		method,
 		headers: new Headers(header)
 	}
 	if (method == 'POST' || method == 'PUT') {
-		req = Object.assign({
-			body: json ? JSON.stringify(body) : body,
-			bodyUsed: true
-		}, req)
+		if (body instanceof FormData) {
+			req = Object.assign({
+				body
+			}, req)
+		} else  {
+			req = Object.assign({
+				body: json ? JSON.stringify(body) : body,
+				bodyUsed: true
+			}, req)
+		}
 	}
 	return new Request(wholeUrl, req)
 }
@@ -117,6 +126,20 @@ const handleURL = url => {
 	return url
 }
 
+const handleText = res => new Promise((rsl, rej) => {
+	rsl(res.text())
+})
+	.then(res => {
+
+		countNum = true;
+		return res
+	})
+	.catch(err => {
+		message.error('请求超时，请联系管理员！');
+		hashHistory.push('/login');
+		console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
+	})
+
 
 export default {
 	tools: {
@@ -135,9 +158,17 @@ export default {
 		return handleTimeout(`${url}${handleDeleteParams(params, '/')}`, 'DELETE', null, null, times)
 			.then(handleResponse)
 	},
+	fetchFormData(url, params = {}, json = false, times = 100000) { //post接口调用
+		return handleTimeout(url, 'POST',qs.stringify(params), json, times)
+			.then(handleResponse)
+	},
 	fetchPut(url, params = {}, json = false, times = 100000) { //put接口
 		return handleTimeout(url, 'PUT', json ? params : handleParams(params), json, times)
 			.then(handleResponse)
+	},
+	fetchGetXml(url, params = {}, times = 100000) { //get接口 xml 信息
+		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, times)
+			.then(handleText)
 	},
 	fetchBlob(url, params = {}) { //get下载接口
 		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, 900000).then(function (response) {

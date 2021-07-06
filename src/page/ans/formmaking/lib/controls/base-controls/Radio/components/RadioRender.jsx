@@ -5,9 +5,9 @@ import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/
 import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
 import useDictTypeItemList from '@/page/ans/formmaking/hooks/useDictTypeItemList'
 
-const RadioRender = ({ control, formConfig }) => {
+const RadioRender = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
-  const baseProps = useFieldBaseProps(control, formConfig)
+  const baseProps = useFieldBaseProps(control, formConfig, false, inTable, onChange)
   const optionList = useDictTypeItemList(options)
 
   return <div className={options.customClass}>

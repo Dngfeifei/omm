@@ -42,19 +42,6 @@ const TabsDesign = ({ control, formConfig }) => {
           })}
         </Tabs>
       </div>
-      {/* {tabs.map((item) => {
-        return (
-          <div key={item.name}>
-            <div className={TabContent}>
-              <TabDroppable tab={item} tabs={tabs} />
-            </div>
-          </div>
-        );
-      })} */}
-
-      {/* <div>
-        <pre>{JSON.stringify(control, null, 2)}</pre>
-      </div> */}
     </div>
   );
 };

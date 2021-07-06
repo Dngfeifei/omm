@@ -4,11 +4,9 @@ import Label from '@/page/ans/formmaking/lib/controls/common/Label'
 import { Container } from '@/page/ans/formmaking/lib/controls/components/styles'
 import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
 
-const NumberDesign = ({ control, formConfig }) => {
+const NumberDesign = ({ control, formConfig, inTable=false, onChange }) => {
   const { options } = control
-  const baseProps = useFieldBaseProps(control, formConfig, true)
-
-  console.log('number render value', options.value);
+  const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
   return <div className={options.customClass}>
     <Container formConfig={formConfig}>
       <Label control={control} formConfig={formConfig} />
