@@ -192,14 +192,14 @@ class MyModal extends Component {
       } else {
         // alert('添加成功')
         //添加成功
-        // Addadd(obj).then((res) => {
-        //   if (res.success != 1) {
-        //     message.error("请求错误");
-        //     return;
-        //   } else {
-        //     this.props.onCancel();
-        //   }
-        // });
+        Addadd(obj).then((res) => {
+          if (res.success != 1) {
+            message.error("请求错误");
+            return;
+          } else {
+            this.props.onCancel();
+          }
+        });
       }
 
     }
