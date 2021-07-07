@@ -186,19 +186,20 @@ class MyModal extends Component {
         feildAuthorizeList: fieldDate,
       };
       if (Allname == "" || authorValue == "" || attriteValue == "" || plainValue == "" || fieldDate == "") {
+        debugger
         message.warning("所有表单项均为必填项，请填写完整后在提交！");
 
       } else {
         // alert('添加成功')
         //添加成功
-        Addadd(obj).then((res) => {
-          if (res.success != 1) {
-            message.error("请求错误");
-            return;
-          } else {
-            this.props.onCancel();
-          }
-        });
+        // Addadd(obj).then((res) => {
+        //   if (res.success != 1) {
+        //     message.error("请求错误");
+        //     return;
+        //   } else {
+        //     this.props.onCancel();
+        //   }
+        // });
       }
 
     }
@@ -760,8 +761,8 @@ class MyModal extends Component {
         >
           <div className="authorization" style={{ overflow: "hidden" }}>
             <p>授权对象</p>
-            <div className="quarters" style={{ border: "none", width: "100%" }}>
-              {/* <Form.Item label={"岗位"} required={false}>
+
+            {/* <Form.Item label={"岗位"} required={false}>
                   {this.state.AllOff ? (
                     <Input
                       ref="inputModelRef"
@@ -799,26 +800,29 @@ class MyModal extends Component {
                   所有人
                 </Checkbox> */}
 
-              {/* 岗位: 修改删除功能第二次*/}
+            {/* 岗位: 修改删除功能第二次*/}
 
-              {this.state.AllOff ? <div className="quartersBox">
+            {this.state.AllOff ? <div className="quarters">
+              <div style={{}} className="quartboxSon">
                 <Select mode="multiple"
                   disabled
                   dropdownStyle={{ display: 'none' }}
                   value={this.state.Allname}
-                  style={{ width: '65%' }} />
-                <Icon style={{ cursor: 'pointer', fontSize: "24px" }} onClick={this.showConnet} type="solution" />
-                <Checkbox onChange={this.showAll} style={{ marginTop: '16px' }} >所有人</Checkbox>
-              </div> : <div className="quartersBox">
+                  style={{ width: '100%' }} />
+                <Icon style={{ cursor: 'pointer', fontSize: "24px", padding: "0 5px" }} onClick={this.showConnet} type="solution" />
+              </div>
+              <Checkbox onChange={this.showAll} style={{ textAlign: "center" }} >所有人</Checkbox></div> : <div className="quarters">
+                <div style={{}} className="quartboxSon">
                   <Select mode="multiple" dropdownStyle={{ display: 'none' }} placeholder="请选择人员"
                     labelInValue value={this.state.params.selectedItems}
                     onChange={(selectedItems) => this.selectedQuarters(selectedItems)}
-                    style={{ width: '65%' }} />
-                  <Icon style={{ cursor: 'pointer', fontSize: "24px" }} onClick={this.showConnet} type="solution" />
-                  <Checkbox onChange={this.showAll} style={{ marginTop: '16px' }} >所有人</Checkbox>
-                </div>}
-            </div>
+                    style={{ width: '100%' }} />
+                  <Icon style={{ cursor: 'pointer', fontSize: "24px", padding: "0 5px" }} onClick={this.showConnet} type="solution" />
+                </div>
+                <Checkbox onChange={this.showAll} style={{ textAlign: "center" }} >所有人</Checkbox>
+              </div>}
           </div>
+
           <div className="Accesspoint">
             <p>权限点</p>
             {/* //2:复选框方便的从数组生成 Checkbox 组 */}
@@ -860,7 +864,7 @@ class MyModal extends Component {
                   >
                     <Select
                       mode="multiple"
-                      style={{ width: "75%", marginRight: 8 }}
+                      style={{ width: "65%", marginRight: 8 }}
                       dropdownStyle={{ display: 'none' }}
                       labelInValue
                       value={k.fieldName}
@@ -871,7 +875,7 @@ class MyModal extends Component {
                       onClick={(_) =>
                         this.attributeAlert(k.fieldMeta, k.isUser)
                       }
-                    />
+                    />&nbsp;&nbsp;&nbsp;&nbsp;
                     {/* // )} */}
                     {k.isUser === "1" ? (
                       <Checkbox style={{ display: "inline", fontSize: "12px" }} onChange={this.showuser}>登录人</Checkbox>
