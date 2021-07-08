@@ -341,14 +341,10 @@ class Access extends Component {
       },
     };
   };
-
-
+  ////  树的id 
   searchRoleNameFun2 = (pageConf) => {
-
     let id = this.state.searchListID;
-    let name = this.state.searchRoleName;
-
-
+    // let name = this.state.searchRoleName;
     // 2 发起查询请求 查询后结构给table赋值
     // 选中后请求角色数据
     let params = Object.assign({}, {
@@ -382,14 +378,16 @@ class Access extends Component {
       }
     });
   };
-  // 角色列表获取
+
+
+  //树的id
   searchRoleFun = (id) => {
 
     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-    if (id == "" || id == null) {
-      message.warning("请先选中左侧角色组，然后再进行查询。");
-      return;
-    }
+    // if (id == "" || id == null) {
+    //   message.warning("请先选中左侧角色组，然后再进行查询。");
+    //   return;
+    // }
     // 2 发起查询请求 查询后结构给table赋值
     // 选中后请求角色数据
     let params = Object.assign(
@@ -397,11 +395,9 @@ class Access extends Component {
       {
         businessKey: id,
       },
-      this.state.pageConf,
-      { offset: 0 }
+      this.state.pageConf
+
     );
-
-
     GetList(params).then((res) => {
       debugger
       if (res.success == 1) {
