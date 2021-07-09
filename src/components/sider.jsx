@@ -45,7 +45,7 @@ class DSider extends Component{
 			}else{
 				this.add(nextprops.menu[0]);
 			}
-		   
+
 		}
 		else{
 
@@ -54,20 +54,25 @@ class DSider extends Component{
 
 	state = {
 		openKeys:[],
-		contNum: 0 
+		contNum: 0
 	}
 
 	add = (item) => {
+	 	let key = item.id
+		let url = item.resourcePath
+	 	if (item.resourcePath.indexOf('/form/GenerateList') === 0) {
+	 		key = item.resourcePath.match(/id=([^&?]+)/)[1] || item.id
+			url = url.replace('/form/GenerateList', 'ans/formmaking/FormPreview.jsx')
+		}
 		let pane = {
-			title: item.resourceName, 
-			key: item.id,
-			url: item.resourcePath
+			title: item.resourceName,
+			key,
+			url
 		}
 		this.props.add(pane)
 	}
 	select = (item) => {
 		let {openKeys} = this.state;
-		console.log(item,openKeys);
 		if (this.state.openKeys[0] == item.id) {
 			this.setState({openKeys: []})
 		} else {
@@ -95,7 +100,7 @@ class DSider extends Component{
 			MyIco = () => (<MyIcon type="iconbiaodanpeizhi" />)
 		}else if(val.id == 173){
 			MyIco = () => (<MyIcon type="iconliucheng" />)
-		} 
+		}
 		return (<span>
 			{leva ? icon ? <Icon type={icon} /> :  <MyIco /> :null}
 		<span>{val.resourceName}</span></span>)
@@ -105,22 +110,22 @@ class DSider extends Component{
 		// <span>{val.resourceName}</span></span>)
 
 	}
-	
+
 	//监听菜单缩放事件并重置collapsed触发收缩
 	collapsed = (collapsed, type) => {
 		let {contNum} = this.state;
 		// console.log(contNum)//,this.setState({contNum: contNum++})
 		contNum && this.props.collapsed !== collapsed && this.props.setCollapsed(),contNum++,this.setState({contNum});
 	}
-	render = _ => <Sider 
+	render = _ => <Sider
 	trigger={null}
 	collapsed={this.props.collapsed}
 	collapsedWidth={60}
 	breakpoint={'xl'}
 	onCollapse={this.collapsed}
-	width={220} 
+	width={220}
 	style={{ background: '#fff' }} className="sider">
-		
+
         <Menu
           mode="inline"
           selectedKeys={[this.props.activeKey]}
@@ -133,17 +138,17 @@ class DSider extends Component{
 			{
 			this.props.menu.map(val => {
         		if (val.children && val.children.length) {
-        			return <SubMenu 
+        			return <SubMenu
         			key={val.id}
         			onTitleClick={this.select}
         			title={this.renderMenuTitle(val,1)}>
 			            {val.children.map(item => {
 			            	if (item.children && item.children.length) {
-			        			return <SubMenu 
-			        			key={item.id} 
+			        			return <SubMenu
+			        			key={item.id}
 			        			onTitleClick={this.select}
 			        			title={this.renderMenuTitle(val)}>
-						            {item.children.map(item => 
+						            {item.children.map(item =>
 						            	<Menu.Item key={item.id} onClick={_ => this.add(item)}>
 						            		{this.renderMenuTitle(item)}
 						            	</Menu.Item>
@@ -163,7 +168,7 @@ class DSider extends Component{
         		}
         	})
 			}
-			
+
         </Menu>
 		<Trigger {...this.props} />
      </Sider>
