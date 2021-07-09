@@ -39,7 +39,7 @@ function example_image_upload_handler(blobInfo, success, failure, progress) {
     var xhr, formData;
     xhr = new XMLHttpRequest();
     xhr.withCredentials = false;
-    xhr.open('POST', '/sysNotice/upload');
+    xhr.open('POST', `${process.env.API_URL}'/sysNotice/upload'`);
     xhr.setRequestHeader('Authorization', `Bearer ${token}`)
     xhr.upload.onprogress = function (e) {
         progress(e.loaded / e.total * 100);
