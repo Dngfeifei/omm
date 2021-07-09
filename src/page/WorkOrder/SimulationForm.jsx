@@ -3,7 +3,7 @@ import {Modal, message, Button, Input, Select, Card, DatePicker, TimePicker, Too
 import { SaveActivitiAuditData } from '/api/initiate'
 
 
-class SimulationPage extends Component {
+class SimulationForm extends Component {
 
   constructor(props){
     super(props)
@@ -61,6 +61,6 @@ class SimulationPage extends Component {
 
 }
 
-const SimulationFrom = Form.create()(SimulationPage)
-export default SimulationFrom
+const SimulationPage = Form.create()(SimulationForm)
+export default SimulationPage
 

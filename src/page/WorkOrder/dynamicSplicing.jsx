@@ -13,7 +13,6 @@ import "../ans/flow/bpmn-designer/bpmn-designer.less";
 import { hashHistory } from 'react-router'
 
 import loadable from '@loadable/component'
-const LoadableComponent = loadable((props) => import(`./SimulationForm`));
 
 
 import { HandleStartTask,GetFlowChart,DoStopAction,GetHistoricTaskList,QueryByDefIdAndTaskId,DoBackAction,DoAuditAction,GetBackNodes,DoTransferAction,DoDelegateAction } from '/api/initiate'
@@ -60,13 +59,13 @@ class DynamicSplicingPage extends Component {
   }
 
    componentWillMount () { 
-    console.info("this.props.params:::::::::::::::"+JSON.stringify(this.props.params))
-    // import('./SimulationForm').then(Imulation => {
-    //   this.setState({ Imulation }); 
-    // });
-
+    // console.info("this.props.params:::::::::::::::"+JSON.stringify(this.props.params))
+     
      let record = this.props.params.dataType.record;
-    
+
+     const loadSimulation = loadable((props) => import(`./`+record.derivedForm))
+     this.setState({ Imulation:loadSimulation });
+
      if (record.status === 'start' && record.routerNum === '6') {
        
        this.setState({buttons:[{code: '_flow_start', name: '启动', isHide: '0'}],loadButton: true})
@@ -246,9 +245,9 @@ class DynamicSplicingPage extends Component {
 
   commit = (vars) =>{
 
-    if(this.props.params.dataType.record.derivedForm.startsWith("./")){ // 外置表单
+    if(this.props.params.dataType.record.derivedForm.startsWith("Simulation")){ // 外置表单
       
-      this.LoadableComponent.saveForm((businessTable, businessId) =>{
+      this.Imulation.saveForm((businessTable, businessId) =>{
         
         DoAuditAction({
           taskId: this.props.params.dataType.record.taskId,
@@ -428,10 +427,10 @@ class DynamicSplicingPage extends Component {
   //启动流程
   startProces = () => {
 
-    if(this.props.params.dataType.record.derivedForm.startsWith("./")){ // 外置表单
+    if(this.props.params.dataType.record.derivedForm.startsWith("Simulation")){ // 外置表单
 
       //处理外置表单数据，外置表单需要有saveForm方法
-      this.LoadableComponent.saveForm((businessTable, businessId) =>{
+      this.Imulation.saveForm((businessTable, businessId) =>{
 
         let params = {
           procDefKey: this.props.params.dataType.record.procDefId,
@@ -473,11 +472,8 @@ class DynamicSplicingPage extends Component {
 
 
   render = _ => {
-
     
-    const Imulation = this.state.Imulation;
-    const loadButton  = this.state.loadButton;
-    const buttons = this.state.buttons
+    let {Imulation,loadButton,buttons} = this.state;
     
     let buttonList = [];
     if (Object.keys(buttons).length >0 && loadButton) {
@@ -497,9 +493,7 @@ class DynamicSplicingPage extends Component {
     }
 
     
-    let { taskId } = this.props.params.dataType.record;
-    let { procInstId } = this.props.params.dataType.record;
-    let { processTitle } = this.props.params.dataType.record;
+    let { record } = this.props.params.dataType;
     
     return (
       <div className="jp-center">
@@ -509,14 +503,13 @@ class DynamicSplicingPage extends Component {
             <TabPane tab="表单信息" key="form" style={{marginTop:"10px"}}>
               
               {/*加载外部表单  */}
-              <LoadableComponent ref="dycForm" onRef={c=>this.LoadableComponent=c}/> 
-
-
+              <Imulation onRef={c=>this.Imulation=c}/> 
+              
               {/*加载动态表单*/}
               
             </TabPane>
 
-            {procInstId && <TabPane tab="流程信息" key="process">
+            {record.procInstId && <TabPane tab="流程信息" key="process">
               <FlowTimeLine datas={this.state.historicTaskList}/>
             </TabPane>}
 
@@ -530,29 +523,29 @@ class DynamicSplicingPage extends Component {
               </Card>
             </TabPane>
 
-            {procInstId && <TabPane tab="流转信息" key="forth">
+            {record.procInstId && <TabPane tab="流转信息" key="forth">
               <FlowStep datas={this.state.historicTaskList} />
             </TabPane>}
             
           </Tabs>
         </Card>
 
-        { (this.props.params.dataType.record.routerNum === '6' || this.props.params.dataType.record.routerNum === '0' ) && 
+        { (record.routerNum === '6' || record.routerNum === '0' ) && 
         <Card style={{marginTop: "10px"}}>
 
-            {!procInstId  && <Row>
+            {!record.procInstId  && <Row>
 
               <label style={{justifyContent: "center", marginRight: "5px"}}>流程标题:</label>
 
               <Input
-                value={processTitle}
+                value={record.processTitle}
                 style={{width: 800}}
                 allowClear
                 placeholder="流程标题"/>
             </Row>}
 
 
-            {taskId && <Row>
+            {record.taskId && <Row>
 
               <label style={{
                 textAlign: "justify",
