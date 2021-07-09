@@ -56,6 +56,7 @@ class DownloadAudit extends Component {
             {
                 title: '文件名',
                 dataIndex: 'fileName',
+                width: 40,
                 align: 'center',
                 render: (t, r) => {
                     return <div>
@@ -63,6 +64,7 @@ class DownloadAudit extends Component {
                         <div style={{ color: "#bfb8b8" }}>
                             <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
                             <Icon type="heart" theme="outlined" style={{ margin: "0 3px 0 5px" }} />{r.collectNum ? r.collectNum : 0}
+                            <span style={{ color: "#bfb8b8", marginLeft: "10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
                         </div>
                     </div>
                 }
@@ -70,16 +72,12 @@ class DownloadAudit extends Component {
             {
                 title: '版本',
                 dataIndex: 'fileVersion',
+                width: 20,
                 align: 'center',
-                render: (t, r) => {
-                    return <div>
-                        <div>{t}</div>
-                        <div style={{ color: "#bfb8b8" }}>{r.downloadNum ? r.downloadNum : 0}次下载</div>
-                    </div>
-                }
             },
             {
                 title: '文件大小',
+                width: 15,
                 dataIndex: 'fileSize',
                 align: 'center',
             },
@@ -94,52 +92,26 @@ class DownloadAudit extends Component {
             // },
             {
                 title: '上传用户',
+                width: 12,
                 dataIndex: 'uploadUserName',
                 align: 'center',
             },
             {
                 title: '下载用户',
+                width: 12,
                 dataIndex: 'downUserName',
                 align: 'center',
             },
-            // {
-            //     title: '资料类型',
-            //     dataIndex: 'categorieName',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '上传时间',
-            //     dataIndex: 'uploadTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '发布时间',
-            //     dataIndex: 'publishTime',
-            //     align: 'center',
-            // },
             {
                 title: '资料级别',
+                width: 12,
                 dataIndex: 'levelName',
                 align: 'center',
             },
-            // {
-            //     title: '币值',
-            //     dataIndex: 'points',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '下架日期',
-            //     dataIndex: 'clearTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '描述',
-            //     dataIndex: 'description',
-            //     align: 'center',
-            // },
             {
                 title: '审核状态',
                 dataIndex: 'reviewStatus',
+                width: 14,
                 align: 'center',
                 editable: false,
                 render: (t, r) => {
@@ -157,7 +129,7 @@ class DownloadAudit extends Component {
                 title: '操作',
                 align: 'center',
                 editable: false,
-                width: 160,
+                width: 16,
                 render: (t, r) => {
                     let status = r.reviewStatus
                     if (status == "0") {
@@ -317,7 +289,7 @@ class DownloadAudit extends Component {
                 </div>
             </div>
             {/* 详情 */}
-            {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details}  info={[{name:"上传用户",value:this.state.details.uploadUserName},{name:"下载用户",value:this.state.details.downUserName}]}></Details> : ""}
+            {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details} info={[{ name: "上传用户", value: this.state.details.uploadUserName }, { name: "下载用户", value: this.state.details.downUserName }]}></Details> : ""}
         </div>
     }
 

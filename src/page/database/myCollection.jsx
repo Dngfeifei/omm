@@ -56,34 +56,31 @@ class DownloadAudit extends Component {
             {
                 title: '文件名',
                 dataIndex: 'fileName',
+                width: 50,
                 align: 'center',
                 render: (t, r) => {
                     let style1 = r.isLike ? { margin: "0 3px 0 0", cursor: "pointer", color: "#7777f7" } : { margin: "0 3px 0 0", cursor: "pointer" }
                     let style2 = r.isCollect ? { margin: "0 3px 0 5px", cursor: "pointer", color: "#f56464" } : { margin: "0 3px 0 5px", cursor: "pointer" }
 
                     return <div>
-                        <div><a onClick={_=>{this.showDetails(r)}}>{t}</a></div>
+                        <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
                         <div style={{ color: "#bfb8b8" }}>
                             <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={style1} />{r.likeNum ? r.likeNum : 0}
                             <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={style2} />{r.collectNum ? r.collectNum : 0}
+                            <span style={{ color: "#bfb8b8", marginLeft: "10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
                         </div>
                     </div>
                 }
             },
             {
                 title: '版本',
+                width: 30,
                 dataIndex: 'fileVersion',
                 align: 'center',
-                render: (t, r) => {
-                    return <div>
-                        <div>{t}</div>
-                        <div style={{ color: "#bfb8b8" }}>{r.downloadNum ? r.downloadNum : 0}次下载</div>
-
-                    </div>
-                }
             },
             {
                 title: '文件大小',
+                width: 20,
                 dataIndex: 'fileSize',
                 align: 'center',
             },
@@ -112,6 +109,7 @@ class DownloadAudit extends Component {
             // },
             {
                 title: '资料级别',
+                width: 20,
                 dataIndex: 'levelName',
                 align: 'center',
             },
@@ -132,6 +130,7 @@ class DownloadAudit extends Component {
             // },
             {
                 title: '操作',
+                width: 15,
                 align: 'center',
                 dataIndex: 'isDownload',
                 render: (t, r) => {

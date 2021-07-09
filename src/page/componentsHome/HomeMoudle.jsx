@@ -1,158 +1,123 @@
 import React, { Component, PropTypes } from 'react'
-import { Row, Col, Spin, Icon, Modal, Button, Form, Input, Select, message } from 'antd'
-import { connect } from "react-redux";
+import { Row, Col, Spin, Icon, Modal, Button, Form, Input, Select ,message } from 'antd'
+
 // 导入 卡片模板文件
 import Card from "@/components/card/card";
 
-//引入接口
-import {
-  GetworkPlatform
-} from "@/api/Workbench.js";
+
 import '/assets/less/pages/homeMoudle.css'
-import { ADD_PANE } from "/redux/action";
-@connect(
-  (state) => ({}),
-  (dispath) => ({
-    add(pane) {
-      dispath({ type: ADD_PANE, data: pane });
-    },
-  })
-)
+
 
 class HomeMoudle extends Component {
   // 相当于构造函数
-  constructor(props) {
-    // 必须写
-    super(props)
-    this.state = {
-      visible: false,  // 对话框的状态
-      Modal: {
-        addModules: '添加模块',
-        delModules: '删除模块',
-      },
-      titleStatus: 'addModules',
-      // 添加模块数据   
-      blockArray: [{ name: '巡检管理', id: '1' }, { name: '事件管理', id: '2' }, { name: '用户回访管理', id: '3' }, { name: '智能运维产品', id: '4' }, { name: '数据采集处理任务调度平台(bridge)', id: '5' }],
-      // 模块对应的待办等各项指标数据   
-      cartList: [
-        // {
-        //     title: '我的待办',
-        //     number: '0',
-        //     icon: 'user-add',
-        //     url: "ServiceRequire/require.jsx",
+    constructor(props) {
+        // 必须写
+        super(props)
+        this.state = {
+            visible: false,  // 对话框的状态
+            Modal: {
+                addModules: '添加模块',
+                delModules: '删除模块',
+            },
+            titleStatus: 'addModules',
+            // 添加模块数据   
+            blockArray: [{ name: '巡检管理', id: '1' }, { name: '事件管理', id: '2' }, { name: '用户回访管理', id: '3' }, { name: '智能运维产品', id: '4' }, { name: '数据采集处理任务调度平台(bridge)', id: '5' }],
+            // 模块对应的待办等各项指标数据   
+            cartList: [
+                {
+                    title: '我的待办',
+                    number: '0',
+                    icon: 'user-add'
+                }, {
+                    title: '已完成的',
+                    number: '0',
+                    icon: 'heart'
+                }, {
+                    title: '进行中的',
+                    number: '0',
+                    icon: 'share-alt'
+                }, {
+                    title: '我管理的',
+                    number: '0',
+                    icon: 'share-alt'
+                }
+            ],
+            cartListImage: ['url(static/images/toDoBanner.png)', 'url(static/images/progressBanner.png)', 'url(static/images/doneBannder.png)', 'url(static/images/manageBanner.png)'],
 
-        // }, {
-        //     title: '已完成的',
-        //     number: '0',
-        //     icon: 'heart'
-        // }, {
-        //     title: '进行中的',
-        //     number: '0',
-        //     icon: 'share-alt'
-        // }, {
-        //     title: '我管理的',
-        //     number: '0',
-        //     icon: 'share-alt'
-        // }
-      ],
-      cartListImage: ['url(static/images/toDoBanner.png)', 'url(static/images/progressBanner.png)', 'url(static/images/doneBannder.png)', 'url(static/images/manageBanner.png)'],
+            //  要展示的模块数据(已添加)   
+            lists: [],
 
-      //  要展示的模块数据(已添加)   
-      lists: [],
-
-      // state中的activeType值来实现样式切换的效果
-      activeType: 0,
-      // 控制当前页面的刷新(加载)--状态
-      loading: false,
-      // 控制当前页面的显示/隐藏--状态
-      isShow: true,
-    };
-  }
-  componentDidMount = () => {
-
-    GetworkPlatform().then((res) => {
-      console.log(res)
-      if (res.success != 1) {
-        message.error("请求错误");
-        return;
-      } else {
-        this.setState({
-          cartList: res.data,
-
-        });
-
-
-      }
-    })
-  }
-  handleSiblingsClick = (index) => {
-    this.setState({
-      activeType: index
-    })
-  }
-  // 用于修改卡片的显示/隐藏
-  change = () => {
-    this.setState({
-      isShow: false
-    })
-  }
-
-  // 用于修改卡片的加载态
-  refresh = () => {
-    this.setState({
-      loading: true
-    })
-    const timeoutID = setTimeout(() => {
-      //执行
-      this.setState({
-        loading: false
-      })
-      //清除
-      clearTimeout(timeoutID);
-    }, 1000)
-
-  }
-
-  // 添加常用模块项--事件
-  showModal = () => {
-    const len = this.state.cartList.length;
-    //   先判断常用模块数据是否超过或等于5(此功能要求：常用模块不能超过5个)
-    if (len >= 5) {
-      message.error('常用模块数量不能超过5个！')
-    } else {
-      this.setState({
-        visible: true,
-        titleStatus: 'addModules',
-      });
+            // state中的activeType值来实现样式切换的效果
+            activeType: 0,
+            // 控制当前页面的刷新(加载)--状态
+            loading: false,
+            // 控制当前页面的显示/隐藏--状态
+            isShow: true,
+        };
     }
 
-  };
 
-  handleOk = e => {
-    console.log(e);
-    this.setState({
-      visible: false,
-      titleStatus: 'addModules',
-    });
-  };
+    handleSiblingsClick = (index) => {
+        this.setState({
+            activeType: index
+        })
 
-  handleCancel = e => {
-    console.log(e);
-    this.setState({
-      visible: false,
-      titleStatus: 'addModules',
-    });
-  };
+    }
 
-  //点击按钮 显示 到其他页面
-  showContent = (i) => {
-    let pane = {
-      title: i.title,
-      key: i.key,
-      url: i.url,
+    // 用于修改卡片的显示/隐藏
+    change = () => {
+        this.setState({
+            isShow: false
+        })
+    }
+
+    // 用于修改卡片的加载态
+    refresh = () => {
+        this.setState({
+            loading: true
+        })
+        const timeoutID = setTimeout(() => {
+            //执行
+            this.setState({
+                loading: false
+            })
+            //清除
+            clearTimeout(timeoutID);
+        }, 1000)
+
+    }
+
+    // 添加常用模块项--事件
+    showModal = () => {
+        const len = this.state.cartList.length;
+        //   先判断常用模块数据是否超过或等于5(此功能要求：常用模块不能超过5个)
+        if (len >= 4) {
+            message.error('常用模块数量不能超过5个！')
+        } else {
+            this.setState({
+                visible: true,
+                titleStatus: 'addModules',
+            });
+        }
+
     };
-    this.props.add(pane);
-  }
+
+    handleOk = e => {
+        console.log(e);
+        this.setState({
+            visible: false,
+            titleStatus: 'addModules',
+        });
+    };
+
+    handleCancel = e => {
+        console.log(e);
+        this.setState({
+            visible: false,
+            titleStatus: 'addModules',
+        });
+    };
+
 
   render() {
     const { getFieldDecorator } = this.props.form;
@@ -192,10 +157,10 @@ class HomeMoudle extends Component {
               <Col span={14} className="right">
                 <div className="cart-list">
                   {
-                    this.state.cartList.map((item, index) => {
+                    this.state.cartList.map((item,index) => {
                       return (
-                        <div className="cart-item cart-itembg" key={item.title} style={{ background: this.state.cartListImage[index], backgroundSize: '100% 100%' }}>
-                          <div className="cart-item-content" style={{ cursor: "pointer" }} onClick={_ => this.showContent(item)}>
+                        <div className="cart-item cart-itembg" key={item.title} style={{background:this.state.cartListImage[index],backgroundSize:'100% 100%'}}>
+                          <div className="cart-item-content" onClick={_=>this.showModal(item)}>
                             <div className="number">{item.title}</div>
                             <div className="title">{item.number}</div>
                           </div>

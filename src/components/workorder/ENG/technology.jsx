@@ -373,6 +373,7 @@ class People extends Component {
         }
         console.log(333)
         let params = Object.assign({}, this.state, { cases: newCase })
+      
         // 专业能力数据提交
         PostAssessProable(params).then((res) => {
             if (res.success != 1) {

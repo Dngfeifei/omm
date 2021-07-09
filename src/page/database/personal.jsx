@@ -107,6 +107,7 @@ class Personal extends Component {
             {
                 title: '文件名',
                 dataIndex: 'fileName',
+                width: 40,
                 align: 'center',
                 render: (t, r) => {
                     return <div>
@@ -115,6 +116,7 @@ class Personal extends Component {
                             r.uploadStatus == 1 ? <div style={{ color: "#bfb8b8" }}>
                                 <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
                                 <Icon type="heart" theme="outlined" style={{ margin: "0 3px 0 5px" }} />{r.collectNum ? r.collectNum : 0}
+                                <span style={{ color: "#bfb8b8", marginLeft: "10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
                             </div> : ""
                         }
 
@@ -123,69 +125,26 @@ class Personal extends Component {
             },
             {
                 title: '版本',
+                width: 14,
                 dataIndex: 'fileVersion',
                 align: 'center',
-                render: (t, r) => {
-                    return <div>
-                        <div>{t}</div>
-                        {
-                            r.uploadStatus == 1 ? <div style={{ color: "#bfb8b8" }}>{r.downloadNum ? r.downloadNum : 0}次下载</div> : ""
-                        }
-
-                    </div>
-                }
             },
             {
                 title: '文件大小',
+                width: 12,
                 dataIndex: 'fileSize',
                 align: 'center',
             },
-            // {
-            //     title: '标签',
-            //     dataIndex: 'fileLabel',
-            //     align: 'center',
-            //     render: (t, r) => {
-            //         return fileLabelData[t]
-            //     }
-            // },
-            // {
-            //     title: '资料类型',
-            //     dataIndex: 'categorieName',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '上传时间',
-            //     dataIndex: 'uploadTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '发布时间',
-            //     dataIndex: 'publishTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '资料级别',
-            //     dataIndex: 'levelName',
-            //     align: 'center',
-            // },
             {
                 title: '币值',
+                width: 10,
                 dataIndex: 'points',
                 align: 'center',
             },
-            // {
-            //     title: '下架日期',
-            //     dataIndex: 'clearTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '描述',
-            //     dataIndex: 'description',
-            //     align: 'center',
-            // },
             {
                 title: '上传审核状态',
                 dataIndex: 'uploadStatus',
+                width: 14,
                 align: 'center',
                 render: (t, r) => {
                     t.toString()
@@ -200,6 +159,7 @@ class Personal extends Component {
             },
             {
                 title: '操作',
+                width: 15,
                 align: 'center',
                 render: (t, r) => {
                     let status = r.uploadStatus
@@ -218,79 +178,40 @@ class Personal extends Component {
                 title: '文件名',
                 dataIndex: 'fileName',
                 align: 'center',
+                width: 40,
                 render: (t, r) => {
                     return <div>
                         <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
                         <div style={{ color: "#bfb8b8" }}>
                             <Icon type="like" theme="outlined" style={{ margin: "0 3px 0 0" }} />{r.likeNum ? r.likeNum : 0}
                             <Icon type="heart" theme="outlined" style={{ margin: "0 3px 0 5px" }} />{r.collectNum ? r.collectNum : 0}
+                            <span style={{ color: "#bfb8b8", marginLeft: "10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
                         </div>
                     </div>
                 }
             },
             {
                 title: '版本',
+                width: 14,
                 dataIndex: 'fileVersion',
                 align: 'center',
-                render: (t, r) => {
-                    return <div>
-                        <div>{t}</div>
-                        <div style={{ color: "#bfb8b8" }}>{r.downloadNum ? r.downloadNum : 0}次下载</div>
-
-                    </div>
-                }
             },
             {
                 title: '文件大小',
+                width: 12,
                 dataIndex: 'fileSize',
                 align: 'center',
             },
-            // {
-            //     title: '标签',
-            //     dataIndex: 'fileLabel',
-            //     align: 'center',
-            //     render: (t, r) => {
-            //         return fileLabelData[t]
-            //     }
-            // },
-            // {
-            //     title: '资料类型',
-            //     dataIndex: 'categorieName',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '上传时间',
-            //     dataIndex: 'uploadTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '发布时间',
-            //     dataIndex: 'publishTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '资料级别',
-            //     dataIndex: 'levelName',
-            //     align: 'center',
-            // },
             {
                 title: '币值',
+                width: 10,
                 dataIndex: 'points',
                 align: 'center',
             },
-            // {
-            //     title: '下架日期',
-            //     dataIndex: 'clearTime',
-            //     align: 'center',
-            // },
-            // {
-            //     title: '描述',
-            //     dataIndex: 'description',
-            //     align: 'center',
-            // },
             {
                 title: '下载审核状态',
                 dataIndex: 'reviewStatus',
+                width: 14,
                 align: 'center',
                 render: (t, r) => {
                     t.toString()
@@ -305,6 +226,7 @@ class Personal extends Component {
             },
             {
                 title: '操作',
+                width: 15,
                 align: 'center',
                 render: (t, r) => {
                     let type = r.reviewStatus
@@ -903,7 +825,7 @@ class Personal extends Component {
                                 </Row>
                             </Form>
                             <div className="tableParson" style={{ flex: 'auto', height: 10, paddingTop: "20px" }} ref={(el) => this.tableDom = el}>
-                                <Table bordered rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkbox" }} dataSource={this.state.tableData} columns={this.state.columns} rowKey={"id"} pagination={false} scroll={h} size="small" />
+                                <Table bordered rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "checkbox", columnWidth: '8px' }} dataSource={this.state.tableData} columns={this.state.columns} rowKey={"id"} pagination={false} scroll={h} size="small" />
                                 <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                             </div>
                         </TabPane>
