@@ -26,7 +26,7 @@ class Component extends React.Component {
                     2:"2323",
                     3:"2323",
                     4:"2323",
-                    5:"2323",
+                    // 5:"2323",
                     6:"2323",
                 }
             ], //数据包
@@ -76,6 +76,7 @@ class Component extends React.Component {
     }
     //表格表单写入
     onFormChange = (index,type,value) => {
+        // console.log(index,type,value)
         const {data} = this.state;
         data[index][type] = value;
         this.setState({data})
@@ -106,7 +107,7 @@ class Component extends React.Component {
 
     // 单选框按钮---选中事件
     selectChangeArea = (selectedRowKeys, selectedRows) => {
-        console.log(selectedRowKeys,selectedRows)
+        // console.log(selectedRowKeys,selectedRows)
         this.setState({ 
             selectedRowKeys:selectedRowKeys,
         });
@@ -115,7 +116,7 @@ class Component extends React.Component {
     onRow = (record,index) => {
         return {
             onClick: () => {
-                console.log(record,index)
+                // console.log(record,index)
                 let selectedKeys = [index];
                 this.selectChangeArea(selectedKeys,record);
             }

@@ -1036,9 +1036,9 @@ export const panes = [
                 title: <div className="ant-form-item-required1">数量</div>,
                 dataIndex: '5',
                 align:'center',
-                width:'80px',
+                width:'90px',
                 render:(text,record,index) => {
-                    return <InputNumber disabled={false} min={1} defaultValue={1} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'5',value)} />
+                    return <InputNumber style={{width: '100%'}} disabled={false} min={1} value={text ? text : 1} onChange={(value) => ComponentNode.onFormChange(index,'5',value)} />
                 },
                 editable: true,
             },
