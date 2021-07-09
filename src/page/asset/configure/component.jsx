@@ -1,9 +1,15 @@
 
-
+/***
+ * 配置库配置管理新增硬件设备---部件信息组件
+ * 
+ * @author  gl
+ */
 import React from 'react';
 import { Table, Form, Input, Modal, message, Select, Button, Row, Popconfirm,Tooltip ,Cascader , Radio} from 'antd';
 import {setComNode} from './assetsList.js'//获取页面渲染配置项
 const { confirm } = Modal;
+// 引入---【部件选择器组件】
+import ProductSelector from '/components/selector/productSelector.jsx'
 
 
 // 引入 API接口
@@ -25,6 +31,7 @@ class Component extends React.Component {
                 }
             ], //数据包
             selectedRowKeys:null,  //选中的table表格的id
+            visibleProductModel:false,
         }
         if(setComNode) setComNode(this)
     }
@@ -114,6 +121,18 @@ class Component extends React.Component {
             }
         }
     }
+    //部件选择器返回数据保存
+    projecthandleOk = (info) => {
+        
+    }
+    //打开部件部件选择器
+    openModal = () => {
+        this.setState({visibleProductModel:true})
+    }
+    //关闭部件选择器
+    close = () => {
+        this.setState({visibleProductModel:false})
+    }
     render() {
         // this.init()
         const rowSelectionArea = {
@@ -140,6 +159,10 @@ class Component extends React.Component {
                     size={'small'}
                     style={{marginTop:16}}
                 />
+                {/* 产品选择器 */}
+                {
+                    this.state.visibleProductModel ? <ProductSelector title={'部件选择器'} onCancel={this.close} onOk={this.projecthandleOk}></ProductSelector> : null
+                }
             </div>
            
         )

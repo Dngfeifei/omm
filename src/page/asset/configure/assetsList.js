@@ -1002,7 +1002,7 @@ export const panes = [
                 width:'100px',
                 align:'center',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'2',value)} />
+                    return <Input placeholder="请选择" suffix={<Icon type="appstore" className="dateIcon" onClick={() => ComponentNode.openModal()} />} />
                 },
                 editable: true,
             },
