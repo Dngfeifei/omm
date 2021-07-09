@@ -212,7 +212,7 @@ class Notice extends Component {
 
         var formData = new FormData();
         formData.append('file', file);
-        fetch(`${process.env.API_URL}'/sysNotice/upload'`, {
+        fetch(`${process.env.API_URL}/sysNotice/upload`, {
             method: 'POST',
             body: formData,
             headers: {
