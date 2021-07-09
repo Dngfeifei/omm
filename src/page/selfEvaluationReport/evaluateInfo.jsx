@@ -501,6 +501,7 @@ class AssessmentReport extends Component {
   }
   // 产品线选中方法
   onChange4 = (checkedValues, info) => {
+    console.log(checkedValues, 1222)
     this.setState({
       productLineCodes: checkedValues
     })
@@ -535,6 +536,7 @@ class AssessmentReport extends Component {
   }
   //表格
   getTable = (flag = 1) => {
+    console.log(this.state.productLineCodes)
     this.setState({ loading: true });
     let obj = Object.assign(
       {},
@@ -789,7 +791,7 @@ class AssessmentReport extends Component {
       skillTypeCode: null,
       brandCode: null,
       productLineLevelCode: null,
-      productLineCodes: null,
+      productLineCodes: [],
       proableLevel: null
 
     })
