@@ -14,7 +14,7 @@ class BasicInformation extends Component {
     constructor (props){
         super(props)
         this.state = {
-            baseData:props.baseData,
+            baseData:{...props.baseData},
             roleWindow:props.roleWindow,
             visibleModule:false,
             visibleProductModel:false,
@@ -70,10 +70,11 @@ class BasicInformation extends Component {
                 initialValue = tableSelectedInfo[0][assetsList[i].dataIndex];
             }
              //处理产品联动是否可编辑
-            if(assetsList[i].selectData == 'productSkillType' || assetsList[i].selectData == 'productBrandType' || assetsList[i].selectData == 'productLineType'){
-                const len = this.state.selectData[assetsList[i].selectData].length
-                rules = roleWindow.roleModalType == 2 ? [] : item ? len ?  item.rules : [] : [];
-                required = len ? false : true;
+            if(assetsList[i].key == 'productSkillType' || assetsList[i].key == 'productBrandType' || assetsList[i].key == 'productLineType' || assetsList[i].key == 'productLevel' || assetsList[i].key == 'serviceClassId'){
+                // const len = this.state.selectData[assetsList[i].selectData].length
+                // rules = roleWindow.roleModalType == 2 ? [] : item ? len ?  item.rules : [] : [];
+                // required = len ? false : true;
+                required = true;
             }
             //处理配置项是否可编辑
             if(roleWindow.roleModalType == 2 || assetsList[i].key == 'basedataTypeId'){
@@ -258,16 +259,17 @@ class BasicInformation extends Component {
                 <div className="commTop">
                     <div className="navTitle">项目信息</div>
                     <Form id="assetsBoxFrom" className="AllocationForm" layout='inline'>
-                        <Row gutter={[16,15]}>{ this.getFields(columnsBasic)}</Row>
+                        <Row gutter={[16,15]}>{ this.getFields(this.props.panes.basicData.columnsBasic)}</Row>
                     </Form>
                 </div>
                 <Divider />
-                <div className="commTop">
+                {this.props.panes.basicData.columnsDevice.length ? <div className="commTop">
                     <div className="navTitle">设备信息</div>
                     <Form id="assetsBoxFrom2" className="AllocationForm" layout='inline'>
-                        <Row gutter={[16,15]}>{ this.getFields(columnsDevice)}</Row>
+                        <Row gutter={[16,15]}>{ this.getFields(this.props.panes.basicData.columnsDevice)}</Row>
                     </Form>
-                </div>
+                </div> : null}
+                
                 {/* 项目选择器 */}
                 {
                     this.state.visibleModule ? <ProjectSelector title={'项目选择器'} onCancel={this.close} onOk={this.projecthandleOk}></ProjectSelector> : null
