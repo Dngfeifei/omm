@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Row, Col,  Input, Select,  DatePicker,Upload,Form,Icon } from 'antd'
+import { Row, Col,  Input, Select,  DatePicker,Upload,Form,Icon,InputNumber } from 'antd'
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
@@ -1038,7 +1038,7 @@ export const panes = [
                 align:'center',
                 width:'80px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'5',value)} />
+                    return <InputNumber disabled={false} min={1} defaultValue={1} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'5',value)} />
                 },
                 editable: true,
             },
