@@ -1,5 +1,5 @@
 /***
- * 选择器组件------（目前此组件只应用于在了 产品选择器）
+ * 选择器组件------（目前此组件只应用于在了 产品选择器 部件选择器）
  * 
  * @author  gl
  */
@@ -44,7 +44,7 @@
              // 存放当前选中行的row数据
              selectedRows: null,   
  
-             // 项目选择器情况下的----Columns、form表单
+             // 产品选择器情况下的----Columns、form表单
              projectParams:{
                  tableColumns:[{
                      title: '序号',
@@ -111,7 +111,55 @@
                      </Select>
                  }]
              },
- 
+             //部件选择器
+             partsParams:{
+                tableColumns:[{
+                    title: '序号',
+                    dataIndex: 'index',
+                    align: 'center',
+                    width: '80px',
+                    // 第一种：每一页都从1开始
+                    render: (text, record, index) => `${index + 1}`
+                },{
+                    title: 'fc',
+                    dataIndex: 'projectNumber',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    width: '240px',
+                    render: (text, record)=> 
+                        <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                },{
+                    title: '部件类别',
+                    dataIndex: 'projectName',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                },{
+                    title: '描述',
+                    dataIndex: 'projectStatus',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                }],
+                formRules:[{
+                    label: 'fc',
+                    key: 'projectNumber',
+                    render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入" />
+                },{
+                    label: '部件类别',
+                    key: 'projectStatus',
+                    render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
+                        {
+                            this.state.projectStatusList.map((items, index) => {
+                                return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
+                            })
+                        }
+                    </Select>
+                }]
+            },
              // 数据集合
              tabledata:[],
              // 服务类别
@@ -133,6 +181,11 @@
                  rules:this.state.projectParams.formRules,
                  columns:this.state.projectParams.tableColumns
              })
+         }else if(this.props.title == '部件选择器'){
+            this.setState({
+                rules:this.state.partsParams.formRules,
+                columns:this.state.partsParams.tableColumns
+            })
          }
  
         
@@ -193,8 +246,18 @@
                          message.error(res.message);
                      }
                  })
-             } else if (this.props.title == '客户选择器') {
- 
+             } else if (this.props.title == '部件选择器') {
+                getProjectSelector(this.state.pageSize, this.state.current, values).then(res => {
+                    if (res.success == 1) {
+                        this.setState({
+                            loading: false,
+                            tabledata: res.data.records,
+                            total: parseInt(res.data.total)
+                        })
+                    } else if (res.success == 0) {
+                        message.error(res.message);
+                    }
+                })
              }
  
  
