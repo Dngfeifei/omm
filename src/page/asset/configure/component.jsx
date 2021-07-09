@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { Table, Form, Input, Modal, message, Select, Button, Row, Popconfirm,Tooltip ,Cascader , Radio} from 'antd';
-
+import {setComNode} from './assetsList.js'//获取页面渲染配置项
 const { confirm } = Modal;
 
 
@@ -26,6 +26,7 @@ class Component extends React.Component {
             ], //数据包
             selectedRowKeys:null,  //选中的table表格的id
         }
+        if(setComNode) setComNode(this)
     }
 
     // 数据更新完成时触发的函数
@@ -54,7 +55,7 @@ class Component extends React.Component {
 
     };
     
-    //区域更改值并回传
+    //部件选择器更改值并回传
     onAreaChange = (index,key,val) => {
         let {data} = this.state;
         if(data[index]){
@@ -64,92 +65,7 @@ class Component extends React.Component {
     }
     // 初始化
     init = () => {
-        this.columns = [
-            {
-                title: '序号',
-                dataIndex: 'key',
-                editable: false,
-                align:'center',
-                width:'60px',
-                //每一页都从1开始
-                render:(text,record,index)=> `${index+1}`
-            },
-            {
-                title: <div className="ant-form-item-required1">fc</div>,
-                dataIndex: '1',
-                align:'center',
-                width:'100px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'1',value)} />
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">部件号</div>,
-                dataIndex: '2',
-                width:'100px',
-                align:'center',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'2',value)} />
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">部件位置</div>,
-                dataIndex: '3',
-                align:'center',
-                width:'100px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'3',value)} />
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">部件类别</div>,
-                dataIndex: '4',
-                align:'center',
-                editable: true,
-                width:'100px',
-                render:(text,record,index) => {
-                   return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => this.onFormChange(index,'4',value)}>
-                                {
-                                    [].map((items, index) => {
-                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
-                                    })
-                                }
-                            </Select>
-                }
-            },
-            {
-                title: <div className="ant-form-item-required1">数量</div>,
-                dataIndex: '5',
-                align:'center',
-                width:'80px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'5',value)} />
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">描述</div>,
-                dataIndex: '6',
-                align:'center',
-                width:'200px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) =>this.onFormChange(index,'6',value)} />
-                },
-                editable: true,
-            },{
-                title: <div className="ant-form-item-required1">备注</div>,
-                dataIndex: '7',
-                align:'center',
-                width:'280px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'7',value)} />
-                },
-                editable: true,
-            }
-        ]
+        
     }
     //表格表单写入
     onFormChange = (index,type,value) => {
@@ -183,6 +99,7 @@ class Component extends React.Component {
 
     // 单选框按钮---选中事件
     selectChangeArea = (selectedRowKeys, selectedRows) => {
+        console.log(selectedRowKeys,selectedRows)
         this.setState({ 
             selectedRowKeys:selectedRowKeys,
         });
@@ -198,7 +115,7 @@ class Component extends React.Component {
         }
     }
     render() {
-        this.init()
+        // this.init()
         const rowSelectionArea = {
             selectedRowKeys:this.state.selectedRowKeys,
             onChange: this.selectChangeArea,
@@ -214,10 +131,10 @@ class Component extends React.Component {
                     className="jxlTable"
                     onRow={this.onRow}
                     bordered
-                    rowKey={index => index}
+                    rowKey={(record,index) => index}
                     rowSelection={rowSelectionArea}  
                     dataSource={this.state.data}
-                    columns={this.columns}
+                    columns={this.props.panes.subColumns}
                     scroll={{y:450}}
                     pagination={false}
                     size={'small'}

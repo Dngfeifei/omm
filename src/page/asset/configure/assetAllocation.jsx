@@ -96,7 +96,7 @@ class assetsAllocation extends Component {
                
     
             },  
-            panes:{rules:[],columns:[],assetsListData:[]},      //基础显示数据
+            panes:{rules:[],columns:[],assetsListData:[],basicData:{columnsBasic:[]},subColumns:[]},      //基础显示数据
             basedataTypeList:[],
             //资源树新增编辑参数数据 
             newRoleGroup: {
@@ -151,12 +151,21 @@ class assetsAllocation extends Component {
     }
     //获取各组件所需参数并赋值
     getProps = (type) => {
-        const {roleWindow,baseData,tableSelectedInfo,searchListID,searchListName,basedataTypeId,basedataTypeName} = this.state;
+        const {roleWindow,baseData,tableSelectedInfo,searchListID,searchListName,basedataTypeId,basedataTypeName,panes} = this.state;
         if(type == 0){
             return {
                 baseData: roleWindow.roleModalType == 0 ? baseData : tableSelectedInfo[0],
                 roleWindow,
                 basedataTypeId,
+                panes,
+                basedataTypeName
+            }
+        }else if(type == 1){
+            return {
+                baseData: roleWindow.roleModalType == 0 ? baseData : tableSelectedInfo[0],
+                roleWindow,
+                basedataTypeId,
+                panes,
                 basedataTypeName
             }
         }
@@ -525,6 +534,7 @@ class assetsAllocation extends Component {
 
     // 表格选中后
     onTableSelect = (selectedRowKeys, info) => {
+        // console.log(selectedRowKeys, info)
         //获取table选中项
         this.setState({
             tableSelecteds: selectedRowKeys,
@@ -722,7 +732,7 @@ class assetsAllocation extends Component {
                 onOk={_ => this.editRoleSave()}
                 width={1200}
                 style={{ top: 50, marginBottom: 100 }}
-                bodyStyle={{paddingTop:0,height:500}}
+                bodyStyle={{paddingTop:0,minHeight:520,maxHeight:600,overflowY:'auto'}}
                 okText="保存"
                 cancelText="取消"
                 className="ViewModal"
