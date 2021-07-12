@@ -4,6 +4,7 @@ import allComps from "@/page/ans/formmaking/lib/controls";
 
 const GridRender = ({ control, formConfig }) => {
   const { options } = control;
+  console.log('options.gutter', options.gutter);
 
   return <Row
     className={options.customClass}
@@ -15,11 +16,12 @@ const GridRender = ({ control, formConfig }) => {
     {control.columns.map((item,key) =>
       <Col
         key={key}
-        xs={options.responsive ? item.options.xs||0: item.options.span || 0}
-        sm={options.responsive ? item.options.sm||0: item.options.span || 0}
-        md={options.responsive ? item.options.md||0: item.options.span || 0}
-        lg={options.responsive ? item.options.lg||0: item.options.span || 0}
-        xl={options.responsive ? item.options.xl||0: item.options.span || 0}
+        style={{ flex: 1 }}
+        // xs={options.responsive ? item.options.xs||0: item.options.span || 0}
+        // sm={options.responsive ? item.options.sm||0: item.options.span || 0}
+        // md={options.responsive ? item.options.md||0: item.options.span || 0}
+        // lg={options.responsive ? item.options.lg||0: item.options.span || 0}
+        // xl={options.responsive ? item.options.xl||0: item.options.span || 0}
       >
         {item.list.map((col, k2) => React.createElement(allComps[`${col.type}-render`], {
           control: col,

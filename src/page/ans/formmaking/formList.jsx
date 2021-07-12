@@ -214,8 +214,9 @@ class FormList extends Common {
 
         <Modal title="表单设计" visible={this.state.formingVisible}
           onCancel={_ => this.setState({ formingVisible: false })}
-          style={{ top: 80 }}
-          width={1320}
+          style={{ top: 0, paddingBottom: 0, height: '100%' }}
+          width={window.innerWidth}
+          className="form-edit-modal"
           footer={null}>
           {this.state.formingVisible && <ReactMkForming hideModal={() => this.setState({ formingVisible: false })} id={this.state.editingId} />}
         </Modal>

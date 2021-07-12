@@ -132,7 +132,9 @@ export default function FormRelease(props) {
   ];
 
   const [inputForm, setInputForm] = useState({
-    parentId: '',
+    parent: {
+      id: ''
+    },
     name: '',
     id: '',
     icon: '',
@@ -201,7 +203,7 @@ export default function FormRelease(props) {
             allowClear
             onChange={value => { setInputForm({
               ...inputForm,
-              parentId: value
+              parent: { id: value }
             })}}
             treeData={menuList}
           />

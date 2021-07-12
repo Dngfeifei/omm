@@ -1,9 +1,8 @@
-import InputDesign from './components/InputDesign'
 import InputSetting from './components/InputSetting'
 import InputRender from './components/InputRender'
 
 export default {
-  'input-design': InputDesign,
+  'input-design': InputRender,
   'input-setting': InputSetting,
   'input-render': InputRender,
 }

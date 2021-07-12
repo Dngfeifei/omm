@@ -49,6 +49,7 @@ const DragItem = ({ meta }) => {
   const { state, dispatch } = useContext(FormDesignContext);
 
   const handleAddControl = () => {
+    console.log(meta);
     const newFormModel = cloneDeep(state.formModel);
     const newControl = genNewCtrl(meta.type);
     newFormModel.push(newControl);

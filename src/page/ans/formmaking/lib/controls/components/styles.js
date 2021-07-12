@@ -1,7 +1,9 @@
 import styled from "@emotion/styled";
+import { css } from '@emotion/css';
 
 export const Container = styled.div`
   display: ${({ formConfig }) => (formConfig.labelPosition === 'top' ? 'block' : 'flex')};
+  overflow-x: auto;
 `
 
 export const Label = styled.div`
@@ -40,3 +42,18 @@ export const Flex = styled.div`
     return props.justifyContent ? props.justifyContent : 'center'
   }};
 `
+
+export const TableHeaderCls = css`
+  height: 60px;
+  background-color: #f6f7fa;
+  line-height: 60px;
+  color: #999;
+  padding-left: 10px;
+  border-bottom: 1px solid #ebeef5;
+`;
+
+export const TableCellCls = css`
+  background-color: #fff;
+  min-height: 60px;
+  padding: 10px;
+`;

@@ -3,24 +3,29 @@ import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.js
 import Label from '@/page/ans/formmaking/lib/controls/common/Label'
 import { Container } from '@/page/ans/formmaking/lib/controls/components/styles'
 import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
+import ControlAdapter from '@/page/ans/formmaking/lib/controls/common/ControlAdapter'
 
-const NumberDesign = ({ control, formConfig, inTable=false, onChange }) => {
+const NumberRender = ({ control, formConfig, inTable = false, onChange, isDesign = false }) => {
   const { options } = control
   const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
-  return <div className={options.customClass}>
-    <Container formConfig={formConfig}>
-      <Label control={control} formConfig={formConfig} />
 
-      <InputNumberPlus
-        {...baseProps}
-        value={options.value}
-        step={options.step}
-        min={options.min}
-        max={options.max}
-      />
-    </Container>
+  return (
+    <ControlAdapter control={control} inTable={inTable} isDesign={isDesign} formConfig={formConfig} onChange={onChange}>
+      <div className={options.customClass}>
+        <Container formConfig={formConfig}>
+          <Label control={control} formConfig={formConfig} inTable={inTable} />
 
-  </div>
+          <InputNumberPlus
+            {...baseProps}
+            value={options.value}
+            step={options.step}
+            min={options.min}
+            max={options.max}
+          />
+        </Container>
+      </div>
+    </ControlAdapter>
+  )
 }
 
-export default NumberDesign
+export default NumberRender
