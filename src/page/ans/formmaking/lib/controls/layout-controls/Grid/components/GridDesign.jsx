@@ -5,6 +5,8 @@ import ColumnDesign from '../Column/ColumnDesign';
 const GridDesign = ({ control, formConfig }) => {
   const { options } = control;
 
+  console.log('GridDesign', control);
+
   return (
     <div style={{ padding: 5 }}>
       <div className={options.customClass} style={{ display: 'flex' }}>

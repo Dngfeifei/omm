@@ -35,7 +35,7 @@ export function tableMutation(rows, type, rowIndex, columnIndex) {
         "height": ""
       },
       "list": [],
-      "id": Math.random()
+      "key": Math.random()
     }
   }
   function createRow() {
@@ -116,8 +116,9 @@ export function tableMutation(rows, type, rowIndex, columnIndex) {
       var rowspan = cell.options.rowspan
       for (var i = 1; i < rowspan; ++i) {
         const newCell = createCell()
-        rows[rowIndex + i].columns.splice(columnIndex, 0, { ...newCell, colspan: cell.options.colspan })
+        rows[rowIndex + i].columns.splice(columnIndex - 1, 0, { ...newCell, colspan: cell.options.colspan })
       }
+      rows[rowIndex].columns[columnIndex].rowspan = 1
       return rows
     },
     [MutationType.splitRow]: (rows, rowIndex, columnIndex) => {
@@ -125,8 +126,9 @@ export function tableMutation(rows, type, rowIndex, columnIndex) {
       var colspan = cell.options.colspan
       for (var i = 1; i < colspan; ++i) {
         const newCell = createCell()
-        rows[rowIndex].columns.splice(columnIndex + i, 0, { ...newCell, colspan: cell.options.colspan })
+        rows[rowIndex].columns.splice(columnIndex, 0, { ...newCell, rowspan: cell.options.rowspan })
       }
+      rows[rowIndex].columns[columnIndex].colspan = 1
       return rows
     },
     [MutationType.deleteRow]: (rows, rowIndex, columnIndex) => {
@@ -145,6 +147,7 @@ export function tableMutation(rows, type, rowIndex, columnIndex) {
     },
   }
 
+  debugger
 
   return mutationFunction[type](rows, rowIndex, columnIndex)
 }

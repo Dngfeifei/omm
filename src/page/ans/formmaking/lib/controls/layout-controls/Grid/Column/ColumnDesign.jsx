@@ -46,6 +46,9 @@ const Container = styled.div`
 const ColumnDesign = ({ gridControl, column }) => {
   const { state, dispatch } = useContext(FormDesignContenxt);
 
+  console.log('ColumnDesign', column);
+
+
   const isSelected = useMemo(
     () => state.selectedControl && state.selectedControl.id === column.id,
     [state, column]

@@ -106,7 +106,7 @@ const ControlDesignBox = ({
   const { state, dispatch } = useContext(FormDesignContenxt);
   const { formConfig } = state;
 
-  const isLayout = ['grid', 'tabs', 'report'].includes(itemControl.type);
+  const isLayout = ['grid', 'tabs', 'report', 'table'].includes(itemControl.type);
   const isSelected =
     state.selectedControl && state.selectedControl.id === itemControl.id;
 
@@ -117,6 +117,7 @@ const ControlDesignBox = ({
     inTable,
     isDesign,
   };
+
 
   const handleControlSelect = (e, control, index) => {
     dispatch({ type: 'update:selected-control', payload: cloneDeep(control) });

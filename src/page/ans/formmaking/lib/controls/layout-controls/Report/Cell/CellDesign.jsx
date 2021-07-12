@@ -135,10 +135,10 @@ const CellDesign = ({ column, updateControl, rowIndex, columnIndex, onOperation 
                   </OpItem>
 
                   <Divider style={{ margin: '4px auto' }} />
-                  <OpItem onClick={() => handleOp(MutationType.splitColumn)}>
+                  <OpItem onClick={() => handleOp(MutationType.splitRow)}>
                     拆分成列
                   </OpItem>
-                  <OpItem onClick={() => handleOp(MutationType.splitRow)}>
+                  <OpItem onClick={() => handleOp(MutationType.splitColumn)}>
                     拆分成行
                   </OpItem>
 

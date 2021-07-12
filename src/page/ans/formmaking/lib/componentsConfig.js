@@ -880,7 +880,8 @@ export const layoutComponents = [
       "borderColor": "#999",
       "width": "100%",
       "remoteFunc": "func_1625990604274",
-      "remoteOption": "option_1625990604274"
+      "remoteOption": "option_1625990604274",
+      dataBind: true,
     },
     "rows": [
       {
