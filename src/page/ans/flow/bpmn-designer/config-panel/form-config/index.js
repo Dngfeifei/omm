@@ -23,10 +23,11 @@ export default function FormConfig(props) {
     if (bpmnElement.businessObject) {
       const busObj = bpmnElement.businessObject;
       if (busObj.formKey) {
-        const { formKey, $attrs } = busObj;
-        if ($attrs["flowable:outFormKey"]) {
+        const { formKey,formType, $attrs } = busObj;
+        if (formType === '2') {
           setFormType("external");
           setExtFormUrl(formKey);
+          initExtUrl(formKey);
           setExtFormReadable($attrs["flowable:formReadOnly"]);
         } else {
           setFormType("active");
@@ -108,6 +109,17 @@ export default function FormConfig(props) {
     updateElementExtensions([...eventListener], bpmnInstance);
   }
 
+  function initExtUrl(value) {
+    setExtFormUrl(value);
+    modeling.updateProperties(bpmnElement, {
+      "flowable:formKey": value,
+      "flowable:formType": 2,
+      "flowable:outFormKey": value,
+      "flowable:formName": "",
+      "flowable:formVersion": "",
+    });
+  }
+  
   function onChangeExtUrl(e) {
     const value = e.target.value;
     setExtFormUrl(value);

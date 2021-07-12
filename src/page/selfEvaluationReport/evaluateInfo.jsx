@@ -29,7 +29,8 @@ import {
   GetselectAssessReportList,
   GetselectAssessProableReportList,
   Getbasedata,
-  GetexportAssessReportList
+  GetexportAssessReportList,
+  GetexportSearchAssessAndProableReport
 } from "/api/evaluateInfo.js";
 // 引入页面CSS
 import "@/assets/less/pages/evalutateinfo.less";
@@ -57,7 +58,6 @@ class AssessmentReport extends Component {
   // 获取表格高度
   SortTable = () => {
     setTimeout(() => {
-
       let h = this.tableDom.clientHeight - 150;
       this.setState({
         h: {
@@ -411,10 +411,6 @@ class AssessmentReport extends Component {
     this.setState({
       // skillTypeId, brandId, competenceLevelId
     })
-
-
-
-
   };
   // 1：产品类别选中方法
   onSelect0 = (val, option) => {
@@ -505,6 +501,7 @@ class AssessmentReport extends Component {
   }
   // 产品线选中方法
   onChange4 = (checkedValues, info) => {
+    console.log(checkedValues, 1222)
     this.setState({
       productLineCodes: checkedValues
     })
@@ -539,6 +536,7 @@ class AssessmentReport extends Component {
   }
   //表格
   getTable = (flag = 1) => {
+    console.log(this.state.productLineCodes)
     this.setState({ loading: true });
     let obj = Object.assign(
       {},
@@ -620,6 +618,41 @@ class AssessmentReport extends Component {
       }
     });
   };
+  //专业技能导出
+  professionalObtn = () => {
+    let currentDay = moment().format("YYYYMMDD");
+    let fileName = "专业技能导出" + currentDay + ".xlsx";
+    const hide = message.loading("报表数据正在检索中,请耐心等待。。。", 0);
+    let obj = Object.assign(
+      {},
+      {
+        regionalName: this.state.regionalName,
+        departmentName: this.state.departmentName,
+        userName: this.state.userName,
+        productType: this.state.productCategory,	//产品类别
+        skillType: this.state.skillTypeCode,	//技术方向
+        brand: this.state.brandCode,	//品牌
+        productLineLevel: this.state.productLineLevelCode,	//产品线级别
+        productLine: this.state.productLineCodes.join(','),	//产品线 []
+        proableLevel: this.state.proableLevel,	//专业能力级别
+      }
+    );
+    GetexportSearchAssessAndProableReport(obj).then((res) => {
+      console.log(res)
+      if (res.success == 1) {
+        message.destroy();
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.href = res.data + "?filename=" + fileName;
+        a.click();
+        document.body.removeChild(a);
+      } else if (res.success == 0) {
+        message.destroy();
+        message.error(res.message);
+      }
+    })
+  }
+
   // 导出工程师技能评价报告
   downFile = () => {
     let currentDay = moment().format("YYYYMMDD");
@@ -733,6 +766,8 @@ class AssessmentReport extends Component {
   //查询
   search = async (type = false) => {
     this.getTable(0);
+
+
   };
 
 
@@ -756,16 +791,12 @@ class AssessmentReport extends Component {
       skillTypeCode: null,
       brandCode: null,
       productLineLevelCode: null,
-      productLineCodes: null,
+      productLineCodes: [],
       proableLevel: null
 
     })
 
     // this.getTable();
-
-
-
-
   };
   render = (_) => {
     // 接受组件外传递的数据
@@ -965,16 +996,20 @@ class AssessmentReport extends Component {
             <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.search()}>
               查询
                 </Button>
-            <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.exportObtn()}>
-              导出
-                </Button>
+
             <Button
               type="primary"
               style={{ margin: "0 15px" }}
               onClick={() => this.reset()}
             >
               重置
-                </Button>
+            </Button>
+            <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.exportObtn()}>
+              导出
+            </Button>
+            <Button type="primary" style={{ margin: "0 15px" }} onClick={() => this.professionalObtn()}>
+              专业技能导出
+            </Button>
             <Button
               type="primary"
               onClick={this.downFile}
@@ -1033,7 +1068,7 @@ class AssessmentReport extends Component {
           <div>
             <Table
               bordered
-              rowKey={(record) => record.assessId}
+              rowKey={(record, index) => index}
               onRow={this.onRow}
               // rowSelection={{
               //   onChange: this.onTableSelect,

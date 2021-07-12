@@ -24,6 +24,12 @@ export const CopyFlow = (params = {}) =>
 export const ActiveFlow = (params = {}) =>
 	http.fetchGet(REMOTE_URL + `/flowable/process/update/active`, params)
 
+
+// 挂起流程
+export const SuspendFlow = (params = {}) =>
+	http.fetchGet(REMOTE_URL + `/flowable/process/update/suspend`, params)
+
+
 // 删除流程信息
 export const DelFlow = (params = {}) => {
 	return http.fetchDelete(REMOTE_URL + `/flowable/model/delete?ids=`+params)

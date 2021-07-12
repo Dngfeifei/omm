@@ -102,8 +102,6 @@ module.exports = {
       '/app/': target,     // 流程设计
       '/form/': target,     // 流程设计
       '/sysMessage': target, //系统消息接口
-	  '/sysNotice/': target, // 系统公告
-      '/sysNoticeFile/': target, // 系统公告附件
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

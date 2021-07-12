@@ -67,6 +67,11 @@ class ListenerForm extends Component {
             )(<Input />)}
           </Form.Item>
         )}
+        <Form.Item label="自定义参数">
+          {getFieldDecorator("customParams",{
+            initialValue: (record && record.customParams) || "",
+          })(<Input />)}
+        </Form.Item>
       </Form>
     );
   }

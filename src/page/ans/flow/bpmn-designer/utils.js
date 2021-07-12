@@ -40,11 +40,31 @@ export function createListenerObject(options, isTask, bpmnInstances) {
     default:
       listenerObj.class = options.class;
   }
+
+  if(options.customParams){
+    listenerObj.fields = [{"name":"universalField","fieldType":"string","string":options.customParams}]
+  }
+  
+  // 注入字段
+  if (listenerObj.fields) {
+    listenerObj.fields = listenerObj.fields.map(field => {
+      return createFieldObject(bpmnInstances,field, "flowable");
+    });
+  } 
+  
   return bpmnInstances.moddle.create(
     `flowable:${isTask ? "TaskListener" : "ExecutionListener"}`,
     listenerObj
   );
 }
+
+// 创建 监听器的注入字段 实例
+export function createFieldObject(bpmnInstances,option, prefix) {
+  const { name, fieldType, string, expression } = option;
+  const fieldConfig = fieldType === "string" ? { name, string } : { name, expression };
+  return bpmnInstances.moddle.create(`${prefix}:Field`, fieldConfig);
+}
+
 
 export const assignInfo = {
   user: {

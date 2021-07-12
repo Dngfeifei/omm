@@ -164,7 +164,7 @@ class CardNotice extends Component {
                     />
                 </Spin>
                 {!this.state.visible ? "" : <CardInfo onCancel={this.closeDetails} data={this.state.modolInfo} />}
-                <p style={{ textAlign: "right", paddingTop: "8px" }}><a onClick={this.seeMore}>查看更多 》》</a></p>
+                {this.state.data.length?<p style={{ textAlign: "right", paddingTop: "8px" }}><a onClick={this.seeMore}>{`查看更多 >>`}</a></p>:""}
             </Card>
         );
     }
