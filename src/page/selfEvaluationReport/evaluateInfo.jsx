@@ -637,19 +637,21 @@ class AssessmentReport extends Component {
         proableLevel: this.state.proableLevel,	//专业能力级别
       }
     );
-    GetexportSearchAssessAndProableReport(obj).then((res) => {
-      console.log(res)
-      if (res.success == 1) {
-        message.destroy();
-        var a = document.createElement("a");
-        document.body.appendChild(a);
-        a.href = res.data + "?filename=" + fileName;
-        a.click();
-        document.body.removeChild(a);
-      } else if (res.success == 0) {
-        message.destroy();
-        message.error(res.message);
-      }
+    return new Promise((resolve, reject) => {
+      GetexportSearchAssessAndProableReport(obj).then((res) => {
+        console.log(res)
+        if (res.success == 1) {
+          resolve(message.destroy());
+          var a = document.createElement("a");
+          document.body.appendChild(a);
+          a.href = res.data + "?filename=" + fileName;
+          a.click();
+          document.body.removeChild(a);
+        } else if (res.success == 0) {
+          message.destroy();
+          message.error(res.message);
+        }
+      }).catch(err => err)
     })
   }
 
