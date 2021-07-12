@@ -7,7 +7,8 @@ export default function ListenerTable(props) {
 
   useEffect(() => {
     const data = listener.map((item, index) => {
-      const obj = { event: item.event, key: index };
+      
+      const obj = { event: item.event, key: index,customParams:item.fields === undefined?"":item.fields[0].string };
       if (item.class) {
         obj.implement = item.class;
         obj.listenerType = "class";
@@ -48,6 +49,11 @@ export default function ListenerTable(props) {
         showTitle: false,
       },
       render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+    },{
+      title: "自定义参数",
+      dataIndex: "customParams",
+      key: "customParams",
+      width: 80,
     },
     {
       title: "操作",
@@ -71,6 +77,7 @@ export default function ListenerTable(props) {
   ];
   return (
     <Table
+      className="jxlTable"
       dataSource={dataSource}
       columns={columns}
       pagination={false}
