@@ -17,7 +17,7 @@
  // 引入 根据数据字典中查出------【服务类别、】API接口
  import { customerLevel} from '/api/customerInfor'
  // 引入 选择器 API接口
- import { getProjectSelector , } from '/api/selectorApi'
+ import { getProductSelector} from '/api/selectorApi'
  
  
  
@@ -235,7 +235,7 @@
  
              // 首先通过传递的title名称判断此时是【项目选择器】还是【客户选择器】
              if (this.props.title == '产品选择器') {
-                 getProjectSelector(this.state.pageSize, this.state.current, values).then(res => {
+                getProductSelector(this.state.pageSize, this.state.current, values).then(res => {
                      if (res.success == 1) {
                          this.setState({
                              loading: false,

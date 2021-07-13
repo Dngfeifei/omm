@@ -24,8 +24,8 @@ export const GetAllocationCustomer = (projectAreaId="") => {
 }
 
 //获取资产库配置管理表格数据
-export const GetAllocationTable = (params = {}) => {
-	return http.fetchGet(`/biConfiguration/list`, params)
+export const GetAllocationTable = (params = {},limit,offset) => {
+	return http.fetchPost(`/biConfigurations/list?limit=${limit}&offset=${offset}`, params,true)
 }
 //资产库配置管理新增
 export const AddAllocationTable = (params = {}) => {

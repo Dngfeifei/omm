@@ -22,7 +22,7 @@ var buildconfig = {
 }
 
 var target = {target: 'http://172.16.100.81/api/dat'}
-// var target = {target: 'http://10.0.17.170:8111'}
+// var target = {target: 'http://10.0.17.241:8111'}
 
 
 module.exports = {
@@ -83,7 +83,7 @@ module.exports = {
       '/biStatisticalReport': target, //统计报表
       '/bdpFunAuth': target, // 数据权限流程表单顶级模型树接口
       '/sysPositionsCategories': target, //数据权限岗位组树装列表|查询岗位列表（分页）接口
-      '/biConfiguration': target, // 配置库-配置管理联想输入
+      '/biConfigurations': target, // 配置库-配置管理联想输入
       '/fileCategories': target, //介质接口
       '/filePonints': target, //币值接口
       '/fileLibrary': target, //介质库列表数据接口

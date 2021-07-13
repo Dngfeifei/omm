@@ -33,7 +33,7 @@ class Component extends React.Component {
             selectedRowKeys:null,  //选中的table表格的id
             visibleProductModel:false,
         }
-        if(setComNode) setComNode(this)
+        if(setComNode) setComNode('component',this)
     }
 
     // 数据更新完成时触发的函数
@@ -94,7 +94,7 @@ class Component extends React.Component {
                 onOk() {
                     var ID = _this.state.selectedRowKeys[0]
                     const dataSource = [..._this.state.data];
-                    _this.setState({ data: dataSource.filter(item => item.key !== ID),selectedRowKeys:null });
+                    _this.setState({ data: dataSource.filter((item,index) => index !== ID),selectedRowKeys:null });
                 },
                 onCancel() {
                     message.info('取消删除！');
@@ -155,7 +155,7 @@ class Component extends React.Component {
                     rowSelection={rowSelectionArea}  
                     dataSource={this.state.data}
                     columns={this.props.panes.subColumns}
-                    scroll={{y:450}}
+                    scroll={{y:400}}
                     pagination={false}
                     size={'small'}
                     style={{marginTop:16}}

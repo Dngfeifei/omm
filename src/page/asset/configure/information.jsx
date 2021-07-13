@@ -30,6 +30,7 @@ class BasicInformation extends Component {
                 productSkillType:[], //技术方向
             },
         }
+        if(this.props.setSon) this.props.setSon(this);
     }
     componentWillMount(){
         //初始化下拉列表数据
@@ -60,10 +61,7 @@ class BasicInformation extends Component {
                 continue;
             }
             let item = assetsListData[assetsList[i].key];
-            // console.log(assetsList[i].key.indexOf('strValue'),assetsWList[i].key.split('strValue')[1])
-            // if(assetsList[i].key.indexOf('strValue')>-1 && (assetsList[i].key.split('strValue')[1]>2&&assetsList[i].key.split('strValue')[1]<5) ){
-            //     item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
-            // }
+            
             //处理初始化显示值
             let initialValue = baseData[assetsList[i].key] ,rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
             if(roleWindow.roleModalType && assetsList[i].key !== assetsList[i].dataIndex && !initialValue){
@@ -71,9 +69,7 @@ class BasicInformation extends Component {
             }
              //处理产品联动是否可编辑
             if(assetsList[i].key == 'productSkillType' || assetsList[i].key == 'productBrandType' || assetsList[i].key == 'productLineType' || assetsList[i].key == 'productLevel' || assetsList[i].key == 'serviceClassId'){
-                // const len = this.state.selectData[assetsList[i].selectData].length
-                // rules = roleWindow.roleModalType == 2 ? [] : item ? len ?  item.rules : [] : [];
-                // required = len ? false : true;
+    
                 required = true;
             }
             //处理配置项是否可编辑
@@ -84,7 +80,7 @@ class BasicInformation extends Component {
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? assetsList[i].title : '无效字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
-                    rules: rules,
+                    rules: [],//rules,
                     initialValue: initialValue
                     })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required,assetsList[i].dataIndex) : <Input />)}
                 </Form.Item>
@@ -96,24 +92,24 @@ class BasicInformation extends Component {
     //初始化下数据
     init = () => {
         //所有下拉数据初始化
-        getBaseData({}).then(res => {
-            if (res.success == 1) {
-                let {selectData} = this.state;
-                this.setState({selectData:{...selectData,...res.data}})
-            } else {
-                message.error(res.message)
-            }
-        })
+        // getBaseData({}).then(res => {
+        //     if (res.success == 1) {
+        //         let {selectData} = this.state;
+        //         this.setState({selectData:{...selectData,...res.data}})
+        //     } else {
+        //         message.error(res.message)
+        //     }
+        // })
         //配置项下拉数据初始化
-        getAllBaseDataTypes({}).then(res => {
-            if (res.success == 1) {
-                let {selectData} = this.state;
-                selectData = Object.assign({}, selectData, { basedataTypeList: res.data});
-                this.setState({selectData})
-            } else {
-                message.error(res.message)
-            }
-        })
+        // getAllBaseDataTypes({}).then(res => {
+        //     if (res.success == 1) {
+        //         let {selectData} = this.state;
+        //         selectData = Object.assign({}, selectData, { basedataTypeList: res.data});
+        //         this.setState({selectData})
+        //     } else {
+        //         message.error(res.message)
+        //     }
+        // })
     }
     //处理项目选择器返回数据
     setProjectHandleOk = (info) =>{
@@ -251,6 +247,18 @@ class BasicInformation extends Component {
             visibleProductModel:false
         },()=>{
             this.props.form.resetFields();
+        })
+    }
+    //提交函数
+    onSubmit = () => {
+        // 1 校验必填数据是否填写
+        return this.props.form.validateFields((err, fieldsValue) => {
+            // console.log(this.state.baseData);
+            if (err) {
+                return;
+            }
+            let newParams = {...fieldsValue}
+            return newParams;
         })
     }
     render  () {

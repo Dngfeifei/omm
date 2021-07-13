@@ -5,7 +5,7 @@ import { Table, Form, Input, Modal, message, Select, Button, Row, Popconfirm,Too
 
 const { confirm } = Modal;
 
-
+import {setComNode} from './assetsList.js'//获取页面渲染配置项
 // 引入 API接口
 import { } from '/api/systemParameter'
 
@@ -26,6 +26,7 @@ class RiskInvestigation extends React.Component {
             ], //数据包
             selectedRowKeys:null,  //选中的table表格的id
         }
+        if(setComNode) setComNode('risk',this)
     }
 
     // 数据更新完成时触发的函数
@@ -35,77 +36,7 @@ class RiskInvestigation extends React.Component {
     }
     // 初始化
     init = () => {
-        this.columns = [
-            {
-                title: <div className="ant-form-item-required1">风险配置项</div>,
-                dataIndex: '1',
-                align:'center',
-                width:'100px',
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">设备分类</div>,
-                dataIndex: '2',
-                width:'100px',
-                align:'center',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'2',value)} />
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">收集方式</div>,
-                dataIndex: '3',
-                align:'center',
-                width:'100px',
-                render:(text,record,index) => {
-                    return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => this.onFormChange(index,'4',value)}>
-                                {
-                                    [].map((items, index) => {
-                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
-                                    })
-                                }
-                            </Select>
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">风险等级</div>,
-                dataIndex: '4',
-                align:'center',
-                editable: true,
-                width:'100px',
-                render:(text,record,index) => {
-                   return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => this.onFormChange(index,'4',value)}>
-                                {
-                                    [].map((items, index) => {
-                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
-                                    })
-                                }
-                            </Select>
-                }
-            },
-            {
-                title: <div className="ant-form-item-required1">建议值</div>,
-                dataIndex: '5',
-                align:'center',
-                width:'80px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'5',value)} />
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">备注</div>,
-                dataIndex: '7',
-                align:'center',
-                width:'280px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'7',value)} />
-                },
-                editable: true,
-            }
-        ]
+        // this.columns = 
     }
     //表格表单写入
     onFormChange = (index,type,value) => {
@@ -114,7 +45,7 @@ class RiskInvestigation extends React.Component {
         this.setState({data})
     }
     render() {
-        this.init()
+        // this.init()
         return (
             <div>
                 <Table
@@ -124,7 +55,7 @@ class RiskInvestigation extends React.Component {
                     rowKey={index => index}
                     // rowSelection={rowSelectionArea}  
                     dataSource={this.state.data}
-                    columns={this.columns}
+                    columns={this.props.panes.riskColumns}
                     scroll={{y:550}}
                     pagination={false}
                     size={'small'}
