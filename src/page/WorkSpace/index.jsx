@@ -25,10 +25,10 @@ import { getWorkList,getTicketType,getStatus } from '/api/workspace'
 
 @connect(state => ({
     activeKey: state.global.activeKey,
-	resetwork: state.global.resetwork,
+    resetwork: state.global.resetwork,
 }), dispath => ({
-	add(pane){dispath({ type: ADD_PANE, data: pane })},
-	setWorklist(data){dispath({ type: SET_WORKLIST,data})}
+    add(pane){dispath({ type: ADD_PANE, data: pane })},
+    setWorklist(data){dispath({ type: SET_WORKLIST,data})}
 }))
 
 
@@ -44,8 +44,8 @@ class workList extends Component {
         if(nextprops.resetwork.switch != this.props.resetwork.switch){   //当改状态改变时调用数据刷新
             this.init();
         }
-		
-	}
+
+    }
     // 挂载完成
     componentDidMount=()=>{
         this.init();
@@ -87,7 +87,7 @@ class workList extends Component {
                         })
                     }
                 </Select>
-               
+
             },{
                 label: '创建人',
                 key: 'applyName',
@@ -102,7 +102,7 @@ class workList extends Component {
                         })
                     }
                 </Select>
-               
+
             }, {
                 label: '创建时间',
                 key: 'dataTime',
@@ -110,14 +110,14 @@ class workList extends Component {
             }
         ],
         columns: [{
-                title: '序号',
-                dataIndex: 'index',
-                align:'center',
-                width:'80px',
-                // 第一种：每一页都从1开始
-                render:(text,record,index)=> this.setHtml(record.finished,index+1)
-                // }
-            },  
+            title: '序号',
+            dataIndex: 'index',
+            align:'center',
+            width:'80px',
+            // 第一种：每一页都从1开始
+            render:(text,record,index)=> this.setHtml(record.finished,index+1)
+            // }
+        },
             {
                 title: '工单编号',
                 dataIndex: 'businessKey',
@@ -211,7 +211,7 @@ class workList extends Component {
             }
 
             const rangeTimeValue = fieldsValue['dataTime'];
-            
+
 
             if (rangeTimeValue == undefined) {
                 var values = {
@@ -239,8 +239,7 @@ class workList extends Component {
                 offset: this.state.current //当前起始页的条数
             }
             //获取列表数据
-            console.info("this.state.currentthis.state.current:::"+this.props.params.pathParam.split('?')[1])
-             getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
+            getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
                 if (res.success == 1) {
                     this.setState({ loading: false })
                     this.setState({
@@ -251,10 +250,10 @@ class workList extends Component {
                     message.error(res.message);
                 }
             })
-           
+
 
         });
-        
+
     }
 
 
@@ -278,7 +277,7 @@ class workList extends Component {
         this.setState({ loading: true })
         // 走接口调用
         this.init();
-       
+
     }
 
     //清空高级搜索
@@ -304,7 +303,7 @@ class workList extends Component {
     // 页码改变的回调，参数是改变后的页码及每页条数
     onPageChange=(page, pageSize)=>{
         let data = Object.assign({}, this.state.pagination, { offset: page })
-        
+
         this.setState({
             current: (page-1) * pageSize,
             pagination:data
@@ -317,7 +316,7 @@ class workList extends Component {
     // 当几条一页的值改变后调用函数，current：改变显示条数时当前数据所在页；pageSize:改变后的一页显示条数
     onShowSizeChange = (current, pageSize) => {
         let data = Object.assign({}, this.state.pagination, { offset: 1,limit: pageSize })
-        
+
         this.setState({
             current: 0,
             pageSize: pageSize ,
@@ -327,58 +326,32 @@ class workList extends Component {
             this.init()
         })
 
-       
+
     }
 //单击行打开工单详情页
     onClickRow = (record) => {
-        
-        if(record.derivedFrom !== ""){
-
-            return {
-                onClick: () => {
-                    let newTitle = { 'processTitle': record.assigneeRealName+" 在"+ moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + " 发起了 "+ record.processDefinitionName };
-                    record = Object.assign({},record,newTitle)
-                    
-                    let newRouterNum = { 'routerNum': this.props.params.pathParam.split('?')[1] };
-                    record = Object.assign({},record,newRouterNum)
-
-                    let pane = {
-                        title: record.processDefinitionName,
-                        key: record.procInstId,
-                        url: 'WorkOrder/dynamicSplicing.jsx',
-                        params:{
-                            reset:this.props.params.type,//刷新本页面key
-                            record
-                        }
+        return {
+            onClick: () => {
+                let pane = {
+                    title: record.businessKey,//record.ticketType,
+                    key: record.procInstId,
+                    url: 'WorkOrder/index.jsx',
+                    params:{
+                        reset:this.props.params.type,//刷新本页面key
+                        record
                     }
-                    this.props.add(pane)
-                },
-            };
-            
-        }else{
+                }
+                //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
+                if(this.props.params.pathParam.split('?')[2] && !record.finished){
+                    setTimeout(_ => {
+                        this.init();
+                    },1000)
+                }
+                //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
+                this.props.add(pane)
+            },
+        };
 
-            return {
-                onClick: () => {
-                    let pane = {
-                        title: record.businessKey,//record.ticketType,
-                        key: record.procInstId,
-                        url: 'WorkOrder/index.jsx',
-                        params:{
-                            reset:this.props.params.type,//刷新本页面key
-                            record
-                        }
-                    }
-                    //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
-                    if(this.props.params.pathParam.split('?')[2] && !record.finished){
-                        setTimeout(_ => {
-                            this.init();
-                        },1000)
-                    }
-                    //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
-                    this.props.add(pane)
-                },
-            };
-        }
     }
 
     render = _ => {
@@ -388,7 +361,7 @@ class workList extends Component {
             selectedRowKeys,
             onChange: this.onSelectChange
         };
-       
+
         return (
             <div style={{ border: '0px solid red',background:' #fff'}} className="main_height" style={{display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
                 <Form layout='inline' style={{ width: '100%', paddingTop: '24px',marginLeft:'15px'}} id="logbookForm">
@@ -419,7 +392,7 @@ class workList extends Component {
                     {/* 分页器组件 */}
                     <Pagination total={this.state.total} pageSize={this.state.pagination.limit} current={(this.state.pagination.offset)}  onChange={this.onPageChange} onShowSizeChange={this.onShowSizeChange}></Pagination>
                 </div>
-                
+
 
                 {/* 详情页--对话框 底部内容，当不需要默认底部按钮时，可以设为 footer={null} */}
                 <Modal title="日志详情" visible={this.state.visible} onCancel={this.handleCancel} footer={null}>
