@@ -97,10 +97,10 @@ export default function FormMeta(props) {
 
   // 获取数据源
   useEffect(() => {
-    getDataSource()
-      .then(resp => {
-        setDataSourceTree(resp.treeData)
-      })
+    // getDataSource()
+    //   .then(resp => {
+    //     setDataSourceTree(resp.treeData)
+    //   })
   }, [])
 
   const handleDataSourceChange = (sourceId) => {
