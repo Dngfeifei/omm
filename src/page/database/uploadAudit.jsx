@@ -54,7 +54,7 @@ class EditableCell extends React.Component {
                             }],
                             initialValue: record[dataIndex],
                         })(
-                            <Select style={{ width: 80 }} >
+                            <Select style={{ minWidth: "75px", maxWidth: "120px" }} >
                                 {
                                     fileLevelsArr.map((item) => {
                                         return <Option key={item.id} value={item.id}>{item.levelName}</Option>
@@ -76,7 +76,7 @@ class EditableCell extends React.Component {
                             // initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                             initialValue: record[dataIndex] ? moment(record[dataIndex], 'YYYY-MM-DD') : record[dataIndex]
                         })(
-                            <DatePickers disabledDate={disabledDate} style={{ width: 115 }} />
+                            <DatePickers disabledDate={disabledDate} style={{ minWidth: "99px", maxWidth: "120px" }} />
                             // <Inputs />
                         )}
                     </Item> : ""
@@ -130,6 +130,7 @@ class DownloadAudit extends Component {
             {
                 title: '文件名',
                 dataIndex: 'fileName',
+                width: 40,
                 align: 'center',
                 editable: false,
                 render: (t, r) => {
@@ -139,57 +140,33 @@ class DownloadAudit extends Component {
             {
                 title: '版本',
                 dataIndex: 'fileVersion',
+                width: 20,
                 align: 'center',
                 editable: false,
             },
             {
                 title: '文件大小',
                 dataIndex: 'fileSize',
+                width: 14,
                 align: 'center',
                 editable: false,
             },
-            // {
-            //     title: '标签',
-            //     dataIndex: 'fileLabel',
-            //     align: 'center',
-            //     editable: false,
-            //     render: (t, r) => {
-            //         return fileLabelData[t]
-            //     }
-            // },
             {
                 title: '上传用户',
                 dataIndex: 'uploadUserName',
+                width: 14,
                 align: 'center',
                 editable: false,
             },
-            // {
-            //     title: '资料类型',
-            //     dataIndex: 'categorieName',
-            //     align: 'center',
-            //     editable: false,
-            // },
-            // {
-            //     title: '上传时间',
-            //     dataIndex: 'uploadTime',
-            //     align: 'center',
-            //     editable: false,
-            // },
-            // {
-            //     title: '发布时间',
-            //     dataIndex: 'publishTime',
-            //     align: 'center',
-            //     editable: false,
-            // },
             {
                 title: <div className="ant-form-item-required">资料级别</div>,
                 dataIndex: 'fileLevelId',
                 align: 'center',
-                width: 96,
+                width: 15,
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
-                        return <Select style={{ width: "80px" }} value={t} onChange={(val, opt) => this.getRowInput(val, 'fileLevelId', r.id)}>
+                        return <Select style={{ minWidth: "75px", maxWidth: "120px" }} value={t} onChange={(val, opt) => this.getRowInput(val, 'fileLevelId', r.id)}>
                             {
                                 fileLevelsArr.map((item) => {
                                     return <Option key={item.id} value={item.id}>{item.levelName}</Option>
@@ -204,6 +181,7 @@ class DownloadAudit extends Component {
             {
                 title: <div className="ant-form-item-required">币值</div>,
                 dataIndex: 'points',
+                width: 10,
                 align: 'center',
                 editable: true,
                 render: (t, r) => {
@@ -219,11 +197,11 @@ class DownloadAudit extends Component {
                 title: <div className="ant-form-item-required">下架日期</div>,
                 dataIndex: 'clearTime',
                 align: 'center',
-                width: 128,
+                width: 20,
                 editable: true,
                 render: (t, r) => {
                     if (r.uploadStatus == 0) {
-                        return <DatePicker disabledDate={disabledDate} style={{ width: 115 }} onChange={(date, dateStr) => this.getRowInput(dateStr, 'clearTime', r.id)} />
+                        return <DatePicker disabledDate={disabledDate} style={{ minWidth: "99px", maxWidth: "120px" }} onChange={(date, dateStr) => this.getRowInput(dateStr, 'clearTime', r.id)} />
                     } else {
                         return t
                     }
@@ -238,6 +216,7 @@ class DownloadAudit extends Component {
             {
                 title: '审核状态',
                 dataIndex: 'uploadStatus',
+                width: 14,
                 align: 'center',
                 editable: false,
                 render: (t, r) => {
@@ -254,6 +233,7 @@ class DownloadAudit extends Component {
             {
                 title: '操作',
                 align: 'center',
+                width: 15,
                 editable: false,
                 render: (t, r) => {
                     let status = r.uploadStatus
@@ -536,7 +516,7 @@ class DownloadAudit extends Component {
                 </div>
             </div>
             {/* 详情 */}
-            {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details} info={[{name:"上传用户",value:this.state.details.uploadUserName}]}></Details> : ""}
+            {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details} info={[{ name: "上传用户", value: this.state.details.uploadUserName }]}></Details> : ""}
         </div>
     }
 

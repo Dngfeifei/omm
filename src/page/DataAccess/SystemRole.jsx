@@ -341,14 +341,10 @@ class Access extends Component {
       },
     };
   };
-
-
+  ////  树的id 
   searchRoleNameFun2 = (pageConf) => {
-
     let id = this.state.searchListID;
-    let name = this.state.searchRoleName;
-
-
+    // let name = this.state.searchRoleName;
     // 2 发起查询请求 查询后结构给table赋值
     // 选中后请求角色数据
     let params = Object.assign({}, {
@@ -357,6 +353,7 @@ class Access extends Component {
     }, pageConf)
 
     GetList(params).then((res) => {
+      debugger
       console.log(res)
       if (res.success == 1) {
         let data = Object.assign({}, this.state.table, {
@@ -381,14 +378,16 @@ class Access extends Component {
       }
     });
   };
-  // 角色列表获取
+
+
+  //树的id
   searchRoleFun = (id) => {
 
     //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-    if (id == "" || id == null) {
-      message.warning("请先选中左侧角色组，然后再进行查询。");
-      return;
-    }
+    // if (id == "" || id == null) {
+    //   message.warning("请先选中左侧角色组，然后再进行查询。");
+    //   return;
+    // }
     // 2 发起查询请求 查询后结构给table赋值
     // 选中后请求角色数据
     let params = Object.assign(
@@ -396,12 +395,11 @@ class Access extends Component {
       {
         businessKey: id,
       },
-      this.state.pageConf,
-      { offset: 0 }
+      this.state.pageConf
+
     );
-
-
     GetList(params).then((res) => {
+      debugger
       if (res.success == 1) {
         let data = Object.assign({}, this.state.table, {
           rolesData: res.data.records,
@@ -443,6 +441,11 @@ class Access extends Component {
     });
     this.searchRoleNameFun2(this.state.pageConf);
   }
+  handleCancel = () => {
+    this.setState({
+      visible: false,
+    });
+  }
 
   // 点击修改，按钮的弹出框
   editRoleItem = () => {
@@ -451,18 +454,26 @@ class Access extends Component {
       this.state.tableSelectedInfo.length == 0
     ) {
       message.destroy();
-      message.warning("没有选中数据,无法进行修改!");
+      return message.warning("没有选中数据,无法进行修改!");
     }
     debugger
-    let row = this.state.tableSelectedInfo[0];
-    let visible = this.state.visible;
-    this.setState({
-      statusModal: 1,
-      updataModal: row,
-      searchListID: row.businessKey,
-      visible: !visible,
+    console.log(this.state.tableSelecteds, 'this.state.tableSelecteds')
+    let row = {};
+    this.state.table.rolesData.forEach((item, index) => {
+      if (item.id === this.state.tableSelecteds[0]) {
+        row = this.state.table.rolesData[index]
+      }
     })
-
+    // row = this.state.tableSelectedInfo[0]
+    if (row !== {}) {
+      let visible = this.state.visible;
+      this.setState({
+        statusModal: 1,
+        updataModal: row,
+        searchListID: row.businessKey,
+        visible: !visible,
+      })
+    }
   };
 
   //角色表格单项删除
@@ -703,6 +714,7 @@ class Access extends Component {
 
   // 表格选中后
   onTableSelect = (selectedRowKeys, info) => {
+    debugger
     //获取table选中项
     this.setState({
       tableSelecteds: selectedRowKeys,
@@ -830,6 +842,7 @@ class Access extends Component {
                       searchListID={this.state.searchListID}
                       updataModal={this.state.statusModal ? this.state.updataModal : ''}
                       onCancel={this.onCancel}
+                      handleCancel={this.handleCancel}
                     >
                     </MyModal> : null
                   }

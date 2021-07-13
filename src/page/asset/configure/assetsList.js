@@ -4,6 +4,14 @@ const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
 
+let ComponentNode,riskInvestigationNode;
+export const setComNode = (_this) => {
+    ComponentNode = _this;
+}
+export const setriskInvestNode = (_this) => {
+    riskInvestigationNode = _this;
+}
+
 export const baseData = {}
 
 
@@ -41,7 +49,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required,d
     }else if(type == 'input2'){
         return <Input disabled={required} disabled placeholder="项目带入" />
     }else if(type == 'input3'){
-        return <Input disabled={required} placeholder="请选择项目号" suffix={<Icon type="appstore" className="dateIcon" onClick={() => _this.openProject(dataIndex)} />} />
+        return <Input disabled={required} placeholder="请选择" suffix={<Icon type="appstore" className="dateIcon" onClick={() => _this.openProject(dataIndex)} />} />
     }else if(type == 'select'){
         return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required} onChange={(value) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue)}>
                     {
@@ -151,6 +159,34 @@ export const assetsListData = {
           ],
         render: render,
         type:'input2',
+    },
+    //保障结束日期
+    'projectEndDate2':{
+        label: '保障结束日期',
+        key: 'projectEndDate2',
+        span:6,
+        rules:[
+            {
+              required: true,
+              message: '该选项不能为空！',
+            },
+          ],
+        render: render,
+        type:'date',
+    },
+    //保障开始日期
+    'projectStartDate2':{
+        label: '保障开始日期',
+        key: 'projectStartDate2',
+        span:6,
+        rules:[
+            {
+              required: true,
+              message: '该选项不能为空！',
+            },
+          ],
+        render: render,
+        type:'date',
     },
     //结束时间
     'projectEndDate':{
@@ -390,7 +426,10 @@ export const assetsListData = {
         setValue:'productLevelName',
         label:'产品等级',
         span:6,
-        rules:[],
+        rules:[{
+            required: true,
+            message: '该选项不能为空！',
+          }],
         render:render,
         type:'select'
     },
@@ -947,7 +986,284 @@ export const panes = [
     {
         type:[23],
         rules:[...rules1],
-        subColumns:[],
+        subColumns:[
+            {
+                title: '序号',
+                dataIndex: 'key',
+                editable: false,
+                align:'center',
+                width:'60px',
+                //每一页都从1开始
+                render:(text,record,index)=> `${index+1}`
+            },
+            {
+                title: <div className="ant-form-item-required1">部件号</div>,
+                dataIndex: '2',
+                width:'100px',
+                align:'center',
+                render:(text,record,index) => {
+                    return <Input placeholder="请选择" suffix={<Icon type="appstore" className="dateIcon" onClick={() => ComponentNode.openModal()} />} />
+                },
+                editable: true,
+            },
+            {
+                title: <div className="ant-form-item-required1">部件位置</div>,
+                dataIndex: '3',
+                align:'center',
+                width:'100px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'3',value)} />
+                },
+                editable: true,
+            },
+            {
+                title: <div className="ant-form-item-required1">部件类别</div>,
+                dataIndex: '4',
+                align:'center',
+                editable: true,
+                width:'100px',
+                render:(text,record,index) => {
+                   return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => ComponentNode.onFormChange(index,'4',value)}>
+                                {
+                                    [].map((items, index) => {
+                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
+                                    })
+                                }
+                            </Select>
+                }
+            },
+            {
+                title: <div className="ant-form-item-required1">数量</div>,
+                dataIndex: '5',
+                align:'center',
+                width:'80px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'5',value)} />
+                },
+                editable: true,
+            },
+            {
+                title: <div className="ant-form-item-required1">描述</div>,
+                dataIndex: '6',
+                align:'center',
+                width:'200px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) =>ComponentNode.onFormChange(index,'6',value)} />
+                },
+                editable: true,
+            },
+            {
+                title: <div className="ant-form-item-required1">fc</div>,
+                dataIndex: '1',
+                align:'center',
+                width:'100px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'1',value)} />
+                },
+                editable: true,
+            },{
+                title: <div className="ant-form-item-required1">备注</div>,
+                dataIndex: '7',
+                align:'center',
+                width:'280px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'7',value)} />
+                },
+                editable: true,
+            }
+        ],
+        basicData:{
+            columnsBasic:[{
+                title: '配置项',
+                dataIndex: 'basedataTypeName',
+                ellipsis:true,
+                key:"basedataTypeId",
+                itemCode:'id',
+                itemValue:'basedataTypeName',
+                selectData:'basedataTypeList',
+                align: 'center',
+            },
+            {
+                title: '客户编号',
+                dataIndex: 'custNum',
+                width:100,
+                selectData:'customerData',
+                align: 'center'
+            },
+            {
+                title: '项目编号',
+                dataIndex: 'projectNumber',
+                key:"projectNumber",
+                align: 'center',
+            },
+            {
+                title: '客户名称',
+                dataIndex: 'custName',
+                ellipsis:true,
+                key:"custName",
+                align: 'center',
+            },
+            {
+                title: '项目名称',
+                dataIndex: 'projectName',
+                ellipsis: true,
+                width:200,
+                key:"projectName",
+                align: 'center',
+            },
+            {
+                title: '项目经理',
+                dataIndex: 'projectManagerName',
+                key:"projectManagerName",
+                width:90,
+                align: 'center',
+            },
+            {
+                title: '开始时间',
+                dataIndex: 'projectStartDate',
+                key:"projectStartDate",
+                align: 'center',
+            },
+            {
+                title: '结束时间',
+                dataIndex: 'projectEndDate',
+                key:"projectEndDate",
+                align: 'center',
+            },
+            {
+                title: '项目销售',
+                dataIndex: 'projectSalesmanName',
+                key:"projectSalesmanName",
+                align: 'center',
+            },
+            {
+                title: '服务区域',
+                dataIndex: 'projectAreaArea',
+                key:"projectAreaId",
+                selectData:'areaData',
+                itemValue:'area',
+                selectChange: 'projectAreaId',
+                align: 'center',
+            },
+            {
+                title: '机房地址',
+                dataIndex: 'projectAreaAddress',
+                key:"projectAreaAddress",
+                ellipsis:true,
+                align: 'center',
+            },
+            {
+                title: '客户方管理员',
+                dataIndex: 'custUserName',
+                selectData:'customerData',
+                key:"custUserId",
+                align: 'center',
+            },
+            {
+                title: '联系方式',
+                dataIndex: 'custUserMobile',
+                key:"custUserMobile",
+                align: 'center',
+            }],
+            columnsDevice:[
+                {
+                    title: '产品型号',
+                    dataIndex: 'productModelName',
+                    selectData:'productModeType',
+                    key:"productModelId",
+                    selectChange: 'productModelId',
+                    align: 'center',
+                },
+                {
+                    title: '产品等级',
+                    dataIndex: 'productLevel',
+                    selectData:'productLevel',
+                    key:"productLevel",
+                    align: 'center',
+                },{
+                    title: '产品线',
+                    dataIndex: 'productLineName',
+                    selectData:'productLineType',
+                    key:"productLineId",
+                    selectChange: 'productLineId',
+                    align: 'center',
+                },{
+                    title: '品牌',
+                    dataIndex: 'brandName',
+                    selectChange: 'brandId',
+                    selectData:'productBrandType',
+                    key:"brandId",
+                    align: 'center',
+                },{
+                    title: '技术方向',
+                    dataIndex: 'skillTypeName',
+                    selectChange: 'skillTypeId',
+                    selectData:'productSkillType',
+                    key:"skillTypeId",
+                    align: 'center',
+                },{
+                    title: '产品类别',
+                    dataIndex: 'serviceClassName',
+                    key:"serviceClassId",
+                    selectChange: 'serviceClassId',
+                    selectData:'productType',
+                    align: 'center',
+                },
+                {
+                    title: '序列号',
+                    dataIndex: 'strValue2',
+                    key:"strValue2",
+                    align: 'center',
+                },
+                {
+                    title: '保障开始日期',
+                    dataIndex: 'projectStartDate2',
+                    key:"projectStartDate2",
+                    align: 'center',
+                },
+                {
+                    title: '保障结束日期',
+                    dataIndex: 'projectEndDate2',
+                    key:"projectEndDate2",
+                    align: 'center',
+                },
+                {
+                    title: '系统类别',
+                    dataIndex: 'appTypeName',
+                    key:"appTypeId",
+                    selectData:'appType',
+                    align: 'center',
+                },
+                {
+                    title: '系统名称',
+                    dataIndex: 'strValue1',
+                    key: 'strValue1',
+                    align: 'center',
+                },
+                {
+                    title: '系统重要程度',
+                    dataIndex: 'appTypeName',
+                    key:"appTypeId",
+                    selectData:'appType',
+                    align: 'center',
+                },
+                {
+                    title: '风险等级',
+                    dataIndex: 'riskLevelName',
+                    selectData:'riskLevel',
+                    ellipsis:true,
+                    key:"riskLevelId",
+                    align: 'center',
+                },
+                {
+                    title: '是否维护',
+                    dataIndex: 'isMroName',
+                    key:'isMroId',
+                    selectData:'maintained',
+                    align: 'center'
+                }
+            ]
+        },
         columns:[
            ...columns,
             {
@@ -1066,6 +1382,7 @@ export const panes = [
     {
         type:[24],
         rules:[...rules1],
+        basicData:{columnsBasic:[],columnsDevice:[]},
         subColumns:[],
         columns:[
             ...columns,
@@ -1270,6 +1587,7 @@ export const panes = [
     {
         type:[25],
         rules:[...rules1],
+        basicData:{columnsBasic:[],columnsDevice:[]},
         subColumns:[],
         columns:[
             ...columns,
@@ -1447,6 +1765,7 @@ export const panes = [
     {
         type:[26],
         rules:[...rules1],
+        basicData:{columnsBasic:[],columnsDevice:[]},
         subColumns:[],
         columns:[
             ...columns,
@@ -1632,6 +1951,7 @@ export const panes = [
     {
         type:[27],
         rules:[...rules1],
+        basicData:{columnsBasic:[],columnsDevice:[]},
         subColumns:[],
         columns:[
             ...columns,
@@ -1703,6 +2023,7 @@ export const panes = [
     {
         type:[29],
         rules:[...rules1],
+        basicData:{columnsBasic:[],columnsDevice:[]},
         subColumns:[],
         columns:[
             ...columnsBase,
@@ -1791,6 +2112,7 @@ export const panes = [
     {
         type:[28],
         rules:[...rules1],
+        basicData:{columnsBasic:[],columnsDevice:[]},
         subColumns:[],
         columns:[
             ...columnsBase,
@@ -2028,49 +2350,101 @@ export const columnsBasic = [{
     align: 'center',
 }]
 //新增配置管理基础数据-设备信息
-export const columnsDevice = [{
-    title: '产品型号',
-    dataIndex: 'productModelName',
-    selectData:'productModeType',
-    key:"productModelId",
-    selectChange: 'productModelId',
-    align: 'center',
-},{
-    title: '产品类别',
-    dataIndex: 'serviceClassName',
-    key:"serviceClassId",
-    selectChange: 'serviceClassId',
-    selectData:'productType',
-    align: 'center',
-},
-{
-    title: '技术方向',
-    dataIndex: 'skillTypeName',
-    selectChange: 'skillTypeId',
-    selectData:'productSkillType',
-    key:"skillTypeId",
-    align: 'center',
-},
-{
-    title: '品牌',
-    dataIndex: 'brandName',
-    selectChange: 'brandId',
-    selectData:'productBrandType',
-    key:"brandId",
-    align: 'center',
-},
-{
-    title: '产品线',
-    dataIndex: 'productLineName',
-    selectData:'productLineType',
-    key:"productLineId",
-    selectChange: 'productLineId',
-    align: 'center',
-},
-{
-    title: '产品等级',
-    dataIndex: 'productLevel',
-    selectData:'productLevel',
-    key:"productLevel",
-    align: 'center',
-}]
+export const columnsDevice = [
+    {
+        title: '产品型号',
+        dataIndex: 'productModelName',
+        selectData:'productModeType',
+        key:"productModelId",
+        selectChange: 'productModelId',
+        align: 'center',
+    },
+    {
+        title: '产品等级',
+        dataIndex: 'productLevel',
+        selectData:'productLevel',
+        key:"productLevel",
+        align: 'center',
+    },{
+        title: '产品线',
+        dataIndex: 'productLineName',
+        selectData:'productLineType',
+        key:"productLineId",
+        selectChange: 'productLineId',
+        align: 'center',
+    },{
+        title: '品牌',
+        dataIndex: 'brandName',
+        selectChange: 'brandId',
+        selectData:'productBrandType',
+        key:"brandId",
+        align: 'center',
+    },{
+        title: '技术方向',
+        dataIndex: 'skillTypeName',
+        selectChange: 'skillTypeId',
+        selectData:'productSkillType',
+        key:"skillTypeId",
+        align: 'center',
+    },{
+        title: '产品类别',
+        dataIndex: 'serviceClassName',
+        key:"serviceClassId",
+        selectChange: 'serviceClassId',
+        selectData:'productType',
+        align: 'center',
+    },
+    {
+        title: '序列号',
+        dataIndex: 'strValue2',
+        key:"strValue2",
+        align: 'center',
+    },
+    {
+        title: '保障开始日期',
+        dataIndex: 'projectStartDate',
+        key:"projectStartDate",
+        align: 'center',
+    },
+    {
+        title: '保障结束日期',
+        dataIndex: 'projectEndDate',
+        key:"projectEndDate",
+        align: 'center',
+    },
+    {
+        title: '系统类别',
+        dataIndex: 'appTypeName',
+        key:"appTypeId",
+        selectData:'appType',
+        align: 'center',
+    },
+    {
+        title: '系统名称',
+        dataIndex: 'strValue1',
+        key: 'strValue1',
+        align: 'center',
+    },
+    {
+        title: '系统重要程度',
+        dataIndex: 'appTypeName',
+        key:"appTypeId",
+        selectData:'appType',
+        align: 'center',
+    },
+    {
+        title: '风险等级',
+        dataIndex: 'riskLevelName',
+        selectData:'riskLevel',
+        ellipsis:true,
+        key:"riskLevelId",
+        align: 'center',
+    },
+    {
+        title: '是否维护',
+        dataIndex: 'isMroName',
+        key:'isMroId',
+        selectData:'maintained',
+        align: 'center'
+    }
+]

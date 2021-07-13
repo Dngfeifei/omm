@@ -239,6 +239,7 @@ class workList extends Component {
                 offset: this.state.current //当前起始页的条数
             }
             //获取列表数据
+            console.info("this.state.currentthis.state.current:::"+this.props.params.pathParam.split('?')[1])
              getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
                 if (res.success == 1) {
                     this.setState({ loading: false })
@@ -330,6 +331,32 @@ class workList extends Component {
     }
 //单击行打开工单详情页
     onClickRow = (record) => {
+        
+        if(record.derivedFrom !== ""){
+
+            return {
+                onClick: () => {
+                    let newTitle = { 'processTitle': record.assigneeRealName+" 在"+ moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + " 发起了 "+ record.processDefinitionName };
+                    record = Object.assign({},record,newTitle)
+                    
+                    let newRouterNum = { 'routerNum': this.props.params.pathParam.split('?')[1] };
+                    record = Object.assign({},record,newRouterNum)
+
+                    let pane = {
+                        title: record.processDefinitionName,
+                        key: record.procInstId,
+                        url: 'WorkOrder/dynamicSplicing.jsx',
+                        params:{
+                            reset:this.props.params.type,//刷新本页面key
+                            record
+                        }
+                    }
+                    this.props.add(pane)
+                },
+            };
+            
+        }else{
+
             return {
                 onClick: () => {
                     let pane = {
@@ -351,7 +378,7 @@ class workList extends Component {
                     this.props.add(pane)
                 },
             };
-        
+        }
     }
 
     render = _ => {

@@ -6,8 +6,9 @@
 /* 卡片的内容高度 */
 
 .content .ant-card .ant-card-body {
-  max-height: 450px;
+  /* max-height: 450px; */
   overflow-y: auto;
+  padding: 8px 24px;
 }
 
 /***********************        以下样式是规定于 常用模块  的样式        *************************/

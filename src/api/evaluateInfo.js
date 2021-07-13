@@ -20,9 +20,11 @@ export const Getbasedata = () => {
 }
 
 //导出按钮接口
-
-
-
 export const GetexportAssessReportList = () => {
 	return http.fetchGet(`/biStatisticalReport/exportAssessReportList`)
 }
+//专业导出按钮
+export const GetexportSearchAssessAndProableReport = (params = {}) => {
+	return http.fetchPost('biStatisticalReport/exportSearchAssessAndProableReport', params, true)
+}
+

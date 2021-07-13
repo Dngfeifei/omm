@@ -79,7 +79,7 @@ class Details extends Component {
             destroyOnClose={true}
             visible={true}
             onCancel={this.props.onCancel}
-            width={1000}
+            width={800}
             bodyStyle={{ padding: "0" }}
             footer={[
                 <Button key="back" onClick={this.props.onCancel}>
@@ -87,7 +87,7 @@ class Details extends Component {
                 </Button>
             ]}
         >
-            <Form layout='inline' className="form-error" style={{ padding: '10px 10px 0' }}>
+            <Form layout='inline' className="form-error" style={{ padding: '10px 10px 0 100px' }}>
                 {/* {this.state.rules.map((val, index) =>
                     <Form.Item
                         label={val.label}
@@ -168,7 +168,7 @@ class Details extends Component {
                 <Form.Item
                     label={"描述"}
                     style={{ marginRight: '0', width: "100%", marginBottom: "20px" }}
-                    labelCol={{ span: 3 }} wrapperCol={{ span: 20 }}
+                    labelCol={{ span: 3 }} wrapperCol={{ span: 18 }}
                 >
                     {this.props.data.description}
                 </Form.Item>
