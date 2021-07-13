@@ -127,5 +127,5 @@ export const FLowAreaList = (params = {}) =>
 
 // 文件/图片上传接口
 export const FlowUpload = (params = {}) =>
-	http.fetchPost(`${REMOTE_URL}/sys/file/webupload/upload?uploadPath=/formbuilder`, params)
+	http.fetchPost(`${REMOTE_URL}/sys/file/webupload/upload`, params)
 
