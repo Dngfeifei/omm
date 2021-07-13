@@ -22,6 +22,8 @@ class BasicInformation extends Component {
                 areaData:[{id:1,name:'ahe'}],//区域下拉列表输入数据
                 customerData:[{id:'-1',name:'无'}],//客户下拉列表输入数据
                 maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
+                systemCategory:[],
+                appLevelList:[],
                 statusList:[],//状态下拉数据
                 basedataTypeList:[],//配置项下拉数据
                 productModeType:[], //产品型号
@@ -91,25 +93,26 @@ class BasicInformation extends Component {
     }
     //初始化下数据
     init = () => {
-        //所有下拉数据初始化
-        // getBaseData({}).then(res => {
-        //     if (res.success == 1) {
-        //         let {selectData} = this.state;
-        //         this.setState({selectData:{...selectData,...res.data}})
-        //     } else {
-        //         message.error(res.message)
-        //     }
-        // })
-        //配置项下拉数据初始化
-        // getAllBaseDataTypes({}).then(res => {
-        //     if (res.success == 1) {
-        //         let {selectData} = this.state;
-        //         selectData = Object.assign({}, selectData, { basedataTypeList: res.data});
-        //         this.setState({selectData})
-        //     } else {
-        //         message.error(res.message)
-        //     }
-        // })
+        //系统类别
+        getBaseData({basedataTypeCode:'systemType'}).then(res => {
+            if (res.success == 1) {
+                let {selectData} = this.state;
+                selectData = Object.assign({}, selectData, { systemCategory: res.data});
+                this.setState({selectData})
+            } else {
+                message.error(res.message)
+            }
+        })
+        //系统重要程度
+        getBaseData({basedataTypeCode:'appLevel'}).then(res => {
+            if (res.success == 1) {
+                let {selectData} = this.state;
+                selectData = Object.assign({}, selectData, { appLevelList: res.data});
+                this.setState({selectData})
+            } else {
+                message.error(res.message)
+            }
+        })
     }
     //处理项目选择器返回数据
     setProjectHandleOk = (info) =>{
@@ -137,6 +140,19 @@ class BasicInformation extends Component {
             this.getAreaData(this.state.baseData.projectId)
         })
         
+    }
+    //产品选择器回传参数
+    producthandleOk = (info) => {
+        const {baseData} = this.state;
+        this.props.form.resetFields(['productModelName','productLevel','productLineName','brandName','skillTypeName','serviceClassName']);
+        //  console.log(info,this.state.baseData)
+        let nowParams = this.props.form.getFieldsValue();
+        this.setState({
+            baseData: info ? {...baseData,...nowParams,...info} : {...baseData,...nowParams}
+        },()=>{
+            console.log(this.state.baseData)
+            // this.getAreaData(this.state.baseData.projectId)
+        })
     }
     //获取服务区域下拉列表数据
     getAreaData = (projectId) =>{
@@ -169,6 +185,21 @@ class BasicInformation extends Component {
             }
         })
     }
+    //获取客户下拉列表数据
+    // getCustomer = (projectAreaId) =>{
+    //     GetAllocationCustomer(projectAreaId).then(res => {
+    //         let {selectData} = this.state;
+    //         if (res.success != 1) {
+    //             selectData = Object.assign({}, selectData, { customerData: [{id:'-1',name:'无'}]});
+    //             this.setState({selectData})
+    //             // message.error("请求错误")
+    //             return
+    //         }else{
+    //             selectData = Object.assign({}, selectData, { customerData: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
+    //             this.setState({selectData})
+    //         }
+    //     })
+    // }
     //查找产品联动数据
     getProjectData = (list,id) => {
         for (let i in list) {
@@ -225,6 +256,8 @@ class BasicInformation extends Component {
            let productLevel = productModeType.filter(item => item.id == id );
            console.log(selectChange,id,productLevel)
            this.props.form.setFieldsValue({productLevel:productLevel[0]['intValue1']});
+        }else if(selectChange == 'appTypeId' ){  //系统类别
+            this.getCustomer(id)
         }
         let getData = this.state.selectData[selectData].filter(item => item.id == id );
         baseData[dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
@@ -285,7 +318,7 @@ class BasicInformation extends Component {
                 {/* visibleProductModel */}
                 {/* 产品选择器 */}
                 {
-                    this.state.visibleProductModel ? <ProductSelector title={'产品选择器'} onCancel={this.close} onOk={this.projecthandleOk}></ProductSelector> : null
+                    this.state.visibleProductModel ? <ProductSelector title={'产品选择器'} skillTypeId={this.props.searchListID} onCancel={this.close} onOk={this.producthandleOk}></ProductSelector> : null
                 }
             </div>  
         )

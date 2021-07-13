@@ -10,8 +10,8 @@ export const GetAllocationTree = (params = {}) => {
 // 	return http.fetchGet(`/static/mock/assetsData.json`)
 // }
 //获取资产配置管理-所有下拉框数据
-export const getBaseData = () => {
-	return http.fetchGet(`/biConfiguration/getConfigurationDictList`)
+export const getBaseData = (params = {}) => {
+	return http.fetchGet(`/basedata/getByBasedataType`,params)
 }
 
 //获取资产配置管理-区域下拉列表

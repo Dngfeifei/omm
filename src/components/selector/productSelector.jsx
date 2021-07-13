@@ -55,7 +55,7 @@
                      render: (text, record, index) => `${index + 1}`
                  },{
                      title: '产品类别',
-                     dataIndex: 'projectNumber',
+                     dataIndex: 'serviceClassName',
                      ellipsis: {
                          showTitle: false,
                      },
@@ -64,14 +64,14 @@
                          <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
                  },{
                      title: '技术方向',
-                     dataIndex: 'projectName',
+                     dataIndex: 'skillTypeName',
                      ellipsis: {
                          showTitle: false,
                      },
                      render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
                  },{
                      title: '品牌',
-                     dataIndex: 'projectStatus',
+                     dataIndex: 'brandName',
                      ellipsis: {
                          showTitle: false,
                      },
@@ -92,23 +92,9 @@
                     render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
                 }],
                  formRules:[{
-                     label: '产品类别',
-                     key: 'projectNumber',
-                     render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入项目号" />
-                 },{
-                     label: '技术方向',
-                     key: 'projectName',
-                     render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入项目名称" />
-                 },{
-                     label: '品牌',
-                     key: 'projectStatus',
-                     render: _ => <Select style={{ width: 200 }} placeholder="请选择项目状态" allowClear={true}>
-                         {
-                             this.state.projectStatusList.map((items, index) => {
-                                 return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
-                             })
-                         }
-                     </Select>
+                     label: '产品型号',
+                     key: 'productModel',
+                     render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入产品型号" />
                  }]
              },
              //部件选择器
@@ -197,7 +183,7 @@
  
  
      init = () => {
-         this.getCustLevel();
+        //  this.getCustLevel();
  
          this.getLists();
      }
@@ -230,12 +216,15 @@
              this.setState({ loading: true })
              var values = {
                  ...fieldsValue,
+                 limit:this.state.pageSize,
+                 offset:this.state.current,
+                 skillTypeId:this.props.skillTypeId
              };
  
  
              // 首先通过传递的title名称判断此时是【项目选择器】还是【客户选择器】
              if (this.props.title == '产品选择器') {
-                getProductSelector(this.state.pageSize, this.state.current, values).then(res => {
+                getProductSelector(values).then(res => {
                      if (res.success == 1) {
                          this.setState({
                              loading: false,
@@ -285,10 +274,10 @@
          });
      }
      // 选中行时就选中单选框按钮
-     onClickRow = (record) => {
+     onClickRow = (record,index) => {
          return {
              onClick: () => {
-                 let selectedKeys = [record.id];
+                 let selectedKeys = [index];
                  let selectedRows = [record]
                  this.setState({
                      selectedRowKeys: selectedKeys,
@@ -371,7 +360,7 @@
                      <Table
                          className="jxlTable"
                          bordered
-                         rowKey={record => record.id} //在Table组件中加入这行代码
+                         rowKey={(record,index) => index} //在Table组件中加入这行代码
                          onRow={this.onClickRow}
                          rowSelection={rowSelection}
                          dataSource={this.state.tabledata}

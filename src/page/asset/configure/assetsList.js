@@ -441,6 +441,15 @@ export const assetsListData = {
         render:render,
         type:'select'
     },
+    //appLevel系统重要程度
+    'appLevel':{
+        label: '系统重要程度',
+        key: 'appLevel',
+        span:6,
+        rules:[],
+        render:render,
+        type:'select'
+    },
     //风险等级
     'riskLevelId':{
         label: '风险等级',
@@ -1307,7 +1316,8 @@ export const panes = [
                     title: '系统类别',
                     dataIndex: 'appTypeName',
                     key:"appTypeId",
-                    selectData:'appType',
+                    selectChange: 'appTypeId',
+                    selectData:'systemCategory',
                     align: 'center',
                 },
                 {
@@ -1320,7 +1330,7 @@ export const panes = [
                     title: '系统重要程度',
                     dataIndex: 'appLevel',
                     key:"appLevel",
-                    selectData:'appType',
+                    selectData:'appLevelList',
                     align: 'center',
                 },
                 {

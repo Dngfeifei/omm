@@ -157,6 +157,7 @@ class assetsAllocation extends Component {
                 baseData: roleWindow.roleModalType == 0 ? baseData : tableSelectedInfo[0],
                 roleWindow,
                 basedataTypeId,
+                searchListID,
                 panes,
                 basedataTypeName,
                 setSon: (el) => this[`son${type}`] = el
