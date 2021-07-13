@@ -15,6 +15,13 @@ const ContentCls = css`
   position: relative;
 `;
 
+
+const ItemCls = css`
+  width: 100%;
+  flex: 1 1 0;
+`;
+
+
 const Container = styled.div`
   flex: 1 1 auto;
   min-height: 50px;
@@ -39,6 +46,9 @@ const Container = styled.div`
 const ColumnDesign = ({ gridControl, column }) => {
   const { state, dispatch } = useContext(FormDesignContenxt);
 
+  console.log('ColumnDesign', column);
+
+
   const isSelected = useMemo(
     () => state.selectedControl && state.selectedControl.id === column.id,
     [state, column]
@@ -50,20 +60,26 @@ const ColumnDesign = ({ gridControl, column }) => {
   };
 
   return (
-    <Row style={{ width: '100%' }}>
-      <Col
-        span={column.options.span}
-        offset={column.options.offset}
-        pull={column.options.pull}
-        push={column.options.push}
-      >
-        <Container isSelected={isSelected} onClick={handleSelect}>
-          <div className={ContentCls}>
-            <ColDraggable column={column} />
-          </div>
-        </Container>
-      </Col>
-    </Row>
+    // <Row style={{ width: '100%' }}>
+    <div className={ItemCls}>
+      <Row>
+        <Col
+          span={24}
+          offset={column.options.offset}
+          pull={column.options.pull}
+          push={column.options.push}
+        >
+          <Container isSelected={isSelected} onClick={handleSelect}>
+            <div className={ContentCls}>
+              <ColDraggable column={column} />
+            </div>
+          </Container>
+        </Col>
+      </Row>
+
+    </div>
+
+    // </Row>
   );
 };
 

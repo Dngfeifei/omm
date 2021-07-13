@@ -72,6 +72,15 @@ const FormRender = forwardRef(({ formModel, formConfig }, ref) => {
             });
           });
         }
+        if (item.type === 'report') {
+          item.rows.forEach((row) => {
+            row.columns.forEach((column) => {
+              column.list.forEach((t) => {
+                formValues[t.model] = t.options.value || '';
+              });
+            });
+          });
+        }
       });
       return formValues;
     },

@@ -3,26 +3,31 @@ import Label from '@/page/ans/formmaking/lib/controls/common/Label'
 import { Container } from '@/page/ans/formmaking/lib/controls/components/styles'
 import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
 import {TreeSelect} from "antd";
+import ControlAdapter from '@/page/ans/formmaking/lib/controls/common/ControlAdapter'
 
-const FileUploadRender = ({ control, formConfig, inTable=false, onChange }) => {
+const SelectTreeRender = ({ control, formConfig, inTable = false, onChange, isDesign = false }) => {
   const { options } = control
   const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
 
-  return <div className={options.customClass}>
-    <Container formConfig={formConfig}>
-      <Label control={control} formConfig={formConfig} />
+  return (
+    <ControlAdapter control={control} inTable={inTable} isDesign={isDesign} formConfig={formConfig} onChange={onChange}>
+      <div className={options.customClass}>
+        <Container formConfig={formConfig}>
+          <Label control={control} formConfig={formConfig} inTable={inTable} />
 
-      <TreeSelect
-        {...baseProps}
-        value={options.value}
-        dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-        treeData={options.options}
-        placeholder="加载数据中..."
-        treeDefaultExpandAll
-      />
-    </Container>
+          <TreeSelect
+            {...baseProps}
+            value={options.value}
+            dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
+            treeData={options.options}
+            placeholder="加载数据中..."
+            treeDefaultExpandAll
+          />
+        </Container>
 
-  </div>
+      </div>
+    </ControlAdapter>
+  )
 }
 
-export default FileUploadRender
+export default SelectTreeRender

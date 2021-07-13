@@ -3,45 +3,34 @@ import { Input } from 'antd';
 import styled from '@emotion/styled';
 import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
 import Label from '@/page/ans/formmaking/lib/controls/common/Label'
+import ControlAdapter from '@/page/ans/formmaking/lib/controls/common/ControlAdapter'
 import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/styles'
+import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
 
-
-const InputBox = styled.div`
-  flex: 1;
-`;
-
-const InputRender = ({ control, formConfig, inTable = false, onChange }) => {
+const InputRender = ({ control, formConfig, inTable = false, onChange, isDesign = false}) => {
   const { updateValue } = useContext(formRenderContext);
   const { options } = control;
-  const handleChange = evt => (inTable ? onChange: updateValue)(control.model, evt.target.value)
+  const baseProps = useFieldBaseProps(control, formConfig, false, inTable, onChange)
 
   return (
-    <div className={options.customClass}>
-      <Container formConfig={formConfig}>
-        {!inTable && <Label control={control} formConfig={formConfig} />}
-        <InputBox>
+    <ControlAdapter control={control} inTable={inTable} isDesign={isDesign} formConfig={formConfig} onChange={onChange}>
+      <div className={options.customClass}>
+        <Container formConfig={formConfig}>
+          <Label control={control} formConfig={formConfig} inTable={inTable} />
           {options.showPassword ? (
             <Input.Password
-              disabled={formConfig.disabled || options.disabled}
-              defaultValue={options.defaultValue}
-              style={{ width: options.width }}
-              placeholder={options.placeholder}
+              {...baseProps}
               value={options.value}
-              onChange={handleChange}
             />
           ) : (
             <Input
-              disabled={formConfig.disabled || options.disabled}
-              defaultValue={options.defaultValue}
-              style={{ width: options.width }}
-              placeholder={options.placeholder}
+              {...baseProps}
               value={options.value}
-              onChange={handleChange}
             />
           )}
-        </InputBox>
-      </Container>
-    </div>
+        </Container>
+      </div>
+    </ControlAdapter>
   );
 };
 

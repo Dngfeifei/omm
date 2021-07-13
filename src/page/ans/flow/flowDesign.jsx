@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { PlusOutlined, SearchOutlined } from '@ant-design/icons';
 import {Button, Input, DatePicker, Modal, Tooltip, message, Row, Col, Tag, Radio, Tree, Card} from 'antd';
-import { BiDesignList,DeployFlow,DelFlow,ActiveFlow,CopyFlow,UpdateFlowCategory } from '/api/design'
+import { BiDesignList,DeployFlow,DelFlow,ActiveFlow,CopyFlow,UpdateFlowCategory,SuspendFlow } from '/api/design'
 import { BiActCategoryList } from '/api/ActCategory'
 import DesignPage from '/page/ans/flow/designPage.jsx'
 import Common from '/page/common.jsx'
@@ -81,7 +81,8 @@ class DesignList extends Common{
         pagesizechange: true,
         modalconf: { visible: false, primary: {}, category:{} },
         categoryconf: { visible: false, treeData: {},checkedKey: "" },
-        filterText:''
+        filterText:'',
+        suspended:null
     })
 
     search = async _ => {
@@ -104,6 +105,22 @@ class DesignList extends Common{
                     })
                 })
             })
+    }
+
+    onRow = (record)=>{
+        return {
+            onClick: ()=>{
+                let selectedKeys = [record.id],selectedItems = [record];
+
+                this.setState({
+                    suspended:selectedItems[0].procDef.suspended,
+                    selected: {
+                        selectedKeys,
+                        selectedItems
+                    }
+                })
+            }
+        }
     }
 
     renderSearch = _ => <div>
@@ -131,7 +148,14 @@ class DesignList extends Common{
             <Button style={{marginRight: "10px",backgroundColor:'rgb(102, 204, 68)',borderColor:'rgb(255, 255, 255)' }} onClick={this.setCtegory} type="primary" >设置分类</Button>
 
             <Button style={{ marginRight: "10px" }} onClick={this.deploy} type="info">发布</Button>
-            <Button style={{ marginRight: "10px" }} onClick={this.active} type="info">激活</Button>
+            {
+                this.state.suspended === true &&
+                <Button style={{marginRight: "10px"}} onClick={this.active} type="info">激活</Button>
+            }
+            {
+                this.state.suspended === false &&
+                <Button style={{marginRight: "10px"}} onClick={this.suspend} type="info">挂起</Button>
+            }
             <Button style={{ marginRight: "10px" }} onClick={this.exportXML} type="info">导出</Button>
             <Button style={{ marginRight: "10px" }} onClick={this.copy} type="info">复制</Button>
         </Col>
@@ -185,11 +209,10 @@ class DesignList extends Common{
             cancelText: '取消',
             onOk() {
                 DelFlow(params)
-                    .then(res => {
-                        if (res.success == 0) {
+                    .then(data => {
+                        if (data && data.success) {
                             message.destroy()
-                            message.error(res.msg);
-                        } else {
+                            message.success(data.msg)
                             _this.search();
                         }
                     })
@@ -241,15 +264,17 @@ class DesignList extends Common{
 
         let _this = this
         UpdateFlowCategory(params)
-            .then(res => {
-                if (res.success == 0) {
-                    message.destroy()
-                    message.error(res.msg);
-                } else {
-                     this.cancelform('categoryconf')
-                    _this.search();
-                }
-            })
+            .then(data => {
+                    if (data && data.success) {
+                        message.destroy()
+                        message.success(data.msg)
+                        _this.search();
+                    }else{
+                        message.error(data.msg)
+                    }
+                     _this.cancelform('categoryconf')
+                })
+               
     }
     
     deploy = async () => {
@@ -273,14 +298,15 @@ class DesignList extends Common{
             cancelText: '取消',
             onOk() {
                 DeployFlow(params)
-                    .then(res => {
-                        if (res.success == 0) {
-                            message.destroy()
-                            message.error(res.msg);
-                        } else {
-                            _this.search();
-                        }
-                    })
+                  .then(data => {
+                      if (data && data.success) {
+                          message.destroy()
+                          message.success(data.msg)
+                          _this.search();
+                      }else{
+                          message.error(data.message)
+                      }
+                  })
             }
         })
     }
@@ -350,14 +376,13 @@ class DesignList extends Common{
             cancelText: '取消',
             onOk() {
                 CopyFlow({id:item.id})
-                    .then(res => {
-                        if (res.success == 0) {
-                            message.destroy()
-                            message.error(res.msg);
-                        } else {
-                            _this.search();
-                        }
-                    })
+                  .then(data => {
+                      if (data && data.success) {
+                          message.destroy()
+                          message.success(data.msg)
+                          _this.search();
+                      }
+                  })
             }
         })
     }
@@ -380,14 +405,44 @@ class DesignList extends Common{
             cancelText: '取消',
             onOk() {
                 ActiveFlow({procDefId:item.procDef.id})
-                    .then(res => {
-                        if (res.success == 0) {
+                    .then(data => {
+                        if (data && data.success) {
                             message.destroy()
-                            message.error(res.msg);
-                        } else {
+                            message.success(data.msg);
                             _this.search();
-                        }
+                            _this.setState({suspended:null})
+                        } 
                     })
+            }
+        })
+    }
+
+    suspend = async () => {
+        if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
+            message.destroy()
+            message.warning("请选中后再进行操作！")
+            return
+        }
+
+        let item = this.state.selected.selectedItems[0];
+
+        let _this = this
+        confirm({
+            title: '提示',
+            content: '确认要挂起 '+ item.name +' 吗?',
+            okText: '确定',
+            okType: 'danger',
+            cancelText: '取消',
+            onOk() {
+                SuspendFlow({procDefId:item.procDef.id})
+                  .then(data => {
+                      if (data && data.success) {
+                          message.destroy()
+                          message.success(data.msg);
+                          _this.search();
+                          _this.setState({suspended:null})
+                      }
+                  })
             }
         })
     }

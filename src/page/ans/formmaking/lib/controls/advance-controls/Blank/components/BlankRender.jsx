@@ -2,6 +2,8 @@ import React, { useMemo } from 'react'
 import { Container } from '@/page/ans/formmaking/lib/controls/components/styles'
 import Label from '@/page/ans/formmaking/lib/controls/common/Label'
 import styled from "@emotion/styled";
+import ControlAdapter from '@/page/ans/formmaking/lib/controls/common/ControlAdapter'
+import useFieldBaseProps from '@/page/ans/formmaking/hooks/useFieldBaseProps'
 
 const BlankWrapper = styled.div`
   flex: 1;
@@ -10,19 +12,24 @@ const BlankWrapper = styled.div`
   background-color: #eeeeee;
 `
 
-const BlankRender = ({ control, formConfig }) => {
+const BlankRender = ({ control, formConfig, inTable = false, onChange, isDesign = false }) => {
   const { options } = control
+  const baseProps = useFieldBaseProps(control, formConfig, true, inTable, onChange)
 
-  return <div className={options.customClass}>
-    <Container formConfig={formConfig}>
-      {/* <Label control={control} formConfig={formConfig} /> */}
+  return (
+    <ControlAdapter control={control} inTable={inTable} isDesign={isDesign} formConfig={formConfig} onChange={onChange}>
+      <div className={options.customClass}>
+        <Container formConfig={formConfig}>
+          <Label control={control} formConfig={formConfig} inTable={inTable} />
 
-      <BlankWrapper>
-        自定义区域
-      </BlankWrapper>
-    </Container>
+          <BlankWrapper>
+            自定义区域
+          </BlankWrapper>
+        </Container>
 
-  </div>
+      </div>
+    </ControlAdapter>
+  )
 }
 
 export default BlankRender

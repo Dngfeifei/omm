@@ -1,4 +1,3 @@
-import SwitchDesign from './components/SwitchDesign'
 import SwitchSetting from './components/SwitchSetting'
 import SwitchRender from './components/SwitchRender'
 

@@ -1,4 +1,3 @@
-import TextareaDesign from './components/TextareaDesign'
 import TextareaSetting from './components/TextareaSetting'
 import TextareaRender from './components/TextareaRender'
 

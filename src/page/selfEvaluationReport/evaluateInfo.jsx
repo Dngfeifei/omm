@@ -638,7 +638,6 @@ class AssessmentReport extends Component {
       }
     );
     GetexportSearchAssessAndProableReport(obj).then((res) => {
-      console.log(res)
       if (res.success == 1) {
         message.destroy();
         var a = document.createElement("a");

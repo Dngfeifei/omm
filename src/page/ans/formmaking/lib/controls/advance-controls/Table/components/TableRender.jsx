@@ -5,26 +5,12 @@ import styled from '@emotion/styled'
 import allComps from '@/page/ans/formmaking/lib/controls';
 import formRenderContext from "@/page/ans/formmaking/lib/FormRender/formRenderContext";
 import { cloneDeep } from 'lodash';
+import Label from '@/page/ans/formmaking/lib/controls/common/Label'
+import { Container, Space } from '@/page/ans/formmaking/lib/controls/components/styles'
+import ControlAdapter from '@/page/ans/formmaking/lib/controls/common/ControlAdapter'
 
-const Container = styled.div`
-  display: ${({ labelPosition }) => (labelPosition === 'top' ? 'block' : 'flex')};
-`
-const Label = styled.div`
-  width: ${({ labelWidth }) => labelWidth}px;
-  text-align: ${({ labelPosition }) => labelPosition};
-  vertical-align: middle;
-  float: left;
-  font-size: 14px;
-  color: #606266;
-  line-height: 32px;
-  padding: 0 12px 0 0;
-  box-sizing: border-box;
-  > span{
-    color: #f56c6c;
-    margin-right: 2px;
-    font-size: 14px;
-  }
-`
+
+
 const Wrapper = styled.div`
   flex: 1;
 `
@@ -36,12 +22,8 @@ const TableRender = ({ control, formConfig }) => {
   const { updateValue } = useContext(formRenderContext);
   const { options } = control
   const { disabled } = formConfig
-  const labelWidth = useMemo(() => {
-    if (options.isLabelWidth) {
-      return options.labelWidth
-    }
-    return formConfig.labelWidth
-  }, [options, formConfig])
+
+
   const [dataSource, setDataSource] = useState([])
   const [values, setValues] = useState([])
   const handleDelete = (index) => {
@@ -100,27 +82,26 @@ const TableRender = ({ control, formConfig }) => {
     setDataSource(copied.map(mapper))
   }
 
-  return <div className={options.customClass}>
-    <Container labelPosition={formConfig.labelPosition}>
-      {!options.hideLabel && <Label
-        labelPosition={formConfig.labelPosition}
-        labelWidth={labelWidth}
-      >
-        {options.required && <span>*</span>}
-        {control.name}
-      </Label>
-      }
-      <Wrapper>
-        <Table
-          columns={columns}
-          dataSource={dataSource}
-          pagination = {false}
-        />
-        {!disabled && <Button type="link" onClick={handleAddRow}>+ 添加</Button>}
-      </Wrapper>
-    </Container>
+  return (
+    <ControlAdapter control={control} inTable={false} isDesign={false} formConfig={formConfig} onChange={() => {}}>
+    <div className={options.customClass}>
+      <Container formConfig={formConfig}>
+        <Label control={control} formConfig={formConfig} inTable={false} />
 
-  </div>
+        <Wrapper>
+          <Table
+            columns={columns}
+            dataSource={dataSource}
+            pagination={false}
+          />
+          {!disabled && <Button type="link" onClick={handleAddRow}>+ 添加</Button>}
+        </Wrapper>
+      </Container>
+
+    </div>
+    </ControlAdapter>
+
+  )
 };
 
 export default TableRender;
