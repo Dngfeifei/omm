@@ -146,7 +146,10 @@ class assetsAllocation extends Component {
                     name:'风险排查',
                     child: require('./riskInvestigation.jsx').default
                 }
-            ]
+            ],
+            selectData:{
+                productLevelList:[],//区域下拉列表输入数据
+            },
         }
     }
     //获取各组件所需参数并赋值
@@ -199,7 +202,15 @@ class assetsAllocation extends Component {
     }
     //初始化数据
     init = () => {
-
+        getBaseData({basedataTypeCode:'productLevel'}).then(res => {
+            if (res.success == 1) {
+                let {selectData} = this.state;
+                selectData = Object.assign({}, selectData, { productLevelList: res.data});
+                this.setState({selectData})
+            } else {
+                message.error(res.message)
+            }
+        })
     }
     //基础树结构数据查询
     searchTree = async (pass) => {
@@ -445,27 +456,22 @@ class assetsAllocation extends Component {
     }
     // 新增/编辑数据保存
     editRoleSave = async () => {
-        
+        //基本信息表单验证完成后再进行其他模块验证
         this.son0.onSubmit().then(res => {
             console.log(res)
-        }).catch(res => {
-            console.log(res)
-        });
-        //  console.log(sonParams)
-        return
-        // 当前表单编辑类型（保存或修改或者查看）
+             // 当前表单编辑类型（保存或修改或者查看）
         let type = this.state.roleWindow.roleModalType
         let {searchListID,searchListName} = this.state;
         
         if (!type) {
             // 新增保存
             let params = {
-                ...this.state.baseData,
                 parentId:searchListID,
-                ...newParams
+                ...this.son0.state.baseData,
+                ...res
             }
-            // console.log(params)
-            // return
+            console.log(params)
+            return
             AddAllocationTable(params).then(res => {
                 if (res.success == 1) {
                     this.setState({
@@ -518,6 +524,13 @@ class assetsAllocation extends Component {
                     }
                 })
             }
+        }).catch(res => {
+            // console.log(res)
+            message.error('基本信息填写不完整，请检查！')
+        });
+        //  console.log(sonParams)
+        return
+       
     }
     //处理编辑修改后要提交的数据，下拉数据为空的，还原为空
     setEditPost = (newParams) => {

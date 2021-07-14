@@ -29,6 +29,8 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required,d
         return <Input disabled={required} placeholder="请输入" />
     }else if(type == 'input2'){
         return <Input disabled={required} disabled placeholder="项目带入" />
+    }else if(type == 'input4'){
+        return <Input disabled={required} disabled placeholder="产品带入" />
     }else if(type == 'input3'){
         return <Input disabled={required} placeholder="请选择" suffix={<Icon type="appstore" className="dateIcon" onClick={() => _this.openProject(dataIndex)} />} />
     }else if(type == 'select'){
@@ -326,8 +328,8 @@ export const assetsListData = {
         type:'input1'
     },
     //产品类别
-    'serviceClassId':{
-        key:'serviceClassId',
+    'serviceClassName':{
+        key:'serviceClassName',
         setValue:'serviceClassName',
         label:'产品类别',
         span:6,
@@ -338,11 +340,11 @@ export const assetsListData = {
             },
           ],
         render:render,
-        type:'select1'
+        type:'input4'
     },
     //技术方向
-    'skillTypeId':{
-        key:'skillTypeId',
+    'skillTypeName':{
+        key:'skillTypeName',
         setValue:'skillTypeName',
         label:'技术方向',
         span:6,
@@ -353,11 +355,11 @@ export const assetsListData = {
             },
           ],
         render:render,
-        type:'select1'
+        type:'input4'
     },
     //品牌
-    'brandId':{
-        key:'brandId',
+    'brandName':{
+        key:'brandName',
         setValue:'brandName',
         label:'品牌',
         span:6,
@@ -368,11 +370,11 @@ export const assetsListData = {
             },
           ],
         render:render,
-        type:'select1'
+        type:'input4'
     },
     //产品线
-    'productLineId':{
-        key:'productLineId',
+    'productLineName':{
+        key:'productLineName',
         setValue:'productLineName',
         label:'产品线',
         span:6,
@@ -383,7 +385,7 @@ export const assetsListData = {
             },
           ],
         render:render,
-        type:'select1'
+        type:'input4'
     },
     //产品型号
     'productModelId':{
@@ -412,7 +414,7 @@ export const assetsListData = {
             message: '该选项不能为空！',
           }],
         render:render,
-        type:'select'
+        type:'input4'
     },
     //产品名称
     'productName':{
@@ -1010,8 +1012,8 @@ export const panes = [
             key: 'productLevelId',
             render: _this => <Select  placeholder="请选择" allowClear={true} style={{width:182}}>
                             {
-                                [].map((items, index) => {
-                                    return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
+                                _this.state.selectData.productLevelList.map((items, index) => {
+                                    return (<Option key={items.id} value={items.id}>{items.name}</Option>)
                                 })
                             }
                         </Select>
@@ -1269,29 +1271,23 @@ export const panes = [
                     title: '产品线',
                     dataIndex: 'productLineName',
                     selectData:'productLineType',
-                    key:"productLineId",
+                    key:"productLineName",
                     selectChange: 'productLineId',
                     align: 'center',
                 },{
                     title: '品牌',
                     dataIndex: 'brandName',
-                    selectChange: 'brandId',
-                    selectData:'productBrandType',
-                    key:"brandId",
+                    key:"brandName",
                     align: 'center',
                 },{
                     title: '技术方向',
                     dataIndex: 'skillTypeName',
-                    selectChange: 'skillTypeId',
-                    selectData:'productSkillType',
-                    key:"skillTypeId",
+                    key:"skillTypeName",
                     align: 'center',
                 },{
                     title: '产品类别',
                     dataIndex: 'serviceClassName',
-                    key:"serviceClassId",
-                    selectChange: 'serviceClassId',
-                    selectData:'productType',
+                    key:"serviceClassName",
                     align: 'center',
                 },
                 {
@@ -1350,119 +1346,7 @@ export const panes = [
                 }
             ]
         },
-        columns:[
-           ...columns,
-            {
-                title: '控制器型号',
-                dataIndex: 'strValue4',
-                key:'strValue4',
-                inputType:'input1',
-                align: 'center',
-            },
-            {
-                title: '控制器数量',
-                dataIndex: 'strValue5',
-                inputType:'input1',
-                key:'strValue5',
-                width:150,
-                align: 'center',
-            },
-            {
-                title: '硬盘/驱动器/SFP型号',
-                dataIndex: 'strValue6',
-                inputType:'select',
-                key:'strValue6',
-                align: 'center',
-            },
-            {
-                title: '硬盘/驱动器/SFP数量',
-                dataIndex: 'strValue7',
-                inputType:'input1',
-                key:'strValue7',
-                align: 'center',
-            },
-            {
-                title: '控制器微码',
-                dataIndex: 'strValue8',
-                inputType:'input1',
-                key:'strValue8',
-                align: 'center',
-            },
-            {
-                title: 'Raid保护',
-                dataIndex: 'strValue9',
-                inputType:'input1',
-                key:'strValue9',
-                align: 'center',
-            },
-            {
-                title: '电源风扇冗余',
-                dataIndex: 'strValue10',
-                inputType:'input1',
-                key:'strValue10',
-                width:150,
-                align: 'center',
-            },
-            {
-                title: '风险规避意见',
-                dataIndex: 'strValue11',
-                inputType:'input1',
-                key:'strValue11',
-                align: 'center',
-            },
-            {
-                title: '用途',
-                dataIndex: 'usage',
-                key:'usage',
-                align: 'center',
-            },
-            {
-                title: 'HotSpare描述',
-                dataIndex: 'strValue12',
-                inputType:'select',
-                key:'strValue12',
-                align: 'center',
-            },
-            {
-                title: '是否维护',
-                dataIndex: 'isMroName',
-                key:'isMroId',
-                selectData:'maintained',
-                align: 'center'
-            },
-            {
-                title: 'raid级别',
-                dataIndex: 'strValue13',
-                key:'strValue13',
-                align: 'center',
-            },
-            {
-                title: '操作',
-                dataIndex: 'operation',
-                key:'operation',
-                align: 'center',
-            },
-            {
-                title: '操作人',
-                dataIndex: 'updaterName',
-                
-                align: 'center',
-            },
-            {
-                title: '操作时间',
-                dataIndex: 'updateTime',
-                
-                align: 'center',
-            },
-            {
-                title: '备注',
-                dataIndex: 'description',
-                key:'description',
-                width:150,
-                align: 'center',
-            }
-            
-        ]
+        columns:[]
     },
     //硬件设备/软件设备
     {
@@ -2176,196 +2060,3 @@ export const panes = [
         ]
     }
 ];
-
-//新增配置管理基础数据-项目信息
-export const columnsBasic = [{
-    title: '配置项',
-    dataIndex: 'basedataTypeName',
-    ellipsis:true,
-    key:"basedataTypeId",
-    itemCode:'id',
-    itemValue:'basedataTypeName',
-    selectData:'basedataTypeList',
-    align: 'center',
-},
-{
-    title: '客户编号',
-    dataIndex: 'custNum',
-    width:100,
-    selectData:'customerData',
-    align: 'center'
-},
-{
-    title: '项目编号',
-    dataIndex: 'projectNumber',
-    key:"projectNumber",
-    align: 'center',
-},
-{
-    title: '客户名称',
-    dataIndex: 'custName',
-    ellipsis:true,
-    key:"custName",
-    align: 'center',
-},
-{
-    title: '项目名称',
-    dataIndex: 'projectName',
-    ellipsis: true,
-    width:200,
-    key:"projectName",
-    align: 'center',
-},
-{
-    title: '项目经理',
-    dataIndex: 'projectManagerName',
-    key:"projectManagerName",
-    width:90,
-    align: 'center',
-},
-{
-    title: '开始时间',
-    dataIndex: 'projectStartDate',
-    key:"projectStartDate",
-    align: 'center',
-},
-{
-    title: '结束时间',
-    dataIndex: 'projectEndDate',
-    key:"projectEndDate",
-    align: 'center',
-},
-{
-    title: '项目销售',
-    dataIndex: 'projectSalesmanName',
-    key:"projectSalesmanName",
-    align: 'center',
-},
-{
-    title: '服务区域',
-    dataIndex: 'projectAreaArea',
-    key:"projectAreaId",
-    selectData:'areaData',
-    itemValue:'area',
-    selectChange: 'projectAreaId',
-    align: 'center',
-},
-{
-    title: '机房地址',
-    dataIndex: 'projectAreaAddress',
-    key:"projectAreaAddress",
-    ellipsis:true,
-    align: 'center',
-},
-{
-    title: '客户方管理员',
-    dataIndex: 'custUserName',
-    selectData:'customerData',
-    key:"custUserId",
-    align: 'center',
-},
-{
-    title: '联系方式',
-    dataIndex: 'custUserMobile',
-    key:"custUserMobile",
-    align: 'center',
-}]
-//新增配置管理基础数据-设备信息
-export const columnsDevice = [
-    {
-        title: '产品型号',
-        dataIndex: 'productModelName',
-        selectData:'productModeType',
-        key:"productModelId",
-        selectChange: 'productModelId',
-        align: 'center',
-    },
-    {
-        title: '产品等级',
-        dataIndex: 'productLevel',
-        selectData:'productLevel',
-        key:"productLevel",
-        align: 'center',
-    },{
-        title: '产品线',
-        dataIndex: 'productLineName',
-        selectData:'productLineType',
-        key:"productLineId",
-        selectChange: 'productLineId',
-        align: 'center',
-    },{
-        title: '品牌',
-        dataIndex: 'brandName',
-        selectChange: 'brandId',
-        selectData:'productBrandType',
-        key:"brandId",
-        align: 'center',
-    },{
-        title: '技术方向',
-        dataIndex: 'skillTypeName',
-        selectChange: 'skillTypeId',
-        selectData:'productSkillType',
-        key:"skillTypeId",
-        align: 'center',
-    },{
-        title: '产品类别',
-        dataIndex: 'serviceClassName',
-        key:"serviceClassId",
-        selectChange: 'serviceClassId',
-        selectData:'productType',
-        align: 'center',
-    },
-    {
-        title: '序列号',
-        dataIndex: 'strValue2',
-        key:"strValue2",
-        align: 'center',
-    },
-    {
-        title: '保障开始日期',
-        dataIndex: 'projectStartDate',
-        key:"projectStartDate",
-        align: 'center',
-    },
-    {
-        title: '保障结束日期',
-        dataIndex: 'projectEndDate',
-        key:"projectEndDate",
-        align: 'center',
-    },
-    {
-        title: '系统类别',
-        dataIndex: 'appTypeName',
-        key:"appTypeId",
-        selectData:'appType',
-        align: 'center',
-    },
-    {
-        title: '系统名称',
-        dataIndex: 'strValue1',
-        key: 'strValue1',
-        align: 'center',
-    },
-    {
-        title: '系统重要程度',
-        dataIndex: 'appTypeName',
-        key:"appTypeId",
-        selectData:'appType',
-        align: 'center',
-    },
-    {
-        title: '风险等级',
-        dataIndex: 'riskLevelName',
-        selectData:'riskLevel',
-        ellipsis:true,
-        key:"riskLevelId",
-        align: 'center',
-    },
-    {
-        title: '是否维护',
-        dataIndex: 'isMroName',
-        key:'isMroId',
-        selectData:'maintained',
-        align: 'center'
-    }
-]

@@ -148,6 +148,7 @@ class BasicInformation extends Component {
         this.props.form.resetFields(['productModelName','productLevel','productLineName','brandName','skillTypeName','serviceClassName']);
         //  console.log(info,this.state.baseData)
         let nowParams = this.props.form.getFieldsValue();
+        // console.log(baseData,nowParams,info)
         this.setState({
             baseData: info ? {...baseData,...nowParams,...info} : {...baseData,...nowParams}
         },()=>{
@@ -293,8 +294,6 @@ class BasicInformation extends Component {
             if (err) {
                 return;
             }
-            let newParams = {...fieldsValue}
-            return newParams;
         })
     }
     render  () {
