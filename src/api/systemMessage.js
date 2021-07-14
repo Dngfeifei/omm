@@ -13,7 +13,7 @@ export const getReadNum = (params = {}) => {
 
 //读取消息接口
 export const getDoRead = (params = {}) => {
-	return http.fetchGet(`/sysMessage/doRead`,params)
+	return http.fetchGetNotest(`/sysMessage/doRead`,params)
 }
 
 //查询未读消息接口
