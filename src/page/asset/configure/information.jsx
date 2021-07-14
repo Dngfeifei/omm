@@ -6,7 +6,7 @@ import ProjectSelector from '/components/selector/projectSelector.jsx'
 // 引入---【产品选择器组件】
 import ProductSelector from '/components/selector/productSelector.jsx'
 
-import { GetAllocationTree, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,GetAllocationArea,GetAllocationCustomer,getAllBaseDataTypes} from '/api/assets.js'
+import { getInfo, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,GetAllocationArea,GetAllocationCustomer,getAllBaseDataTypes} from '/api/assets.js'
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
@@ -24,6 +24,7 @@ class BasicInformation extends Component {
                 maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
                 systemCategory:[],
                 appLevelList:[],
+                riskLevel:[],
                 statusList:[],//状态下拉数据
                 basedataTypeList:[],//配置项下拉数据
                 productModeType:[], //产品型号
@@ -186,20 +187,20 @@ class BasicInformation extends Component {
         })
     }
     //获取客户下拉列表数据
-    // getCustomer = (projectAreaId) =>{
-    //     GetAllocationCustomer(projectAreaId).then(res => {
-    //         let {selectData} = this.state;
-    //         if (res.success != 1) {
-    //             selectData = Object.assign({}, selectData, { customerData: [{id:'-1',name:'无'}]});
-    //             this.setState({selectData})
-    //             // message.error("请求错误")
-    //             return
-    //         }else{
-    //             selectData = Object.assign({}, selectData, { customerData: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
-    //             this.setState({selectData})
-    //         }
-    //     })
-    // }
+    getInfo = (id) =>{
+        getInfo(id).then(res => {
+            let {selectData} = this.state;
+            if (res.success != 1) {
+                selectData = Object.assign({}, selectData, { riskLevel: [{id:'-1',name:'无'}]});
+                this.setState({selectData})
+                // message.error("请求错误")
+                return
+            }else{
+                selectData = Object.assign({}, selectData, { riskLevel: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
+                this.setState({selectData})
+            }
+        })
+    }
     //查找产品联动数据
     getProjectData = (list,id) => {
         for (let i in list) {
@@ -257,11 +258,13 @@ class BasicInformation extends Component {
            console.log(selectChange,id,productLevel)
            this.props.form.setFieldsValue({productLevel:productLevel[0]['intValue1']});
         }else if(selectChange == 'appTypeId' ){  //系统类别
-            this.getCustomer(id)
+            const {systemCategory} = this.state.selectData;
+            let productLevel = systemCategory.filter(item => item.id == id );
+            this.getInfo(productLevel.intValue1)
         }
-        let getData = this.state.selectData[selectData].filter(item => item.id == id );
-        baseData[dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
-        this.setState({baseData})
+        // let getData = this.state.selectData[selectData].filter(item => item.id == id );
+        // baseData[dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
+        // this.setState({baseData})
     }
     //项目选择器打开函数
     openProject = (type) => {

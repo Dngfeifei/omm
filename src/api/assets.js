@@ -14,6 +14,11 @@ export const getBaseData = (params = {}) => {
 	return http.fetchGet(`/basedata/getByBasedataType`,params)
 }
 
+//获取资产配置管理-风险等级数据
+export const getInfo = (params = {}) => {
+	return http.fetchGet(`/basedata/getInfo`,params)
+}
+
 //获取资产配置管理-区域下拉列表
 export const GetAllocationArea = (projectId="") => {
 	return http.fetchGet(`/biProjectArea/getByProId/${projectId}`)
