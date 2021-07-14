@@ -495,7 +495,12 @@ class content extends Component {
             return
         }
         let key = tableSelecteds[0];
+        let data = this.state.table.dictData
+        let newData = data.filter(item => {
+            return item.id == key
+        })
         this.setState({
+            tableSelectedInfo: newData,
             editID: key,
             editType: "edit",
             editVisible: true
