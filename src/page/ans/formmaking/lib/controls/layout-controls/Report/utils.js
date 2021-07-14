@@ -116,9 +116,15 @@ export function tableMutation(rows, type, rowIndex, columnIndex) {
       var rowspan = cell.options.rowspan
       for (var i = 1; i < rowspan; ++i) {
         const newCell = createCell()
-        rows[rowIndex + i].columns.splice(columnIndex - 1, 0, { ...newCell, colspan: cell.options.colspan })
+        rows[rowIndex + i].columns.splice(columnIndex - 1, 0, {
+          ...newCell,
+          options: {
+            ...newCell.options,
+            colspan: cell.options.colspan
+          }
+        })
       }
-      rows[rowIndex].columns[columnIndex].rowspan = 1
+      rows[rowIndex].columns[columnIndex].options.rowspan = 1
       return rows
     },
     [MutationType.splitRow]: (rows, rowIndex, columnIndex) => {
@@ -126,9 +132,15 @@ export function tableMutation(rows, type, rowIndex, columnIndex) {
       var colspan = cell.options.colspan
       for (var i = 1; i < colspan; ++i) {
         const newCell = createCell()
-        rows[rowIndex].columns.splice(columnIndex, 0, { ...newCell, rowspan: cell.options.rowspan })
+        rows[rowIndex].columns.splice(columnIndex + 1, 0, {
+          ...newCell,
+          options: {
+            ...newCell.options,
+            rowspan: cell.options.rowspan
+          }
+        })
       }
-      rows[rowIndex].columns[columnIndex].colspan = 1
+      rows[rowIndex].columns[columnIndex].options.colspan = 1
       return rows
     },
     [MutationType.deleteRow]: (rows, rowIndex, columnIndex) => {
@@ -147,7 +159,60 @@ export function tableMutation(rows, type, rowIndex, columnIndex) {
     },
   }
 
-  debugger
-
   return mutationFunction[type](rows, rowIndex, columnIndex)
+}
+
+export function isMutationDisabled(rows, type, rowIndex, columnIndex) {
+  const statusFunction = {
+    [MutationType.mergeRight]: (rows, rowIndex, columnIndex) => {
+      var disabled = false
+      if (columnIndex == rows[rowIndex].columns.length - 1) {
+        disabled = true
+      } else {
+        const cell = rows[rowIndex].columns[columnIndex]
+        const nextCell = rows[rowIndex].columns[columnIndex + 1]
+        if (cell && nextCell) {
+          if (cell.options.rowspan !== nextCell.options.rowspan) {
+            disabled = true
+          }
+        } else {
+          disabled = true
+        }
+      }
+      return disabled
+    },
+    [MutationType.mergeDown]: (rows, rowIndex, columnIndex) => {
+      var disabled = false
+      if (rowIndex === rows.length - 1) {
+        disabled = true
+      } else {
+        const cell = rows[rowIndex].columns[columnIndex]
+        const nextCell = rows[rowIndex + 1].columns[columnIndex]
+        if (cell && nextCell) {
+          if (cell.options.colspan !== nextCell.options.colspan) {
+            disabled = true
+          }
+        } else {
+          disabled = true
+        }
+      }
+      return disabled
+    },
+    [MutationType.splitRow]: (rows, rowIndex, columnIndex) => {
+      var disabled = false
+      if (rows[rowIndex].columns[columnIndex].options.colspan == 1) {
+        disabled = true
+      }
+      return disabled
+    },
+    [MutationType.splitColumn]: (rows, rowIndex, columnIndex) => {
+      var disabled = false
+      if (rows[rowIndex].columns[columnIndex].options.rowspan == 1) {
+        disabled = true
+      }
+      return disabled
+    },
+  }
+
+  return statusFunction[type](rows, rowIndex, columnIndex)
 }
