@@ -10,8 +10,13 @@ export const GetAllocationTree = (params = {}) => {
 // 	return http.fetchGet(`/static/mock/assetsData.json`)
 // }
 //获取资产配置管理-所有下拉框数据
-export const getBaseData = () => {
-	return http.fetchGet(`/biConfiguration/getConfigurationDictList`)
+export const getBaseData = (params = {}) => {
+	return http.fetchGet(`/basedata/getByBasedataType`,params)
+}
+
+//获取资产配置管理-风险等级数据
+export const getInfo = (params = {}) => {
+	return http.fetchGet(`/basedata/getInfo`,params)
 }
 
 //获取资产配置管理-区域下拉列表
@@ -24,8 +29,8 @@ export const GetAllocationCustomer = (projectAreaId="") => {
 }
 
 //获取资产库配置管理表格数据
-export const GetAllocationTable = (params = {}) => {
-	return http.fetchGet(`/biConfiguration/list`, params)
+export const GetAllocationTable = (params = {},limit,offset) => {
+	return http.fetchPost(`/biConfigurations/list?limit=${limit}&offset=${offset}`, params,true)
 }
 //资产库配置管理新增
 export const AddAllocationTable = (params = {}) => {

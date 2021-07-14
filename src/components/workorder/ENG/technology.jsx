@@ -354,6 +354,7 @@ class People extends Component {
     onSubmit = () => {
         let { skillTypeCode, brandCode, productLineCodes, productLineLevelCode, proableLevel, serviceItemCodes, cases } = this.state;
         let newCase = []
+        console.log(111)
         for (var i = 0; i < cases.length; i++) {
             let { custName, productLineCode, serviceItemCode, caseDesc } = cases[i];
             if (nullCheck(custName) && nullCheck(productLineCode) && nullCheck(serviceItemCode) && nullCheck(caseDesc)) {
@@ -362,6 +363,7 @@ class People extends Component {
                 newCase.push({ custName, productLineCode, serviceItemCode, caseDesc })
             }
         }
+        console.log(222)
         let allData = { skillTypeCode, brandCode, productLineCodes, productLineLevelCode, proableLevel, serviceItemCodes }
         let checked = this.check(allData, newCase);
         if (!checked) {
@@ -369,6 +371,7 @@ class People extends Component {
             message.error("所有表单项均为必填项，请填写完整后再提交!")
             return
         }
+        console.log(333)
         let params = Object.assign({}, this.state, { cases: newCase })
       
         // 专业能力数据提交
@@ -731,8 +734,6 @@ class People extends Component {
                                 </Card>
                             })
                         }
-
-
 
                     </div>
                 </div>

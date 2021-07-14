@@ -51,7 +51,17 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	return new Request(wholeUrl, req)
 }
 
-const handleResponse = res => new Promise((rsl, rej) => {
+	const handleResponse1 = res => new Promise((rsl, rej) => {
+		rsl(res.json())
+	})
+	.then(res => {
+		return res;
+	})
+	.catch(err => {
+		// message.error('请求超时，请联系管理员！');
+		// console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
+	})
+	const handleResponse = res => new Promise((rsl, rej) => {
 		rsl(res.json())
 	})
 	.then(res => {
@@ -74,7 +84,6 @@ const handleResponse = res => new Promise((rsl, rej) => {
 		hashHistory.push('/login');
 		// console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
 	})
-
 const handleTimeout = (url, type, body = {}, json = false, times = 100000) => Promise.race([
 	new Promise((rsl, rej) => {
 		setTimeout(_ => {
@@ -149,6 +158,10 @@ export default {
 	fetchGet(url, params = {}, times = 100000) { //get接口调用
 		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, times)
 			.then(handleResponse)
+	},
+	fetchGetNotest(url, params = {}, times = 100000) { //get接口调用,当不进行接口报错处理的时候使用
+		return handleTimeout(`${url}${handleParams(params, '?')}`, 'GET', null, null, times)
+			.then(handleResponse1)
 	},
 	fetchPost(url, params = {}, json = false, times = 100000) { //post接口调用
 		return handleTimeout(url, 'POST', json ? params : handleParams(params), json, times)

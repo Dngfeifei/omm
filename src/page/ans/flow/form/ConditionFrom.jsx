@@ -109,14 +109,12 @@ class ConditionItem extends Component {
                 <Row>
                     {this.state.rules.map(
                         (val, index) => val.key != 'remarks' ?
-
                         <Col key={index} span={24} style={{ display: 'block' }}>
                             <FormItem
                                 label={val.label} labelCol={{ span: 3 }} wrapperCol={{ span: 14 }}>
                                 {getFieldDecorator(val.key, val.option)(val.render())}
                             </FormItem>
                         </Col> :
-
                         <Col key={index} span={24} style={{ display: 'block' }}>
                             <FormItem
                                 label={val.label} labelCol={{ span: 3 }} wrapperCol={{ span: 20 }}>

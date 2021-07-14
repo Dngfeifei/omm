@@ -97,10 +97,10 @@ export default function FormMeta(props) {
 
   // 获取数据源
   useEffect(() => {
-    getDataSource()
-      .then(resp => {
-        setDataSourceTree(resp.treeData)
-      })
+    // getDataSource()
+    //   .then(resp => {
+    //     setDataSourceTree(resp.treeData)
+    //   })
   }, [])
 
   const handleDataSourceChange = (sourceId) => {
@@ -195,7 +195,7 @@ export default function FormMeta(props) {
         </Form.Item>
 
         <Form.Item
-          label="表明"
+          label="表名"
         >
           {formMeta.autoCreate === '1' ? (
             <Input.Search
