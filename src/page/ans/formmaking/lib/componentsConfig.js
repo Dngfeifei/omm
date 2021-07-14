@@ -489,7 +489,7 @@ export const advanceComponents = [
       token: '',
       domain: '',
       tip: '',
-      action: '/sys/file/webupload/upload?uploadPath=/formbuilder',
+      action: '/sys/file/webupload/upload',
       customClass: '',
       disabled: false,
       required: false,
@@ -531,7 +531,7 @@ export const advanceComponents = [
       isDelete: true,
       min: 0,
       isEdit: true,
-      action: '/sys/file/webupload/upload?uploadPath=/formbuilder',
+      action: '/sys/file/webupload/upload',
       customClass: '',
       labelWidth: 100,
       isLabelWidth: false,
@@ -868,6 +868,50 @@ export const layoutComponents = [
       remoteOption: '',
     },
   },
+
+
+  {
+    "type": "report",
+    "icon": "icon iconfont icon-table1",
+    "options": {
+      "customClass": "",
+      "hidden": false,
+      "borderWidth": 1,
+      "borderColor": "#999",
+      "width": "100%",
+      "remoteFunc": "func_1625990604274",
+      "remoteOption": "option_1625990604274",
+      dataBind: true,
+    },
+    "rows": [
+      {
+        "columns": [
+          {
+            "type": "td",
+            "id": '111',
+            "options": {
+              "customClass": "",
+              "colspan": 1,
+              "rowspan": 1,
+              "align": "left",
+              "valign": "top",
+              "width": "",
+              "height": ""
+            },
+            "list": [],
+            "key": "k9k15nok"
+          }
+        ]
+      },
+    ],
+    "name": "表格布局",
+    "key": "1625990604274",
+    "model": "report_1625990604274",
+    "rules": []
+  },
+
+
+
   {
     type: 'tabs',
     icon: 'icon iconfont icon-tabs',

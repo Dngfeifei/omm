@@ -1,4 +1,3 @@
-import ColorDesign from './components/ColorDesign'
 import ColorSetting from './components/ColorSetting'
 import ColorRender from './components/ColorRender'
 

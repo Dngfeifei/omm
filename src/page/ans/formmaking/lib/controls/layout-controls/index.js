@@ -1,13 +1,13 @@
 import Grid from './Grid';
 import Tabs from './Tabs';
 import Divider from './Divider';
-import SubTable from './SubTable';
+import Report from './Report';
 
 const comps = {
   ...Grid,
   ...Tabs,
   ...Divider,
-  ...SubTable,
+  ...Report,
 };
 
 export default comps;

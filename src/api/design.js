@@ -24,6 +24,12 @@ export const CopyFlow = (params = {}) =>
 export const ActiveFlow = (params = {}) =>
 	http.fetchGet(REMOTE_URL + `/flowable/process/update/active`, params)
 
+
+// 挂起流程
+export const SuspendFlow = (params = {}) =>
+	http.fetchGet(REMOTE_URL + `/flowable/process/update/suspend`, params)
+
+
 // 删除流程信息
 export const DelFlow = (params = {}) => {
 	return http.fetchDelete(REMOTE_URL + `/flowable/model/delete?ids=`+params)
@@ -121,5 +127,5 @@ export const FLowAreaList = (params = {}) =>
 
 // 文件/图片上传接口
 export const FlowUpload = (params = {}) =>
-	http.fetchPost(`${REMOTE_URL}/sys/file/webupload/upload?uploadPath=/formbuilder`, params)
+	http.fetchPost(`${REMOTE_URL}/sys/file/webupload/upload`, params)
 

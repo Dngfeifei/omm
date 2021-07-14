@@ -1,4 +1,3 @@
-import SliderDesign from './components/SliderDesign'
 import SliderSetting from './components/SliderSetting'
 import SliderRender from './components/SliderRender'
 

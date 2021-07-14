@@ -99,19 +99,25 @@ const ControlDesignBox = ({
   itemControl,
   dataIndex,
   inTable = false,
+  isDesign = true,
+  inReport = false,
+  updateFormModel,
 }) => {
   const { state, dispatch } = useContext(FormDesignContenxt);
   const { formConfig } = state;
 
-  const isLayout = ['grid', 'tabs', 'table'].includes(itemControl.type);
+  const isLayout = ['grid', 'tabs', 'report', 'table'].includes(itemControl.type);
   const isSelected =
     state.selectedControl && state.selectedControl.id === itemControl.id;
 
   const controlProps = {
+    updateFormModel,
     control: itemControl,
     formConfig,
     inTable,
+    isDesign,
   };
+
 
   const handleControlSelect = (e, control, index) => {
     dispatch({ type: 'update:selected-control', payload: cloneDeep(control) });
@@ -136,10 +142,10 @@ const ControlDesignBox = ({
     console.log(id);
   };
 
-  //添加table 布局行
-  const handleAddRow =(control)=>{
-    console.log('addRow:',control);
-  }
+  //添加report 布局行
+  const handleAddRow = (control) => {
+    console.log('addRow:', control);
+  };
   return (
     <div>
       <ControlBox
@@ -171,7 +177,7 @@ const ControlDesignBox = ({
                 <Icon type="plus" />
               </span>
             )}
-            {itemControl.type === 'table' && (
+            {itemControl.type === 'report' && (
               <span onClick={() => handleAddRow(itemControl)}>
                 <Icon type="plus" />
               </span>

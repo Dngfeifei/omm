@@ -4,6 +4,9 @@ import { GetDictionary, AddDictionary, EditDictionary, DelDictionary, GetDictIte
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
+// 引入字典编辑页
+import EditDic from "./editDictionary.jsx"
+
 // 引入页面CSS
 import '/assets/less/pages/logBookTable.css'
 
@@ -29,47 +32,6 @@ const assignment = (data) => {
             return
         }
     });
-}
-// 表格可编辑行渲染
-class EditableCell extends React.Component {
-    renderCell = ({ getFieldDecorator }) => {
-        const {
-            editing, dataIndex, title, Inputs, record, index, children,
-            ...restProps
-        } = this.props;
-        return (
-            <td {...restProps} className='my-cell-td'>
-                {editing ? (
-                    dataIndex == 'status' ?
-                        < Item style={{ margin: 0 }}>
-                            {getFieldDecorator(dataIndex, {
-                                rules: [{
-                                    required: true,
-                                    message: `请输入 ${title}!`
-                                }],
-                                initialValue: record[dataIndex],
-                            })(
-                                <Select style={{ width: 120 }}>
-                                    <Option value={0}>禁用</Option>
-                                    <Option value={1}>启用</Option>
-                                </Select>
-                            )}
-                        </Item> : < Item style={{ margin: 0 }}>
-                            {getFieldDecorator(dataIndex, {
-                                rules: [{ required: true, message: `请输入 ${title}!` }],
-                                initialValue: record[dataIndex],
-                            })(
-                                <Inputs />
-                            )}
-                        </Item>
-                ) : children
-                }
-            </td>
-        );
-    };
-    render() {
-        return <Consumer>{this.renderCell}</Consumer>;
-    }
 }
 
 class content extends Component {
@@ -132,27 +94,23 @@ class content extends Component {
                 },
                 {
                     title: '字典值',
-                    dataIndex: 'itemValue',
+                    dataIndex: 'name',
                     align: 'center',
-                    editable: true,
                 },
                 {
                     title: '编码值',
-                    dataIndex: 'itemCode',
+                    dataIndex: 'code',
                     align: 'center',
-                    editable: true,
                 },
                 {
                     title: '顺序',
                     dataIndex: 'serialNumber',
                     align: 'center',
-                    editable: true,
                 },
                 {
                     title: '状态',
                     dataIndex: 'status',
                     align: 'center',
-                    editable: true,
                     render: (t, r) => {
                         if (t == 1) {
                             return "启用"
@@ -165,9 +123,17 @@ class content extends Component {
             //右侧角色表格数据
             dictData: [],
         },
+        // 当前字典类型拓展字段
+        extendedField: [
+            // {
+            //     fieldEn: "strvalu1",
+            //     fieldCn: "备注",
+            //     field_type: "string",
+            // }
+        ],
         // 表格选中项
         tableSelecteds: null,
-        tableSelectedInfo: null,
+        tableSelectedInfo: [],
         //新增修改字典弹窗配置
         newGroupWindow: {
             newGroupModal: false, //弹窗是否显示可见
@@ -185,6 +151,10 @@ class content extends Component {
             dictName: null,//字典名称
             dictCode: null//字典编码
         },
+        editID: "",
+        editType: "add",
+        editVisible: false
+
     }
     //点击行选中选框
     onRow = (record) => {
@@ -215,9 +185,10 @@ class content extends Component {
                         },
                     })
                     if (this.state.newEntry && res.data) {
-                        this.searchList({ dictId: res.data[0].id })
+                        this.searchList({ basedataTypeId: res.data[0].id })
                         this.setState({
-                            currentID: res.data[0].id
+                            currentID: res.data[0].id,
+                            extendedField: res.data[0].basedataMetas
                         })
                         this.setState({ newEntry: false })
                     }
@@ -293,29 +264,31 @@ class content extends Component {
     }
     // 树选中后
     onTreeSelect = async (selectedKeys, info) => {
+        console.log(info, "info")
         if (!info.selected) {
-            let table = Object.assign({}, this.state.table, { dictData: [] })
-            let pagination = Object.assign({}, this.state.pagination, {
-                total: 0,
-                current: 1,
-            })
-            let pageConf = Object.assign({}, this.state.pageConf, {
-                offset: 0,
-            })
-            this.setState({
-                currentID: "",
-                currentGroup: {
-                    dictName: "",
-                    dictCode: ""
-                },
-                newGroup: {
-                    dictName: "",
-                    dictCode: ""
-                },
-                table: table,
-                pagination: pagination,
-                pageConf: pageConf
-            })
+            // let table = Object.assign({}, this.state.table, { dictData: [] })
+            // let pagination = Object.assign({}, this.state.pagination, {
+            //     total: 0,
+            //     current: 1,
+            // })
+            // let pageConf = Object.assign({}, this.state.pageConf, {
+            //     offset: 0,
+            // })
+            // this.setState({
+            //     currentID: "",
+            //     currentGroup: {
+            //         dictName: "",
+            //         dictCode: ""
+            //     },
+            //     newGroup: {
+            //         dictName: "",
+            //         dictCode: ""
+            //     },
+            //     table: table,
+            //     pagination: pagination,
+            //     pageConf: pageConf,
+            //     extendedField: []
+            // })
             return
         }
         let data = info.selectedNodes[0].props.dataRef
@@ -331,19 +304,14 @@ class content extends Component {
             },
             tableSelecteds: [],
             tableSelectedInfo: [],
-            pageConf: Object.assign({}, this.state.pageConf, { offset: 0 })
+            pageConf: Object.assign({}, this.state.pageConf, { offset: 0 }),
+            extendedField: data.basedataMetas
         })
         // 选中后请求字典项详情列表数据
-        this.cancel()
-        this.searchList({ dictId: data.id, offset: 0 })
+
+        this.searchList({ basedataTypeId: data.id, offset: 0 })
     };
 
-    //获取要查询的字典名称
-    // getSearchName = (e) => {
-    //     this.setState({
-    //         searchName: e.target.value
-    //     })
-    // }
     // 通过字典名称查询字典数据
     onSearch = (value) => {
         this.searchTree({ dictName: value })
@@ -438,7 +406,7 @@ class content extends Component {
     }
     // 查询字典项详情列表
     searchList = (Params = {}) => {
-        let params = Object.assign({}, this.state.pageConf, { dictId: this.state.currentID }, Params)
+        let params = Object.assign({}, this.state.pageConf, { basedataTypeId: this.state.currentID }, Params)
         GetDictItems(params).then(res => {
             if (res.success != 1) {
                 message.error("操作失败")
@@ -464,8 +432,8 @@ class content extends Component {
     // 分页页码变化
     pageIndexChange = (current, pageSize) => {
         let pageConf = Object.assign({}, this.state.pageConf, { offset: (current - 1) * pageSize });
-        let dictId = this.state.currentID;
-        let params = Object.assign({}, pageConf, { dictId: dictId })
+        let basedataTypeId = this.state.currentID;
+        let params = Object.assign({}, pageConf, { basedataTypeId: basedataTypeId })
         this.setState({
             tableSelecteds: [],
             tableSelectedInfo: []
@@ -475,8 +443,8 @@ class content extends Component {
     // 分页条数变化
     pageSizeChange = (current, pageSize) => {
         let pageConf = Object.assign({}, this.state.pageConf, { limit: pageSize });
-        let dictId = this.state.currentID;
-        let params = Object.assign({}, pageConf, { dictId: dictId })
+        let basedataTypeId = this.state.currentID;
+        let params = Object.assign({}, pageConf, { basedataTypeId: basedataTypeId })
         this.setState({
             tableSelecteds: [],
             tableSelectedInfo: []
@@ -495,9 +463,6 @@ class content extends Component {
             }
         }
     }
-    //判断是否可编辑
-    isEditing = record => record.id == this.state.editingKey
-
     // 表格选中后
     onTableSelect = (selectedRowKeys, info) => {
         //获取table选中项
@@ -515,26 +480,11 @@ class content extends Component {
             message.warning('请先选中您要添加的数据字典类型，然后再进行新增数据字典操作!');
             return
         }
-        if (this.state.editingKey) {
-            this.cancel()
-        }
-        let oldData = this.state.table.dictData
-        let count = oldData.length + 1
-
-        let data = [...oldData, {
-            id: count,
-            itemValue: ``,
-            itemCode: ``,
-            serialNumber: "",
-            status: 1,
-        }]
-        let table = Object.assign({}, this.state.table, { dictData: data })
         this.setState({
-            table: table,
-            editingKey: count, //将当前新增的数据进行新增填写
-            editType: 0
-        });
-
+            editID: selected,
+            editType: "add",
+            editVisible: true
+        })
     }
     //编辑字典项
     editItem = () => {
@@ -545,13 +495,10 @@ class content extends Component {
             return
         }
         let key = tableSelecteds[0];
-
-        if (this.state.editingKey) {
-            this.cancel()
-        }
         this.setState({
-            editingKey: key,
-            editType: 1
+            editID: key,
+            editType: "edit",
+            editVisible: true
         })
     }
     // 删除字典项
@@ -577,7 +524,7 @@ class content extends Component {
                         message.error("操作失败")
                         return
                     } else {
-                        _this.searchList({ dictId: ID })
+                        _this.searchList({ basedataTypeId: ID })
                         _this.setState({
                             editingKey: '', tableSelecteds: [],
                             tableSelectedInfo: [],
@@ -589,92 +536,70 @@ class content extends Component {
         });
 
     }
-    //保存字典项
-    saveItem = () => {
-        let key = this.state.editingKey;
-        if (!key) {
-            message.warning("未存在编辑项，无法保存")
-            return
-        }
-        this.props.form.validateFields((error, row) => {
-            if (error) { return }
-            var params = JSON.parse(JSON.stringify(row));
-            let type = this.state.editType;//当前编辑类型
-            let ID = this.state.currentID;//当前字典ID
-            // dictId
-            if (!type) {
-                //新增保存
-                params = Object.assign({}, params, { dictId: ID })
-                AddDictItem(params).then(res => {
-                    if (res.success != 1) {
-                        message.error("操作失败")
-                        return
-                    } else {
-                        this.setState({ editingKey: '' });
-                        this.searchList({ dictId: ID })
-                    }
-                })
-            } else {
-                //编辑保存
-                params = Object.assign({}, params, { id: key })
-                EditDictItem(params).then(res => {
-                    if (res.success != 1) {
-                        message.error("操作失败")
-                        return
-                    } else {
-                        this.setState({ editingKey: '' });
-                        this.searchList({ dictId: ID })
-                    }
-                })
-            }
+    // 字典项编辑完成
+    onOk = () => {
+        this.setState({
+            editVisible: false
+        }, () => {
+            this.searchList()
         })
     }
-    //取消
-    cancel = () => {
-        if (!this.state.editingKey) {
-            return
-        }
-        let _this = this
-        if (!_this.state.editType) {
-            let oldData = _this.state.table.dictData
-            oldData.pop()
-            let table = Object.assign({}, _this.state.table, { dictData: oldData })
-            _this.setState({
-                table: table,
-                editingKey: "", //将当前新增的数据进行新增填写
-                editType: 0
-            });
-        } else {
-            _this.setState({
-                editingKey: "", //将编辑项改为不可编辑
-            });
-        }
-
-        //     },
-        // });
+    // 字典项编辑取消
+    onCancel = () => {
+        this.setState({
+            editVisible: false
+        })
     }
+    //保存字典项
+    // saveItem = () => {
+    //     let key = this.state.editingKey;
+    //     if (!key) {
+    //         message.warning("未存在编辑项，无法保存")
+    //         return
+    //     }
+    //     this.props.form.validateFields((error, row) => {
+    //         if (error) { return }
+    //         var params = JSON.parse(JSON.stringify(row));
+    //         let type = this.state.editType;//当前编辑类型
+    //         let ID = this.state.currentID;//当前字典ID
+    //         // basedataTypeId
+    //         if (!type) {
+    //             //新增保存
+    //             params = Object.assign({}, params, { basedataTypeId: ID })
+    //             AddDictItem(params).then(res => {
+    //                 if (res.success != 1) {
+    //                     message.error("操作失败")
+    //                     return
+    //                 } else {
+    //                     this.setState({ editingKey: '' });
+    //                     this.searchList({ basedataTypeId: ID })
+    //                 }
+    //             })
+    //         } else {
+    //             //编辑保存
+    //             params = Object.assign({}, params, { id: key })
+    //             EditDictItem(params).then(res => {
+    //                 if (res.success != 1) {
+    //                     message.error("操作失败")
+    //                     return
+    //                 } else {
+    //                     this.setState({ editingKey: '' });
+    //                     this.searchList({ basedataTypeId: ID })
+    //                 }
+    //             })
+    //         }
+    //     })
+    // }
+
     render = _ => {
-        const components = {
-            body: {
-                cell: EditableCell,
-            },
-        };
-        // 表格列配置
-        const columns = this.state.table.columns.map(col => {
-            if (!col.editable) {
-                return col;
-            }
-            return {
-                ...col,
-                onCell: record => ({
-                    record,
-                    Inputs: Input,
-                    dataIndex: col.dataIndex,
-                    title: col.title,
-                    editing: this.isEditing(record),
-                }),
-            };
-        });
+        let expandColumns = []
+        this.state.extendedField.forEach(item => {
+            expandColumns.push({
+                title: item.fieldCn,
+                dataIndex: item.fieldEn,
+                align: 'center',
+            })
+        })
         const { getFieldDecorator } = this.props.form
         const { h } = this.state;
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
@@ -691,14 +616,12 @@ class content extends Component {
                         <Row style={{ textAlign: 'right' }}>
                             <Button type="info" style={{ marginLeft: '10px' }} onClick={this.delItem}>删除</Button>
                             <Button type="info" style={{ marginLeft: '10px' }} onClick={this.editItem}>修改</Button>
-                            <Button disabled={this.state.editingKey ? false : true} type="info" style={{ marginLeft: '10px' }} onClick={this.cancel}>取消</Button>
-                            <Button disabled={this.state.editingKey ? false : true} type="info" style={{ marginLeft: '10px' }} onClick={this.saveItem}>保存</Button>
                             <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.addItem}>新增</Button>
                         </Row>
                     </Form>
                     <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
                         <Provider value={this.props.form}>
-                            <Table className='jxlTable' bordered onRow={this.onRow} rowSelection={{ type: "radio", onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds }} dataSource={this.state.table.dictData} columns={columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} components={components} size="small" scroll={h} />
+                            <Table className='jxlTable' bordered onRow={this.onRow} rowSelection={{ type: "radio", onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds }} dataSource={this.state.table.dictData} columns={this.state.table.columns.concat(expandColumns)} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} size="small" scroll={h} />
                         </Provider>
                         <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
                     </div>
@@ -715,15 +638,16 @@ class content extends Component {
             >
                 <Row>
                     <label htmlFor="字典名称">
-                        <span  className="ant-form-item-required" style={{ width: "18%", display: "inline-block",textAlign:"right" }}>字典名称：</span>
+                        <span className="ant-form-item-required" style={{ width: "18%", display: "inline-block", textAlign: "right" }}>字典名称：</span>
                         <Input placeholder="请输入" value={this.state.newGroup.dictName} onChange={this.getdictName} style={{ margin: "2% 10px", width: '70%' }} /></label>
                 </Row>
                 <Row>
                     <label htmlFor="字典名称">
-                        <span  className="ant-form-item-required" style={{ width: "18%", display: "inline-block",textAlign:"right" }}>编码值：</span>
+                        <span className="ant-form-item-required" style={{ width: "18%", display: "inline-block", textAlign: "right" }}>编码值：</span>
                         <Input placeholder="请输入" value={this.state.newGroup.dictCode} onChange={this.getdictCode} style={{ margin: "2% 10px", width: '70%' }} /></label>
                 </Row>
             </Modal>
+            {this.state.editVisible ? <EditDic ID={this.state.editID} type={this.state.editType} data={this.state.tableSelectedInfo[0]} extendedField={this.state.extendedField} onOk={this.onOk} onCancel={this.onCancel}></EditDic> : ""}
 
 
         </div>

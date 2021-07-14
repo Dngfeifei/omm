@@ -29,6 +29,7 @@ export default {
                 dict: '字典',
                 grid: '栅格布局',
                 tabs: '标签页',
+                report: '表格布局',
                 divider: '分割线',
                 html: 'HTML',
                 component: '自定义组件'
