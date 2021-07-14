@@ -141,12 +141,12 @@ export const assetsListData = {
             },
           ],
         render: render,
-        type:'input2',
+        type:'date',
     },
     //保障结束日期
-    'projectEndDate2':{
+    'maintenanceEnd':{
         label: '保障结束日期',
-        key: 'projectEndDate2',
+        key: 'maintenanceEnd',
         span:6,
         rules:[
             {
@@ -158,9 +158,9 @@ export const assetsListData = {
         type:'date',
     },
     //保障开始日期
-    'projectStartDate2':{
+    'maintenanceStart':{
         label: '保障开始日期',
-        key: 'projectStartDate2',
+        key: 'maintenanceStart',
         span:6,
         rules:[
             {
