@@ -195,7 +195,7 @@ export default function FormMeta(props) {
         </Form.Item>
 
         <Form.Item
-          label="表明"
+          label="表名"
         >
           {formMeta.autoCreate === '1' ? (
             <Input.Search
