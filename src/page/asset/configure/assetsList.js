@@ -392,8 +392,8 @@ export const assetsListData = {
         type:'input4'
     },
     //产品型号
-    'productModelId':{
-        key:'productModelId',
+    'productModelName':{
+        key:'productModelName',
         setValue:'productModelName',
         label:'产品型号',
         span:6,
@@ -1101,7 +1101,7 @@ export const panes = [
                 render:(text,record,index)=> `${index+1}`
             },
             {
-                title: <div className="ant-form-item-required1">部件号</div>,
+                title: <div className="ant-form-item-required">部件号</div>,
                 dataIndex: 'partNumber',
                 width:'100px',
                 align:'center',
@@ -1277,9 +1277,7 @@ export const panes = [
                 {
                     title: '产品型号',
                     dataIndex: 'productModelName',
-                    selectData:'productModeType',
-                    key:"productModelId",
-                    selectChange: 'productModelId',
+                    key:"productModelName",
                     align: 'center',
                 },
                 {

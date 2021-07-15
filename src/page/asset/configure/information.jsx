@@ -163,6 +163,7 @@ class BasicInformation extends Component {
     //产品选择器回传参数
     producthandleOk = (info) => {
         const {baseData} = this.state;
+        console.log(info)
         this.props.form.resetFields(['productModelName','productLevel','productLineName','brandName','skillTypeName','serviceClassName']);
         //  console.log(info,this.state.baseData)
         let nowParams = this.props.form.getFieldsValue();
