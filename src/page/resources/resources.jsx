@@ -565,7 +565,6 @@ class resources extends Component {
 	};
 	//导航图标设置窗口确定后回调
 	onOK = (icon) => {
-		x
 		this.setState({
 			icon
 		})
