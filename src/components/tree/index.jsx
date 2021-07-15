@@ -159,7 +159,7 @@ class TreeList extends Component {
                 <Spin tip="Loading..." spinning={this.state.visible}>
                     <Row>
                         {
-                            search ? <Col span={12}>
+                            search ? <Col span={edit?12:24}>
                                 <Search allowClear placeholder='请输入关键词' onSearch={this.searchChange} />
                             </Col> : ""
                         }

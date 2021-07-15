@@ -1,4 +1,4 @@
-import React, { useEffect, useReducer } from 'react';
+import React, { useEffect, useReducer, useState } from 'react';
 import { Button, message } from 'antd';
 import FormDesignContext, {
   initState,
@@ -34,8 +34,13 @@ export default ({ id, hideModal }) => {
     });
   }, []);
 
+  const [pending, setPending] = useState(false)
+
   const handleSubmit = () => {
     const { formModel: list, formConfig: config } = state;
+    if (pending) {
+      return
+    }
     if (!id) {
       console.log({ list, config });
       return;
@@ -44,13 +49,15 @@ export default ({ id, hideModal }) => {
       ...inputForm,
       source: JSON.stringify({ list, config }),
     };
+    setPending(true)
 
     saveFormSourceMakeForm(params).then((data) => {
       if (data && data.success) {
         message.success(data.msg);
         hideModal();
       }
-    });
+      setPending(false)
+    }).catch(() => setPending(false));
   };
 
   return (
@@ -68,7 +75,7 @@ export default ({ id, hideModal }) => {
           </div>
         </div>
       </div>
-      <div style={{ textAlign: 'right' }}>
+      <div style={{ textAlign: 'right', marginTop: 20 }}>
         <Button type="primary" onClick={() => handleSubmit()}>
           确定
         </Button>
