@@ -28,7 +28,7 @@ class BasicInformation extends Component {
                 systemCategory:[],//系统类别下拉
                 appLevelList:[],//系统重要程度
                 riskLevel:[],//风险等级下拉
-                addressList:[],//状态下拉数据
+                addressList:[],//机房地址下拉数据
                 statusList:[],//状态下拉数据
                 basedataTypeList:[],//配置项下拉数据
                 productModeType:[], //产品型号
@@ -145,6 +145,7 @@ class BasicInformation extends Component {
     }
     //项目选择器回传参数
     projecthandleOk = (info) => {
+        console.log(info)
         info = this.setProjectHandleOk(info);
         const { roleWindow,tableSelectedInfo,baseData} = this.state;
         this.props.form.resetFields(['projectNumber','projectName','projectManagerName','custName','projectEndDate','projectStartDate','projectManagerName','projectSalesmanName']);
@@ -255,16 +256,12 @@ class BasicInformation extends Component {
         const {baseData} = this.state,item = option.props.appitem;
         if(selectChange == 'projectAreaId' ){  //服务区域
             baseData['computerRoomAddress'] = baseData['custUserId'] = baseData['custUserMobile'] = undefined;
+            this.props.form.resetFields(['computerRoomAddress','custUserId','custUserMobile']);
             this.getCustomer(id);
             this.getAddress(id);
         }else if(selectChange == 'appTypeId' ){  //系统类别
-            // const {systemCategory} = this.state.selectData;
-            // let productLevel = systemCategory.filter(item => item.id == id );
             this.getInfo(item.intValue1)
         }else if(selectChange == 'custUserId' ){  //客户管理员
-            // const {customerData} = this.state.selectData;
-            // let productLevel = customerData.filter(item => item.id == id );
-            // console.log(productLevel)
             baseData['custUserMobile'] = item.mobile;
         }
         // let getData = this.state.selectData[selectData].filter(item => item.id == id );

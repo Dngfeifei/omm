@@ -1254,6 +1254,8 @@ export const panes = [
                 title: '机房地址',
                 dataIndex: 'computerRoomAddress',
                 key:"computerRoomAddress",
+                selectData:'addressList',
+                itemValue:'address',
                 ellipsis:true,
                 align: 'center',
             },
