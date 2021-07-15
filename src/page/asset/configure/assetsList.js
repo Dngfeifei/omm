@@ -3,6 +3,8 @@ import { Row, Col,  Input, Select,  DatePicker,Upload,Form,Icon,InputNumber } fr
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
+// 引入日期格式化
+import moment from 'moment'
 
 let ComponentNode,riskInvestigationNode;
 export const setComNode = (type,_this) => {
@@ -31,23 +33,25 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required,d
         return <Input disabled={required} disabled placeholder="项目带入" />
     }else if(type == 'input4'){
         return <Input disabled={required} disabled placeholder="产品带入" />
+    }else if(type == 'input5'){
+        return <Input disabled={required} disabled placeholder="系统类别带入" />
     }else if(type == 'input3'){
         return <Input disabled={required} placeholder="请选择" suffix={<Icon type="appstore" className="dateIcon" onClick={() => _this.openProject(dataIndex)} />} />
     }else if(type == 'select'){
-        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required} onChange={(value) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue)}>
+        return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required} onChange={(value,option) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue,option)}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
-                            return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
+                            return (<Option key={index} value={itemCode ? items[itemCode]:items.id} appitem={items}>{itemValue ? items[itemValue] : items.name}</Option>)
                         }):[].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
                         })
                     }
                 </Select>
     }else if(type == 'select1'){
-        return <Select disabled={required} style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue)}>
+        return <Select disabled={required} style={{ width: '100%' }} disabled={required} placeholder="请选择" allowClear={true} onChange={(value,option) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue,option)}>
                     {
                         _this.state.selectData[selectData] ? _this.state.selectData[selectData].map((items, index) => {
-                            return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
+                            return (<Option key={index} value={itemCode ? items[itemCode]:items.id} appitem={items}>{itemValue ? items[itemValue] : items.name}</Option>)
                         }):[].map((items, index) => {
                             return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
                         })
@@ -56,7 +60,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required,d
     }else if(type == 'textarea'){
         return <TextArea disabled={required} placeholder="请输入" rows={4}/>
     }else if(type == 'date'){
-        return <DatePicker disabled={required} placeholder="项目带入" showTime format="YYYY-MM-DD" />
+        return <DatePicker disabled={required} placeholder="请选择日期" format="YYYY-MM-DD" />
     }
 }
 function renderDom(obj) {
@@ -71,8 +75,8 @@ function renderDom(obj) {
 }
 export const assetsListData = {
     //配置项名称
-    'basedataTypeId':{
-        key:'basedataTypeId',
+    'basedataName':{
+        key:'basedataName',
         label:'配置项名称',
         span:6,
         rules:[
@@ -82,7 +86,7 @@ export const assetsListData = {
             },
           ],
         render: render,
-        type:'select',
+        type:'input2',
     },
     //项目号
     'projectNumber':{
@@ -141,7 +145,7 @@ export const assetsListData = {
             },
           ],
         render: render,
-        type:'date',
+        type:'input2',
     },
     //保障结束日期
     'maintenanceEnd':{
@@ -249,8 +253,8 @@ export const assetsListData = {
         type:'select1',
     },
     //机房地址
-    'projectAreaAddress':{
-        key:'projectAreaAddress',
+    'computerRoomAddress':{
+        key:'computerRoomAddress',
         label:'机房地址',
         span:6,
         rules:[
@@ -263,7 +267,7 @@ export const assetsListData = {
             return <Input placeholder="placeholder" />;
         },
         render:render,
-        type:'input1'
+        type:'select'
     },
     //客户方管理员
     'custUserName':{
@@ -453,13 +457,13 @@ export const assetsListData = {
         type:'select'
     },
     //风险等级
-    'riskLevelId':{
+    'riskLevelName':{
         label: '风险等级',
-        key: 'riskLevelId',
+        key: 'riskLevelName',
         span:6,
         rules:[],
         render:render,
-        type:'select'
+        type:'input5'
     },
     //是否维护
     'isMroId':{
@@ -1021,31 +1025,44 @@ export const panes = [
         riskColumns:[
             {
                 title: <div className="ant-form-item-required1">风险配置项</div>,
-                dataIndex: '1',
+                dataIndex: 'rcName',
                 align:'center',
                 width:'100px',
                 editable: true,
             },
             {
                 title: <div className="ant-form-item-required1">当前风险</div>,
-                dataIndex: '2',
+                dataIndex: 'rcValue',
                 width:'100px',
                 align:'center',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.riskInvestigationNode(index,'2',value)} />
+                    if(record.dataType == 'string'){
+                        return <Input disabled={false} placeholder="请选择" value={text} onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'rcValue',value)} />
+                    }else if(record.dataType == 'int'){
+                        return <Select style={{ width: '100%' }} value={record.rcValueId} placeholder="请选择" allowClear={true} disabled={false} onChange={(value,option) => riskInvestigationNode.onFormChange(index,'rcValueId',value,'rcValue',option)}>
+                                    {
+                                        record.currentRisks.map((items, index) => {
+                                            return (<Option key={index} value={items.currentRiskId} appitem={items}>{items.currentRiskName}</Option>)
+                                        })
+                                    }
+                                </Select>
+                    }else{
+                        return <DatePicker placeholder="请选择日期" value={text ? moment(text) : undefined} format="YYYY-MM-DD" onChange={(date, dateString) => riskInvestigationNode.onFormChange(index,'rcValue',dateString)} />
+                    }
+                   
                 },
                 editable: true,
             },
             {
                 title: <div className="ant-form-item-required1">收集方式</div>,
-                dataIndex: '3',
+                dataIndex: 'rcSourceId',
                 align:'center',
                 width:'100px',
                 render:(text,record,index) => {
-                    return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => this.riskInvestigationNode(index,'4',value)}>
+                    return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value,option) => riskInvestigationNode.onFormChange(index,'rcSourceId',value,'rcSource',option)}>
                                 {
-                                    [].map((items, index) => {
-                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
+                                    riskInvestigationNode.state.selectData.rcSourceList.map((items, index) => {
+                                        return (<Option key={index} value={items.id} appitem={items}>{items.name}</Option>)
                                     })
                                 }
                             </Select>
@@ -1054,21 +1071,21 @@ export const panes = [
             },
             {
                 title: <div className="ant-form-item-required1">建议值</div>,
-                dataIndex: '5',
+                dataIndex: 'rcSuggest',
                 align:'center',
                 width:'80px',
                 render:(text,record,index) => {
-                    return <Input disabled={true} value={text} placeholder="由当前风险带入" onChange={({target:{value}}) => this.riskInvestigationNode(index,'5',value)} />
+                    return <Input disabled={true} value={text} placeholder="由当前风险带入" onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'rcSuggest',value)} />
                 },
                 editable: true,
             },
             {
                 title: <div className="ant-form-item-required1">备注</div>,
-                dataIndex: '7',
+                dataIndex: 'description',
                 align:'center',
                 width:'280px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.riskInvestigationNode(index,'7',value)} />
+                    return <Input disabled={false} placeholder="请选择" value={text} onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'description',value)} />
                 },
                 editable: true,
             }
@@ -1085,76 +1102,80 @@ export const panes = [
             },
             {
                 title: <div className="ant-form-item-required1">部件号</div>,
-                dataIndex: '2',
+                dataIndex: 'partNumber',
                 width:'100px',
                 align:'center',
                 render:(text,record,index) => {
-                    return <Input placeholder="请选择" suffix={<Icon type="appstore" className="dateIcon" onClick={() => ComponentNode.openModal()} />} />
+                    return <Input placeholder="请选择" value={text} suffix={<Icon type="appstore" className="dateIcon" onClick={() => ComponentNode.openModal()} />} />
+                },
+                editable: true,
+            },
+            {
+                title: <div className="ant-form-item-required1">部件序列号</div>,
+                dataIndex: 'partSerial',
+                align:'center',
+                width:'100px',
+                render:(text,record,index) => {
+                    return <Input disabled={false} placeholder="请输入" value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'partSerial',value)} />
                 },
                 editable: true,
             },
             {
                 title: <div className="ant-form-item-required1">部件位置</div>,
-                dataIndex: '3',
+                dataIndex: 'partPosition',
                 align:'center',
-                width:'100px',
+                width:'150px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'3',value)} />
+                    return <Input disabled={false} placeholder="请输入" value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'partPosition',value)} />
                 },
                 editable: true,
             },
             {
                 title: <div className="ant-form-item-required1">部件类别</div>,
-                dataIndex: '4',
+                dataIndex: 'partTypeName',
                 align:'center',
                 editable: true,
-                width:'100px',
+                width:'150px',
                 render:(text,record,index) => {
-                   return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => ComponentNode.onFormChange(index,'4',value)}>
-                                {
-                                    [].map((items, index) => {
-                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
-                                    })
-                                }
-                            </Select>
+                   return <Input disabled={true} placeholder="部件号带入" value={text} onChange={({target:{value}}) =>ComponentNode.onFormChange(index,'partTypeName',value)} />
                 }
             },
             {
                 title: <div className="ant-form-item-required1">数量</div>,
-                dataIndex: '5',
+                dataIndex: 'partAmount',
                 align:'center',
                 width:'90px',
                 render:(text,record,index) => {
-                    return <InputNumber style={{width: '100%'}} disabled={false} min={1} value={text ? text : 1} onChange={(value) => ComponentNode.onFormChange(index,'5',value)} />
+                    return <InputNumber style={{width: '100%'}} disabled={false} min={1} value={text ? text : 1} onChange={(value) => ComponentNode.onFormChange(index,'partAmount',value)} />
                 },
                 editable: true,
             },
             {
                 title: <div className="ant-form-item-required1">描述</div>,
-                dataIndex: '6',
+                dataIndex: 'description',
                 align:'center',
                 width:'200px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) =>ComponentNode.onFormChange(index,'6',value)} />
+                    return <Input disabled={true} placeholder="部件号带入" value={text} onChange={({target:{value}}) =>ComponentNode.onFormChange(index,'description',value)} />
                 },
                 editable: true,
             },
             {
-                title: <div className="ant-form-item-required1">fc</div>,
-                dataIndex: '1',
+                title: <div className="ant-form-item-required1">FC</div>,
+                dataIndex: 'fc',
                 align:'center',
-                width:'100px',
+                width:'150px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'1',value)} />
+                    return <Input disabled={true} placeholder="部件号带入"  value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'fc',value)} />
                 },
                 editable: true,
             },{
                 title: <div className="ant-form-item-required1">备注</div>,
-                dataIndex: '7',
+                dataIndex: 'remark',
                 align:'center',
                 width:'280px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'7',value)} />
+                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'remark',value)} />
                 },
                 editable: true,
             }
@@ -1164,10 +1185,7 @@ export const panes = [
                 title: '配置项',
                 dataIndex: 'basedataName',
                 ellipsis:true,
-                key:"basedataTypeId",
-                itemCode:'id',
-                itemValue:'basedataTypeName',
-                selectData:'basedataTypeList',
+                key:"basedataName",
                 align: 'center',
             },
             {
@@ -1243,6 +1261,7 @@ export const panes = [
                 title: '客户方管理员',
                 dataIndex: 'custUserName',
                 selectData:'customerData',
+                selectChange: 'custUserId',
                 key:"custUserId",
                 align: 'center',
             },
@@ -1332,9 +1351,8 @@ export const panes = [
                 {
                     title: '风险等级',
                     dataIndex: 'riskLevelName',
-                    selectData:'riskLevel',
                     ellipsis:true,
-                    key:"riskLevelId",
+                    key:"riskLevelName",
                     align: 'center',
                 },
                 {

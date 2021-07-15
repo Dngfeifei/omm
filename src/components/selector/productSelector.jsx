@@ -17,7 +17,7 @@
  // 引入 根据数据字典中查出------【服务类别、】API接口
  import { customerLevel} from '/api/customerInfor'
  // 引入 选择器 API接口
- import { getProductSelector} from '/api/selectorApi'
+ import { getProductSelector,getPartsSelector} from '/api/selectorApi'
  
  
  
@@ -107,43 +107,33 @@
                     // 第一种：每一页都从1开始
                     render: (text, record, index) => `${index + 1}`
                 },{
-                    title: 'fc',
-                    dataIndex: 'projectNumber',
+                    title: 'FC',
+                    dataIndex: 'strValue1',
                     ellipsis: {
                         showTitle: false,
                     },
-                    width: '240px',
                     render: (text, record)=> 
                         <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
                 },{
                     title: '部件类别',
-                    dataIndex: 'projectName',
+                    dataIndex: 'name',
                     ellipsis: {
                         showTitle: false,
                     },
                     render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
                 },{
                     title: '描述',
-                    dataIndex: 'projectStatus',
+                    dataIndex: 'description',
+                    width: '240px',
                     ellipsis: {
                         showTitle: false,
                     },
                     render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
                 }],
                 formRules:[{
-                    label: 'fc',
-                    key: 'projectNumber',
+                    label: '部件号',
+                    key: 'partNum',
                     render: _ => <Input allowClear style={{ width: 200 }} placeholder="请输入" />
-                },{
-                    label: '部件类别',
-                    key: 'projectStatus',
-                    render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
-                        {
-                            this.state.projectStatusList.map((items, index) => {
-                                return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
-                            })
-                        }
-                    </Select>
                 }]
             },
              // 数据集合
@@ -236,7 +226,7 @@
                      }
                  })
              } else if (this.props.title == '部件选择器') {
-                getProjectSelector(this.state.pageSize, this.state.current, values).then(res => {
+                getPartsSelector(values).then(res => {
                     if (res.success == 1) {
                         this.setState({
                             loading: false,

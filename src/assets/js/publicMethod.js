@@ -105,3 +105,18 @@ export const setBaseData = (data) => {
     }
     return obj
 }
+
+//遍历树节点，找出目标节点的父节点
+export const getParent = (data,id) => {
+    // let obj = {};
+    for(let i of data){
+        if(i.id == id){
+            return [];
+        }
+        if(i.children && i.children.length){
+            let node = getParent(i.children,id)
+            return node.concat(i)
+        }
+    } 
+}
+

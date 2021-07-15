@@ -24,17 +24,20 @@ export const GetAllocationArea = (projectId="") => {
 	return http.fetchGet(`/biProjectArea/getByProId/${projectId}`)
 }
 //获取资产配置管理-客户联系人下拉列表
-export const GetAllocationCustomer = (projectAreaId="") => {
-	return http.fetchGet(`/biCustContact/getByAreaId/${projectAreaId}`)
+export const GetAllocationCustomer = (areaId="") => {
+	return http.fetchGet(`/biCustContact/getArtContact/${areaId}`)
 }
-
+//获取资产配置管理-机房地址列表
+export const GetAddress = (areaId="") => {
+	return http.fetchGet(`/biComproom/byArea/${areaId}`)
+}
 //获取资产库配置管理表格数据
 export const GetAllocationTable = (params = {},limit,offset) => {
 	return http.fetchPost(`/biConfigurations/list?limit=${limit}&offset=${offset}`, params,true)
 }
 //资产库配置管理新增
 export const AddAllocationTable = (params = {}) => {
-	return http.fetchPost(`/biConfiguration/add`, params,true)
+	return http.fetchPost(`/biConfigurations/add`, params,true)
 }
 //资产库配置管理编辑
 export const EditAllocationTable = (params = {}) => {
@@ -42,11 +45,21 @@ export const EditAllocationTable = (params = {}) => {
 }
 //资产库配置管理删除
 export const DelAllocationTable = (params = {}) => {
-	return http.fetchGet(`/biConfiguration/deleteBacth`, params)
+	return http.fetchGet(`/biConfigurations/delete`, params)
 }
-//联想输入数据查询-配置管理
-export const getAllocationSearchData = (params = {}) => {
-	return http.fetchGet(`/biConfiguration/listKeywords`, params)
+//获取部件列表接口
+export const getParts = (params = {}) => {
+	return http.fetchGet(`/basedata/getAllPartInfo`, params)
+	//return http.fetchGet(`/static/mock/searchData.json`, params)
+}
+//获取风险信息列表接口
+export const getRiskList = (params = {}) => {
+	return http.fetchGet(`/basedata/getRiskConfig`, params)
+	//return http.fetchGet(`/static/mock/searchData.json`, params)
+}
+//配置管理-查询详情数据接口
+export const getDetail = (id) => {
+	return http.fetchGet(`biConfigurations/detail/${id}`)
 	//return http.fetchGet(`/static/mock/searchData.json`, params)
 }
 
