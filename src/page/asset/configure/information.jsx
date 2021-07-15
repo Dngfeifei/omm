@@ -6,10 +6,13 @@ import ProjectSelector from '/components/selector/projectSelector.jsx'
 // 引入---【产品选择器组件】
 import ProductSelector from '/components/selector/productSelector.jsx'
 
-import { getInfo, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,GetAllocationArea,GetAllocationCustomer,getAllBaseDataTypes} from '/api/assets.js'
+import { getInfo, GetAddress,getBaseData,GetAllocationArea,GetAllocationCustomer} from '/api/assets.js'
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
+// const dateFormat = 'YYYY-MM-DD';
+// 引入日期格式化
+import moment from 'moment'
 class BasicInformation extends Component {
     constructor (props){
         super(props)
@@ -21,10 +24,11 @@ class BasicInformation extends Component {
             selectData:{
                 areaData:[{id:1,name:'ahe'}],//区域下拉列表输入数据
                 customerData:[{id:'-1',name:'无'}],//客户下拉列表输入数据
-                maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
-                systemCategory:[],
-                appLevelList:[],
-                riskLevel:[],
+                maintained:[],//是否维护数据
+                systemCategory:[],//系统类别下拉
+                appLevelList:[],//系统重要程度
+                riskLevel:[],//风险等级下拉
+                addressList:[],//状态下拉数据
                 statusList:[],//状态下拉数据
                 basedataTypeList:[],//配置项下拉数据
                 productModeType:[], //产品型号
@@ -32,6 +36,7 @@ class BasicInformation extends Component {
                 productBrandType:[], //品牌
                 productSkillType:[], //技术方向
             },
+            dateKeys:[]
         }
         if(this.props.setSon) this.props.setSon(this);
     }
@@ -40,24 +45,22 @@ class BasicInformation extends Component {
         this.init();
         if(this.props.roleWindow.roleModalType){
             let selectData = this.initSelectData();
-            this.setState({selectData});
+            // this.setState({selectData});
         }
     }
     //编辑的时候初始化下拉框数据
     initSelectData =() => {
         let {selectData} = this.state;
-        let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].productLineId);
-        let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].serviceClassId);
-        let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].skillTypeId);
-        let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.tableSelectedInfo[0].brandId);
-        this.getAreaData(this.state.tableSelectedInfo[0].projectId)
-        this.getCustomer(this.state.tableSelectedInfo[0].projectAreaId)
-        selectData = Object.assign({}, selectData, { productModeType:productModeType? productModeType :[],productSkillType:productSkillType? productSkillType :[],productBrandType:productBrandType? productBrandType :[],productLineType:productLineType? productLineType :[]});
+        this.getAreaData(this.state.baseData.projectId)
+        this.getCustomer(this.state.baseData.projectAreaId)
+        this.state.baseData.projectAreaId && this.getAddress(this.state.baseData.projectAreaId)
+        this.state.baseData.appTypeId && this.getInfo(this.state.baseData.appTypeId)
+        // selectData = Object.assign({}, selectData, { });
         return selectData;
     }
     //生成新增/修改/查看弹框内容
     getFields = (assetsList) => {
-        let {baseData,roleWindow} = this.state;
+        let {baseData,roleWindow,dateKeys} = this.state;
         const { getFieldDecorator } = this.props.form,children = [];
         for (let i = 0; i < assetsList.length; i++) {
             if(!assetsList[i].key){
@@ -66,9 +69,12 @@ class BasicInformation extends Component {
             let item = assetsListData[assetsList[i].key];
             
             //处理初始化显示值
-            let initialValue = baseData[assetsList[i].key] ,rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
+            let initialValue = (item.type == 'date'&& baseData[assetsList[i].key]) ? moment(baseData[assetsList[i].key],"YYYY-MM-DD") : baseData[assetsList[i].key] ,rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
             if(roleWindow.roleModalType && assetsList[i].key !== assetsList[i].dataIndex && !initialValue){
-                initialValue = tableSelectedInfo[0][assetsList[i].dataIndex];
+                initialValue = baseData[assetsList[i].dataIndex];
+            }
+            if(item.type == 'date'){
+                dateKeys.push(item.key);
             }
              //处理产品联动是否可编辑
             if(assetsList[i].key == 'productSkillType' || assetsList[i].key == 'productBrandType' || assetsList[i].key == 'productLineType' || assetsList[i].key == 'productLevel' || assetsList[i].key == 'serviceClassId'){
@@ -114,11 +120,22 @@ class BasicInformation extends Component {
                 message.error(res.message)
             }
         })
+        //是否维护
+        getBaseData({basedataTypeCode:'isMaintain'}).then(res => {
+            if (res.success == 1) {
+                let {selectData} = this.state;
+                selectData = Object.assign({}, selectData, { maintained: res.data});
+                this.setState({selectData})
+            } else {
+                message.error(res.message)
+            }
+        })
     }
     //处理项目选择器返回数据
     setProjectHandleOk = (info) =>{
         if(info){
             info.projectId = info.id
+            // info.projectNum = info.projectNumber
             info.projectManagerName = info.managerName
             info.projectStartDate = info.startDate
             info.projectEndDate = info.endDate
@@ -187,18 +204,31 @@ class BasicInformation extends Component {
             }
         })
     }
-    //获取客户下拉列表数据
-    getInfo = (id) =>{
-        getInfo(id).then(res => {
+    //获取机房地址下拉
+    getAddress = (projectAreaId) =>{
+        GetAddress(projectAreaId).then(res => {
             let {selectData} = this.state;
             if (res.success != 1) {
-                selectData = Object.assign({}, selectData, { riskLevel: [{id:'-1',name:'无'}]});
+                selectData = Object.assign({}, selectData, { addressList: [{id:'-1',name:'无'}]});
                 this.setState({selectData})
                 // message.error("请求错误")
                 return
             }else{
-                selectData = Object.assign({}, selectData, { riskLevel: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
+                selectData = Object.assign({}, selectData, { addressList: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
                 this.setState({selectData})
+            }
+        })
+    }
+    //获取风险等级下拉列表数据
+    getInfo = (id) =>{
+        getInfo({id}).then(res => {
+            let {baseData} = this.state;
+            if (res.success != 1) {
+                 message.error("获取风险等级接口错误！")
+            }else{
+                // selectData = Object.assign({}, selectData, { riskLevel: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
+                baseData['riskLevelId'] = res.data.id,baseData['riskLevelName'] = res.data.name;
+                this.setState({baseData})
             }
         })
     }
@@ -221,51 +251,25 @@ class BasicInformation extends Component {
         }
     }
     //服务区域选择改变
-    onAreaChange = (selectChange,id,selectData,dataIndex,itemValue)=>{
-        const {baseData} = this.state;
+    onAreaChange = (selectChange,id,selectData,dataIndex,itemValue,option)=>{
+        const {baseData} = this.state,item = option.props.appitem;
         if(selectChange == 'projectAreaId' ){  //服务区域
-            this.getCustomer(id)
-        }else if(selectChange == 'serviceClassId'){//产品类别
-            this.props.form.resetFields(['skillTypeId','brandId','productLineId','productModelId','productLevel'])
-            let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
-            // console.log(productSkillType)
-            //  return
-            let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productSkillType:productSkillType? productSkillType :[] });
-            this.setState({selectData})
-        }else if(selectChange == 'skillTypeId'){//技术方向
-            this.props.form.resetFields(['brandId','productLineId','productModelId','productLevel'])
-            let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
-            let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productBrandType:productBrandType?productBrandType:[]});
-            this.setState({selectData})
-        }else if(selectChange == 'brandId'){//品牌
-            this.props.form.resetFields(['productLineId','productModelId','productLevel'])
-            let productLineType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
-            let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productLineType:productLineType?productLineType:[]});
-            this.setState({selectData})
-        }else if(selectChange == 'productLineId'){//产品线
-            this.props.form.resetFields(['productModelId','productLevel'])
-            let productModeType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],id);
-            let {selectData} = this.state;
-            selectData = Object.assign({}, selectData, { productModeType:productModeType?productModeType:[]});
-            this.setState({selectData})
-        }
-        else if(selectChange == 'productModelId'){//产品型号
-            // console.log(selectChange,id)
-           const {productModeType} = this.state.selectData;
-           let productLevel = productModeType.filter(item => item.id == id );
-           console.log(selectChange,id,productLevel)
-           this.props.form.setFieldsValue({productLevel:productLevel[0]['intValue1']});
+            baseData['computerRoomAddress'] = baseData['custUserId'] = baseData['custUserMobile'] = undefined;
+            this.getCustomer(id);
+            this.getAddress(id);
         }else if(selectChange == 'appTypeId' ){  //系统类别
-            const {systemCategory} = this.state.selectData;
-            let productLevel = systemCategory.filter(item => item.id == id );
-            this.getInfo(productLevel.intValue1)
+            // const {systemCategory} = this.state.selectData;
+            // let productLevel = systemCategory.filter(item => item.id == id );
+            this.getInfo(item.intValue1)
+        }else if(selectChange == 'custUserId' ){  //客户管理员
+            // const {customerData} = this.state.selectData;
+            // let productLevel = customerData.filter(item => item.id == id );
+            // console.log(productLevel)
+            baseData['custUserMobile'] = item.mobile;
         }
         // let getData = this.state.selectData[selectData].filter(item => item.id == id );
-        // baseData[dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
-        // this.setState({baseData})
+        baseData[dataIndex] = itemValue ? item[itemValue] : item['name'];
+        this.setState({baseData})
     }
     //项目选择器打开函数
     openProject = (type) => {

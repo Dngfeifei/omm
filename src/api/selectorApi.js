@@ -17,7 +17,11 @@ export const getProjectSelector = (limit,offset,params = {}) => {
 }
 // 产品选择器（分页）
 export const getProductSelector = (params = {}) => {
-	return http.fetchGet(`basedata/productModelSelector`, params)
+	return http.fetchGet(`/basedata/productModelSelector`, params)
+}
+// 部件选择器（分页）
+export const getPartsSelector = (params = {}) => {
+	return http.fetchGet(`/basedata/partInfoSelector`, params)
 }
 
 
