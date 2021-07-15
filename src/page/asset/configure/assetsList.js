@@ -452,7 +452,10 @@ export const assetsListData = {
         label: '系统重要程度',
         key: 'appLevel',
         span:6,
-        rules:[],
+        rules:[{
+            required: true,
+            message: '该选项不能为空！',
+          }],
         render:render,
         type:'select'
     },
@@ -470,7 +473,10 @@ export const assetsListData = {
         label: '是否维护',
         key: 'isMroId',
         span:6,
-        rules:[],
+        rules:[{
+            required: true,
+            message: '该选项不能为空！',
+          }],
         render:render,
         type:'select'
     },
@@ -547,11 +553,14 @@ export const assetsListData = {
         type:'input1'
     },
     //序列号
-    'strValue2':{
-        key:'strValue2',
+    'serialNumber':{
+        key:'serialNumber',
         label:'序列号',
         span:6,
-        rules:[],
+        rules:[{
+            required: true,
+            message: '该选项不能为空！',
+          }],
         render:render,
         type:'input1'
     },
@@ -983,7 +992,7 @@ export const panes = [
         type:['skillType'],
         rules:[{
             label: '项目号',
-            key: 'projectNum',
+            key: 'projectNumber',
             render: _ => <Input  placeholder="请输入"  />
         },
         {
@@ -1036,18 +1045,19 @@ export const panes = [
                 width:'100px',
                 align:'center',
                 render:(text,record,index) => {
+                    const {roleWindow} = riskInvestigationNode.props;
                     if(record.dataType == 'string'){
-                        return <Input disabled={false} placeholder="请选择" value={text} onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'rcValue',value)} />
+                        return <Input disabled={roleWindow.roleModalType == 2 ? true : false} placeholder="请选择" value={text} onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'rcValue',value)} />
                     }else if(record.dataType == 'int'){
-                        return <Select style={{ width: '100%' }} value={record.rcValueId} placeholder="请选择" allowClear={true} disabled={false} onChange={(value,option) => riskInvestigationNode.onFormChange(index,'rcValueId',value,'rcValue',option)}>
+                        return <Select disabled={roleWindow.roleModalType == 2 ? true : false} style={{ width: '100%' }} value={record.rcValueId} placeholder="请选择" allowClear={true} onChange={(value,option) => riskInvestigationNode.onFormChange(index,'rcValueId',value,'rcValue',option)}>
                                     {
                                         record.currentRisks.map((items, index) => {
                                             return (<Option key={index} value={items.currentRiskId} appitem={items}>{items.currentRiskName}</Option>)
                                         })
                                     }
                                 </Select>
-                    }else{
-                        return <DatePicker placeholder="请选择日期" value={text ? moment(text) : undefined} format="YYYY-MM-DD" onChange={(date, dateString) => riskInvestigationNode.onFormChange(index,'rcValue',dateString)} />
+                    }else if(record.dataType == 'date'){
+                        return <DatePicker disabled={roleWindow.roleModalType == 2 ? true : false} placeholder="请选择日期" value={text ? moment(text) : null} format="YYYY-MM-DD" onChange={(date, dateString) => riskInvestigationNode.onFormChange(index,'rcValue',dateString)} />
                     }
                    
                 },
@@ -1059,7 +1069,8 @@ export const panes = [
                 align:'center',
                 width:'100px',
                 render:(text,record,index) => {
-                    return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value,option) => riskInvestigationNode.onFormChange(index,'rcSourceId',value,'rcSource',option)}>
+                    const {roleWindow} = riskInvestigationNode.props;
+                    return <Select disabled={roleWindow.roleModalType == 2 ? true : false} style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} onChange={(value,option) => riskInvestigationNode.onFormChange(index,'rcSourceId',value,'rcSource',option)}>
                                 {
                                     riskInvestigationNode.state.selectData.rcSourceList.map((items, index) => {
                                         return (<Option key={index} value={items.id} appitem={items}>{items.name}</Option>)
@@ -1075,7 +1086,8 @@ export const panes = [
                 align:'center',
                 width:'80px',
                 render:(text,record,index) => {
-                    return <Input disabled={true} value={text} placeholder="由当前风险带入" onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'rcSuggest',value)} />
+                    const {roleWindow} = riskInvestigationNode.props;
+                    return <Input disabled={roleWindow.roleModalType == 2 ? true : false} placeholder="请输入"  value={text} onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'rcSuggest',value)} />
                 },
                 editable: true,
             },
@@ -1085,7 +1097,8 @@ export const panes = [
                 align:'center',
                 width:'280px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} placeholder="请选择" value={text} onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'description',value)} />
+                    const {roleWindow} = riskInvestigationNode.props;
+                    return <Input disabled={roleWindow.roleModalType == 2 ? true : false} placeholder="请选择" value={text} onChange={({target:{value}}) => riskInvestigationNode.onFormChange(index,'description',value)} />
                 },
                 editable: true,
             }
@@ -1106,7 +1119,8 @@ export const panes = [
                 width:'100px',
                 align:'center',
                 render:(text,record,index) => {
-                    return <Input placeholder="请选择" value={text} suffix={<Icon type="appstore" className="dateIcon" onClick={() => ComponentNode.openModal()} />} />
+                    const {roleWindow} = ComponentNode.props;
+                    return <Input placeholder="请选择" disabled={roleWindow.roleModalType == 2 ? true : false} value={text} suffix={<Icon type="appstore" className="dateIcon" onClick={() => ComponentNode.openModal()} />} />
                 },
                 editable: true,
             },
@@ -1116,7 +1130,8 @@ export const panes = [
                 align:'center',
                 width:'100px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} placeholder="请输入" value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'partSerial',value)} />
+                    const {roleWindow} = ComponentNode.props;
+                    return <Input disabled={roleWindow.roleModalType == 2 ? true :false} placeholder="请输入" value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'partSerial',value)} />
                 },
                 editable: true,
             },
@@ -1126,7 +1141,8 @@ export const panes = [
                 align:'center',
                 width:'150px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} placeholder="请输入" value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'partPosition',value)} />
+                    const {roleWindow} = ComponentNode.props;
+                    return <Input disabled={roleWindow.roleModalType == 2 ? true :false} placeholder="请输入" value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'partPosition',value)} />
                 },
                 editable: true,
             },
@@ -1146,7 +1162,8 @@ export const panes = [
                 align:'center',
                 width:'90px',
                 render:(text,record,index) => {
-                    return <InputNumber style={{width: '100%'}} disabled={false} min={1} value={text ? text : 1} onChange={(value) => ComponentNode.onFormChange(index,'partAmount',value)} />
+                    const {roleWindow} = ComponentNode.props;
+                    return <InputNumber style={{width: '100%'}} disabled={roleWindow.roleModalType == 2 ? true :false} min={1} value={text ? text : 1} onChange={(value) => ComponentNode.onFormChange(index,'partAmount',value)} />
                 },
                 editable: true,
             },
@@ -1175,7 +1192,8 @@ export const panes = [
                 align:'center',
                 width:'280px',
                 render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'remark',value)} />
+                    const {roleWindow} = ComponentNode.props;
+                    return <Input disabled={roleWindow.roleModalType == 2 ? true :false} value={text} onChange={({target:{value}}) => ComponentNode.onFormChange(index,'remark',value)} />
                 },
                 editable: true,
             }
@@ -1311,8 +1329,8 @@ export const panes = [
                 },
                 {
                     title: '序列号',
-                    dataIndex: 'strValue2',
-                    key:"strValue2",
+                    dataIndex: 'serialNumber',
+                    key:"serialNumber",
                     align: 'center',
                 },
                 {

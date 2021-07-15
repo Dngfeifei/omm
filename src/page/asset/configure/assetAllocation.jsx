@@ -269,7 +269,6 @@ class assetsAllocation extends Component {
             let newParams = {...fieldsValue}
             // return console.log(newParams);
             // 2 发起查询请求 查询后结构给table赋值
-            console.log(newParams);
             let x = this.state.searchX?this.state.searchX:'',{basedataTypeId} = this.state;
             let params = pass ? Object.assign({},newParams, {basedataId:parentId},{parentId},{x},this.state.pageConf) : Object.assign({},newParams, {basedataId:parentId},{parentId},{x},this.state.pageConf, { offset: 0 })
             if(basedataTypeId == 'productType'){
