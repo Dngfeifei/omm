@@ -6,7 +6,7 @@ import ProjectSelector from '/components/selector/projectSelector.jsx'
 // 引入---【产品选择器组件】
 import ProductSelector from '/components/selector/productSelector.jsx'
 
-import { GetAllocationTree, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,GetAllocationArea,GetAllocationCustomer,getAllBaseDataTypes} from '/api/assets.js'
+import { getInfo, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,GetAllocationArea,GetAllocationCustomer,getAllBaseDataTypes} from '/api/assets.js'
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
@@ -22,6 +22,9 @@ class BasicInformation extends Component {
                 areaData:[{id:1,name:'ahe'}],//区域下拉列表输入数据
                 customerData:[{id:'-1',name:'无'}],//客户下拉列表输入数据
                 maintained:[{id:"0",name:"否"},{id:"1",name:"是"}],//是否维护数据
+                systemCategory:[],
+                appLevelList:[],
+                riskLevel:[],
                 statusList:[],//状态下拉数据
                 basedataTypeList:[],//配置项下拉数据
                 productModeType:[], //产品型号
@@ -30,6 +33,7 @@ class BasicInformation extends Component {
                 productSkillType:[], //技术方向
             },
         }
+        if(this.props.setSon) this.props.setSon(this);
     }
     componentWillMount(){
         //初始化下拉列表数据
@@ -60,10 +64,7 @@ class BasicInformation extends Component {
                 continue;
             }
             let item = assetsListData[assetsList[i].key];
-            // console.log(assetsList[i].key.indexOf('strValue'),assetsWList[i].key.split('strValue')[1])
-            // if(assetsList[i].key.indexOf('strValue')>-1 && (assetsList[i].key.split('strValue')[1]>2&&assetsList[i].key.split('strValue')[1]<5) ){
-            //     item = assetsListData[assetsList[i].key].renderDom ? assetsListData[assetsList[i].key].renderDom(assetsList[i]) : item;
-            // }
+            
             //处理初始化显示值
             let initialValue = baseData[assetsList[i].key] ,rules=roleWindow.roleModalType == 2 ? [] : item ?   item.rules : [] ,required = false;
             if(roleWindow.roleModalType && assetsList[i].key !== assetsList[i].dataIndex && !initialValue){
@@ -71,9 +72,7 @@ class BasicInformation extends Component {
             }
              //处理产品联动是否可编辑
             if(assetsList[i].key == 'productSkillType' || assetsList[i].key == 'productBrandType' || assetsList[i].key == 'productLineType' || assetsList[i].key == 'productLevel' || assetsList[i].key == 'serviceClassId'){
-                // const len = this.state.selectData[assetsList[i].selectData].length
-                // rules = roleWindow.roleModalType == 2 ? [] : item ? len ?  item.rules : [] : [];
-                // required = len ? false : true;
+    
                 required = true;
             }
             //处理配置项是否可编辑
@@ -84,7 +83,7 @@ class BasicInformation extends Component {
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? assetsList[i].title : '无效字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
-                    rules: rules,
+                    rules: [],//rules,
                     initialValue: initialValue
                     })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required,assetsList[i].dataIndex) : <Input />)}
                 </Form.Item>
@@ -95,20 +94,21 @@ class BasicInformation extends Component {
     }
     //初始化下数据
     init = () => {
-        //所有下拉数据初始化
-        getBaseData({}).then(res => {
+        //系统类别
+        getBaseData({basedataTypeCode:'systemType'}).then(res => {
             if (res.success == 1) {
                 let {selectData} = this.state;
-                this.setState({selectData:{...selectData,...res.data}})
+                selectData = Object.assign({}, selectData, { systemCategory: res.data});
+                this.setState({selectData})
             } else {
                 message.error(res.message)
             }
         })
-        //配置项下拉数据初始化
-        getAllBaseDataTypes({}).then(res => {
+        //系统重要程度
+        getBaseData({basedataTypeCode:'appLevel'}).then(res => {
             if (res.success == 1) {
                 let {selectData} = this.state;
-                selectData = Object.assign({}, selectData, { basedataTypeList: res.data});
+                selectData = Object.assign({}, selectData, { appLevelList: res.data});
                 this.setState({selectData})
             } else {
                 message.error(res.message)
@@ -142,6 +142,20 @@ class BasicInformation extends Component {
         })
         
     }
+    //产品选择器回传参数
+    producthandleOk = (info) => {
+        const {baseData} = this.state;
+        this.props.form.resetFields(['productModelName','productLevel','productLineName','brandName','skillTypeName','serviceClassName']);
+        //  console.log(info,this.state.baseData)
+        let nowParams = this.props.form.getFieldsValue();
+        // console.log(baseData,nowParams,info)
+        this.setState({
+            baseData: info ? {...baseData,...nowParams,...info} : {...baseData,...nowParams}
+        },()=>{
+            console.log(this.state.baseData)
+            // this.getAreaData(this.state.baseData.projectId)
+        })
+    }
     //获取服务区域下拉列表数据
     getAreaData = (projectId) =>{
         GetAllocationArea(projectId).then(res => {
@@ -169,6 +183,21 @@ class BasicInformation extends Component {
                 return
             }else{
                 selectData = Object.assign({}, selectData, { customerData: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
+                this.setState({selectData})
+            }
+        })
+    }
+    //获取客户下拉列表数据
+    getInfo = (id) =>{
+        getInfo(id).then(res => {
+            let {selectData} = this.state;
+            if (res.success != 1) {
+                selectData = Object.assign({}, selectData, { riskLevel: [{id:'-1',name:'无'}]});
+                this.setState({selectData})
+                // message.error("请求错误")
+                return
+            }else{
+                selectData = Object.assign({}, selectData, { riskLevel: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
                 this.setState({selectData})
             }
         })
@@ -229,10 +258,14 @@ class BasicInformation extends Component {
            let productLevel = productModeType.filter(item => item.id == id );
            console.log(selectChange,id,productLevel)
            this.props.form.setFieldsValue({productLevel:productLevel[0]['intValue1']});
+        }else if(selectChange == 'appTypeId' ){  //系统类别
+            const {systemCategory} = this.state.selectData;
+            let productLevel = systemCategory.filter(item => item.id == id );
+            this.getInfo(productLevel.intValue1)
         }
-        let getData = this.state.selectData[selectData].filter(item => item.id == id );
-        baseData[dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
-        this.setState({baseData})
+        // let getData = this.state.selectData[selectData].filter(item => item.id == id );
+        // baseData[dataIndex] = itemValue ? getData[0][itemValue] : getData[0]['name'];
+        // this.setState({baseData})
     }
     //项目选择器打开函数
     openProject = (type) => {
@@ -251,6 +284,16 @@ class BasicInformation extends Component {
             visibleProductModel:false
         },()=>{
             this.props.form.resetFields();
+        })
+    }
+    //提交函数
+    onSubmit = () => {
+        // 1 校验必填数据是否填写
+        return this.props.form.validateFields((err, fieldsValue) => {
+            // console.log(this.state.baseData);
+            if (err) {
+                return;
+            }
         })
     }
     render  () {
@@ -277,7 +320,7 @@ class BasicInformation extends Component {
                 {/* visibleProductModel */}
                 {/* 产品选择器 */}
                 {
-                    this.state.visibleProductModel ? <ProductSelector title={'产品选择器'} onCancel={this.close} onOk={this.projecthandleOk}></ProductSelector> : null
+                    this.state.visibleProductModel ? <ProductSelector title={'产品选择器'} skillTypeId={this.props.searchListID} onCancel={this.close} onOk={this.producthandleOk}></ProductSelector> : null
                 }
             </div>  
         )

@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { Upload, Icon, Modal } from 'antd';
-// const REMOTE_URL = 'http://152.136.121.201:8080/jeeplus-vue'
-const REMOTE_URL = ''
+import {REMOTE_URL} from '@/page/ans/config'
 
 function getBase64(file) {
   return new Promise((resolve, reject) => {

@@ -131,6 +131,17 @@ export default function FormRelease(props) {
     },
   ];
 
+  // const [inputForm, setInputForm] = useState({
+  //   parent: {
+  //     id: ''
+  //   },
+  //   name: '',
+  //   id: '',
+  //   icon: '',
+  //   dataRuleList: [],
+  //   formId: props.id
+  // })
+
   const [inputForm, setInputForm] = useState({
     parentId: '',
     name: '',
