@@ -147,6 +147,8 @@ class Component extends React.Component {
     }
     //打开部件部件选择器
     openModal = () => {
+        const {roleWindow} = this.props;
+        if(roleWindow.roleModalType == 2) return;
         this.setState({visibleProductModel:true})
     }
     //关闭部件选择器
@@ -173,16 +175,16 @@ class Component extends React.Component {
         };
         return (
             <div>
-                <Row gutter={24} style={{textAlign:'right',visibility:'visible'}}>
-                    <Button style={{marginRight: '10px'}} onClick={this.handlerDelete} >删除</Button>
-                    <Button type="primary" style={{marginRight: '10px'}} onClick={this.handleAdd}>新增</Button>
+                <Row gutter={24} style={{textAlign:'right',visibility:'visible',padding:'0 4px'}}>
+                    <Button disabled={this.props.roleWindow.roleModalType == 2 ? true : false} style={{marginRight: '10px'}} onClick={this.handlerDelete} >删除</Button>
+                    <Button disabled={this.props.roleWindow.roleModalType == 2 ? true : false} type="primary" style={{marginRight: '10px'}} onClick={this.handleAdd}>新增</Button>
                 </Row>
                 <Table
                     className="jxlTable"
                     onRow={this.onRow}
                     bordered
                     rowKey={(record,index) => index}
-                    rowSelection={rowSelectionArea}  
+                    rowSelection={ this.props.roleWindow.roleModalType == 2 ? null : rowSelectionArea}  
                     dataSource={this.state.data}
                     columns={this.props.panes.subColumns}
                     scroll={{x:300,y:400}}

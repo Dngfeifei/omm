@@ -89,7 +89,7 @@ class BasicInformation extends Component {
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? assetsList[i].title : '无效字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
-                    rules: [],//rules,
+                    rules: rules,
                     initialValue: initialValue
                     })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required,assetsList[i].dataIndex) : <Input />)}
                 </Form.Item>
@@ -271,6 +271,8 @@ class BasicInformation extends Component {
     }
     //项目选择器打开函数
     openProject = (type) => {
+        const {roleWindow} = this.props;
+        if(roleWindow.roleModalType == 2) return;
         const obj = {};
         if(type == 'projectNumber'){
             obj['visibleModule'] = true;
