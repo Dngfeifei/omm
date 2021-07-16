@@ -1,9 +1,16 @@
 import React, { useMemo } from 'react'
 import { Radio, Input, InputNumber, Button, Select } from 'antd'
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx'
+import StylesheetModal from '@/page/ans/formmaking/lib/FormAttributes/components/StylesheetModal'
+import { getClassList } from '@/page/ans/formmaking/lib/utils/index'
 
 const FormAttrSettings = ({ config, updateConfig }) => {
-  const defaultClass = useMemo(() => config.customClass ? config.customClass.split(' ') : [], [config])
+  const defaultClass = config.customClass ? config.customClass.split(' ') : []
+
+  const [isStylesheetOpen, setIsStylesheetOpen] = React.useState(false)
+  const classList = useMemo(() => {
+    return getClassList(config.styleSheets)
+  }, [config.styleSheets])
 
   return <div>
     <FormAttrItem label="表单宽度">
@@ -45,7 +52,7 @@ const FormAttrSettings = ({ config, updateConfig }) => {
     </FormAttrItem>
 
     <FormAttrItem label="表单样式表">
-      <Button style={{ width: '100%' }}>设置</Button>
+      <Button style={{ width: '100%' }} onClick={() => { setIsStylesheetOpen(true)}}>设置</Button>
     </FormAttrItem>
 
     <FormAttrItem label="自定义Class">
@@ -58,6 +65,9 @@ const FormAttrSettings = ({ config, updateConfig }) => {
           value => updateConfig({ customClass: value.join(' ') })
         }
       >
+        {classList.map((cls, index) => {
+          return <Select.Option key={index} value={cls}>{cls}</Select.Option>
+        })}
       </Select>
     </FormAttrItem>
 
@@ -78,6 +88,18 @@ const FormAttrSettings = ({ config, updateConfig }) => {
         <Radio value={'2'}>保存后执行</Radio>
       </Radio.Group>
     </FormAttrItem>
+
+    {isStylesheetOpen ? (
+      <StylesheetModal
+        stylesheet={config.styleSheets}
+        open={isStylesheetOpen}
+        onCancel={() => { setIsStylesheetOpen(false)}}
+        onOk={value => {
+          updateConfig({ styleSheets: value })
+          setIsStylesheetOpen(false)
+        }}
+      />
+    ) : null}
   </div>
 }
 

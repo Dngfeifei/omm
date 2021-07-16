@@ -6,6 +6,7 @@ import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
 import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
 import useDictTypeList from "@/page/ans/formmaking/hooks/useDictTypeList";
 const {Option} = Select
+import CustomerClassSetting from '@/page/ans/formmaking/components/CustomerClassSetting';
 
 const WrapFlex = styled.div`
   display: flex;
@@ -102,15 +103,17 @@ const DictBlankSetting = ({ control, updateFormModel }) => {
         </FormAttrItem>
 
       <FormAttrItem label="自定义Class">
-        <Select
-          mode="tags"
-          style={{ width: '100%' }}
-          placeholder="请选择"
-          value={defaultClass}
-          onChange={(value) => updateOptions({ customClass: value.join(' ') })}
+        <CustomerClassSetting options={options} updateOptions={updateOptions} />
+      </FormAttrItem>
+      
+      <FormAttrItem label="onChange">
+        <Input.TextArea
+          value={options.onChange}
+          onChange={(e) => {
+            updateOptions({ onChange: e.target.value });
+          }}
         />
       </FormAttrItem>
-
       <FormAttrItem label="操作属性">
         <WrapFlex>
           <div>

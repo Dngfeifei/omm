@@ -25,6 +25,7 @@ export const getDefaultSource = () => ({
     labelPosition: 'right',
     size: 'small',
     customClass: '',
+    customStyle:'',
     customJs: '',
     eventType: '1',
     ui: 'element',
@@ -35,6 +36,7 @@ export const getDefaultSource = () => ({
     hideLabel: false,
     hideErrorMessage: false,
     disabled: false,
+    styleSheets: '',
   },
 });
 

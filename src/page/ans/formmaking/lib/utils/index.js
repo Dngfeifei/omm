@@ -19,6 +19,31 @@ export function compatData(data) {
   return data
 }
 
+//  从样式表中获取定级类列表
+export function getClassList(stylesheet) {
+  var clsList = []
+  if (stylesheet) {
+    try {
+      var tokenReg = /(\.[^}]+})/g
+      var tokens = []
+      do {
+        var token = tokenReg.exec(stylesheet)
+        if (token) {
+          tokens.push(token[0])
+        }
+      } while (token)
+
+      var clsReg = /\.([^ ]+)/
+      clsList = tokens.map(token => {
+        return clsReg.exec(token)[1]
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  return clsList
+}
+
 export function recover(target, source) {
   if (target === undefined || target === null) { throw new TypeError('Cannot convert first argument to object') }
   var to = Object(target)

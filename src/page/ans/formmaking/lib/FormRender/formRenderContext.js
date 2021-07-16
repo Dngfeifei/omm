@@ -10,6 +10,13 @@ export const initState = (formModel, formConfig) => {
 
 export const updateFormRenderModelReducer = (state, action) => {
   switch (action.type) {
+    case 'update:form-model':
+      state = {
+        ...state,
+        formModel: action.payload
+      };
+      break;
+
     case 'update:form-value':
       const { field, value } = action.payload;
       const schema = state.formModel;

@@ -7,6 +7,7 @@ import DataTypeSetting from '@/page/ans/formmaking/lib/controls/common/DataTypeS
 import PatternSetting from '@/page/ans/formmaking/lib/controls/common/PatternSetting.jsx';
 import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
 import moment from 'moment'
+import CustomerClassSetting from '@/page/ans/formmaking/components/CustomerClassSetting';
 
 const WrapFlex = styled.div`
   display: flex;
@@ -140,13 +141,16 @@ const DateSetting = ({ control, updateFormModel }) => {
       </FormAttrItem>
 
       <FormAttrItem label="自定义Class">
-        <Select
-          mode="tags"
-          style={{ width: '100%' }}
-          placeholder="请选择"
-          value={defaultClass}
-          onChange={(value) => updateOptions({ customClass: value.join(' ') })}
-        ></Select>
+        <CustomerClassSetting options={options} updateOptions={updateOptions} />
+      </FormAttrItem>
+
+      <FormAttrItem label="onChange">
+        <Input.TextArea
+          value={options.onChange}
+          onChange={(e) => {
+            updateOptions({ onChange: e.target.value });
+          }}
+        />
       </FormAttrItem>
 
       <FormAttrItem label="操作属性">
