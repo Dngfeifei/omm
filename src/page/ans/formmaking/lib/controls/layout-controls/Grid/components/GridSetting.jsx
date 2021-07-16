@@ -3,6 +3,7 @@ import { Input, InputNumber, Switch, Select, Checkbox, Button } from 'antd';
 import { genGridColumn } from '@/page/ans/formmaking/lib/utils/genNewCtrl';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem';
 import ColumnSetting from './GridSetting/ColumnSetting';
+import CustomerClassSetting from '@/page/ans/formmaking/components/CustomerClassSetting';
 
 const InputSetting = ({ control, updateFormModel }) => {
   const { options } = control;
