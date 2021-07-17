@@ -110,7 +110,7 @@ class FormList extends Common {
     await this.setState({ loading: true, selected: {} })
     let search = Object.assign({}, this.state.search)
     search.pageSize = search.limit
-    search.pageNo = search.offset
+    search.pageNo = (search.offset/search.pageSize)+1
     return getFormList(search)
       .then(res => {
         let data = (f => f(f))(f => list => list.map(val => {
@@ -122,7 +122,7 @@ class FormList extends Common {
           loading: false,
           pagination: Object.assign({}, this.state.pagination, {
             total: res.page.count,
-            current: search.offset + 1
+            current: search.offset/search.pageSize + 1
           })
         })
       })

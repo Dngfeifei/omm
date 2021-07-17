@@ -7,6 +7,8 @@ import FormDesignContenxt from '@/page/ans/formmaking/lib/formDesignContext';
 import { genNonDuplicateId } from '@/page/ans/formmaking/lib/utils';
 import allComps from '@/page/ans/formmaking/lib/controls';
 
+import { MutationType, tableMutation } from '@/page/ans/formmaking/lib/controls/layout-controls/Report/utils'
+
 const ControlBox = styled.div`
   position: relative;
   background-color: ${({ isHidden, isLayout }) => {
@@ -143,9 +145,27 @@ const ControlDesignBox = ({
   };
 
   //添加report 布局行
-  const handleAddRow = (control) => {
+  const handleAddReportRow = (control) => {
+    control.rows = tableMutation(rows, MutationType.appendRow, control.rows.length)
+    dispatch({ type: 'update:form-model', payload: [...state.formModel] });
+
     console.log('addRow:', control);
   };
+
+  //添加report 布局列
+  const handleAddReportColumn = (control) => {
+    var columnCount = 0
+    control.rows[0].columns.forEach(d => {
+      columnCount += d.options.colspan
+    })
+    control.rows = tableMutation(rows, MutationType.appendColumn, 0, columnCount - 1)
+    dispatch({ type: 'update:form-model', payload: [...state.formModel] });
+
+    console.log('handleAddReportColumn:', control);
+  };
+
+
+
   return (
     <div>
       <ControlBox
@@ -178,9 +198,14 @@ const ControlDesignBox = ({
               </span>
             )}
             {itemControl.type === 'report' && (
-              <span onClick={() => handleAddRow(itemControl)}>
-                <Icon type="plus" />
-              </span>
+              <React.Fragment>
+                <span onClick={() => handleAddReportRow(itemControl)}>
+                  <Icon type="plus" />
+                </span>
+                <span onClick={() => handleAddReportColumn(itemControl)}>
+                  <Icon type="plus-square" />
+                </span>
+              </React.Fragment>
             )}
             <span onClick={() => handleCopyControl(dataIndex)}>
               <Icon type="copy" />

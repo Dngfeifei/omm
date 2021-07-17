@@ -3,6 +3,7 @@ import { Input, InputNumber, Switch, Select, Checkbox, Button } from 'antd';
 import { genGridColumn } from '@/page/ans/formmaking/lib/utils/genNewCtrl';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem';
 import ColumnSetting from './GridSetting/ColumnSetting';
+import CustomerClassSetting from '@/page/ans/formmaking/components/CustomerClassSetting';
 
 const InputSetting = ({ control, updateFormModel }) => {
   const { options } = control;
@@ -112,13 +113,7 @@ const InputSetting = ({ control, updateFormModel }) => {
       </FormAttrItem>
 
       <FormAttrItem label="自定义Class">
-        <Select
-          mode="tags"
-          style={{ width: '100%' }}
-          placeholder="请选择"
-          value={defaultClass}
-          onChange={(value) => updateOptions({ customClass: value.join(' ') })}
-        ></Select>
+        <CustomerClassSetting options={options} updateOptions={updateOptions} />
       </FormAttrItem>
 
       <FormAttrItem label="操作属性">
