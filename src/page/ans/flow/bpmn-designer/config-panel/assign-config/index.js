@@ -113,10 +113,21 @@ export default function AssignConfig(props) {
             const detail = [];
             let valueName = "";
             for (const i of valueList) {
-              await getInfoById({ id: i }).then((data) => {
-                valueName += data.name + ",";
-                detail.push(data);
-              });
+              
+              if(type === 'user'){
+
+                await getInfoById({ loginName: i }).then((data) => {
+                  valueName += data.name + ",";
+                  detail.push(data);
+                })
+                
+              }else{
+              
+                await getInfoById({ id: i }).then((data) => {
+                  valueName += data.name + ",";
+                  detail.push(data);
+                });
+              }
             }
             list.push({
               ...item,
