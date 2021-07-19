@@ -163,26 +163,26 @@ export const assetsListData = [
     {
         type:[8,14,1,2,3,13],
         data:[
-            {
-                key:'basedataTypeId',
-                label:'数据类别',
-                span:12,
-                rules:[
-                    {
-                      required: true,
-                      message: '该选项不能为空！',
-                    },
-                  ],
-                render: (_this,disabled) =>{
-                    return <Select disabled={disabled}  placeholder="请选择" allowClear={true} onChange={_this.onChange}>
-                                {
-                                    _this.state.basedataTypeList.map((items, index) => {
-                                        return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
-                                    })
-                                }
-                            </Select>;
-                }
-            },
+            // {
+            //     key:'basedataTypeId',
+            //     label:'数据类别',
+            //     span:12,
+            //     rules:[
+            //         {
+            //           required: true,
+            //           message: '该选项不能为空！',
+            //         },
+            //       ],
+            //     render: (_this,disabled) =>{
+            //         return <Select disabled={disabled}  placeholder="请选择" allowClear={true} onChange={_this.onChange}>
+            //                     {
+            //                         _this.state.basedataTypeList.map((items, index) => {
+            //                             return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
+            //                         })
+            //                     }
+            //                 </Select>;
+            //     }
+            // },
             {
                 key:'code',
                 label:'编码',
