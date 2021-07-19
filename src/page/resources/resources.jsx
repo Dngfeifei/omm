@@ -19,6 +19,10 @@ const { Option } = Select
 const { TextArea } = Input
 const { confirm } = Modal;
 
+const MyIcon = Icon.createFromIconfontCN({
+	scriptUrl: '//at.alicdn.com/t/font_2410657_j8b1224bdw.js', // 在 iconfont.cn 上生成
+});
+
 const assignment = (data) => {
 	data.forEach((list, i) => {
 		list.key = list.id;
@@ -175,12 +179,13 @@ class resources extends Component {
 				render: _ => <Input disabled />
 			},
 			{
-				label: '导航图标',
+				label: '菜单图标',
 				key: 'icon',
 				render: () => {
+					let from = this.state.icon.slice(0, 1)
 					return <div>
 						{this.state.editable ? <Button onClick={_ => { this.setState({ isVisble: true }) }}>选择</Button> : ""}
-						{this.state.icon ? <Icon style={{ marginLeft: "18px" }} type={this.state.icon} /> : ""}
+						{this.state.icon ? (from == 1 ? <Icon style={{ marginLeft: "18px" }} type={this.state.icon.slice(2)} /> : <MyIcon style={{ marginLeft: "18px" }} type={this.state.icon.slice(2)} />) : ""}
 					</div>
 
 				}

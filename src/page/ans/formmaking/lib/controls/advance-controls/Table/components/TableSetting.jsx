@@ -5,6 +5,7 @@ import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
 import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
 import TableDefaultValue from './Setting/TableDefaultValue';
+import CustomerClassSetting from '@/page/ans/formmaking/components/CustomerClassSetting';
 
 const WrapFlex = styled.div`
   display: flex;
@@ -84,13 +85,7 @@ const TableSetting = ({ control, updateFormModel }) => {
       </FormAttrItem>
 
       <FormAttrItem label="自定义Class">
-        <Select
-          mode="tags"
-          style={{ width: '100%' }}
-          placeholder="请选择"
-          value={defaultClass}
-          onChange={(value) => updateOptions({ customClass: value.join(' ') })}
-        />
+        <CustomerClassSetting options={options} updateOptions={updateOptions} />
       </FormAttrItem>
 
       <FormAttrItem label="操作属性">

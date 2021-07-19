@@ -4,6 +4,7 @@ import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
 import InputNumberPlus from '@/page/ans/formmaking/components/InputNumberPlus.jsx';
+import CustomerClassSetting from '@/page/ans/formmaking/components/CustomerClassSetting';
 
 const WrapFlex = styled.div`
   display: flex;

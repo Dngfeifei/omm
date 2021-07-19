@@ -10,6 +10,7 @@ export const basicComponents = [
     primaryKey: '',
     foreignKey: '',
     options: {
+      onChange: 'console.log("onChange")',
       width: '100%',
       defaultValue: '',
       required: false,

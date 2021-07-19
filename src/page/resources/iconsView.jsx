@@ -7,6 +7,10 @@ import { Button, message, Modal, Icon } from 'antd'
 
 import { OMSIcons } from './icons'
 
+const MyIcon = Icon.createFromIconfontCN({
+    scriptUrl: '//at.alicdn.com/t/font_2410657_j8b1224bdw.js', // 在 iconfont.cn 上生成
+});
+
 class IconsView extends Component {
     static defaultProps = {
         // icon:"",
@@ -51,8 +55,13 @@ class IconsView extends Component {
         >
             {
                 OMSIcons.map((icon, i) => {
+                    let from = icon.slice(0, 1)  //1 为antd内置图标库   2为第三方图标库
                     let iconStyle = currentIcon == icon ? { padding: "5px", margin: "5px", backgroundColor: "#1890ff" } : { padding: "5px", margin: "5px" };
-                    return <Icon onClick={_ => { this.setIcon(icon) }} style={iconStyle} key={i} type={icon} />
+                    if (from == 1) {
+                        return <Icon onClick={_ => { this.setIcon(icon) }} style={iconStyle} key={i} type={icon.slice(2)} />
+                    } else {
+                        return <MyIcon onClick={_ => { this.setIcon(icon) }} style={iconStyle} key={i} type={icon.slice(2)} />
+                    }
                 })
             }
         </Modal>
