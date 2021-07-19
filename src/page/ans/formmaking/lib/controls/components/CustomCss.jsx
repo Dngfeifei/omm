@@ -10,7 +10,7 @@ const CustomOptions = ({options, onChange}) => {
     const handleChange = (editor, data, value) => setValue(value)
     const openModal = () => setVisible(true)
     const handleOk = () => {
-        onChange(JSON.parse(value)) 
+        onChange(value) 
         setVisible(false)
     }
     const handleCancel = () => {
@@ -18,13 +18,13 @@ const CustomOptions = ({options, onChange}) => {
     }
     return <div>
         <Button style={{ width: '100%' }} onClick={openModal}>设置</Button>
-        <Modal title="自定义选项" 
+        <Modal title="表单样式表" 
          visible={visible}
          onOk={handleOk} 
          onCancel={handleCancel}>
             <CodeMirror
                 value={value}
-                options={{lineNumbers: true,mode:'html',theme: 'material'}}
+                options={{lineNumbers: true,mode:'css',theme: 'material'}}
                 onChange={handleChange} />
         </Modal>
     </div>

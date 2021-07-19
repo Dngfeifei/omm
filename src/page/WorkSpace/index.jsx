@@ -253,7 +253,7 @@ class workList extends Component {
 
 
         });
-
+        
     }
 
 
@@ -330,28 +330,54 @@ class workList extends Component {
     }
 //单击行打开工单详情页
     onClickRow = (record) => {
-        return {
-            onClick: () => {
-                let pane = {
-                    title: record.businessKey,//record.ticketType,
-                    key: record.procInstId,
-                    url: 'WorkOrder/index.jsx',
-                    params:{
-                        reset:this.props.params.type,//刷新本页面key
-                        record
-                    }
-                }
-                //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
-                if(this.props.params.pathParam.split('?')[2] && !record.finished){
-                    setTimeout(_ => {
-                        this.init();
-                    },1000)
-                }
-                //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
-                this.props.add(pane)
-            },
-        };
+        
+        if(record.derivedFrom !== ""){
 
+            return {
+                onClick: () => {
+                    let newTitle = { 'processTitle': record.assigneeRealName+" 在"+ moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + " 发起了 "+ record.processDefinitionName };
+                    record = Object.assign({},record,newTitle)
+                    
+                    let newRouterNum = { 'routerNum': this.props.params.pathParam.split('?')[1] };
+                    record = Object.assign({},record,newRouterNum)
+
+                    let pane = {
+                        title: record.processDefinitionName,
+                        key: record.procInstId,
+                        url: 'WorkOrder/dynamicSplicing.jsx',
+                        params:{
+                            reset:this.props.params.type,//刷新本页面key
+                            record
+                        }
+                    }
+                    this.props.add(pane)
+                },
+            };
+            
+        }else{
+
+            return {
+                onClick: () => {
+                    let pane = {
+                        title: record.businessKey,//record.ticketType,
+                        key: record.procInstId,
+                        url: 'WorkOrder/index.jsx',
+                        params:{
+                            reset:this.props.params.type,//刷新本页面key
+                            record
+                        }
+                    }
+                    //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
+                    if(this.props.params.pathParam.split('?')[2] && !record.finished){
+                        setTimeout(_ => {
+                            this.init();
+                        },1000)
+                    }
+                    //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
+                    this.props.add(pane)
+                },
+            };
+        }
     }
 
     render = _ => {

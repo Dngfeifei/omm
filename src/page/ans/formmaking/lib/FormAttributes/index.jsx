@@ -31,17 +31,14 @@ const FormAttributes = () => {
   const { state, dispatch } = useContext(FormDesignContext)
 
   const { formConfig } = state
-  const config = useMemo(() => {
-    return cloneDeep(formConfig)
-  }, [formConfig])
 
-  const updateConfig = useCallback((params) => {
+  const updateConfig = (params) => {
     const payload = {
-      ...config,
+      ...formConfig,
       ...params
     }
     dispatch({ type: 'update:form-config', payload })
-  }, [dispatch])
+  }
 
 
   return <div className="jp-form-attributes-global">
@@ -59,10 +56,10 @@ const FormAttributes = () => {
         <FieldAttrSettings />
       </div>
       <div style={{ display: active === 1 ? 'block' : 'none' }}>
-        <FormAttrSettings config={config} updateConfig={updateConfig} />
+        <FormAttrSettings config={formConfig} updateConfig={updateConfig} />
       </div>
       <div style={{ display: active === 2 ? 'block' : 'none' }}>
-        <ListAttrSettings config={config} updateConfig={updateConfig} />
+        <ListAttrSettings config={formConfig} updateConfig={updateConfig} />
       </div>
     </div>
   </div>
