@@ -76,10 +76,9 @@ class DSider extends Component{
 	}
 	//处理icon类型函数
 	getIcon = (item) => {
-		let icons = null
-		// console.log(item.icon)
+		let icons = null;
 		if(item.icon){
-			icons = item.icon.split('_');//shift()
+			icons = item.icon.split('_');
 			if(icons[0] == 1){
 				icons.shift();
 				let iconStr = icons.join('_');
@@ -94,49 +93,10 @@ class DSider extends Component{
 	}
 	renderMenuTitle = (val,leva) => {
 		//工作台 93 系统配置 85 信息管理135 工作空间140
-		let icon = null,MyIco= () => (<MyIcon type="iconxitongpeizhi1" />),MyIcoy = this.getIcon(val);
-		if(val.icon){
-			let icons = val.icon.split('_');//shift()
-			if(icons[0] == 1){
-				icons.shift();
-				icon = icons.join('_');
-				// return <Icon type={iconStr} />
-			}else{
-				icons.shift();
-				let iconStr = icons.join('_');
-				MyIco = () => (<MyIcon type={iconStr} />)
-			}
-		}
+		let MyIcoy = this.getIcon(val);
 		return (<span>
 			{leva ? MyIcoy ?  <MyIcoy /> : null :null}
 		<span>{val.resourceName}</span></span>)
-		// if(val.id == 93){
-		// 	icon = 'appstore'
-		// }else if(val.id == 85){
-		// 	MyIco = () => (<MyIcon type="iconxitongpeizhi1" />)
-		// }else if(val.id == 135){
-		// 	icon="unordered-list"
-		// }else if(val.id == 140){
-		// 	icon = 'file-text'
-		// }else if(val.id == 156){ //配置库
-		// 	icon = 'setting'
-		// }else if(val.id == 175 || val.id == 152){ //资料库
-		// 	icon = 'save'
-		// }else if(val.id == 167){
-		// 	MyIco = () => (<MyIcon type="iconyuanshujuguanli1" />)
-		// }else if(val.id == 165){
-		// 	MyIco = () => (<MyIcon type="iconbiaodanpeizhi" />)
-		// }else if(val.id == 173){
-		// 	MyIco = () => (<MyIcon type="iconliucheng" />)
-		// } 
-		return (<span>
-			{leva ?   icon ? <Icon type={icon} /> :  <MyIco /> :null}
-		<span>{val.resourceName}</span></span>)
-
-		// return (<span>
-		// 	{icon ? <Icon type={icon} /> : leva ? <Icon type="bars" /> :null}
-		// <span>{val.resourceName}</span></span>)
-
 	}
 	
 	//监听菜单缩放事件并重置collapsed触发收缩
