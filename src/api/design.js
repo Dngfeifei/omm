@@ -56,7 +56,7 @@ export const SaveAndPush = (params = {}) =>{
 // ---------------------------------用户，岗位，角色相关接口---------------------------------
 // 根据用户id获取用户信息
 export const FLowQueryByUserId = (params = {}) =>
-	http.fetchGet(REMOTE_URL + `/sys/user/queryById`, params)
+	http.fetchGet(REMOTE_URL + `/sys/user/queryByLoginName`, params)
 
 // 根据角色id获取角色信息
 export const FLowQueryByRoleId = (params = {}) =>

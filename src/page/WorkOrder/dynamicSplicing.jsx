@@ -1,412 +1,587 @@
 import React, { Component } from 'react'
-import { Modal, message, Button, Row, Col, Form, Input, Select, Table, DatePicker, TimePicker,Tooltip } from 'antd'
-
-// 分页组件
-import Pagination from "@/components/pagination/index";
-// 时间格式化组件
-import moment from 'moment'
+import {Modal, message, Button, Row, Col, Input, Select, Card, DatePicker, TimePicker, Tooltip, Tabs, Form, Spin, Empty} from 'antd'
+const { confirm } = Modal;
+const { TabPane } = Tabs;
+const { TextArea } = Input;
+import '@/assets/less/pages/workorder.less'
+import {css} from "@emotion/css";
 import { connect } from 'react-redux'
+import { REMOVE_PANE,SET_WORKLIST,SET_PANE,SET_WORKSTATUS} from '/redux/action'
+import flowableModdleDescriptor from "@/page/ans/flow/bpmn-designer/flow";
+import CustomModeler from "../ans/flow/bpmn-designer/custom-modeler";
+import "../ans/flow/bpmn-designer/bpmn-designer.less";
+import { hashHistory } from 'react-router'
 
-// 引入时间选择器
-const { MonthPicker, RangePicker } = DatePicker;
+import loadable from '@loadable/component'
 
-const FormItem = Form.Item
-const ButtonGroup = Button.Group
-const { Option } = Select;
 
-// 引入 API接口
-import {getSysLog, getByCode} from '/api/systemParameter'
-// 引入页面CSS
-import '/assets/less/pages/logBookTable.css'
+import { HandleStartTask,GetFlowChart,DoStopAction,GetHistoricTaskList,QueryByDefIdAndTaskId,DoBackAction,DoAuditAction,GetBackNodes,DoTransferAction,DoDelegateAction } from '/api/initiate'
+import FlowTimeLine from "@/page/WorkOrder/FlowTimeLine";
+import FlowStep from "@/page/WorkOrder/FlowStep";
+import TaskBackNodes from "@/page/WorkOrder/TaskBackNodes";
+import UserSelectDialog from "@/page/WorkOrder/UserSelectDialog";
 
-import { ADD_PANE,SET_WORKLIST} from '/redux/action'
-//引入接口
-import { getWorkList,getTicketType,getStatus } from '/api/workspace'
+
+
+const resetCss = css`
+  .ant-tabs-content {
+    height: unset !important;
+  }
+`;
+
 
 @connect(state => ({
-  activeKey: state.global.activeKey,
   resetwork: state.global.resetwork,
 }), dispath => ({
-  add(pane){dispath({ type: ADD_PANE, data: pane })},
-  setWorklist(data){dispath({ type: SET_WORKLIST,data})}
+  setWorklist(data){dispath({ type: SET_WORKLIST,data})},
+  remove(key){dispath({type: REMOVE_PANE, key})},
+  setKey(key){dispath({type: SET_PANE, data: key})},
+  updatePane(data){dispath({type: SET_WORKSTATUS, data: data})},
 }))
 
-
-class workList extends Component {
-
-  componentWillMount(){
-    this.getOperateType()
-  }
-//本组件监控外部属性变化时调用回调
-  componentWillReceiveProps (nextprops,prevProps) {
-    //当工单处理完成提交后刷新原工单列表
-    // console.log(nextprops,this.props)
-    if(nextprops.resetwork.switch != this.props.resetwork.switch){   //当改状态改变时调用数据刷新
-      this.init();
-    }
-
-  }
-  // 挂载完成
-  componentDidMount=()=>{
-    this.init();
-    this.SortTable();
-    //窗口变动的时候调用
-    window.addEventListener("resize", ()=>{
-      if(this.props.activeKey == this.props.params.type) this.SortTable();
-    }, false)
-  }
-
+class DynamicSplicingPage extends Component {
 
   state = {
-    h:{y:240},  //设置表格的高度
-    visible: false,  // 对话框的状态
-    pageSize:10,
-    current:0,
-    total:0,  //表格分页---设置显示一共几条数据
-    typeArr:[], //工单类型
-    statusArr:[],//状态
-
-    pagination:{
-      limit:10,
-      offset:1,
-    },
-    loading:true,  //表格加载太
-    rules: [
-      {
-        label: '工单号',
-        key: 'ticketId',
-        render: _ => <Input style={{ width: 200 }} placeholder="请输入工单号"/>
-      },
-      {
-        label: '工单类型',
-        key: 'ticketType',
-        render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
-          {
-            this.state.typeArr.map((items, index) => {
-              return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
-            })
-          }
-        </Select>
-
-      },{
-        label: '创建人',
-        key: 'applyName',
-        render: _ => <Input style={{ width: 200 }} placeholder="请输入人员名称"/>
-      },{
-        label: '状态',
-        key: 'status',
-        render: _ => <Select style={{ width: 200 }} placeholder="请选择" allowClear={true}>
-          {
-            this.state.statusArr.map((items, index) => {
-              return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
-            })
-          }
-        </Select>
-
-      }, {
-        label: '创建时间',
-        key: 'dataTime',
-        render:_=>  <RangePicker showTime format="YYYY-MM-DD HH:mm:ss" />
-      }
-    ],
-    columns: [{
-      title: '序号',
-      dataIndex: 'index',
-      align:'center',
-      width:'80px',
-      // 第一种：每一页都从1开始
-      render:(text,record,index)=> this.setHtml(record.finished,index+1)
-      // }
-    },
-      {
-        title: '工单编号',
-        dataIndex: 'businessKey',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
-      }, {
-        title: '工单类型',
-        dataIndex: 'ticketType',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
-      }, {
-        title: '工单任务',
-        dataIndex: 'taskName',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
-      }, {
-        title: '当前待办人',
-        dataIndex: 'assigneeRealName',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
-      }, {
-        title: '创建人',
-        dataIndex: 'startRealName',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
-      }, {
-        title: '状态',
-        dataIndex: 'statusText',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
-      }, {
-        title: '创建时间',
-        dataIndex: 'createDate',
-        ellipsis: {
-          showTitle: false,
-        },
-        render: (text,record) => <Tooltip placement="topLeft" title={text}>{this.setHtml(record.finished,text)}</Tooltip>
-      },
-      //  {
-      //     title: '操作详情',
-      //     dataIndex: 'content',
-      //     ellipsis: {
-      //         showTitle: false,
-      //     },
-      //     render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-      // }
-    ],
-    tabledata: [],
-  }
-  //处理是否加粗显示
-  setHtml = (finished,text) => {
-    return <span style={{fontWeight: finished ? 'normal' : 'bold'}}>{text}</span>
-  }
-  // 获取表格高度
-  SortTable = () => {
-    setTimeout(() => {
-      console.log(this.tableDom.clientHeight)
-      let h = this.tableDom.clientHeight - 125;
-      this.setState({
-        h: {
-          y: (h)
-        }
-      });
-    }, 0)
+    Imulation: null,
+    historicTaskList:null,
+    buttons:{},
+    loadButton: false,//加载loading
+    taskBackNodesConf: {visible: false, taskId: {}},
+    transferUserConf: {visible: false},
+    delegateUserConf: {visible: false},
+    auditForm: {
+      message: '',
+      type: '',
+      status: '',
+      userIds: null,
+      assignee: null
+    }
   }
 
-  // 获取 类型 状态
-  getOperateType= async ()=>{
-    let typeArr = await getTicketType({ dictCode: 'operateType' });
-    let statusArr = await getStatus({ dictCode: 'operateType' });
-    this.setState({ typeArr: typeArr.data ? typeArr.data : [], statusArr: statusArr.data ? statusArr.data : [] });
-  }
+  componentWillMount () {
+    console.info("this.props.params:::::::::::::::"+JSON.stringify(this.props.params))
 
-  // 初始化接口
-  init=()=>{
-    this.props.form.validateFields((err, fieldsValue) => {
-      if (err) {
-        return;
-      }
+    let record = this.props.params.dataType.record;
 
-      const rangeTimeValue = fieldsValue['dataTime'];
+    const loadSimulation = loadable((props) => import(`./`+record.derivedFrom))
+    this.setState({ Imulation:loadSimulation });
 
+    if (record.status === 'start' && record.routerNum === '6') {
 
-      if (rangeTimeValue == undefined) {
-        var values = {
-          ...fieldsValue,
-          'dataTime': ['',''],
-        };
-      }else {
-        var values = {
-          ...fieldsValue,
-          'dataTime': [
-            rangeTimeValue[0].format('YYYY-MM-DD HH:mm:ss'),
-            rangeTimeValue[1].format('YYYY-MM-DD HH:mm:ss'),
-          ],
-        };
-      }
-      let newParams = {
-        ticketId: values.ticketId, //工单编号
-        startTime:values.dataTime[0],//开始时间
-        endTime:values.dataTime[1],//结束时间
-        applyName:values.applyName,//申请人
-        ticketType: values.ticketType,//工单类型
-        status: values.status,//工单状态
-        ticketOpt: this.props.params.pathParam.split('?')[1] ? this.props.params.pathParam.split('?')[1] : '',
-        limit: this.state.pageSize, //每页显示的条数
-        offset: this.state.current //当前起始页的条数
-      }
-      //获取列表数据
-      getWorkList(this.state.pageSize, this.state.current,newParams).then(res => {
-        if (res.success == 1) {
-          this.setState({ loading: false })
-          this.setState({
-            tabledata: res.data.records,
-            total: parseInt(res.data.total)
-          })
-        } else if (res.success == 0) {
-          message.error(res.message);
+      this.setState({buttons:[{code: '_flow_start', name: '启动', isHide: '0'}],loadButton: true})
+
+    } else if (record.procDefId && record.taskDefKey && record.routerNum === '0') {
+
+      // 读取按钮 
+      QueryByDefIdAndTaskId({
+        processDefId: record.procDefId.split(":")[0],
+        taskDefId: record.taskDefKey
+      }).then(data => {
+        if (data.success) {
+          this.setState({buttons: data.taskDefExtension.flowButtonList, loadButton: true});
         }
       })
+    }else{
+      this.setState({loadButton: true});
+    }
 
 
-    });
-
-  }
-
-
-
-  //获取表单数据
-  getFormData = _ => {
-    let params;
-    this.props.form.validateFieldsAndScroll(null, {}, (err, val) => {
-      if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 获取合并后的表单数据
-        params = Object.assign({}, val)
-      }
-    })
-    return params;
-  }
-
-
-
-  // 根据条件模糊查询
-  onSearch=(e)=>{
-    e.preventDefault();
-    this.setState({ loading: true })
-    // 走接口调用
-    this.init();
-
-  }
-
-  //清空高级搜索
-  clearSearchprops =()=> {
-    this.props.form.resetFields();
-  }
-
-  // 打开--详情---对话框
-  showModal = () => {
-    this.setState({
-      visible: true,
-    });
-  };
-
-  // 关闭--详情---对话框
-  handleCancel = () => {
-    this.setState({
-      visible: false,
-    });
-  };
-
-
-  // 页码改变的回调，参数是改变后的页码及每页条数
-  onPageChange=(page, pageSize)=>{
-    let data = Object.assign({}, this.state.pagination, { offset: page })
-
-    this.setState({
-      current: (page-1) * pageSize,
-      pagination:data
-    },()=>{
-      // 调用接口
-      this.init()
+    // 读取历史任务列表
+    GetHistoricTaskList({procInsId: record.procInstId}).then(data => {
+      this.setState({
+        historicTaskList:data.historicTaskList
+      })
     })
   }
 
-  // 当几条一页的值改变后调用函数，current：改变显示条数时当前数据所在页；pageSize:改变后的一页显示条数
-  onShowSizeChange = (current, pageSize) => {
-    let data = Object.assign({}, this.state.pagination, { offset: 1,limit: pageSize })
+  loadImg = () =>{
 
-    this.setState({
-      current: 0,
-      pageSize: pageSize ,
-      pagination:data
-    },()=>{
-      // 调用接口
-      this.init()
-    })
+    GetFlowChart({processDefId: this.props.params.dataType.record.procDefId}).then(data => {
 
+      this.bpmnModeler = new CustomModeler({
+        container: "#canvas",
+        additionalModules: [],
+        moddleExtensions: {
+          flowable: flowableModdleDescriptor, //添加flowable前缀
+        },
+      });
 
-  }
-//单击行打开工单详情页
-  onClickRow = (record) => {
-    return {
-      onClick: () => {
-        let pane = {
-          title: record.businessKey,//record.ticketType,
-          key: record.procInstId,
-          url: 'WorkOrder/index.jsx',
-          params:{
-            reset:this.props.params.type,//刷新本页面key
-            record
+      const elementRegistry = this.bpmnModeler.get('elementRegistry');
+      const modeling = this.bpmnModeler.get('modeling');
+
+      var _this = this;
+      this.bpmnModeler.importXML(data.bpmnXml, function(err) {
+        if (err) {
+          console.error(err)
+        }
+
+        _this.bpmnModeler.get('canvas').zoom('fit-viewport')
+
+        if (data.activityIds) {
+          var last = data.activityIds.pop();
+
+          var elementToColor = _this.elementRegistry.get(last);
+
+          if (!last.startsWith('EndEvent')) {
+            _this.modeling.setColor([elementToColor], {
+              'stroke': 'red',
+              'stroke-width': '0.8px',
+              'fill': 'white',
+              'fill-opacity': '0.95'
+            });
+          } else {
+            _this.modeling.setColor([elementToColor], {
+              'stroke': 'rgb(64, 158, 255)',
+              'stroke-width': '0.8px',
+              'fill': 'white',
+              'fill-opacity': '0.95'
+            });
+          }
+
+          data.activityIds.forEach(function (activity) {
+            var elementToColor = _this.elementRegistry.get(activity);
+
+            _this.modeling.setColor([elementToColor], {
+              'stroke': 'rgb(64, 158, 255)',
+              'stroke-width': '0.8px',
+              'fill': 'white',
+              'fill-opacity': '0.95'
+            });
+          });
+
+          if (data.flows) {
+            data.flows.forEach(function (activity) {
+              var elementToColor = _this.elementRegistry.get(activity);
+
+              _this.modeling.setColor([elementToColor], {
+                'stroke': 'rgb(64, 158, 255)',
+                'stroke-width': '0.9px',
+                'fill': 'white',
+                'fill-opacity': '0.95'
+              });
+            });
           }
         }
-        //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
-        if(this.props.params.pathParam.split('?')[2] && !record.finished){
-          setTimeout(_ => {
-            this.init();
-          },1000)
-        }
-        //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
-        this.props.add(pane)
-      },
-    };
+      })
+    })
+  }
+
+
+
+  submit = async (currentBtn, buttons) => {
+    let vars = {} // 存储流程变量
+
+    // 把当前操作对应的自定义按钮(以_flow_开头的是系统按钮，排除在外）的编码，存储为对应的流程变量，值设置为true，其余自定义按钮编码对应的流程变量值为false。
+    buttons.forEach((btn) => {
+      if (btn.code && !btn.code.startsWith('_flow_')) {
+        vars[btn.code] = false
+      }
+    })
+
+    if (currentBtn.code && !currentBtn.code.startsWith('_flow_')) {
+      vars[currentBtn.code] = true
+    }
+
+    vars.title = this.props.params.dataType.record.processTitle // 标题
+    vars.assignee = "" // 指定的下一步骤处理人
+
+
+    await this.setState({
+      auditForm: {
+        type: currentBtn.code,  // 提交类型
+        status: currentBtn.name // 按钮文字
+      }
+    })
+
+
+    switch (currentBtn.code) {
+      case '_flow_start': // 自动流程
+        this.startProces(vars)
+        break
+      case '_flow_save': // 保存草稿
+        this.save()
+        break
+      case '_flow_agree': // 同意
+        this.agree()
+        break
+      case '_flow_reject': // 驳回
+        this.reject()
+        break
+      case '_flow_back': // 驳回到任意步骤
+        this.turnBack()
+        break
+      case '_flow_add_multi_instance': // 加签
+        this.addMultiInstance()
+        break
+      case '_flow_del_multi_instance': // 减签
+        this.delMultiInstance()
+        break
+      case '_flow_transfer': // 转办
+        this.transfer()
+        break
+      case '_flow_delegate':// 外派
+        this.delegate()
+        break
+      case '_flow_stop':// 终止
+        this.stop()
+        break
+      case '_flow_print':// 打印
+        this.print()
+        break
+      default:
+        this.commit(vars) // 自定义按钮提交
+    }
+  }
+
+  // 暂存草稿
+  save = () => {
 
   }
 
+  // 同意
+  agree = (vars) => {
+    this.commit(vars) // 同意
+  }
+
+  commit = (vars) =>{
+
+    if(this.props.params.dataType.record.derivedFrom.startsWith("Simulation")){ // 外置表单
+
+      this.Imulation.saveForm((businessTable, businessId) =>{
+
+        DoAuditAction({
+          taskId: this.props.params.dataType.record.taskId,
+          taskDefKey: this.props.params.dataType.record.taskDefKey,
+          procInsId: this.props.params.dataType.record.procInstId,
+          procDefId: this.props.params.dataType.record.procDefId,
+          vars: vars,
+          "comment.message": this.state.auditForm.message,
+          "comment.type": this.state.auditForm.type,
+          "comment.status": this.state.auditForm.status,
+          "comment.userIds":this.state.auditForm.userIds,
+          assignee: ""
+        }).then( data => {
+          if (data.success) {
+            message.success(data.msg)
+
+            this.goInitialPage()
+          }
+        })
+
+      })
+    } else { // 动态表单
+      this.$refs.form.submitTaskFormData(vars, this.procInsId, this.taskId, this.auditForm.assignee, this.auditForm, (data) => {
+        if (data.success) {
+          this.$events.$emit('closeTab', this.$route.fullPath)
+          this.$router.push('/flowable/task/TodoList')
+          this.cc(data)
+        }
+      })
+    }
+  }
+
+  // 驳回
+  reject = () => {
+
+    var _this = this
+    confirm({
+      title: '提示',
+      content: '确定驳回流程吗？',
+      okText: '确定',
+      okType: 'warning',
+      cancelText: '取消',
+      onOk() {
+        GetBackNodes({taskId: _this.props.params.dataType.record.taskId,..._this.state.auditForm}).then(data => {
+          let backNodes = data.backNodes
+          if (backNodes.length > 0) {
+            let backTaskDefKey = backNodes[backNodes.length - 1].taskDefKey
+            _this.back(backTaskDefKey)
+          }
+        })
+      }
+    })
+
+
+
+  }
+
+  // 驳回到任意节点
+  turnBack = () =>  {
+
+    let conf = {}
+    conf["taskBackNodesConf"] = {
+      visible: true,
+      taskId: this.props.params.dataType.record.taskId
+    }
+    this.setState(conf)
+
+  }
+
+
+  // 回退到任意节点
+  back = (backTaskDefKey) => {
+
+    if(backTaskDefKey !== undefined){
+      DoBackAction({
+        taskId: this.props.params.dataType.record.taskId,
+        backTaskDefKey: backTaskDefKey,
+        ...this.state.auditForm
+      }).then(data => {
+        if (data.success) {
+          message.success(data.msg)
+          this.goInitialPage()
+        }
+      })
+    }
+
+    let config = {}
+    config.taskBackNodesConf = { visible: false, taskId: {} }
+    this.setState(config)
+
+  }
+
+  // 加签
+  addMultiInstance = () => {
+
+  }
+  // 减签
+  delMultiInstance = () => {
+
+  }
+
+  // 转办
+  transfer = () => {
+
+    let conf = {}
+    conf["transferUserConf"] = {
+      visible: true
+    }
+    this.setState(conf)
+  }
+
+  selectUsersToTransferTask = (userId) => {
+
+    if(userId !== undefined) {
+      DoTransferAction({taskId: this.props.params.dataType.record.taskId, userId: userId}).then(data => {
+        message.success(data.msg)
+
+        this.goInitialPage()
+      })
+    }
+
+    let config = {}
+    config.transferUserConf = { visible: false }
+    this.setState(config)
+  }
+
+  // 委托
+  delegate = () => {
+
+    let conf = {}
+    conf["delegateUserConf"] = {
+      visible: true
+    }
+    this.setState(conf)
+  }
+
+  selectUsersToDelateTask = (userId) => {
+
+    if(userId !== undefined) {
+
+      DoDelegateAction({taskId: this.props.params.dataType.record.taskId, userId: userId}).then(data => {
+        message.success(data.msg)
+
+        this.goInitialPage()
+      })
+    }
+
+    let config = {}
+    config.transferUserConf = { visible: false }
+    this.setState(config)
+  }
+
+  // 终止
+  stop = () =>  {
+    var _this = this
+    confirm({
+      title: '提示',
+      content: '确定终止流程吗？',
+      okText: '确定',
+      okType: 'warning',
+      cancelText: '取消',
+      onOk() {
+        DoStopAction({id: _this.props.params.dataType.record.procInstId, ..._this.state.auditForm}).then(data => {
+          message.success(data.msg)
+
+          _this.goInitialPage()
+        })
+      }
+    })
+  }
+
+  // 打印
+  print = () => {
+
+  }
+
+  //启动流程
+  startProces = () => {
+
+    if(this.props.params.dataType.record.derivedFrom.startsWith("Simulation")){ // 外置表单
+
+      //处理外置表单数据，外置表单需要有saveForm方法
+      this.Imulation.saveForm((businessTable, businessId) =>{
+
+        let params = {
+          procDefKey: this.props.params.dataType.record.procDefId,
+          businessTable: businessTable,
+          businessId: businessId,
+          title: this.props.params.dataType.record.processTitle,
+          assignee: ""
+        }
+
+        HandleStartTask(params).then(data => {
+          if (data.success) {
+            message.success(data.msg)
+
+            this.goInitialPage()
+          }
+        })
+      })
+    }else{  //动态表单
+
+    }
+  }
+
+  //监控文本框的change事件
+  messageChange = (e)=>{
+    const newVal = e.target.value
+    this.setState({auditForm:{message:newVal}})
+  }
+
+
+
+  goInitialPage = _ => {
+    let resetwork = {key: backKey, switch: !this.props.resetwork.switch};
+    this.props.setWorklist(resetwork);
+
+    let nowKey = this.props.params.type,backKey = this.props.params.dataType.reset;
+    this.props.remove(nowKey)    //关闭当前标签页
+    this.props.setKey(backKey) //跳回到初始页面
+  }
+
+
   render = _ => {
-    const { getFieldDecorator } = this.props.form;
-    const { selectedRowKeys,h } = this.state;
-    const rowSelection = {
-      selectedRowKeys,
-      onChange: this.onSelectChange
-    };
+
+    let {Imulation,loadButton,buttons} = this.state;
+
+    let buttonList = [];
+    if (Object.keys(buttons).length >0 && loadButton) {
+
+      buttons.forEach((btn,index) => {
+
+        if(btn.isHide === '0'){
+
+          if(btn.code !== '_flow_print'){
+            buttonList.push(<Button type="primary" style={{marginRight:"10px"}} key={index} onClick={() => this.submit(btn, buttons) }>{btn.name}</Button>)
+          }else {
+            buttonList.push(<Button type="primary"  v-print="printObj" style={{marginRight:"10px"}} key={index} onClick={() => this.submit(btn, buttons)}>{btn.name}</Button>)
+          }
+
+        }
+      })
+    }
+
+
+    let { record } = this.props.params.dataType;
 
     return (
-        <div style={{ border: '0px solid red',background:' #fff'}} className="main_height" style={{display:'flex',flexDirection:'column',flexWrap:'nowrap'}}>
-          <Form layout='inline' style={{ width: '100%', paddingTop: '24px',marginLeft:'15px'}} id="logbookForm">
-            {this.state.rules.map((val, index) =>
-                <FormItem
-                    label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                  {getFieldDecorator(val.key, val.option)(val.render())}
-                </FormItem>)}
-            <FormItem>
-              <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
-              <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
-            </FormItem>
-          </Form>
-          <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
-            <Table
-                className="jxlTable"
-                bordered
-                dataSource={this.state.tabledata.length ? this.state.tabledata :[]}
-                onRow={this.onClickRow}
-                columns={this.state.columns}
-                pagination={false}
-                scroll={h}
-                rowKey={ (record, index) => `complete${record.id}${index}`}
-                size={'small'}
-                style={{ marginTop: '16px', padding: '0px 15px',height:h,overflowY:'auto'}}
-                loading={this.state.loading}  //设置loading属性
-            />
-            {/* 分页器组件 */}
-            <Pagination total={this.state.total} pageSize={this.state.pagination.limit} current={(this.state.pagination.offset)}  onChange={this.onPageChange} onShowSizeChange={this.onShowSizeChange}></Pagination>
-          </div>
+      <div className="jp-center">
+
+        <Card className={resetCss}>
+          <Tabs defaultActiveKey="form" type="line">
+            <TabPane tab="表单信息" key="form" style={{marginTop:"10px"}}>
+
+              {/*加载外部表单  */}
+              <Imulation onRef={c=>this.Imulation=c}/>
+
+              {/*加载动态表单*/}
+
+            </TabPane>
+
+            {record.procInstId && <TabPane tab="流程信息" key="process">
+              <FlowTimeLine datas={this.state.historicTaskList}/>
+            </TabPane>}
 
 
-          {/* 详情页--对话框 底部内容，当不需要默认底部按钮时，可以设为 footer={null} */}
-          <Modal title="日志详情" visible={this.state.visible} onCancel={this.handleCancel} footer={null}>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-          </Modal>
+            <TabPane tab="流程图" key="chat" onTabClick={this.loadImg()} forceRender={true}>
+              <Card style={{marginTop:"10px",height:"700px",width: "100%"}}>
+
+                <div className="containers">
+                  <div id="canvas" className="canvas" ></div>
+                </div>
+              </Card>
+            </TabPane>
+
+            {record.procInstId && <TabPane tab="流转信息" key="forth">
+              <FlowStep datas={this.state.historicTaskList} />
+            </TabPane>}
+
+          </Tabs>
+        </Card>
+
+        { (record.routerNum === '6' || record.routerNum === '0' ) &&
+        <Card style={{marginTop: "10px"}}>
+
+          {!record.procInstId  && <Row>
+
+            <label style={{justifyContent: "center", marginRight: "5px"}}>流程标题:</label>
+
+            <Input
+              value={record.processTitle}
+              style={{width: 800}}
+              allowClear
+              placeholder="流程标题"/>
+          </Row>}
+
+
+          {record.taskId && <Row>
+
+            <label style={{
+              textAlign: "justify",
+              display: "inline-block",
+              verticalAlign: "top",
+              marginRight: "5px"
+            }}>审批信息:</label>
+
+            <TextArea
+              id="message"
+              onChange={(e) => this.messageChange(e)}
+              value={this.state.auditForm.message}
+              style={{width: 800}}
+              allowClear
+              rows={3}
+              placeholder="请输入审批意见"/>
+          </Row>}
+
+        </Card>
+        }
+
+        <div className="FlowFormFooter">
+
+          <Spin tip="Loading..." spinning={!loadButton}/>
+          {buttonList}
+
         </div>
-    )
+
+        <TaskBackNodes config={this.state.taskBackNodesConf} backAction={this.back}/>
+        <UserSelectDialog config={this.state.transferUserConf} transferAction={this.selectUsersToTransferTask}/>
+        <UserSelectDialog config={this.state.delegateUserConf} transferAction={this.selectUsersToDelateTask}/>
+
+      </div>
+    );
   }
 
 }
-const workSpaceForm = Form.create()(workList)
-export default workSpaceForm
 
-
-
+export default DynamicSplicingPage
