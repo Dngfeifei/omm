@@ -92,6 +92,7 @@ module.exports = {
       '/fileLevel': target, //介质文件级别数据
       '/fileApply': target, //介质文件下载审核
       '/sysMessage': target, //系统消息接口
+      '/basedataMeta': target, //配置库基础数据获取子节点编码
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README
