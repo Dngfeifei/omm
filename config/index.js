@@ -21,7 +21,16 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-var target = { target: 'http://172.16.100.81/api/dat', headers: {Connection: "keep-alive"} }
+var target = {
+  target: 'http://172.16.100.81/api/dat',
+  headers: {
+    Connection: "keep-alive",
+    'Cache-Control': 'max-age=0',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
+  },
+  secure: false,
+  logLevel: 'debug'
+}
 // var target = {target: 'http://10.0.17.214:8111'}
 // var target = {target: 'http://localhost:8111'}
 
