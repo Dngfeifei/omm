@@ -20,29 +20,37 @@ const ItemCss = css`
 const FormContent = ({ state, form }) => {
   const { getFieldDecorator } = form;
 
+  if (state.formConfig.styleSheets) {
+    var dom = document.createElement('style')
+    dom.innerHTML = state.formConfig.styleSheets
+    document.body.appendChild(dom)
+  }
+
   return (
-    <Form>
-      {state.formModel.map((item, index) => {
-        return (
-          <div className={ItemCss} key={item.model}>
-            <Form.Item>
-              {getFieldDecorator(
-                item.model,
-                {}
-              )(
-                <div>
-                  {React.createElement(allComps[`${item.type}-render`], {
-                    control: item,
-                    formConfig: state.formConfig,
-                    form,
-                  })}
-                </div>
-              )}
-            </Form.Item>
-          </div>
-        );
-      })}
-    </Form>
+    <div className={state.formConfig.customClass}>
+      <Form >
+        {state.formModel.map((item, index) => {
+          return (
+            <div className={ItemCss} key={item.model}>
+              <Form.Item>
+                {getFieldDecorator(
+                  item.model,
+                  {}
+                )(
+                  <div>
+                    {React.createElement(allComps[`${item.type}-render`], {
+                      control: item,
+                      formConfig: state.formConfig,
+                      form,
+                    })}
+                  </div>
+                )}
+              </Form.Item>
+            </div>
+          );
+        })}
+      </Form>
+    </div>
   );
 };
 const WrappedForm = Form.create()(FormContent);

@@ -63,6 +63,7 @@ const FormPreview = ({ params }) => {
             };
           });
           setColumns(cusColums);
+          setFormModel([...list]);
         }
       }
     });

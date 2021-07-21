@@ -64,12 +64,16 @@ export default function SelectAssignTable(props) {
   }
 
   // 选择对话框点击确定
-  function handSelectModalOk() {
+  function handSelectModalOk(typeStr) {
     let valueName = "";
     let value = "";
     for (const item of selectList) {
       valueName += item.name + ",";
-      value += item.id + ",";
+      if(typeStr === 'user'){
+        value += item.loginName + ",";
+      }else{
+        value += item.id + ",";
+      }
     }
     assignList[index].value = value.substring(0, value.length - 1);
     assignList[index].valueName = valueName.substring(0, valueName.length - 1);
@@ -221,7 +225,7 @@ export default function SelectAssignTable(props) {
       <Modal
         title={"选择" + typeName}
         visible={selectModalVisible}
-        onOk={handSelectModalOk}
+        onOk={() => handSelectModalOk(type)}
         onCancel={() => setSelectModalVisible(false)}
         width={1000}
         destroyOnClose

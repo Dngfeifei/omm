@@ -5,126 +5,120 @@ import { Table, Form, Input, Modal, message, Select, Button, Row, Popconfirm,Too
 
 const { confirm } = Modal;
 
+import {setComNode} from './assetsList.js'//获取页面渲染配置项
 
 // 引入 API接口
-import { } from '/api/systemParameter'
+import {getRiskList,getBaseData} from '/api/assets.js'
+
 
 // 正式服务区域---渲染
 class RiskInvestigation extends React.Component {
     constructor(props) {
+        console.log(props.baseData.configRisks);
         super(props)
         this.state = {
-            data: [
-                {
-                    1:"2323",
-                    2:"2323",
-                    3:"2323",
-                    4:"2323",
-                    5:"2323",
-                    6:"2323",
-                }
-            ], //数据包
-            selectedRowKeys:null,  //选中的table表格的id
+            data: props.baseData.configRisks ? [...props.baseData.configRisks] : [], //数据包
+            selectedRowKeys:null,  //选中的table表格的id,
+            selectData:{
+                rcSourceList:[]
+            }
         }
+        if(setComNode) setComNode('risk',this);
+        if(this.props.setSon) this.props.setSon(this);
     }
-
     // 数据更新完成时触发的函数
     componentWillMount() {
-        // this.initData(this.props.data)
-        console.log('风险排查加载')
+        // console.log('风险排查加载')
+        this.init()
+    }
+    //处理数据扁平化
+    sortData = (data) => {
+        if(data instanceof Array){
+            data.forEach((item,index) => {
+               data[index].rcId = item.riskConfigurationId,
+               data[index].rcName = item.riskConfigurationName;
+            })
+        }
+        return data;
+    }
+    //处理数据扁平化
+    sortData2 = (data1,data2) => {
+        if(data1 instanceof Array && data2 instanceof Array){
+            data1.forEach((item,index) => {
+                data2.forEach((item1,index1) =>{
+                    if((item.riskConfigurationId == item1.rcId)){
+                        data1[index] = {...item,...item1}
+                    }
+                })
+            })
+        }
+        return data1;
     }
     // 初始化
     init = () => {
-        this.columns = [
-            {
-                title: <div className="ant-form-item-required1">风险配置项</div>,
-                dataIndex: '1',
-                align:'center',
-                width:'100px',
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">设备分类</div>,
-                dataIndex: '2',
-                width:'100px',
-                align:'center',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'2',value)} />
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">收集方式</div>,
-                dataIndex: '3',
-                align:'center',
-                width:'100px',
-                render:(text,record,index) => {
-                    return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => this.onFormChange(index,'4',value)}>
-                                {
-                                    [].map((items, index) => {
-                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
-                                    })
-                                }
-                            </Select>
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">风险等级</div>,
-                dataIndex: '4',
-                align:'center',
-                editable: true,
-                width:'100px',
-                render:(text,record,index) => {
-                   return <Select style={{ width: '100%' }} value={text} placeholder="请选择" allowClear={true} disabled={false} onChange={(value) => this.onFormChange(index,'4',value)}>
-                                {
-                                    [].map((items, index) => {
-                                        return (<Option key={index} value={itemCode ? items[itemCode]:items.id} >{itemValue ? items[itemValue] : items.name}</Option>)
-                                    })
-                                }
-                            </Select>
+        const {roleWindow,searchListID} = this.props;
+        getRiskList({skillTypeId:searchListID}).then(res => {
+            if (res.success == 1) {
+                let {data} = this.state;
+                if(!roleWindow.roleModalType){
+                     //处理数据
+                    data = this.sortData(res.data);
+                }else{
+                    //处理数据
+                     data = this.sortData2(res.data,data);
                 }
-            },
-            {
-                title: <div className="ant-form-item-required1">建议值</div>,
-                dataIndex: '5',
-                align:'center',
-                width:'80px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'5',value)} />
-                },
-                editable: true,
-            },
-            {
-                title: <div className="ant-form-item-required1">备注</div>,
-                dataIndex: '7',
-                align:'center',
-                width:'280px',
-                render:(text,record,index) => {
-                    return <Input disabled={false} value={text} onChange={({target:{value}}) => this.onFormChange(index,'7',value)} />
-                },
-                editable: true,
+                
+                this.setState({data})
+            } else {
+                message.error(res.message)
             }
-        ]
+        })
+        //系统类别
+        getBaseData({basedataTypeCode:'crSource'}).then(res => {
+            if (res.success == 1) {
+                let {selectData} = this.state;
+                selectData = Object.assign({}, selectData, { rcSourceList: res.data});
+                this.setState({selectData})
+            } else {
+                message.error(res.message)
+            }
+        })
     }
     //表格表单写入
-    onFormChange = (index,type,value) => {
-        const {data} = this.state;
+    onFormChange = (index,type,value,select,option) => {
+        const {data} = this.state,item = option ? option.props.appitem : {};
         data[index][type] = value;
+        if(select == 'rcSource'){
+            data[index][select] = item.name
+        }else if(select == 'rcValue'){
+            data[index][select] = item.currentRiskName
+        }
         this.setState({data})
     }
+     //提交函数
+    onSubmit = () => {
+        const {data} = this.state;
+        //校验
+        for(let i of data){
+            if(!i.rcId || !i.rcName){
+                message.error('请检查风险排查信息是否填写正确,当前风险！');
+                return false;
+            }
+        }
+        return data;
+    }
     render() {
-        this.init()
+        // this.init()
         return (
             <div>
                 <Table
                     className="jxlTable"
                     onRow={this.onRow}
                     bordered
-                    rowKey={index => index}
+                    rowKey={(recode,index) => index}
                     // rowSelection={rowSelectionArea}  
                     dataSource={this.state.data}
-                    columns={this.columns}
+                    columns={this.props.panes.riskColumns}
                     scroll={{y:550}}
                     pagination={false}
                     size={'small'}

@@ -8,6 +8,12 @@ import Common from '/page/common.jsx'
 import ReactMkForming from '/page/ans/formmaking/lib/Container.jsx'
 import FormMeta from '/page/ans/formmaking/lib/FormMeta'
 import FormRelease from '/page/ans/formmaking/lib/FormRelease'
+import styled from '@emotion/styled'
+
+const SearchWrap = styled.div`
+  display: flex;
+  align-items: center;
+`
 
 class FormList extends Common {
   componentWillMount() {
@@ -104,7 +110,7 @@ class FormList extends Common {
     await this.setState({ loading: true, selected: {} })
     let search = Object.assign({}, this.state.search)
     search.pageSize = search.limit
-    search.pageNo = search.offset
+    search.pageNo = (search.offset/search.pageSize)+1
     return getFormList(search)
       .then(res => {
         let data = (f => f(f))(f => list => list.map(val => {
@@ -116,7 +122,7 @@ class FormList extends Common {
           loading: false,
           pagination: Object.assign({}, this.state.pagination, {
             total: res.page.count,
-            current: search.offset + 1
+            current: search.offset/search.pageSize + 1
           })
         })
       })
@@ -153,23 +159,38 @@ class FormList extends Common {
     })
   }
 
+  handleCloseModel = () => {
+    this.setState({formingVisible: false}, this.search)
+  }
+
+  handleReset = () => {
+    this.setState({
+      search: {
+        ...this.state.search,
+        name: ''
+      }
+    }, this.search)
+  }
+
   renderSearch = _ => (
     <div className="mgrSearchBar">
-      <div className="mb20 w200">
-
-        <Input.Search
-          width={200}
-          enterButton="搜索"
-          value={this.state.search.name}
-          onChange={e => this.setState({
-            search: {
-              ...this.state.search,
-              name: e.target.value,
-            }
-          })}
-          onSearch={() => { this.search() }}
-        />
-      </div>
+      <SearchWrap className="mb20">
+        <div className="w200">
+          <Input.Search
+            width={200}
+            enterButton="搜索"
+            value={this.state.search.name}
+            onChange={e => this.setState({
+              search: {
+                ...this.state.search,
+                name: e.target.value,
+              }
+            })}
+            onSearch={() => { this.search() }}
+          />
+        </div>
+        <Button onClick={this.handleReset} style={{marginLeft: 20}}>重置</Button>
+      </SearchWrap>
       <div className="mb20">
         <Button
           onClick={() => {
@@ -218,7 +239,7 @@ class FormList extends Common {
           width={window.innerWidth}
           className="form-edit-modal"
           footer={null}>
-          {this.state.formingVisible && <ReactMkForming hideModal={() => this.setState({ formingVisible: false })} id={this.state.editingId} />}
+          {this.state.formingVisible && <ReactMkForming hideModal={this.handleCloseModel} id={this.state.editingId} />}
         </Modal>
       </React.Fragment>
     )

@@ -4,10 +4,11 @@ import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Dat
 import TreeParant from "@/components/tree/index.jsx"
 
 
-import { GetAllocationTree, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,GetAllocationArea,GetAllocationCustomer,getAllBaseDataTypes} from '/api/assets.js'
+import { GetAllocationTree, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,getDetail,GetTablebasic} from '/api/assets.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
 import {panes,baseData,assetsListData} from './assetsList.js'//获取页面渲染配置项
+import {getParent} from '@/assets/js/publicMethod.js'//获取公共方法
 import '@/assets/less/pages/assets.less'
 //引入状态管理
 import { connect } from 'react-redux'
@@ -96,7 +97,7 @@ class assetsAllocation extends Component {
                
     
             },  
-            panes:{rules:[],columns:[],assetsListData:[],basicData:{columnsBasic:[]},subColumns:[]},      //基础显示数据
+            panes:{rules:[],columns:[],assetsListData:[],basicData:{columnsBasic:[],columnsDevice:[]},subColumns:[],riskColumns:[]},      //基础显示数据
             basedataTypeList:[],
             //资源树新增编辑参数数据 
             newRoleGroup: {
@@ -120,8 +121,9 @@ class assetsAllocation extends Component {
             //右侧查询表单参数
             searchRoleName: null,
             searchListID: null,
+            searchListIDCode: null, //判断是软件服务还是硬件服务 2 为硬件  1为软件
             searchListName: null,
-            basedataTypeId: null,
+            basedataTypeId: 'productType',
             basedataTypeName: null,
             TreeParantID:null,
             //表格选中项
@@ -136,47 +138,51 @@ class assetsAllocation extends Component {
             tabPane:[
                 {
                     name:'基本信息',
-                    child: require('./information.jsx').default
+                    child: require('./information.jsx').default,
+                    typeCode:['1','2'],
+                    errMessage:''
                 },
                 {
                     name:'部件信息',
-                    child: require('./component.jsx').default
+                    child: require('./component.jsx').default,
+                    typeCode:['2'],
+                    errMessage:'请填写部件信息信息！'
                 },
                 {
                     name:'风险排查',
-                    child: require('./riskInvestigation.jsx').default
+                    child: require('./riskInvestigation.jsx').default,
+                    typeCode:['1','2'],
+                    errMessage:'请填写风险排查信息！'
                 }
-            ]
+            ],
+            selectData:{
+                productLevelList:[],//区域下拉列表输入数据
+            },
+            detail:null
         }
     }
     //获取各组件所需参数并赋值
     getProps = (type) => {
-        const {roleWindow,baseData,tableSelectedInfo,searchListID,searchListName,basedataTypeId,basedataTypeName,panes} = this.state;
-        if(type == 0){
-            return {
-                baseData: roleWindow.roleModalType == 0 ? baseData : tableSelectedInfo[0],
-                roleWindow,
-                basedataTypeId,
-                panes,
-                basedataTypeName
-            }
-        }else if(type == 1){
-            return {
-                baseData: roleWindow.roleModalType == 0 ? baseData : tableSelectedInfo[0],
-                roleWindow,
-                basedataTypeId,
-                panes,
-                basedataTypeName
-            }
+        const {roleWindow,baseData,detail,searchListID,searchListName,basedataTypeId,basedataTypeName,panes} = this.state;
+        // console.log(detail,roleWindow.roleModalType == 0 ? baseData : detail ? detail : {})
+        return {
+            baseData: roleWindow.roleModalType == 0 ? baseData : detail ? detail : {},
+            roleWindow,
+            basedataTypeId,
+            searchListID,
+            panes,
+            basedataTypeName,
+            setSon: (el) => this[`son${type}`] = el
         }
     }
     SortTable = () => {
         setTimeout(() => {
+            // const {panes} = this.state,columns = panes.basicData.columnsBasic.concat(columnsBasic);
             let h = this.tableDom.clientHeight - 100 < 0 ? 120 : this.tableDom.clientHeight - 120 ;
-            console.log(h)
+            // console.log(h)
             this.setState({
                 h: {
-                    x:8300,
+                    x:4500,
                     y: (h)
                 }
             });
@@ -196,7 +202,15 @@ class assetsAllocation extends Component {
     }
     //初始化数据
     init = () => {
-
+        getBaseData({basedataTypeCode:'productLevel'}).then(res => {
+            if (res.success == 1) {
+                let {selectData} = this.state;
+                selectData = Object.assign({}, selectData, { productLevelList: res.data});
+                this.setState({selectData})
+            } else {
+                message.error(res.message)
+            }
+        })
     }
     //基础树结构数据查询
     searchTree = async (pass) => {
@@ -213,23 +227,28 @@ class assetsAllocation extends Component {
                     })
                     // this.generateList(res.data)
                     if (pass && res.data) {
-                        let pane = this.getClums(res.data[0]['id'],panes);
+                        let pane = this.getClums(res.data[0]['children'][0]['basedataTypeCode'],panes);
+                        //获取当前节点的父节点，判断其code
+                        let parentNodes = getParent(res.data,res.data[0]['children'][0]['id']);
+                        let searchListIDCode = parentNodes[parentNodes.length-1] ? parentNodes[parentNodes.length-1].code : null;
+                        
                         this.setState({
-                            searchListID: res.data[0]['id'],
-                            searchListName:res.data[0]['name'],
+                            // searchListID: res.data[0]['children'][0]['id'],
+                            searchListIDCode,
+                            searchListName:res.data[0]['children'][0]['name'],
                             panes:pane,
                             searchParmas: this.formatParmas(pane),
-                            TreeParantID: res.data[0]['parentId'],
-                            basedataTypeId: res.data[0]['basedataTypeId'],
-                            basedataTypeName: res.data[0]['basedataTypeName'],
-                            newRoleGroup:{
-                                treeSelect:res.data[0]['parentId'],
-                                newRoleGroupVal:null,
-                                newRoleGroupCode:null,
-                                newRoleGroupType:null
-                            }
+                            TreeParantID: res.data[0]['children'][0]['parentId'],
+                            basedataTypeId: res.data[0]['children'][0]['basedataTypeCode'],
+                            basedataTypeName: res.data[0]['children'][0]['basedataTypeName'],
+                            // newRoleGroup:{
+                            //     treeSelect:res.data[0]['children'][0]['parentId'],
+                            //     newRoleGroupVal:null,
+                            //     newRoleGroupCode:null,
+                            //     newRoleGroupType:null
+                            // }
                         },()=>{
-                            this.searchRoleFun(res.data[0]['id'])
+                           // this.searchRoleFun(res.data[0]['id'])
                         })
                     }
                 }
@@ -242,33 +261,56 @@ class assetsAllocation extends Component {
             message.warning('请先选中左侧角色组，然后再进行查询。');
             return
         }
-        // 2 发起查询请求 查询后结构给table赋值
-        let x = this.state.searchX?this.state.searchX:''
-        let params = pass ? Object.assign({},this.state.searchParmas, {parentId},{x},this.state.pageConf) : Object.assign({},this.state.searchParmas, {parentId},{x},this.state.pageConf, { offset: 0 })
-        GetAllocationTable(params).then(res => {
-            if (res.success == 1) {
-                let data = Object.assign({}, this.state.table, {
-                    rolesData:res.data.records ? res.data.records : []
-                })
-                let pagination = Object.assign({}, this.state.pagination, {
-                    total: res.data.total,
-                    pageSize: res.data.size,
-                    current: res.data.current,
-                })
-                let pageConf = Object.assign({}, this.state.pagination, {
-                    limit: res.data.size,
-                    offset: (res.data.current - 1) * 10,
-                })
-                this.setState({ table: data, pagination: pagination, pageConf: pageConf })
-            } else {
-                message.error(res.message)
+        this.props.form.validateFields((err, fieldsValue) => {
+            // console.log(this.state.baseData);
+            if (err) {
+                return;
             }
-
+            let newParams = {...fieldsValue}
+            // return console.log(newParams);
+            // 2 发起查询请求 查询后结构给table赋值
+            let x = this.state.searchX?this.state.searchX:'',{basedataTypeId} = this.state;
+            let params = pass ? Object.assign({},newParams, {basedataId:parentId},{parentId:-1},{x},this.state.pageConf) : Object.assign({},newParams, {basedataId:parentId},{parentId:-1},{x},this.state.pageConf, { offset: 0 })
+            if(basedataTypeId == 'productType'){
+                GetTablebasic(params).then(res => {
+                    this.setTableData(res)
+                })
+            }else{
+                GetAllocationTable(params,params.limit,params.offset).then(res => {
+                    this.setTableData(res)
+                })
+            }
         })
+        
+        
+    }
+    //根据不同接口返回设置表格数据显示
+    setTableData = (res) => {
+        if (res.success == 1) {
+            let data = Object.assign({}, this.state.table, {
+                rolesData:res.data.records ? res.data.records : []
+            })
+            let pagination = Object.assign({}, this.state.pagination, {
+                total: res.data.total,
+                pageSize: res.data.size,
+                current: res.data.current,
+            })
+            let pageConf = Object.assign({}, this.state.pagination, {
+                limit: res.data.size,
+                offset: (res.data.current - 1) * 10,
+            })
+            this.setState({ table: data, pagination: pagination, pageConf: pageConf })
+        } else {
+            message.error(res.message)
+        }
     }
     // 树选中后
     onTreeSelect = async (selectedKeys, info) => {
-        console.log(selectedKeys,info)
+        //获取当前节点的父节点，判断其code
+        let data = info.selectedNodes[0].props.dataRef
+        let parentNodes = getParent(this.state.tree.treeData,data['id']);
+        let searchListIDCode = parentNodes[parentNodes.length-1] ? parentNodes[parentNodes.length-1].code : null;
+        if(!parentNodes.length) return message.warning('该节点不可选！');
         if (!info.selected) {
             let table = Object.assign({}, this.state.table, { rolesData: [] })
             let pagination = Object.assign({}, this.state.pagination, {
@@ -286,15 +328,17 @@ class assetsAllocation extends Component {
             }})
             return
         }
-        let data = info.selectedNodes[0].props.dataRef
-        let pane = this.getClums(data['basedataTypeId'],panes)
+        
+        let pane = this.getClums(data['basedataTypeCode'],panes)
+        // console.log(searchListIDCode)
         this.setState({
             searchListID: data['id'],
+            searchListIDCode,
             panes:pane,
             searchParmas: this.formatParmas(pane),
             searchListName:data['name'],
             TreeParantID: data['parentId'],
-            basedataTypeId: data['basedataTypeId'],
+            basedataTypeId: data['basedataTypeCode'],
             basedataTypeName: data['basedataTypeName'],
             tableSelecteds: [],
             tableSelectedInfo: [],
@@ -353,8 +397,8 @@ class assetsAllocation extends Component {
         searchParmas[field] = value;
     }
     //打开新增、编辑、查看窗口
-    openModal = (roleModalType) => {
-        let {searchListID,selectData,basedataTypeId,basedataTypeName} = this.state,roleModalTitle = null;
+    openModal = async (roleModalType) => {
+        let {searchListID,searchListName,selectData} = this.state,roleModalTitle = null;
         // this.props.form.resetFields();
         if(roleModalType == 0){
             if (searchListID == "" || searchListID == null) {
@@ -369,7 +413,7 @@ class assetsAllocation extends Component {
                     roleModalTitle
                 },
                 selectData:{...selectData, productModeType:[], productLineType:[],productBrandType:[],productSkillType:[]},
-                baseData:{basedataTypeId,basedataTypeName}
+                baseData:{basedataId:searchListID,basedataName:searchListName}
             })
         }else{
             if (!this.state.tableSelectedInfo || this.state.tableSelectedInfo.length == 0) {
@@ -378,14 +422,17 @@ class assetsAllocation extends Component {
                 return
             }
             roleModalTitle = roleModalType == 1 ? "修改资产配置" : "查看资产配置";
-            // console.log(tableSelectedInfo)
-            // return
+            let detailRes = await getDetail(this.state.tableSelectedInfo[0].id),detail = {};
+            if(detailRes.success == 1){
+                detail = detailRes.data;
+            }
             this.setState({
                 roleWindow: {
                     roleModal: true,
                     roleModalType,
                     roleModalTitle
-                }
+                },
+                detail
             })
         }
     }
@@ -408,7 +455,7 @@ class assetsAllocation extends Component {
                 DelAllocationTable({ ids: [id] }).then(res => {
                     if (res.success == 1) {
                         _this.searchRoleFun(_this.state.searchListID)
-                        _this.searchTree()
+                        // _this.searchTree()
                         _this.setState({
                             tableSelecteds: [],
                             tableSelectedInfo: []
@@ -420,25 +467,41 @@ class assetsAllocation extends Component {
             }
         })
     }
+    //处理时间组件值格式化回传
+    setDateValue = (fieldsValue) => {
+        const {dateKeys} = this.son0.state,newDateParams = {};
+        dateKeys.forEach((item,index) => {
+            newDateParams[item] = fieldsValue[item] ? fieldsValue[item].format('YYYY-MM-DD'):undefined;
+        })
+        return newDateParams;
+    }
     // 新增/编辑数据保存
-    editRoleSave = async () => {
-        // 1 校验必填数据是否填写
-        this.props.form.validateFields((err, fieldsValue) => {
-            // console.log(this.state.baseData);
+    editRoleSave = () => {
+        const {tabPane,searchListIDCode} = this.state;
+        //基本信息表单验证完成后再进行其他模块验证
+        this.son0.props.form.validateFields((err, fieldsValue) => {
             if (err) {
+                message.error('基本信息填写不完整，请检查！')
                 return;
             }
-            let newParams = {...fieldsValue}
-        // 当前表单编辑类型（保存或修改或者查看）
-        let type = this.state.roleWindow.roleModalType
-        let {searchListID,searchListName} = this.state;
-        
-        if (!type) {
-            // 新增保存
+            //验证部件，风险提交数据
+            for(let i=1; i < tabPane.length; i++){
+                if(tabPane[i].typeCode.indexOf(searchListIDCode) > -1){
+                    if(this[`son${i}`]){
+                        if(!this.son1.onSubmit()) return false;
+                    }else{
+                        message.error(tabPane[i].errMessage)
+                        return;
+                    }
+                }
+            }
+            let newFieldsValue = this.setDateValue(fieldsValue),{searchListID} = this.state;
             let params = {
-                ...this.state.baseData,
-                parentId:searchListID,
-                ...newParams
+                ...this.son0.state.baseData,
+                ...fieldsValue,
+                ...newFieldsValue,
+                configParts:searchListIDCode == '1' ? [] : this.son1.onSubmit(),
+                configRisks:this.son2.onSubmit(),
             }
             // console.log(params)
             // return
@@ -452,49 +515,16 @@ class assetsAllocation extends Component {
                         },
                         tableSelecteds: [],
                         tableSelectedInfo: []
-                    },()=>{
-                        this.props.form.resetFields();
                     })
                     this.searchRoleFun(searchListID)
-                    this.searchTree()
+                    // this.searchTree()
                     message.success("操作成功")
                 } else {
                     message.error(res.message)
                 }
             })
-        } else {
-        //     {
-                // 修改保存
-                newParams = this.setEditPost(newParams);
-                let params = {
-                    ...this.state.tableSelectedInfo[0],
-                    ...newParams
-                }
-                
-                // console.log(params)
-                // return
-                EditAllocationTable(params).then(res => {
-                    if (res.success == 1) {
-                        this.setState({
-                            roleWindow: {
-                                roleModal: false,
-                                roleModalType: null, //0新增  1修改
-                                roleModalTitle: null
-                            },
-                            tableSelecteds: [],
-                            tableSelectedInfo: []
-                        },()=>{
-                            this.props.form.resetFields();
-                        })
-                       this.searchRoleFun(searchListID)
-                       this.searchTree()
-                        message.success("操作成功")
-                    } else {
-                        message.error(res.message)
-                    }
-                })
-            }
-         })
+        })
+       
     }
     //处理编辑修改后要提交的数据，下拉数据为空的，还原为空
     setEditPost = (newParams) => {
@@ -551,7 +581,7 @@ class assetsAllocation extends Component {
     getClums = (basedataTypeId,data) => {
         let newColumns = data[0];
         data.forEach((item,index) => {
-            if(item.type.indexOf(Number(basedataTypeId)) > -1){
+            if(item.type.indexOf(basedataTypeId) > -1){
                 newColumns = item;
             }
         })
@@ -632,7 +662,9 @@ class assetsAllocation extends Component {
           }
     }
     render = _ => {
-        const { h,panes } = this.state;
+        const { h,panes } = this.state,columns = panes.basicData.columnsBasic.concat(panes.basicData.columnsDevice);
+        const {getFieldDecorator} = this.props.form;
+        columns.length > 6 ? h.x = 4500 : h.x = 0;
         // const { getFieldDecorator } = this.props.form;
         // console.log(panes)
         // const baseData = this.getClums(panes);
@@ -648,54 +680,35 @@ class assetsAllocation extends Component {
                     <Form id="assetsForm" layout='inline' style={{ width: '100%' }}>
                         {/* <Row type="flex" style={{flexWrap:'nowrap'}}> */}
                         <Row>
-                        {/* {panes.rules.map((val, index) =>
-                            index <= 1 ? <FormItem
-                                label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                                {val.render()}
-                            </FormItem>:null)} */}
-                            {panes.rules.map((val, index) =>
-                            this.state.stretch ?
-                            <FormItem
-                                label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                                {val.render(this)}
-                            </FormItem>:<FormItem
-                                label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                                {val.render(this)}
-                            </FormItem>
-                            // <FormItem
-                            //     label={val.label} style={{ marginBottom: '5px' }} key={index}>
-                            //     {val.render(this)}
-                            // </FormItem> : index <= 1 ? <FormItem
-                            //     label={val.label} style={{ marginBottom: '5px' }} key={index}>
-                            //     {val.render(this)}
-                            // </FormItem>:null
-                            )}
+                        {panes.rules.map((val, index) =>
+                            index <= 1 ? <Col span={8}  key={index}><FormItem
+                                label={val.label} style={{ marginBottom: '8px' }}>
+                                {getFieldDecorator(val.key, val.option?val.option:{})(val.render(this))}
+                            </FormItem></Col>:null)}
                             {/* <div style={{flex:'auto',textAlign:'right'}}> */}
                                 <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
                                 <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
-                                {/* <span style={{ marginLeft: '10px',color:'#1890ff',fontSize:12}} onClick={this.setStretch}>{this.state.stretch ? '收起' : '展开'}</span> */}
+                                <span style={{ marginLeft: '10px',color:'#1890ff',fontSize:12}} onClick={this.setStretch}>{this.state.stretch ? '收起' : '展开'}</span>
                             {/* </div> */}
                         </Row>
-                        {/* {
+                        {
                             this.state.stretch ? <Row>
                             {panes.rules.map((val, index) =>
-                                index > 1 ? <FormItem
-                                    label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                                    {val.render()}
-                                </FormItem>:null)}
+                                index > 1 ? <Col span={8}  key={index}><FormItem
+                                    label={val.label} style={{ marginBottom: '8px' }}>
+                                    {getFieldDecorator(val.key, val.option?val.option:{})(val.render(this))}
+                                </FormItem></Col>:null)}
                             </Row> : null
-                        } */}
+                        }
                         <Row>
                             <Col span={4} style={{ textAlign: 'left'}}>
                                 {/* <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
                                 <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>*/}
                                 
                             </Col>
-                            <Col span={20} style={{ textAlign: 'right' }}>
+                            {this.state.basedataTypeId !== 'productType' ? <Col span={20} style={{ textAlign: 'right' }}>
+                            
                                 <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ClienttChange} showUploadList={false}>
-                                    {/* <Button style={{ marginRight: '10px' }}>
-                                        <Icon type="upload" /> 导入文件
-                                    </Button> */}
                                     <Button
                                         style={{ marginRight: '10px' }}
                                         type="primary"
@@ -709,12 +722,12 @@ class assetsAllocation extends Component {
                                 <Button type="primary" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(2)}>查看</Button>
                                 <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
                                 <Button type="info" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(1)}>修改</Button>
-                                <Button type="primary" onClick={(e) => this.openModal(0)}>新增</Button>
-                            </Col>
+                                <Button type="primary" onClick={(e) => this.openModal(0)}>新增</Button> 
+                            </Col>: null}
                         </Row>
                     </Form>
                     <div className="tableParson" style={{ flex: 'auto',height: 10 }} ref={(el) => this.tableDom = el}>
-                        <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.table.rolesData} columns={panes.columns} style={{ marginTop: '20px',maxHeight:'86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={h} size="small" />
+                        <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.table.rolesData} columns={columns} style={{ marginTop: '20px',maxHeight:'86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={h} size="small" />
                         <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                     </div>
                 </Col>
@@ -727,7 +740,8 @@ class assetsAllocation extends Component {
                 onCancel={_ => this.setState({
                     roleWindow: { roleModal: false },
                     tableSelecteds: [],
-                    tableSelectedInfo: []
+                    tableSelectedInfo: [],
+                    detail:null
                 })}
                 onOk={_ => this.editRoleSave()}
                 width={1200}
@@ -744,6 +758,9 @@ class assetsAllocation extends Component {
                         this.state.tabPane.map((item,index) => {
                             let Children = item.child;
                             const resetProps = this.getProps(index);
+                            if(item.typeCode.indexOf(this.state.searchListIDCode) == -1){
+                                return null;
+                            }
                             return (
                                 <TabPane tab={item.name} key={index}>
                                     <Children {...resetProps}></Children>
@@ -758,7 +775,8 @@ class assetsAllocation extends Component {
     }
 
 }
-export default assetsAllocation
+const assetsAllocations = Form.create()(assetsAllocation)
+export default assetsAllocations
 
 
 

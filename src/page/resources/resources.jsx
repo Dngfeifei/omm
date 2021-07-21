@@ -1,16 +1,27 @@
+/***
+ *  资料库--资源
+ * @auth yyp
+*/
 import React, { Component } from 'react'
-import { Tree, Input, Button, message, Select, Form, Row, Col, Modal, Card, Tooltip } from 'antd'
+import { Tree, Input, Button, message, Select, Form, Row, Col, Modal, Card, Tooltip, Icon } from 'antd'
 import { connect } from 'react-redux'
 import { GET_MENU } from '/redux/action'
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
+import IconsView from "./iconsView.jsx"
+
 import { GetResourceTree, AddResource, EditResource, DelResource, GetResourceInfo } from '/api/resources'
 import { GetDictInfo } from '/api/dictionary'
+
 const FormItem = Form.Item;
 const { Option } = Select
 const { TextArea } = Input
 const { confirm } = Modal;
+
+const MyIcon = Icon.createFromIconfontCN({
+	scriptUrl: '//at.alicdn.com/t/font_2410657_j8b1224bdw.js', // 在 iconfont.cn 上生成
+});
 
 const assignment = (data) => {
 	data.forEach((list, i) => {
@@ -126,6 +137,7 @@ class resources extends Component {
 					]
 				},
 				render: _ => <Select disabled={!this.state.editable}
+					onChange={this.handleSelectChange}
 					placeholder="请选择"
 				>
 					{this.state.resourceType.map(t => <Option key={t.itemCode} value={t.itemCode}>{t.itemValue}</Option>)}
@@ -167,6 +179,18 @@ class resources extends Component {
 				render: _ => <Input disabled />
 			},
 			{
+				label: '菜单图标',
+				key: 'icon',
+				render: () => {
+					let from = this.state.icon.slice(0, 1)
+					return <div>
+						{this.state.editable ? <Button onClick={_ => { this.setState({ isVisble: true }) }}>选择</Button> : ""}
+						{this.state.icon ? (from == 1 ? <Icon style={{ marginLeft: "18px" }} type={this.state.icon.slice(2)} /> : <MyIcon style={{ marginLeft: "18px" }} type={this.state.icon.slice(2)} />) : ""}
+					</div>
+
+				}
+			},
+			{
 				label: '备注',
 				key: 'description',
 				option: {
@@ -181,6 +205,9 @@ class resources extends Component {
 				render: _ => <TextArea autoSize={{ minRows: 4, maxRows: 6 }} disabled={!this.state.editable} />
 			}
 		],
+		icon: "",//当前资源图标字段
+		resourceCategoryId: "",//当前资源类型
+		isVisble: false
 	})
 	// 获取资源类型下拉框数据
 	getDictData = () => {
@@ -267,6 +294,10 @@ class resources extends Component {
 					this.props.form.setFields({ serialNumber: { value: item.serialNumber } })
 					this.props.form.setFields({ parentResourceName: { value: item.parentResourceName } })
 					this.props.form.setFields({ description: { value: item.description } })
+					this.setState({
+						icon: item.icon,
+						resourceCategoryId: item.resourceCategoryId
+					})
 				}
 			})
 	}
@@ -310,13 +341,6 @@ class resources extends Component {
 				})
 			}
 		}
-		// if(row.hasOwnProperty("c")){
-		// 	if( row.resourceCategoryId==4||row.resourceCategoryId==5){
-		// 		message.destroy()
-		// 		message.warning("外部链接和普通按钮下不能新建资源")
-		// 		return
-		// 	}
-		// }
 		let selected = this.state.selected.id;
 		//1 判断角色组tree是否有选中 如无选中提示无选中数据无法修改
 		if (selected == "" || selected == null) {
@@ -325,6 +349,7 @@ class resources extends Component {
 			return
 		}
 		this.setState({ type: 2, editable: true })
+		this.getTreeNodeInfo()
 	}
 	//删除按钮
 	delBtn = async_ => {
@@ -377,10 +402,10 @@ class resources extends Component {
 			if (!err || !Object.getOwnPropertyNames(err).length) {//校验完成执行的逻辑 获取合并后的表单数据
 				params = Object.assign({}, val)
 				if (this.state.type == 1) {
-					params = Object.assign({}, params, { parentResourceId: this.state.selected.id })
+					params = Object.assign({}, params, { parentResourceId: this.state.selected.id, icon: this.state.icon })
 					this.addSave(params)
 				} else {
-					params = Object.assign({}, params, { parentResourceId: this.state.selected.parentResourceId })
+					params = Object.assign({}, params, { parentResourceId: this.state.selected.parentResourceId, icon: this.state.icon })
 					this.editSave(params);
 				}
 			}
@@ -390,6 +415,10 @@ class resources extends Component {
 	//查询表单重置
 	reset = _ => {
 		this.props.form.resetFields()
+		this.setState({
+			icon: "",
+			resourceCategoryId: ""
+		})
 	}
 	//保存
 	save = _ => {
@@ -533,6 +562,25 @@ class resources extends Component {
 				})
 		}
 	}
+	// 资源类型变化 引起图标选择项是否显示
+	handleSelectChange = value => {
+		this.setState({
+			resourceCategoryId: value
+		})
+	};
+	//导航图标设置窗口确定后回调
+	onOK = (icon) => {
+		this.setState({
+			icon
+		})
+		this.onCancel()
+	}
+	//导航图标设置窗口确定后回调
+	onCancel = () => {
+		this.setState({
+			isVisble: false
+		})
+	}
 	render = _ => {
 		const { getFieldDecorator } = this.props.form
 		return (<div style={{ border: '0px solid red', background: ' #fff', height: '100%' }} >
@@ -552,8 +600,11 @@ class resources extends Component {
 
 							layout="horizontal"
 						>
-							{this.state.rules.map((val, index) =>
-								val.key == "description" ?
+							{this.state.rules.map((val, index) => {
+								if (val.key == "icon" && this.state.resourceCategoryId != "1") {
+									return ""
+								}
+								return val.key == "description" ?
 									<Col key={index} span={24} style={{ display: 'block' }}>
 										<FormItem
 											label={val.label} labelCol={{ span: 2 }} wrapperCol={{ span: 19 }}>
@@ -565,6 +616,7 @@ class resources extends Component {
 											{getFieldDecorator(val.key, val.option)(val.render())}
 										</FormItem>
 									</Col>
+							}
 							)}
 						</Form>
 
@@ -577,6 +629,7 @@ class resources extends Component {
 					</Row>
 				</Col>
 			</Row>
+			<IconsView icon={this.state.icon} visible={this.state.isVisble} onOk={this.onOK} onCancel={this.onCancel}></IconsView>
 		</div >)
 	}
 }

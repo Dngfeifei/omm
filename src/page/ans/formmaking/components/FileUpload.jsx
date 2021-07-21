@@ -1,8 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { Upload, Button, message } from 'antd'
 import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
-// const REMOTE_URL = 'http://152.136.121.201:8080/jeeplus-vue'
-const REMOTE_URL = ''
+import {REMOTE_URL} from '@/page/ans/config'
 
 const FileUpload = ({ control, formConfig, onChange }) => {
   const { options } = control;

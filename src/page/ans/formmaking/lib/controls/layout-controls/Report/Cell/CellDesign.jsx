@@ -7,7 +7,7 @@ import { cloneDeep } from 'lodash';
 import FormDesignContenxt from '@/page/ans/formmaking/lib/formDesignContext';
 import ColDraggable from './CellDesign/ColDraggable';
 
-import { MutationType } from '../utils.js';
+import { MutationType, isMutationDisabled } from '../utils.js';
 
 
 const ContentCls = css`
@@ -80,7 +80,7 @@ const overlayCls = css`
   }
 `;
 
-const CellDesign = ({ column, updateControl, rowIndex, columnIndex, onOperation }) => {
+const CellDesign = ({ rows, column, updateControl, rowIndex, columnIndex, onOperation }) => {
   const { state, dispatch } = useContext(FormDesignContenxt);
 
   const isSelected = useMemo(
@@ -127,26 +127,39 @@ const CellDesign = ({ column, updateControl, rowIndex, columnIndex, onOperation 
                   </OpItem>
 
                   <Divider style={{ margin: '4px auto' }} />
-                  <OpItem onClick={() => handleOp(MutationType.mergeRight)}>
+                  <OpItem
+                    onClick={() => handleOp(MutationType.mergeRight)}
+                    disabled={isMutationDisabled(rows, MutationType.mergeRight, rowIndex, columnIndex )}
+                  >
                     向右合并
                   </OpItem>
-                  <OpItem onClick={() => handleOp(MutationType.mergeDown)}>
+                  <OpItem
+                    onClick={() => handleOp(MutationType.mergeDown)}
+                    disabled={isMutationDisabled(rows, MutationType.mergeDown, rowIndex, columnIndex)}
+
+                    >
                     向下合并
                   </OpItem>
 
                   <Divider style={{ margin: '4px auto' }} />
-                  <OpItem onClick={() => handleOp(MutationType.splitRow)}>
+                  <OpItem
+                    onClick={() => handleOp(MutationType.splitRow)}
+                    disabled={isMutationDisabled(rows, MutationType.splitRow, rowIndex, columnIndex)}
+                  >
                     拆分成列
                   </OpItem>
-                  <OpItem onClick={() => handleOp(MutationType.splitColumn)}>
+                  <OpItem
+                    onClick={() => handleOp(MutationType.splitColumn)}
+                    disabled={isMutationDisabled(rows, MutationType.splitColumn, rowIndex, columnIndex)}
+                  >
                     拆分成行
                   </OpItem>
 
                   <Divider style={{ margin: '4px auto' }} />
-                  <OpItem onClick={() => handleOp(MutationType.deleteRow)}>
+                  <OpItem onClick={() => handleOp(MutationType.deleteColumn)}>
                     删除当前列
                   </OpItem>
-                  <OpItem onClick={() => handleOp(MutationType.deleteColumn)}>
+                  <OpItem onClick={() => handleOp(MutationType.deleteRow)}>
                     删除当前行
                   </OpItem>
                 </div>

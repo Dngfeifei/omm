@@ -65,6 +65,7 @@ const ReportDesign = ({
                   >
                     <CellDesign
                       column={column}
+                      rows={control.rows}
                       rowIndex={index}
                       columnIndex={colIndex}
                       updateControl={updateControl}

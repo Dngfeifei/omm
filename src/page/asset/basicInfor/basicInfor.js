@@ -77,84 +77,28 @@ export const baseData = {
 export const rules = {
     rules2:[
         {
-            label: '一级服务目录',
-            key: 'a',
-            render: _ => <Select  placeholder="请选择" allowClear={true}>
-                            {
-                                [].map((items, index) => {
-                                    return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
-                                })
-                            }
-                        </Select>
+            label: '名称',
+            key: 'name',
+            render: _this => <Input placeholder="请输入" />
         },
         {
-            label: '二级服务目录',
-            key: 'b',
-            render: _ => <Select  placeholder="请选择" allowClear={true}>
-                {
-                    [].map((items, index) => {
-                        return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
-                    })
-                }
-            </Select>
+            label: 'code',
+            key: '编码',
+            render: _this => <Input placeholder="请输入"/>
            
-        },{
-            label: '三级服务目录',
-            key: 'g',
-            render: _ => <Select  placeholder="请选择" allowClear={true}>
-                            {
-                                [].map((items, index) => {
-                                    return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
-                                })
-                            }
-                        </Select>
-        },{
-            label: '需求类型',
-            key: 'h',
-            render: _ => <Select  placeholder="请选择" allowClear={true}>
-                            {
-                                [].map((items, index) => {
-                                    return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
-                                })
-                            }
-                        </Select>
-        },{
-            label: '状态',
-            key: 'h',
-            render: _ => <Select  placeholder="请选择" allowClear={true}>
-                            {
-                                [].map((items, index) => {
-                                    return (<Option key={items.paramterName} value={items.paramterName}>{items.parameterValue}</Option>)
-                                })
-                            }
-                        </Select>
         }
     ],
     rules1:[
         {
-            label: '模糊查询',
-            key: 'x',
-            // render: _this => <Input placeholder="请输入查询条件" />
-            render: _this => {
-                const options = _this.state.searchData.map(d => <Option key={d}>{d}</Option>);
-                return <Select
-                    showSearch
-                    value={_this.state.searchX}
-                    placeholder="请输入查询"
-                    style={{minWidth:195}}
-                    defaultActiveFirstOption={false}
-                    allowClear
-                    showArrow={false}
-                    filterOption={false}
-                    onInputKeyDown={()=> _this.swich = true}
-                    onBlur={()=> _this.swich = false}
-                    onSearch={_this.handleSearch}
-                    onChange={_this.handleChange}
-                    notFoundContent={null}
-                >
-                    {options}
-                </Select>
-            }
+            label: '名称',
+            key: 'name',
+            render: _this => <Input placeholder="请输入" value={_this.state.searchName} onChange={({target:{value}}) => _this.handleChange('searchName',value)}/>
+        },
+        {
+            label: 'code',
+            key: '编码',
+            render: _this => <Input placeholder="请输入" value={_this.state.searchCode} onChange={({target:{value}}) => _this.handleChange('searchCode',value) } />
+           
         }
     ]
 }
@@ -163,26 +107,6 @@ export const assetsListData = [
     {
         type:[8,14,1,2,3,13],
         data:[
-            {
-                key:'basedataTypeId',
-                label:'数据类别',
-                span:12,
-                rules:[
-                    {
-                      required: true,
-                      message: '该选项不能为空！',
-                    },
-                  ],
-                render: (_this,disabled) =>{
-                    return <Select disabled={disabled}  placeholder="请选择" allowClear={true} onChange={_this.onChange}>
-                                {
-                                    _this.state.basedataTypeList.map((items, index) => {
-                                        return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
-                                    })
-                                }
-                            </Select>;
-                }
-            },
             {
                 key:'code',
                 label:'编码',
@@ -193,7 +117,7 @@ export const assetsListData = [
                       message: '该选项不能为空！',
                     },
                   ],
-                render: (_this,disabled) =>{
+                renderForm: (_this,disabled) =>{
                     return <Input disabled={disabled} placeholder="请输入" />;
                 }
             },
@@ -207,7 +131,7 @@ export const assetsListData = [
                       message: '该选项不能为空！',
                     },
                   ],
-                render: (_this,disabled) =>{
+                renderForm: (_this,disabled) =>{
                     return <Input disabled={disabled} placeholder="请输入" />;;
                 }
             },
@@ -221,7 +145,7 @@ export const assetsListData = [
                       message: '该选项不能为空！',
                     },
                   ],
-                render: (_this,disabled) =>{
+                renderForm: (_this,disabled) =>{
                     return <Input disabled={disabled} disabled placeholder="请输入" />;
                 }
             },
@@ -235,7 +159,7 @@ export const assetsListData = [
                       message: '该选项不能为空！',
                     },
                   ],
-                render: (_this,disabled) =>{
+                renderForm: (_this,disabled) =>{
                     return <Select disabled={disabled}  placeholder="请选择" allowClear={true}>
                                 <Option key="1" value="1">启动</Option>
                                 <Option key="0" value="0">废弃</Option>
@@ -243,8 +167,8 @@ export const assetsListData = [
                 }
             },
             {
-                key:'intValue1',
-                label:'产品等级',
+                key:'description',
+                label:'说明',
                 span:12,
                 rules:[
                     {
@@ -252,14 +176,8 @@ export const assetsListData = [
                       message: '该选项不能为空！',
                     },
                   ],
-                render: (_this,disabled) =>{
-                    return <Select disabled={disabled}  placeholder="请选择" allowClear={true}>
-                                {
-                                    _this.state.productLevel.map((items, index) => {
-                                        return (<Option key={items.id} value={items.id}>{items.name}</Option>)
-                                    })
-                                }
-                            </Select>;
+                renderForm: (_this,disabled) =>{
+                    return <Input disabled={disabled} placeholder="请输入" />;
                 }
             }
         ]
