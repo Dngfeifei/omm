@@ -290,9 +290,7 @@ class basicInfor extends Component {
                         } else {
                             let { basicInfor } = this.state
                             basicInfor.writeDept = res.data.records[0].orgFullName
-                            this.setState({ basicInfor },()=>{
-                                console.log(this.state.basicInfor,111)
-                            })
+                            this.setState({ basicInfor })
                         }
                     })
                 serviceWorkOrder().then(res => {
@@ -420,6 +418,10 @@ class basicInfor extends Component {
         //使用setsatte方法改变类中属性
         let data = Object.assign({}, basicInfor);
 
+        if (element == 'managerType' && value == "1") {
+            data["managerName"] = "";
+            data["managerPhone"] = "";
+        }
 
         // 判断是否是【手机号验证】
         if (element == 'salesmanPhone' || element == 'managerPhone') {
