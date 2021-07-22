@@ -3,6 +3,7 @@ import { Input, Select, Checkbox, Radio, Button } from 'antd';
 import { genTabsTab } from '@/page/ans/formmaking/lib/utils/genNewCtrl';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
 import TabSetting from './TabsSetting/TabSetting';
+import CustomerClassSetting from '@/page/ans/formmaking/components/CustomerClassSetting';
 
 const TabsSetting = ({ control, updateFormModel }) => {
   const { options } = control;

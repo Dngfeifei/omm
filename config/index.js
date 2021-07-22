@@ -21,7 +21,16 @@ var buildconfig = {
   bundleAnalyzerReport: process.env.npm_config_report
 }
 
-var target = { target: 'http://172.16.100.81/api/dat' }
+var target = {
+  target: 'http://172.16.100.81/api/dat',
+  headers: {
+    Connection: "keep-alive",
+    'Cache-Control': 'max-age=0',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36'
+  },
+  secure: false,
+  logLevel: 'debug'
+}
 // var target = {target: 'http://10.0.17.214:8111'}
 // var target = {target: 'http://localhost:8111'}
 
@@ -61,7 +70,6 @@ module.exports = {
       '/biProject': target, // 项目信息模块
       '/biCert': target, // 工程师信息---证书模块
       '/biCompany': target, // 工程师信息---公司列表
-      '/assess': target, // 工程师信息---专业能力、工作经验以及软技能
       '/biProjectArea': target, // 项目信息---服务区域
       '/biProjectMember': target, // 项目信息---项目组成员列表
       '/biCustContact': target, // 项目信息---客户技术联系人列表

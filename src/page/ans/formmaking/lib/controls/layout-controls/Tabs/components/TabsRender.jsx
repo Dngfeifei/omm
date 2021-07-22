@@ -25,24 +25,26 @@ const TabsRender = ({ control, form, formConfig }) => {
 
   return (
     <div>
-      <div className={resetCss}>
-        <Tabs
-          defaultActiveKey={defaultKey}
-          type={options.type}
-          tabPosition={options.tabPosition}
-          onChange={(key) => setDefaultKey(key)}
-        >
-          {tabs.map((item) => {
-            return (
-              <TabPane tab={item.label} key={item.name}>
-                <TabContentBox>
-                  <TabContent controls={item.list} form={form} />
-                </TabContentBox>
-              </TabPane>
-            );
-          })}
-        </Tabs>
-      </div>
+      {options.hidden ? null : (
+        <div className={resetCss}>
+          <Tabs
+            defaultActiveKey={defaultKey}
+            type={options.type}
+            tabPosition={options.tabPosition}
+            onChange={(key) => setDefaultKey(key)}
+          >
+            {tabs.map((item) => {
+              return (
+                <TabPane tab={item.label} key={item.name}>
+                  <TabContentBox>
+                    <TabContent controls={item.list} form={form} />
+                  </TabContentBox>
+                </TabPane>
+              );
+            })}
+          </Tabs>
+        </div>
+      )}
     </div>
   );
 };
