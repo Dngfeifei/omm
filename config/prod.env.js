@@ -1,5 +1,5 @@
 module.exports = {
   NODE_ENV: '"production"',
-  API_URL: '"http://211.159.177.165/api/pro/"',
+  API_URL: '"http://172.16.100.81/api/uat"',
   ENV_NAME:'"pro"'
 }
