@@ -384,8 +384,9 @@ class serviceArea extends React.Component {
                 title: <div className="ant-form-item-required">客户地址</div>,
                 dataIndex: 'address',
                 render:(text,record,index) => {
+                    console.log(text,index)
                     let node = this.setJurisdiction(this.props.isEdit,this.props.formRead,this.props.node);
-                    return <Input disabled={node} onChange={({target:{value}}) => this.onAreaChange(index,'address',value)} />
+                    return <Input disabled={node} value={text} onChange={({target:{value}}) => this.onAreaChange(index,'address',value)} />
                 },
                 editable: true,
             }
