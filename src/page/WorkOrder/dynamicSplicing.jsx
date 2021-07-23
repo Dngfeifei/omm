@@ -20,6 +20,7 @@ import FlowTimeLine from "@/page/WorkOrder/FlowTimeLine";
 import FlowStep from "@/page/WorkOrder/FlowStep";
 import TaskBackNodes from "@/page/WorkOrder/TaskBackNodes";
 import UserSelectDialog from "@/page/WorkOrder/UserSelectDialog";
+import {Assign} from "@/api/tools";
 
 
 
@@ -185,7 +186,6 @@ class DynamicSplicingPage extends Component {
     vars.title = this.props.params.dataType.record.processTitle // 标题
     vars.assignee = "" // 指定的下一步骤处理人
 
-
     await this.setState({
       auditForm: {
         type: currentBtn.code,  // 提交类型
@@ -257,7 +257,9 @@ class DynamicSplicingPage extends Component {
           taskDefKey: this.props.params.dataType.record.taskDefKey,
           procInsId: this.props.params.dataType.record.procInstId,
           procDefId: this.props.params.dataType.record.procDefId,
-          vars: vars,
+          "vats.assignee": vars.assign,
+          "vars.title": vars.title,
+          // vars: vars,
           "comment.message": this.state.auditForm.message,
           "comment.type": this.state.auditForm.type,
           "comment.status": this.state.auditForm.status,
