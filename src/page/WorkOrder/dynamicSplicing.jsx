@@ -15,11 +15,12 @@ import { hashHistory } from 'react-router'
 import loadable from '@loadable/component'
 
 
-import { HandleStartTask,GetFlowChart,DoStopAction,GetHistoricTaskList,QueryByDefIdAndTaskId,DoBackAction,DoAuditAction,GetBackNodes,DoTransferAction,DoDelegateAction } from '/api/initiate'
+import { SuspensionStateAction,HandleStartTask,GetFlowChart,DoStopAction,GetHistoricTaskList,QueryByDefIdAndTaskId,DoBackAction,DoAuditAction,GetBackNodes,DoTransferAction,DoDelegateAction } from '/api/initiate'
 import FlowTimeLine from "@/page/WorkOrder/FlowTimeLine";
 import FlowStep from "@/page/WorkOrder/FlowStep";
 import TaskBackNodes from "@/page/WorkOrder/TaskBackNodes";
 import UserSelectDialog from "@/page/WorkOrder/UserSelectDialog";
+import {Assign} from "@/api/tools";
 
 
 
@@ -59,7 +60,7 @@ class DynamicSplicingPage extends Component {
   }
 
   componentWillMount () {
-    console.info("this.props.params:::::::::::::::"+JSON.stringify(this.props.params))
+    // console.info("this.props.params:::::::::::::::"+JSON.stringify(this.props.params))
 
     let record = this.props.params.dataType.record;
 
@@ -185,7 +186,6 @@ class DynamicSplicingPage extends Component {
     vars.title = this.props.params.dataType.record.processTitle // 标题
     vars.assignee = "" // 指定的下一步骤处理人
 
-
     await this.setState({
       auditForm: {
         type: currentBtn.code,  // 提交类型
@@ -228,6 +228,9 @@ class DynamicSplicingPage extends Component {
       case '_flow_print':// 打印
         this.print()
         break
+      case '_flow_activation_pending':// 激活 or 挂起
+        this.activationPending()
+        break
       default:
         this.commit(vars) // 自定义按钮提交
     }
@@ -254,7 +257,9 @@ class DynamicSplicingPage extends Component {
           taskDefKey: this.props.params.dataType.record.taskDefKey,
           procInsId: this.props.params.dataType.record.procInstId,
           procDefId: this.props.params.dataType.record.procDefId,
-          vars: vars,
+          "vats.assignee": vars.assign,
+          "vars.title": vars.title,
+          // vars: vars,
           "comment.message": this.state.auditForm.message,
           "comment.type": this.state.auditForm.type,
           "comment.status": this.state.auditForm.status,
@@ -400,6 +405,41 @@ class DynamicSplicingPage extends Component {
     this.setState(config)
   }
 
+
+  
+  // 激活 or 挂起
+  activationPending = () =>  {
+    let {suspensionState} = this.props.params.dataType.record;
+    let suspensionString  = "";
+    
+    if(suspensionState){
+      suspensionString = "激活"
+    }else {
+      suspensionString = "挂起"
+    }
+    
+    var _this = this
+    confirm({
+      title: '提示',
+      content: '确定'+suspensionString+'流程吗？',
+      okText: '确定',
+      okType: 'warning',
+      cancelText: '取消',
+      onOk() {
+        SuspensionStateAction({
+                              defId: _this.props.params.dataType.record.procDefId,
+                              instId: _this.props.params.dataType.record.procInstId,
+                              taskId: _this.props.params.dataType.record.taskId,
+                              operate:suspensionState,
+                              }).then(data => {
+          message.success(data.msg)
+
+          _this.goInitialPage()
+        })
+      }
+    })
+  }
+  
   // 终止
   stop = () =>  {
     var _this = this
@@ -474,7 +514,8 @@ class DynamicSplicingPage extends Component {
   render = _ => {
 
     let {Imulation,loadButton,buttons} = this.state;
-
+    let { record } = this.props.params.dataType;
+    
     let buttonList = [];
     if (Object.keys(buttons).length >0 && loadButton) {
 
@@ -482,18 +523,21 @@ class DynamicSplicingPage extends Component {
 
         if(btn.isHide === '0'){
 
-          if(btn.code !== '_flow_print'){
+          if(btn.code === '_flow_activation_pending'){
+            if(record.suspensionState === true){
+              buttonList.push(<Button type="primary" style={{marginRight:"10px"}} key={index} onClick={() => this.submit(btn, buttons) }>激活</Button>)
+            }else if(record.suspensionState === false){
+              buttonList.push(<Button type="primary" style={{marginRight:"10px"}} key={index} onClick={() => this.submit(btn, buttons) }>挂起</Button>)
+            }
+          }else if(btn.code !== '_flow_print'){
             buttonList.push(<Button type="primary" style={{marginRight:"10px"}} key={index} onClick={() => this.submit(btn, buttons) }>{btn.name}</Button>)
-          }else {
+          }else if(btn.code === '_flow_print'){
             buttonList.push(<Button type="primary"  v-print="printObj" style={{marginRight:"10px"}} key={index} onClick={() => this.submit(btn, buttons)}>{btn.name}</Button>)
           }
 
         }
       })
     }
-
-
-    let { record } = this.props.params.dataType;
 
     return (
       <div className="jp-center">
