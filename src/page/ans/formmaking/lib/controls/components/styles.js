@@ -16,6 +16,7 @@ export const Label = styled.div`
   line-height: 32px;
   padding: 0 12px 0 0;
   box-sizing: border-box;
+  white-space: nowrap;
   > span{
     color: #f56c6c;
     margin-right: 2px;

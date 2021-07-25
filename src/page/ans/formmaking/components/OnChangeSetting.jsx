@@ -8,6 +8,9 @@ const OnChangeSetting = ({
 
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const [value, setValue] = useState(options.onChange)
+  useEffect(() => {
+    setValue(options.onChange)
+  }, [options])
 
   return (
     <React.Fragment>
