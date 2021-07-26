@@ -281,9 +281,13 @@ class Sqt extends Component {
         }
         //主表提交接口
          if (!this.props.config.formControl || (this.props.config.formControl.masterList.nodes && [2,3].indexOf(this.props.config.formControl.masterList.nodes) > -1) || (this.props.config.formControl.masterList.isEdit)) {
-            if (!this.vildteMasterList()) {
-                // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
-                return false;
+            if(this.props.config.formControl.masterList.nodes == 2 && (!paramsObj['managerName'] || !paramsObj['managerPhone'])){
+                message.error('项目经理信息为必填项，请检查！');
+            }else{
+                if (!this.vildteMasterList()) {
+                    // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
+                    return false;
+                }
             }
             // console.log(JSON.stringify(paramsObj))
             // return
@@ -306,11 +310,11 @@ class Sqt extends Component {
         //主表基本填写信息验证
         let slaNum = 0,{paramsObj,masterVildter} = this.state;
         for(var i of masterVildter){
-            console.log(i.special)
+            // console.log(i.special)
             if(i.special == '1' || (i.attribute == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i.attribute == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i.attribute == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i.attribute == 'managerName' && paramsObj['managerType'] == 1) || ((i.attribute == 'renewalName' || i.attribute == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
                 continue;
             }
-            if(paramsObj[i.attribute] == undefined || !(paramsObj[i.attribute] + '')){
+            if(paramsObj[i.attribute] === undefined || !(paramsObj[i.attribute] + '')){
                 console.log(i.attribute,paramsObj[i.attribute])
                 message.error(i.errorMeassge);
                 return false;
@@ -326,9 +330,10 @@ class Sqt extends Component {
             message.error('请保证主表服务承诺SLA等级有一条数据填写完整再进行提交！');
             return false;
         }
+        console.log(paramsObj['areaList'])
         //主表服务区域数据验证
         for(var h of paramsObj['areaList']){
-            if(!h.area || !h.isMainDutyArea || !h.address){
+            if(!h.area || (h.isMainDutyArea !== undefined && !h.isMainDutyArea.toString()) || !h.address){
                 message.warning('请先确保服务区域数据填写完整！')
                 return false;
             }

@@ -153,7 +153,7 @@ class basicInfor extends Component {
                 label: '项目经理',
                 key: 'managerName',
                 init: isSelfCreation,
-                special: this.props.node == 2 ? false : true,
+                special: this.props.node == 2 ? 2 : 3,
                 render: (isEdit, formRead, node, disaBled) => {
                     // console.log(this.setJurisdiction(isEdit, formRead, node, 2))
                     return this.setJurisdiction(isEdit, formRead, node, 2) ? <div style={{ position: 'absolute', backgroundColor: '#fafafa', cursor: ' no-drop', top: '0', left: '0', width: '100%', height: '48px', color: '#c4c4c4', display: 'flex', justifyContent: 'start', alignItems: 'center', padding: '8px 16px' }}>{this.state.basicInfor.managerName}</div> : (this.state.basicInfor.managerType == '1' && node !=2) ? <div style={{ position: 'absolute', backgroundColor: '#fafafa', cursor: ' no-drop', top: '0', left: '0', width: '100%', height: '48px', color: '#c4c4c4', display: 'flex', justifyContent: 'start', alignItems: 'center', padding: '8px 16px' }}>{this.state.basicInfor.managerName}</div>
@@ -163,7 +163,7 @@ class basicInfor extends Component {
                 label: '项目经理联系方式',
                 key: 'managerPhone',
                 init: isSelfCreation,
-                special: this.props.node == 2 ? false : true,
+                special: this.props.node == 2 ? 2 : 3,
                 render: (isEdit, formRead, node, disaBled) => {
                     // let a = this.props.node != 2 ? disaBled ? true : this.state.basicInfor.managerType == '1' ? false : true : false;
                     return <Input disabled={this.setJurisdiction(isEdit, formRead, node, 2) ? true : (this.state.basicInfor.managerType == '1' && node !=2) ? true : false} value={this.state.basicInfor.managerPhone} onChange={({ target: { value } }) => this.handleChange('managerPhone', value)} placeholder='根据项目经理所选进行带入' />
@@ -592,6 +592,11 @@ class basicInfor extends Component {
 
     //处理个lable显示是否必填
     setRequired = (disaBled, key, special) => {
+        if (special == 2) {   //单独对主责区域经理节点做处理可编辑项目经理
+            console.log(key)
+            return <span className='ant-form-item-required'>{key}</span>
+        }
+        //单独对主责区域经理节点做处理可编辑项目经理
         if (!disaBled && !special) {
             // return <span>{key}<span className='required'></span></span>
             return <span className='ant-form-item-required'>{key}</span>
