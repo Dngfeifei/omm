@@ -313,7 +313,7 @@ class assetsAllocation extends Component {
                                     })}
                                 </Select> )
         }else{
-            return (_this,disabled) => <Input disabled={disabled} disabled placeholder="请输入" />
+            return (_this,disabled) => <Input disabled={disabled} placeholder="请输入" />
         }
     }
     //处理获取到的扩展增量显示数据
@@ -322,9 +322,9 @@ class assetsAllocation extends Component {
         if(data instanceof Array){
             data.forEach((item,index) => {
                 let obj = {};
-                obj['title'] = obj['lable'] = item.fieldCn,
+                obj['title'] = obj['label'] = item.fieldCn,
                 obj['key'] = obj['dataIndex'] = item.fieldEn,
-                obj['isRequired'] = item.isRequired ? [{required: true,message: '该选项不能为空！'}] : [],
+                obj['rules'] = item.isRequired ? [{required: true,message: '该选项不能为空！'}] : [],
                 obj['renderForm'] = this.getFormCompent(item,index),
                 obj['index'] = `select${index}`,
                 obj['span'] = 12,
