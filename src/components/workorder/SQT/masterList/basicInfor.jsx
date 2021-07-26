@@ -154,8 +154,10 @@ class basicInfor extends Component {
                 key: 'managerName',
                 init: isSelfCreation,
                 special: this.props.node == 2 ? false : true,
-                render: (isEdit, formRead, node, disaBled) => this.setJurisdiction(isEdit, formRead, node, 2) ? <div style={{ position: 'absolute', backgroundColor: '#fafafa', cursor: ' no-drop', top: '0', left: '0', width: '100%', height: '48px', color: '#c4c4c4', display: 'flex', justifyContent: 'start', alignItems: 'center', padding: '8px 16px' }}>{this.state.basicInfor.managerName}</div> : this.state.basicInfor.managerType == '1' ? <div style={{ position: 'absolute', backgroundColor: '#fafafa', cursor: ' no-drop', top: '0', left: '0', width: '100%', height: '48px', color: '#c4c4c4', display: 'flex', justifyContent: 'start', alignItems: 'center', padding: '8px 16px' }}>{this.state.basicInfor.managerName}</div>
-                    : <span>{this.state.basicInfor.managerName}<Icon type="user" className="dateIcon" onClick={() => this.showUserManager('项目经理')} /></span>
+                render: (isEdit, formRead, node, disaBled) => {
+                    // console.log(this.setJurisdiction(isEdit, formRead, node, 2))
+                    return this.setJurisdiction(isEdit, formRead, node, 2) ? <div style={{ position: 'absolute', backgroundColor: '#fafafa', cursor: ' no-drop', top: '0', left: '0', width: '100%', height: '48px', color: '#c4c4c4', display: 'flex', justifyContent: 'start', alignItems: 'center', padding: '8px 16px' }}>{this.state.basicInfor.managerName}</div> : (this.state.basicInfor.managerType == '1' && node !=2) ? <div style={{ position: 'absolute', backgroundColor: '#fafafa', cursor: ' no-drop', top: '0', left: '0', width: '100%', height: '48px', color: '#c4c4c4', display: 'flex', justifyContent: 'start', alignItems: 'center', padding: '8px 16px' }}>{this.state.basicInfor.managerName}</div>
+                    : <span>{this.state.basicInfor.managerName}<Icon type="user" className="dateIcon" onClick={() => this.showUserManager('项目经理')} /></span>}
 
             }, {
                 label: '项目经理联系方式',
@@ -164,7 +166,7 @@ class basicInfor extends Component {
                 special: this.props.node == 2 ? false : true,
                 render: (isEdit, formRead, node, disaBled) => {
                     // let a = this.props.node != 2 ? disaBled ? true : this.state.basicInfor.managerType == '1' ? false : true : false;
-                    return <Input disabled={this.setJurisdiction(isEdit, formRead, node, 2) ? true : this.state.basicInfor.managerType == '1' ? true : false} value={this.state.basicInfor.managerPhone} onChange={({ target: { value } }) => this.handleChange('managerPhone', value)} placeholder='根据项目经理所选进行带入' />
+                    return <Input disabled={this.setJurisdiction(isEdit, formRead, node, 2) ? true : (this.state.basicInfor.managerType == '1' && node !=2) ? true : false} value={this.state.basicInfor.managerPhone} onChange={({ target: { value } }) => this.handleChange('managerPhone', value)} placeholder='根据项目经理所选进行带入' />
                 }
 
             }, {
@@ -601,6 +603,7 @@ class basicInfor extends Component {
         const { getFieldDecorator } = this.props.form;
         const { isEdit, formRead, node } = this.props;
         const disaBled = this.setJurisdiction(isEdit, formRead, node);
+        // console.log(this.setJurisdiction(isEdit, formRead, node, 2))
         return (
             <div className="BasicInfor">
                 {/* 基本信息--区域 */}

@@ -138,6 +138,7 @@ initData = (nextprops) => {
         // 进行【基本信息、服务区域、服务承诺】页面组件的赋值
         let basicInfor = this.setInfo(nextprops.paramsObj, this.state.basicInfor);
         let areaList = nextprops.paramsObj.areaList;
+        let accList = nextprops.paramsObj.accList;
         let performancePledge = this.setInfo(nextprops.paramsObj, this.state.performancePledge);
         
        
@@ -173,6 +174,7 @@ initData = (nextprops) => {
         this.setState({
             basicInfor,
             areaList,
+            accList,
             performancePledge: data,
             formRead: power.formRead,
             isEdit:!power.formControl.masterList.isEdit,

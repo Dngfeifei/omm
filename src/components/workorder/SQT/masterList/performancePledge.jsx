@@ -913,7 +913,7 @@ addMouseLeave = (record) => {
             };
         });
         // console.log(isEdit,formRead,node)
-         console.log(this.state.PerformanceData.isReceiveReport+'========'+this.state.PerformanceData.serviceMode)
+         console.log(this.state.serviceListRequireArray)
         
         return (
             <div className="performanceContent">
@@ -1036,7 +1036,7 @@ addMouseLeave = (record) => {
                         <Descriptions.Item label={this.setRequired(disaBled,"服务单要求")} span={1}>
                             <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceListRequire} onChange={(value) => this.inputChange('serviceListRequire', value)}>
                                 {
-                                    this.state.serviceListRequireArray.map((items, index) => {
+                                    this.state.serviceListRequireArray.map((items,index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
                                     })
                                 }
