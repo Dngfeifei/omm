@@ -373,7 +373,7 @@ class serviceArea extends React.Component {
                 // render: t => t == '1' ? '是' : '否',
                 render:(text,record,index)=>{
                     let parentedit = this.props.isEdit ? 0 : 1;
-                    return (<Radio.Group value={text} onChange={({target:{value}}) => this.onAreaChange(index,'isMainDutyArea',value)}>
+                    return (<Radio.Group value={text.toString()} onChange={({target:{value}}) => this.onAreaChange(index,'isMainDutyArea',value)}>
                         <Radio value='1' disabled={parentedit ? false : true}>是</Radio>
                         <Radio value='0' disabled={parentedit ? false : true}>否</Radio>
                     </Radio.Group>)
