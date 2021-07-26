@@ -74,9 +74,11 @@ const FormPreview = ({ params }) => {
   }, []);
 
   const handleSearch = (params) => {
-    let newParams = { ...requestParams };
-    if (params) newParams.params = JSON.stringify(params);
-    listGenerateForm(newParams).then((res) => {
+    if (params) {
+      setRequestParams(params)
+    }
+
+    listGenerateForm(params || requestParams).then((res) => {
       if (res.code === 200) {
         const { list, count } = res.page;
         setTotal(count);
@@ -160,7 +162,15 @@ const FormPreview = ({ params }) => {
     <div>
       <SearchTools
         searchCtrls={searchCtrls}
-        search={handleSearch}
+        search={values => {
+          var params = {
+            ...requestParams,
+            params: JSON.stringify(values),
+            pageNo: 1,
+            pageSize: 10,
+           }
+           handleSearch(params)
+        }}
       ></SearchTools>
       <div style={{ padding: 20 }}>
         <TableTool>
@@ -237,7 +247,6 @@ const FormPreview = ({ params }) => {
               pageSizeOptions: ['10', '20', '50', '100'],
               onChange: (page, pageSize) => {
                 const newParams = { ...requestParams, pageNo: page };
-                setRequestParams(newParams);
                 handleSearch(newParams);
               },
               onShowSizeChange: (current, size) => {
@@ -246,7 +255,6 @@ const FormPreview = ({ params }) => {
                   pageSize: size,
                   pageNo: 1,
                 };
-                setRequestParams(newParams);
                 handleSearch(newParams);
               },
             }}

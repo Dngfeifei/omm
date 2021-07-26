@@ -20,7 +20,7 @@ const SelectRender = ({ control, formConfig, inTable = false, onChange, isDesign
           <Select
             {...baseProps}
             value={options.value}
-            style={{ width: options.width }}
+            style={{ width: options.width, minWidth: 100 }}
           >
             {optionList.map((option, index) => {
               return (<Select.Option value={option.value} key={index}>{option.label}</Select.Option>)

@@ -21,7 +21,8 @@ const StyleSN = styled.div`
 const TableRender = ({ control, formConfig }) => {
   const { updateValue } = useContext(formRenderContext);
   const { options } = control
-  const { disabled } = formConfig
+  // const { disabled } = formConfig
+  const disabled = formConfig.disabled || control.options.disabled
 
 
   const [dataSource, setDataSource] = useState([])

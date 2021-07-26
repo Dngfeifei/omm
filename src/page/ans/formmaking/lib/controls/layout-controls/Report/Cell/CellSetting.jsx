@@ -3,6 +3,7 @@ import { Input, Switch, Select, Checkbox } from 'antd';
 import styled from '@emotion/styled';
 import { css } from '@emotion/css';
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx';
+import CustomerClassSetting from '@/page/ans/formmaking/components/CustomerClassSetting';
 
 const ColumnSetting = ({ control, updateFormModel }) => {
   const { options } = control;

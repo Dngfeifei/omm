@@ -52,13 +52,19 @@ export const DoAuditAction = (params = {}) =>
 export const DoStopAction = (params = {}) =>
 	http.fetchPost(REMOTE_URL + `	/flowable/process/stop`, params)
 
-// 执行终止动作
+// 执行转办动作
 export const DoTransferAction = (params = {}) =>
 	http.fetchPost(REMOTE_URL + `	/flowable/task/transfer`, params)
 
 // 执行委派动作
 export const DoDelegateAction = (params = {}) =>
 	http.fetchPost(REMOTE_URL + `	/flowable/task/delegate`, params)
+
+
+// 执行激活&挂起动作
+export const SuspensionStateAction = (params = {}) =>
+	http.fetchPost(REMOTE_URL + `	/flowable/task/suspensionStateAction`, params)
+
 
 
 	
