@@ -326,6 +326,7 @@ class assetsAllocation extends Component {
                 obj['isRequired'] = item.isRequired ? [{required: true,message: '该选项不能为空！'}] : [],
                 obj['renderForm'] = this.getFormCompent(item,index),
                 obj['index'] = `select${index}`,
+                obj['span'] = 12,
                 obj['align'] = 'center';
                 newData.push(obj);
             })
