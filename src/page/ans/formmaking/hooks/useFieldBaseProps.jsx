@@ -18,7 +18,11 @@ export default function useFieldBaseProps(
 
     if (control.options.onChange && typeof control.options.onChange === 'string') {
       window.global.value = value
-      window.eval(control.options.onChange)
+      try {
+        window.eval(control.options.onChange)
+      } catch (e) {
+
+      }
     }
   }
 

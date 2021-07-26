@@ -121,7 +121,7 @@ class FormList extends Common {
           tabledata: data,
           loading: false,
           pagination: Object.assign({}, this.state.pagination, {
-            total: res.page.count,
+            total: parseInt(res.page.count),
             current: search.offset/search.pageSize + 1
           })
         })
