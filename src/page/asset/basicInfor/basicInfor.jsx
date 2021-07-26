@@ -263,16 +263,17 @@ class assetsAllocation extends Component {
             }})
             return
         }
+        console.log(selectedKeys, info,'树结构点击生效')
         let data = info.selectedNodes[0].props.dataRef
-        let basedataTypeId =   await getChildType({basedataId:searchListID,type:lableType});
-        let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data.id})
+        let basedataTypeId =   await getChildType({basedataId:selectedKeys[0],type:lableType});
+        let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data ? basedataTypeId.data.id :''})
         // console.log(this.getIncrementFeild(incrementFeild.data))
         this.setState({
             searchListID: data['id'],
             searchListName:data['name'],
             TreeParantID: data['parentId'],
             basedataTypeId: data['basedataTypeId'],
-            basedataTypeIdSon: basedataTypeId.data.id,
+            basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id :'',
             basedataTypeName: data['basedataTypeName'],
             incrementFeild: this.getIncrementFeild(incrementFeild.data),
             tableSelecteds: [],
@@ -326,6 +327,7 @@ class assetsAllocation extends Component {
                 obj['isRequired'] = item.isRequired ? [{required: true,message: '该选项不能为空！'}] : [],
                 obj['renderForm'] = this.getFormCompent(item,index),
                 obj['index'] = `select${index}`,
+                obj['span'] = 12,
                 obj['align'] = 'center';
                 newData.push(obj);
             })
