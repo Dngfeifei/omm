@@ -283,6 +283,7 @@ class Sqt extends Component {
          if (!this.props.config.formControl || (this.props.config.formControl.masterList.nodes && [2,3].indexOf(this.props.config.formControl.masterList.nodes) > -1) || (this.props.config.formControl.masterList.isEdit)) {
             if(this.props.config.formControl && (this.props.config.formControl.masterList.nodes == 2 && (!paramsObj['managerName'] || !paramsObj['managerPhone']))){
                 message.error('项目经理信息为必填项，请检查！');
+                return false;
             }else{
                 if (!this.vildteMasterList()) {
                     // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
