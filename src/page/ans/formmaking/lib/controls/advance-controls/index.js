@@ -10,6 +10,7 @@ import Area from './Area'
 import Dict from './Dict'
 import Office from './Office'
 import User from './User'
+import Projitem from './Projitem'
 
 export default {
     ...Blank,
@@ -23,5 +24,6 @@ export default {
     ...Area,
     ...Dict,
     ...Office,
-    ...User
+    ...User,
+    ...Projitem
 }

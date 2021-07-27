@@ -1,6 +1,7 @@
 import { useMemo, useContext, useEffect } from 'react'
 import formRenderContext from '@/page/ans/formmaking/lib/FormRender/formRenderContext';
 import FormDesignContenxt from '@/page/ans/formmaking/lib/formDesignContext';
+import http from '/api/index'
 
 export default function useFieldBaseProps(
   control,
@@ -10,7 +11,6 @@ export default function useFieldBaseProps(
   onChange) {
   const { options } = control;
   const { state, updateValue, dispatch } = useContext(formRenderContext);
-  console.log(state);
   const changeFn = inTable ? onChange: updateValue
   const handleChange = evt => {
     const value = isDirectValue ? evt : evt.target.value
@@ -30,6 +30,7 @@ export default function useFieldBaseProps(
     if (!window.global) {
       window.global = {}
     }
+    window.global.http = http
     window.global.updateValue = changeFn
     window.global.updateControl = (newCtrl) => {
       state.formModel = state.formModel.map(ctrl => {
