@@ -82,8 +82,8 @@ export const rules = {
             render: _this => <Input placeholder="请输入" />
         },
         {
-            label: 'code',
-            key: '编码',
+            label: '编码',
+            key: 'code',
             render: _this => <Input placeholder="请输入"/>
            
         }
@@ -95,8 +95,8 @@ export const rules = {
             render: _this => <Input placeholder="请输入" value={_this.state.searchName} onChange={({target:{value}}) => _this.handleChange('searchName',value)}/>
         },
         {
-            label: 'code',
-            key: '编码',
+            label: '编码',
+            key: 'code',
             render: _this => <Input placeholder="请输入" value={_this.state.searchCode} onChange={({target:{value}}) => _this.handleChange('searchCode',value) } />
            
         }
