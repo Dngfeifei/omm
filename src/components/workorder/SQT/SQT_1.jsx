@@ -281,7 +281,7 @@ class Sqt extends Component {
         }
         //主表提交接口
          if (!this.props.config.formControl || (this.props.config.formControl.masterList.nodes && [2,3].indexOf(this.props.config.formControl.masterList.nodes) > -1) || (this.props.config.formControl.masterList.isEdit)) {
-            if(this.props.config.formControl.masterList.nodes == 2 && (!paramsObj['managerName'] || !paramsObj['managerPhone'])){
+            if(this.props.config.formControl && (this.props.config.formControl.masterList.nodes == 2 && (!paramsObj['managerName'] || !paramsObj['managerPhone']))){
                 message.error('项目经理信息为必填项，请检查！');
             }else{
                 if (!this.vildteMasterList()) {
