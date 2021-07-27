@@ -365,7 +365,6 @@ class assetsAllocation extends Component {
     // 表格数据查询
     onSearch = () => {
         let id = this.state.searchListID;
-        this.setState({searchX:undefined})
         this.searchRoleFun(id);
     }
     openModal = async (roleModalType) => {
@@ -596,6 +595,12 @@ class assetsAllocation extends Component {
         })
         return newColumns;
     }
+    //输入数据回填
+    handleChange = (type,value) => {
+        const obj = {};
+        obj[type] = value;
+        this.setState(obj);
+    };
     render = _ => {
         const { h,assetsList } = this.state;
         const { columns } = this.state.table;
