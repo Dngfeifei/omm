@@ -26,6 +26,7 @@ export const Label = styled.div`
 
 export const Space = styled.div`
   display: flex;
+  flex-wrap: wrap;
   flex-direction: ${props => {
     return props.control.options.inline ? 'row' : 'column'
   }};
