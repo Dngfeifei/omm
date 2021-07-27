@@ -85,7 +85,7 @@ export const generateChildCode = (params = {}) => {
 
 //获取下拉数据
 export const getByCode = (params = {}) => {
-	return http.fetchGet(`/sysDictItems/getByCode`,params)//?type=basedata
+	return http.fetchGet(`/basedata/getByCode`,params)//?type=basedata
 }
 
 //获取配置库基础数据表格数据

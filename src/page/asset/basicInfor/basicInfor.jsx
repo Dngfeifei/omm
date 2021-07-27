@@ -218,9 +218,9 @@ class assetsAllocation extends Component {
             return
         }
         // const fieldNames = this.state.rules['rules1'].map(item => item.key)
-        let name = this.state.searchName ? this.state.searchName : '',code = this.state.searchCode ? this.state.searchCode :'';
+        let name = this.state.searchName ? this.state.searchName : '',code = this.state.searchCode ? this.state.searchCode :'',{lableType} = this.state;
         // 2 发起查询请求 查询后结构给table赋值
-        let params = pass ? Object.assign({}, {name,code},{basedataId:parentId},this.state.pageConf) : Object.assign({}, {name,code}, {basedataId:parentId},this.state.pageConf, { offset: 0 })
+        let params = pass ? Object.assign({}, {name,code,type:lableType},{basedataId:parentId},this.state.pageConf) : Object.assign({}, {name,code,type:lableType}, {basedataId:parentId},this.state.pageConf, { offset: 0 })
         GetTable(params).then(res => {
             if (res.success == 1) {
                 let data = Object.assign({}, this.state.table, {
@@ -295,7 +295,7 @@ class assetsAllocation extends Component {
     //处理不同组件加载不同组件
     getFormCompent = (item,index) => {
         if(item.fieldType == 2){
-            getByCode({basedataTypeId: item.dictCode }).then(res => {
+            getByCode({code: item.dictCode }).then(res => {
                 let {selectData} = this.state,obj = {};
                 if (res.success == 1) {
                     obj[`select${index}`] = res.data ? res.data :[];
@@ -305,13 +305,16 @@ class assetsAllocation extends Component {
                 selectData = Object.assign({}, selectData,obj);
                 this.setState({ selectData});
             })
-            return (_this,disabled,index) => (<Select disabled={disabled}  placeholder="请选择" allowClear={true}>
-                                    {_this.state.selectData[`select${index}`] ? _this.state.selectData[`select${index}`].map((items, index) => {
-                                        return (<Option key={index} value={items.id}>{items.name}</Option>)
-                                    }) : [].map((items, index) => {
-                                        return (<Option key={index} value={items.id}>{items.name}</Option>)
-                                    })}
-                                </Select> )
+            return (_this,disabled,index) => {
+                console.log(_this.state.selectData,index)
+                return (<Select disabled={disabled}  placeholder="请选择" allowClear={true}>
+                            {_this.state.selectData[index] ? _this.state.selectData[index].map((items, index) => {
+                                return (<Option key={index} value={items.id}>{items.name}</Option>)
+                            }) : [].map((items, index) => {
+                                return (<Option key={index} value={items.id}>{items.name}</Option>)
+                            })}
+                        </Select> )
+            }
         }else{
             return (_this,disabled) => <Input disabled={disabled} placeholder="请输入" />
         }
@@ -580,8 +583,7 @@ class assetsAllocation extends Component {
      }
     //重置查询条件
     clearSearchprops = () => {
-        // this.props.form.resetFields(['searchName'])
-        this.setState({searchX:undefined});
+        this.setState({searchName:undefined,searchCode:undefined});
     }
     //设置显示表格内容
     getClums = (data) => {
@@ -594,46 +596,12 @@ class assetsAllocation extends Component {
         })
         return newColumns;
     }
-    swich = false
-
-    //联想查询数据切换
-    handleSearch = value => {
-        if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-        }
-        timeout = setTimeout(()=>{
-             console.log(value)
-            if (value) {
-                getBasicSearchData({x:value}).then(res =>{
-                    if (res.success != 1) {
-                        message.error("请求错误")
-                        this.setState({ searchData: [] });
-                        return
-                    }else{
-                        // let data = res.data.unshift(value)
-                        this.setState({searchData:res.data,searchX:value})
-                    }
-                });
-            }else if(value === '' && this.swich){
-                this.setState({searchData:[],searchX:undefined})
-            }else {
-                this.setState({ searchData: [] });
-            }
-        }, 300);
-    };
-    //联想输入输入数据回填
-    handleChange = (type,value) => {
-        let obj = {};
-        obj[type] = value;
-        this.setState(obj);
-    };
     render = _ => {
         const { h,assetsList } = this.state;
         const { columns } = this.state.table;
         const { getFieldDecorator } = this.props.form;
         const column = this.getClums(columns) ? this.getClums(columns).concat(this.state.incrementFeild) : [];
-        h.x = column.length > 8 ?  3400 : 0;
+        h.x = column.length > 9 ?  1400 : 0;
         const assetsLists = this.getClums(assetsList) ? this.getClums(assetsList) : [];
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%'}} >
             <Row gutter={24} className="main_height">
