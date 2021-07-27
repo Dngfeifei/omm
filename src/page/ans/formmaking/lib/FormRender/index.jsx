@@ -1,6 +1,5 @@
 import React, {
   useEffect,
-  useMemo,
   useReducer,
   useImperativeHandle,
   forwardRef,
@@ -109,6 +108,14 @@ const FormRender = forwardRef(({ formModel, formConfig }, ref) => {
   const updateValue = (field, value) => {
     dispatch({ type: 'update:form-value', payload: { field, value } });
   };
+
+  useEffect(() => {
+    dispatch({ type: 'update:form-model', payload: formModel})
+  }, [formModel])
+
+  useEffect(() => {
+    dispatch({ type: 'update:form-config', payload: formConfig})
+  }, [formConfig])
 
   return (
     <div>
