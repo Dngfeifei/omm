@@ -509,6 +509,7 @@ class basicInfor extends Component {
         // 新增一项【项目id--projectId】
         newBasicInfor['projectId'] = info.id;
         newBasicInfor['companyName'] = info.compayName;
+        newBasicInfor['writeDept'] = this.state.basicInfor.writeDept;
         this.setState({
             basicInfor: newBasicInfor
         }, () => {
