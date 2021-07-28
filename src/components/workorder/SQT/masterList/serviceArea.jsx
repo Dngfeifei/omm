@@ -306,9 +306,9 @@ class serviceArea extends React.Component {
        
     }
     //验证服务区域选择是否有重复
-    validationArea = (data,val) => {
-        for(let i of data){
-            if(i.area  == val.join('/')){
+    validationArea = (data,val,index) => {
+        for( let [ i, item ] of new Map( data.map( ( item, index ) => [ index, item ] ) ) ) {
+            if(i != index && item.area  == val.join('/')){
                 return false;
             }
         }
@@ -323,7 +323,7 @@ class serviceArea extends React.Component {
     //区域更改值并回传
     onAreaChange = (index,key,val) => {
         let {data} = this.state;
-        if(key == 'area' && !this.validationArea(data,val)){
+        if(key == 'area' && !this.validationArea(data,val,index)){
             message.warning('服务区域有重复，请重新选择！')
             return false;
         }
@@ -373,7 +373,7 @@ class serviceArea extends React.Component {
                 // render: t => t == '1' ? '是' : '否',
                 render:(text,record,index)=>{
                     let parentedit = this.props.isEdit ? 0 : 1;
-                    return (<Radio.Group value={text} onChange={({target:{value}}) => this.onAreaChange(index,'isMainDutyArea',value)}>
+                    return (<Radio.Group value={text.toString()} onChange={({target:{value}}) => this.onAreaChange(index,'isMainDutyArea',value)}>
                         <Radio value='1' disabled={parentedit ? false : true}>是</Radio>
                         <Radio value='0' disabled={parentedit ? false : true}>否</Radio>
                     </Radio.Group>)
@@ -384,8 +384,9 @@ class serviceArea extends React.Component {
                 title: <div className="ant-form-item-required">客户地址</div>,
                 dataIndex: 'address',
                 render:(text,record,index) => {
+                    console.log(text,index)
                     let node = this.setJurisdiction(this.props.isEdit,this.props.formRead,this.props.node);
-                    return <Input disabled={node} onChange={({target:{value}}) => this.onAreaChange(index,'address',value)} />
+                    return <Input disabled={node} value={text} onChange={({target:{value}}) => this.onAreaChange(index,'address',value)} />
                 },
                 editable: true,
             }

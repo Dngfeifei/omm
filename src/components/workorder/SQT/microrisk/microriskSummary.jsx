@@ -33,14 +33,7 @@ class MicroSum extends Component{
                 configTemplate:'',     //配置信息管理模板地址
                 venturnReportName:'',   //风险提示报告名称
                 venturnReport:'',        //风险提示报告地址
-                firstInspectReportNameList:[
-                    {
-                        uid:'23232',
-                        name:'xxx.txt',
-                        status:'done',
-                        url:'xxxxxx'
-                    }
-                ],
+                firstInspectReportNameList:[],
                 configTemplateNameList:[],
                 venturnReportNameList:[],
 

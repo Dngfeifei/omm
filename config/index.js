@@ -22,7 +22,6 @@ var buildconfig = {
 }
 
 var target = {
-  // target: 'http://localhost:8111',
   target: 'http://172.16.100.81/api/dat',
   headers: {
     Connection: "keep-alive",

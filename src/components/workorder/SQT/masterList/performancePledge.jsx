@@ -291,7 +291,9 @@ class performance extends Component {
                 dataIndex: 'trainMode',
                 // render: t => t == 'online' ? '线上' : '线下',
                 render:(text,record,index) => {
-                    return <Select style={{ width: '100%' }} placeholder="请选择" value={text} allowClear={true} onChange={(value) => this.trainChange(index,'trainMode',value)}>
+                    let {isEdit,formRead,node} = this.props;
+                    const disaBled = this.setJurisdiction(isEdit,formRead,node);
+                    return <Select disabled={disaBled} disabled={disaBled} style={{ width: '100%' }} placeholder="请选择" value={text} allowClear={true} onChange={(value) => this.trainChange(index,'trainMode',value)}>
                                 {
                                     this.state.trainModeArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -307,7 +309,9 @@ class performance extends Component {
                 dataIndex: 'trainTeachers',
                 // render: t => t == '1' ? '原厂' : t == '2' ? '合作方' : '我司提供培训',
                 render:(text,record,index) => {
-                    return <Select style={{ width: '100%' }} placeholder="请选择" value={text} allowClear={true} onChange={(value) => this.trainChange(index,'trainTeachers',value)}>
+                    let {isEdit,formRead,node} = this.props;
+                    const disaBled = this.setJurisdiction(isEdit,formRead,node);
+                    return <Select disabled={disaBled} style={{ width: '100%' }} placeholder="请选择" value={text} allowClear={true} onChange={(value) => this.trainChange(index,'trainTeachers',value)}>
                                 {
                                     this.state.trainTeachersArray.map((items, index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
@@ -322,7 +326,9 @@ class performance extends Component {
                 title: '课程方向',
                 dataIndex: 'courseDirection',
                 render:(text,record,index) => {
-                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'courseDirection',value)} />
+                    let {isEdit,formRead,node} = this.props;
+                    const disaBled = this.setJurisdiction(isEdit,formRead,node);
+                    return <Input disabled={disaBled} value={text} onChange={({target:{value}}) => this.trainChange(index,'courseDirection',value)} />
                 },
                 editable: true,
                 align:'center'
@@ -330,7 +336,9 @@ class performance extends Component {
                 title: '培训课程',
                 dataIndex: 'trainCourse',
                 render:(text,record,index) => {
-                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'trainCourse',value)} />
+                    let {isEdit,formRead,node} = this.props;
+                    const disaBled = this.setJurisdiction(isEdit,formRead,node);
+                    return <Input disabled={disaBled} value={text} onChange={({target:{value}}) => this.trainChange(index,'trainCourse',value)} />
                 },
                 editable: true,
                 align:'center'
@@ -338,7 +346,9 @@ class performance extends Component {
                 title: '培训人次',
                 dataIndex: 'oursePersonTimes',
                 render:(text,record,index) => {
-                    return <Input value={text} onChange={({target:{value}}) => this.trainChange(index,'oursePersonTimes',value)} />
+                    let {isEdit,formRead,node} = this.props;
+                    const disaBled = this.setJurisdiction(isEdit,formRead,node);
+                    return <Input disabled={disaBled} value={text} onChange={({target:{value}}) => this.trainChange(index,'oursePersonTimes',value)} />
                 },
                 editable: true,
                 align:'center'
@@ -913,7 +923,7 @@ addMouseLeave = (record) => {
             };
         });
         // console.log(isEdit,formRead,node)
-         console.log(this.state.PerformanceData.isReceiveReport+'========'+this.state.PerformanceData.serviceMode)
+         console.log(this.state.serviceListRequireArray)
         
         return (
             <div className="performanceContent">
@@ -1036,7 +1046,7 @@ addMouseLeave = (record) => {
                         <Descriptions.Item label={this.setRequired(disaBled,"服务单要求")} span={1}>
                             <Select disabled={disaBled ? true : false} style={{ width: '100%' }} placeholder="请选择服务单要求" allowClear={true} showSearch value={this.state.PerformanceData.serviceListRequire} onChange={(value) => this.inputChange('serviceListRequire', value)}>
                                 {
-                                    this.state.serviceListRequireArray.map((items, index) => {
+                                    this.state.serviceListRequireArray.map((items,index) => {
                                         return (<Option key={index} value={items.itemCode} >{items.itemValue}</Option>)
                                     })
                                 }

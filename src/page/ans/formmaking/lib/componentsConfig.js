@@ -821,31 +821,6 @@ export const advanceComponents = [
       isSearch: false,
     },
   },
-  {
-    type: 'projitem',
-    icon: 'icon fa fa-map',
-    dsId: '',
-    tableName: '',
-    primaryKey: '',
-    foreignKey: '',
-    options: {
-      defaultType: 'String',
-      customClass: '',
-      defaultValue: '',
-      placeholder: '',
-      width: '200px',
-      limit: 1,
-      labelWidth: 100,
-      isLabelWidth: false,
-      hidden: false,
-      dataBind: true,
-      required: false,
-      disabled: false,
-      isShow: true,
-      isSort: true,
-      isSearch: false,
-    },
-  },
 ];
 
 export const gridColumn = {

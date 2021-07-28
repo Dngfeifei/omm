@@ -193,8 +193,8 @@ class User extends Common {
 		let user = this.state.selected.selectedItems[0].userName
 		let _this = this
 		confirm({
-			title: '删除',
-			content: '确定要删除系统账号 ' + user + ' 吗？',
+			title: '启用',
+			content: '确定要启用系统账号 ' + user + ' 吗？',
 			okText: '确定',
 			okType: 'danger',
 			cancelText: '取消',
