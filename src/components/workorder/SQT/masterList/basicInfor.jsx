@@ -67,7 +67,7 @@ class basicInfor extends Component {
                 label: '填写部门',
                 key: 'writeDept',
                 init: true,
-                render: (isEdit, formRead, node, disaBled) => <Input disabled={ true } value={this.state.basicInfor.writeDept} onChange={({ target: { value } }) => this.handleChange('writeDept', value)} />
+                render: (isEdit, formRead, node, disaBled) => <Input disabled={ disaBled ? true : false } placeholder="根据项目号带入" value={this.state.basicInfor.writeDept} onChange={({ target: { value } }) => this.handleChange('writeDept', value)} />
             }, {
                 label: '项目类别',
                 key: 'projectType',
