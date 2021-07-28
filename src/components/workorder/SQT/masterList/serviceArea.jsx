@@ -306,9 +306,9 @@ class serviceArea extends React.Component {
        
     }
     //验证服务区域选择是否有重复
-    validationArea = (data,val) => {
-        for(let i of data){
-            if(i.area  == val.join('/')){
+    validationArea = (data,val,index) => {
+        for( let [ i, item ] of new Map( data.map( ( item, index ) => [ index, item ] ) ) ) {
+            if(i != index && item.area  == val.join('/')){
                 return false;
             }
         }
@@ -323,7 +323,7 @@ class serviceArea extends React.Component {
     //区域更改值并回传
     onAreaChange = (index,key,val) => {
         let {data} = this.state;
-        if(key == 'area' && !this.validationArea(data,val)){
+        if(key == 'area' && !this.validationArea(data,val,index)){
             message.warning('服务区域有重复，请重新选择！')
             return false;
         }
