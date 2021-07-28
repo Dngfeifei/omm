@@ -22,8 +22,8 @@ var buildconfig = {
 }
 
 var target = {
-  target: 'http://localhost:8111',
-  // target: 'http://172.16.100.81/api/dat',
+  // target: 'http://localhost:8111',
+  target: 'http://172.16.100.81/api/dat',
   headers: {
     Connection: "keep-alive",
     'Cache-Control': 'max-age=0',
@@ -39,7 +39,7 @@ module.exports = {
   build: buildconfig,
   dev: {
     env: require('./dev.env'),
-    port: 8112,
+    port: 8111,
     autoOpenBrowser: true,
     assetsSubDirectory: 'static',
     assetsPublicPath: '/',
