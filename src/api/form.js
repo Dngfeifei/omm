@@ -18,8 +18,8 @@ export const saveFormSourceMakeForm = (params) => http.fetchPost(REMOTE_URL + `/
 export const queryByIdMakeForm = (params) => http.fetchGet(REMOTE_URL + `/form/make/queryById`, params)
 
 export const listGenerateForm = (params) => http.fetchPost(REMOTE_URL + `/form/generate/list`, params)
-// 获得项目列表
-export const getProjitemList = (params) => http.fetchGet(REMOTE_URL + `/form/formOms/selectorProjitem`, params)
+
+export const getProjitemList = (params) => http.fetchGet(REMOTE_URL + `/form/formOms/selector`, params)
 
 export const getTableColumnList = (params) =>
   http.fetchGet(REMOTE_URL + `/form/make/getTableColumnList`, params);

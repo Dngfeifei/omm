@@ -32,8 +32,7 @@ export default {
                 report: '表格布局',
                 divider: '分割线',
                 html: 'HTML',
-                component: '自定义组件',
-                projitem: '项目',
+                component: '自定义组件'
             },
             basic: {
                 title: '基础字段',
