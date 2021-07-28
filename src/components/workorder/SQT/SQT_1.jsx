@@ -336,7 +336,7 @@ class Sqt extends Component {
             message.error('请保证主表服务承诺SLA等级有一条数据填写完整再进行提交！');
             return false;
         }
-        console.log(paramsObj['areaList'])
+        // console.log(paramsObj['areaList'])
         //主表服务区域数据验证
         for(var h of paramsObj['areaList']){
             if(h.isMainDutyArea == 1) areaNum++;
