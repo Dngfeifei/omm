@@ -113,7 +113,8 @@ class EditableCell extends React.Component {
                             rules: [
                                 {
                                     required: true,
-                                    message: `${title} 不能为空！`,
+                                    pattern:/^(\d+)([.][0-9]{0,2})?$/,
+                                    message: `${title} 不能为空且只能是数字且最多到小数点后两位！`,
                                 },
                             ],
                             initialValue: record[dataIndex],
@@ -248,7 +249,7 @@ class performance extends Component {
     componentWillReceiveProps (nextprops) {
         let {PerformanceData} = this.state;
         if(JSON.stringify(PerformanceData) == JSON.stringify(nextprops.data)) return false;
-        console.log(JSON.stringify(PerformanceData) == JSON.stringify(nextprops.data))
+        // console.log(JSON.stringify(PerformanceData) == JSON.stringify(nextprops.data))
 		this.initData(nextprops.data)
 	}
     //初始化服务承诺接收数据  @author  gl
@@ -923,7 +924,8 @@ addMouseLeave = (record) => {
             };
         });
         // console.log(isEdit,formRead,node)
-         console.log(this.state.serviceListRequireArray)
+        
+        //  console.log(disaBled ? true :/^(101|102)/.test(this.props.basicInfor.projectNumber) ? false : true,this.props.basicInfor.projectNumber)
         
         return (
             <div className="performanceContent">
@@ -1053,11 +1055,15 @@ addMouseLeave = (record) => {
                             </Select>
                         </Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(disaBled,"客户方模版")} span={2}>
-                            <div className="upload">
-                                <Upload disabled={disaBled ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ClienttChange} fileList={this.state.PerformanceData.clientFileList}>
-                                    <Icon type="upload" />上传
-                                </Upload>
-                            </div>
+                            {
+                                this.state.PerformanceData.serviceListRequire == 0 ?
+                                <div style={{position: 'absolute', backgroundColor: '#fafafa', cursor: ' no-drop', top: '0',bottom:0,left: 0,width:'100%'}}></div>:<div className="upload">
+                                        <Upload disabled={disaBled ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ClienttChange} fileList={this.state.PerformanceData.clientFileList}>
+                                            <Icon type="upload" />上传
+                                        </Upload>
+                                    </div>
+                            }
+                            
                         </Descriptions.Item>
                         <Descriptions.Item label={this.setRequired(disaBled,"合同承诺备机备件清单")} span={3}>
                             <div className="upload">
@@ -1101,7 +1107,7 @@ addMouseLeave = (record) => {
                                     <div className="timeRight">
                                         <div className="partsProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.originalSeriveType=='1'?true:false} onClick={ () => this.changeOriginaPartsRadio(1)} disabled={isEdit ? true :false}>部分项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.originalSeriveType=='1'?true:false} onClick={ () => this.changeOriginaPartsRadio(1)} disabled={isEdit ? true : /^(101|102)/.test(this.props.basicInfor.projectNumber) ? false : true}>部分项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
@@ -1120,7 +1126,7 @@ addMouseLeave = (record) => {
                                         </div>
                                         <div className="allProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={ this.state.PerformanceData.originalSeriveType=='2'?true:false} onClick={() => this.changeOriginaPartsRadio(2)} disabled={disaBled ? true : false}>全部项目周期</Radio> 
+                                                <Radio checked={ this.state.PerformanceData.originalSeriveType=='2'?true:false} onClick={() => this.changeOriginaPartsRadio(2)} disabled={disaBled ? true : /^(101|102)/.test(this.props.basicInfor.projectNumber) ? false : true}>全部项目周期</Radio> 
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
@@ -1150,7 +1156,7 @@ addMouseLeave = (record) => {
                                     <div className="timeRight">
                                     <div className="partsProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={ this.state.PerformanceData.ourcompServieType=='1' ? true : false} disabled={disaBled ? true :false} onClick={() => this.changeOriginaPartsRadio(3)}>部分项目周期</Radio>
+                                                <Radio checked={ this.state.PerformanceData.ourcompServieType=='1' ? true : false} disabled={disaBled ? true :/^(101|102)/.test(this.props.basicInfor.projectNumber) ? false : true} onClick={() => this.changeOriginaPartsRadio(3)}>部分项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>
@@ -1169,7 +1175,7 @@ addMouseLeave = (record) => {
                                         </div>
                                         <div className="allProject">
                                             <div className="title projectTitle">
-                                                <Radio checked={this.state.PerformanceData.ourcompServieType=='2'? true : false } disabled={disaBled ? true :false} onClick={() => this.changeOriginaPartsRadio(4)}>全部项目周期</Radio>
+                                                <Radio checked={this.state.PerformanceData.ourcompServieType=='2'? true : false } disabled={disaBled ? true :/^(101|102)/.test(this.props.basicInfor.projectNumber) ? false : true} onClick={() => this.changeOriginaPartsRadio(4)}>全部项目周期</Radio>
                                             </div>
                                             <div className="projectTime">
                                                 <Descriptions bordered column={1} size={'small'}>

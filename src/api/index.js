@@ -73,7 +73,7 @@ const handleRequest = (url, method, body = {}, json = false) => {
 	.catch(err => {
 		message.error('请求超时，请联系管理员！');
 		localStorage.clear();
-		window.resetStore();
+		if(window.resetStore) window.resetStore();
 		hashHistory.push('/login');
 		// console.error(new Error(`status: ${res.status}, statusText: ${res.statusText}`))
 	})
