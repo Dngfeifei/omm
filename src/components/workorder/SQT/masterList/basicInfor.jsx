@@ -10,7 +10,7 @@ import { Descriptions, Icon, Form, Input, Select, DatePicker, message } from 'an
 const { Option } = Select;
 const { MonthPicker, RangePicker, WeekPicker } = DatePicker;
 const dateFormat = 'YYYY-MM-DD';
-
+let timeout;
 
 // 引入---【项目选择器组件】
 import ProjectSelector from '/components/selector/projectSelector.jsx'
@@ -427,26 +427,36 @@ class basicInfor extends Component {
 
         // 判断是否是【手机号验证】
         if (element == 'salesmanPhone' || element == 'managerPhone') {
-            // console.log(value,basicInfor)
-            var regex = /^1(3|4|5|6|7|8|9)\d{9}$/;
-            // if (value) {
-            //react使用正则表达式变量的test方法进行校验，若是填写不正确就不将数据返回给父组件；否则 反之
-            if (!regex.test(value)) {
-                message.error('请输入正确的手机号码！');
-                this.setState({
-                    basicInfor: data
-                })
-            } else {
-                message.success('手机号码格式填写正确！');
-                this.setState({
-                    basicInfor: data
-                }, () => {
-                    // 向父组件传递更新后的对象集合
-                    this.props.onChangeInfo(this.state.basicInfor)
-
-                })
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
             }
-
+            timeout = setTimeout(()=>{
+                 // console.log(value,basicInfor)
+                var regex = /^1(3|4|5|6|7|8|9)\d{9}$/;
+                // if (value) {
+                //react使用正则表达式变量的test方法进行校验，若是填写不正确就不将数据返回给父组件；否则 反之
+                if (!regex.test(value)) {
+                    message.error('请输入正确的手机号码！');
+                    // this.setState({
+                    //     basicInfor: data
+                    // })
+                } else {
+                    // message.success('手机号码格式填写正确！');
+                    // this.setState({
+                    //     basicInfor: data
+                    // }, () => {
+                    //     // 向父组件传递更新后的对象集合
+                    //     this.props.onChangeInfo(this.state.basicInfor)
+                    // })
+                }
+            }, 300);
+            this.setState({
+                basicInfor: data
+            }, () => {
+                // 向父组件传递更新后的对象集合
+                this.props.onChangeInfo(this.state.basicInfor)
+            })
             // }    
         } else {
             this.setState({

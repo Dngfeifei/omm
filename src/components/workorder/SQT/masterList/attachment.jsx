@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { Row,Table, Icon, message, Select, Upload,Button} from 'antd';
+import { Row,Table, Icon, message, Select, Upload,Button,Modal} from 'antd';
 
 
 // 引入 API接口
@@ -10,6 +10,7 @@ import {getByCode} from '/api/systemParameter'
 import '/assets/less/pages/logBookTable.css'
 
 let {Option} = Select;
+const { confirm } = Modal;
 
 
 // 附件上传---渲染
@@ -169,18 +170,19 @@ class AttachmentTable extends React.Component {
 
     // 删除--系统参数（单个删除）
     handlerDelete=()=>{
+        console.log(this.state.selectedRowKeys)
         var _this = this
         if (this.state.selectedRowKeys) {
             confirm({
                 title: '删除',
-                content: '您确定删除此服务区域数据？',
+                content: '您确定删除此数据？',
                 okText: '确定',
                 okType: 'danger',
                 cancelText: '取消',
                 onOk() {
                     var ID = _this.state.selectedRowKeys[0]
                     const dataSource = [..._this.state.data];
-                    _this.setState({ data: dataSource.filter(item => item.key !== ID), editingKey: '',selectedRowKeys:null },()=>{
+                    _this.setState({ data: dataSource.filter((item,index) => index !== ID), editingKey: '',selectedRowKeys:null },()=>{
                         // console.log(_this.state)
                         _this.updataToParent();
                     });
@@ -202,11 +204,11 @@ class AttachmentTable extends React.Component {
         });
     }
     // 选中行时就选中单选框按钮
-    onRow = (record) => {
+    onRow = (record,index) => {
         return {
             onClick: () => {
                 // let selectedKeys = [record.id];
-                let selectedKeys = [record.key];
+                let selectedKeys = [index];
                 this.setState({
                     selectedRowKeys: selectedKeys,
                 })

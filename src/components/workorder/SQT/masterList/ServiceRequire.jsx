@@ -115,7 +115,7 @@ class servies extends Component {
     // }
     //@author  gl
     componentWillReceiveProps (nextprops) {
-        console.log(nextprops.power.sign == 1 && !nextprops.swich && this.state.swich)
+        // console.log(nextprops.power.sign == 1 && !nextprops.swich && this.state.swich)
        if(nextprops.power.sign == 1 && !nextprops.swich && this.state.swich){
             this.initData(nextprops)
             this.setState({swich:false})
@@ -229,7 +229,7 @@ setIsFirstInspection = (info,performancePledge)=>{
         }, () => {
             //向父组件【SQT页面】传递数据
             let {basicInfor,areaList,performancePledge,accList}=this.state
-            console.log(performancePledge)
+            // console.log(performancePledge)
             let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
             this.props.onChangeData(result);
         })
