@@ -22,31 +22,35 @@ const FormElements = () => {
         </ReactSortable>
       </div>
       <div className="widget-cate">{$t.fm.components.advance.title}</div>
-      <ReactSortable
-        tag="div"
-        group={{ name: 'formDesign', pull: 'clone', put: false }}
-        animation={200}
-        list={advanceComps}
-        sort={false}
-        setList={() => {}}
-      >
-        {advanceComps.map((item) => (
-          <MetaItem meta={item} key={item.type} />
-        ))}
-      </ReactSortable>
+      <div className="form-edit-widget-box">
+        <ReactSortable
+          tag="div"
+          group={{ name: 'formDesign', pull: 'clone', put: false }}
+          animation={200}
+          list={advanceComps}
+          sort={false}
+          setList={() => {}}
+        >
+          {advanceComps.map((item) => (
+            <MetaItem meta={item} key={item.type} />
+          ))}
+        </ReactSortable>
+      </div>
       <div className="widget-cate">{$t.fm.components.layout.title}</div>
-      <ReactSortable
-        tag="div"
-        group={{ name: 'formDesign', pull: 'clone', put: false }}
-        animation={200}
-        list={layoutComps}
-        sort={false}
-        setList={() => {}}
-      >
-        {layoutComps.map((item) => (
-          <MetaItem meta={item} key={item.type} />
-        ))}
-      </ReactSortable>
+      <div className="form-edit-widget-box">
+        <ReactSortable
+          tag="div"
+          group={{ name: 'formDesign', pull: 'clone', put: false }}
+          animation={200}
+          list={layoutComps}
+          sort={false}
+          setList={() => {}}
+        >
+          {layoutComps.map((item) => (
+            <MetaItem meta={item} key={item.type} />
+          ))}
+        </ReactSortable>
+      </div>
     </div>
   );
 };
