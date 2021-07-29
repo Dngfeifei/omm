@@ -1,7 +1,7 @@
 
 
 import React from 'react';
-import { Row,Table, Icon, message, Select, Upload,Button} from 'antd';
+import { Row,Table, Icon, message, Select, Upload,Button,Modal} from 'antd';
 
 
 // 引入 API接口
@@ -10,6 +10,7 @@ import {getByCode} from '/api/systemParameter'
 import '/assets/less/pages/logBookTable.css'
 
 let {Option} = Select;
+const { confirm } = Modal;
 
 
 // 附件上传---渲染
@@ -27,13 +28,12 @@ class AttachmentTable extends React.Component {
             columns : [
                 {
                     title: '附件类型',
-                    dataIndex: 'acc_type',
+                    dataIndex: 'accType',
                     width:200,
                     editable: true,
                     render: (value, row, index) => {
-                        return <Select disabled={props.edit} bordered={props.edit} style={{ width: "100%" }} value={value} onChange={(value) => this.onSelectContactType(value,index)}>
-                            {/* <Option key={index} value={"1"}>职级主管</Option>
-                            <Option key={index} value={"2"}>技术联系人</Option> */}
+                        let { isEdit,formRead,node} = this.props;
+                        return <Select disabled={this.setJurisdiction(isEdit,formRead,node)} bordered={props.edit} style={{ width: "100%" }} value={value} onChange={(value) => this.onSelectContactType(value,index)}>
                             {
                                 this.state.contractTypes.map((item) => {
                                     return <Option key={item.itemCode} index={index} value={item.itemCode}>{item.itemValue}</Option>
@@ -46,10 +46,10 @@ class AttachmentTable extends React.Component {
                     title: '上传附件',
                     dataIndex: 'upload',
                     render: (value, row, index) => {
-                        //  console.log(value)
+                        let { isEdit,formRead,node} = this.props;
                         //  let fileList = row['acc_name'] && row['acc_path'] ? [{ uid: index + '', name: row['acc_name'], status: 'done', url: row['acc_path'] }] : [];
                         return <div className="upload">
-                                <Upload disabled={this.props.isEdit ? true : false} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,index)} fileList={value}>
+                                <Upload disabled={this.setJurisdiction(isEdit,formRead,node)} {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={(info) => this.uploadChange(info,index)} fileList={value}>
                                     <Icon type="upload" />上传
                                 </Upload>
                             </div>
@@ -57,7 +57,7 @@ class AttachmentTable extends React.Component {
                    
                 }
             ],
-            data: this.props.data ? this.props.data : [{
+            data: props.data ? props.data : [{
                 key:'1',
                 contractType:1,
                 // uploadList: [{uid:111, url:'11111111',name:'xxx.txt'}]
@@ -82,10 +82,10 @@ class AttachmentTable extends React.Component {
     }
     //@author  gl
     componentWillReceiveProps (nextprops) {
+        this.setUpload(nextprops.data);
         this.initData(nextprops.data)
 	}
     initData = (data) => {
-        // this.setUpload(data);
         this.setState({
             data: data,
         })
@@ -93,7 +93,7 @@ class AttachmentTable extends React.Component {
     //处理数据
     setUpload = (data = []) => {
         data.forEach((item,index) => {
-            let upload = item['acc_name'] ? [{ uid: index + '', name: item['acc_name'], status: 'done', url: item['acc_path'] }] : []
+            let upload = item['accName'] ? [{ uid: index + '', name: item['accName'], status: 'done', url: item['accPath'] }] : []
             data[index].upload = upload;
         })
         return data;
@@ -129,7 +129,7 @@ class AttachmentTable extends React.Component {
     //附件类型
     onSelectContactType = (value,index) => {
         let {data} = this.state;
-        data[index]['acc_type'] = value;
+        data[index]['accType'] = value;
         this.setState({data},()=>{this.updataToParent()});
     }
     //附件上传过程函数
@@ -150,8 +150,8 @@ class AttachmentTable extends React.Component {
             return file;
         });
         let {data} = this.state;//Object.assign({}, this.state.data, {customerModelName:fileList[0] && fileList[0].status !='error' ? fileList[0].fileName:'',customerModelPath:fileList[0] && fileList[0].status !='error' ? fileList[0].fileUrl : '', clientFileList:fileList});
-        data[index]['acc_name'] = fileList[0] && fileList[0].status !='error' ? fileList[0].name:'';
-        data[index]['acc_path'] = fileList[0] && fileList[0].status !='error' ? fileList[0].url:'';
+        data[index]['accName'] = fileList[0] && fileList[0].status !='error' ? fileList[0].name:'';
+        data[index]['accPath'] = fileList[0] && fileList[0].status !='error' ? fileList[0].url:'';
         data[index]['upload'] = fileList;
         this.setState({data},()=>{this.updataToParent()});
     }
@@ -170,18 +170,19 @@ class AttachmentTable extends React.Component {
 
     // 删除--系统参数（单个删除）
     handlerDelete=()=>{
+        console.log(this.state.selectedRowKeys)
         var _this = this
         if (this.state.selectedRowKeys) {
             confirm({
                 title: '删除',
-                content: '您确定删除此服务区域数据？',
+                content: '您确定删除此数据？',
                 okText: '确定',
                 okType: 'danger',
                 cancelText: '取消',
                 onOk() {
                     var ID = _this.state.selectedRowKeys[0]
                     const dataSource = [..._this.state.data];
-                    _this.setState({ data: dataSource.filter(item => item.key !== ID), editingKey: '',selectedRowKeys:null },()=>{
+                    _this.setState({ data: dataSource.filter((item,index) => index !== ID), editingKey: '',selectedRowKeys:null },()=>{
                         // console.log(_this.state)
                         _this.updataToParent();
                     });
@@ -203,11 +204,11 @@ class AttachmentTable extends React.Component {
         });
     }
     // 选中行时就选中单选框按钮
-    onRow = (record) => {
+    onRow = (record,index) => {
         return {
             onClick: () => {
                 // let selectedKeys = [record.id];
-                let selectedKeys = [record.key];
+                let selectedKeys = [index];
                 this.setState({
                     selectedRowKeys: selectedKeys,
                 })

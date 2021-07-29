@@ -3,6 +3,12 @@ export default [
     "name": "山东",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "济南",
         "area": [
           "中区",
@@ -312,6 +318,12 @@ export default [
     "name": "河北",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "石家庄",
         "area": [
           "长安区",
@@ -544,6 +556,12 @@ export default [
     "name": "山西",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "太原",
         "area": [
           "小店区",
@@ -723,6 +741,12 @@ export default [
     "name": "内蒙古",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "呼和浩特",
         "area": [
           "新城区",
@@ -888,6 +912,12 @@ export default [
   {
     "name": "辽宁",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "沈阳",
         "area": [
@@ -1084,6 +1114,12 @@ export default [
     "name": "吉林",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "长春",
         "area": [
           "朝阳区",
@@ -1208,6 +1244,12 @@ export default [
   {
     "name": "黑龙江",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "哈尔滨",
         "area": [
@@ -1457,6 +1499,12 @@ export default [
     "name": "江苏",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "南京",
         "area": [
           "玄武区",
@@ -1652,6 +1700,12 @@ export default [
     "name": "浙江",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "杭州",
         "area": [
           "拱墅区",
@@ -1818,6 +1872,12 @@ export default [
   {
     "name": "安徽",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "合肥",
         "area": [
@@ -2037,6 +2097,12 @@ export default [
     "name": "福建",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "福州",
         "area": [
           "鼓楼区",
@@ -2186,6 +2252,12 @@ export default [
   {
     "name": "江西",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "南昌",
         "area": [
@@ -2362,6 +2434,12 @@ export default [
   {
     "name": "河南",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "郑州",
         "area": [
@@ -2641,6 +2719,12 @@ export default [
     "name": "湖北",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "武汉",
         "area": [
           "江岸区",
@@ -2851,6 +2935,12 @@ export default [
   {
     "name": "湖南",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "长沙",
         "area": [
@@ -3068,6 +3158,12 @@ export default [
   {
     "name": "广东",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "广州",
         "area": [
@@ -3326,6 +3422,12 @@ export default [
     "name": "广西",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "南宁",
         "area": [
           "青秀区",
@@ -3530,6 +3632,12 @@ export default [
     "name": "海南",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "海口",
         "area": [
           "龙华区",
@@ -3704,6 +3812,12 @@ export default [
   {
     "name": "四川",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "成都",
         "area": [
@@ -4023,6 +4137,12 @@ export default [
     "name": "贵州",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "贵阳",
         "area": [
           "南明区",
@@ -4175,6 +4295,12 @@ export default [
   {
     "name": "云南",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "昆明",
         "area": [
@@ -4412,6 +4538,12 @@ export default [
     "name": "西藏",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "拉萨",
         "area": [
           "城关区",
@@ -4537,6 +4669,12 @@ export default [
   {
     "name": "陕西",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "西安",
         "area": [
@@ -4715,6 +4853,12 @@ export default [
   {
     "name": "甘肃",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "兰州",
         "area": [
@@ -4898,6 +5042,12 @@ export default [
     "name": "青海",
     "city": [
       {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
+      {
         "name": "西宁",
         "area": [
           "城中区",
@@ -4999,6 +5149,12 @@ export default [
   {
     "name": "宁夏",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "银川",
         "area": [
@@ -5251,6 +5407,12 @@ export default [
   {
     "name": "台湾",
     "city": [
+      {
+        "name": "全部",
+        "area": [
+          "全部"
+        ]
+      },
       {
         "name": "台北",
         "area": [

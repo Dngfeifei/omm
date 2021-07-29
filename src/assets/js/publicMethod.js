@@ -115,7 +115,7 @@ export const getParent = (data,id) => {
         }
         if(i.children && i.children.length){
             let node = getParent(i.children,id)
-            return node.concat(i)
+            if(node) return node.concat(i)
         }
     } 
 }

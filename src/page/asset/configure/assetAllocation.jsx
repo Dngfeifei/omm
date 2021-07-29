@@ -4,7 +4,7 @@ import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, Dat
 import TreeParant from "@/components/tree/index.jsx"
 
 
-import { GetAllocationTree, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,getDetail,GetTable} from '/api/assets.js'
+import { GetAllocationTree, GetAllocationTable, AddAllocationTable, EditAllocationTable, DelAllocationTable,getBaseData,getAllocationSearchData,getDetail,GetTablebasic} from '/api/assets.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
 import {panes,baseData,assetsListData} from './assetsList.js'//获取页面渲染配置项
@@ -227,28 +227,28 @@ class assetsAllocation extends Component {
                     })
                     // this.generateList(res.data)
                     if (pass && res.data) {
-                        let pane = this.getClums(res.data[0]['basedataTypeCode'],panes);
+                        let pane = this.getClums(res.data[0]['children'][0]['basedataTypeCode'],panes);
                         //获取当前节点的父节点，判断其code
-                        let parentNodes = getParent(res.data,res.data[0]['id']);
+                        let parentNodes = getParent(res.data,res.data[0]['children'][0]['id']);
                         let searchListIDCode = parentNodes[parentNodes.length-1] ? parentNodes[parentNodes.length-1].code : null;
                         
                         this.setState({
-                            searchListID: res.data[0]['id'],
+                            // searchListID: res.data[0]['children'][0]['id'],
                             searchListIDCode,
-                            searchListName:res.data[0]['name'],
+                            searchListName:res.data[0]['children'][0]['name'],
                             panes:pane,
                             searchParmas: this.formatParmas(pane),
-                            TreeParantID: res.data[0]['parentId'],
-                            basedataTypeId: res.data[0]['basedataTypeCode'],
-                            basedataTypeName: res.data[0]['basedataTypeName'],
-                            newRoleGroup:{
-                                treeSelect:res.data[0]['parentId'],
-                                newRoleGroupVal:null,
-                                newRoleGroupCode:null,
-                                newRoleGroupType:null
-                            }
+                            TreeParantID: res.data[0]['children'][0]['parentId'],
+                            basedataTypeId: res.data[0]['children'][0]['basedataTypeCode'],
+                            basedataTypeName: res.data[0]['children'][0]['basedataTypeName'],
+                            // newRoleGroup:{
+                            //     treeSelect:res.data[0]['children'][0]['parentId'],
+                            //     newRoleGroupVal:null,
+                            //     newRoleGroupCode:null,
+                            //     newRoleGroupType:null
+                            // }
                         },()=>{
-                            this.searchRoleFun(res.data[0]['id'])
+                           // this.searchRoleFun(res.data[0]['id'])
                         })
                     }
                 }
@@ -270,9 +270,9 @@ class assetsAllocation extends Component {
             // return console.log(newParams);
             // 2 发起查询请求 查询后结构给table赋值
             let x = this.state.searchX?this.state.searchX:'',{basedataTypeId} = this.state;
-            let params = pass ? Object.assign({},newParams, {basedataId:parentId},{parentId},{x},this.state.pageConf) : Object.assign({},newParams, {basedataId:parentId},{parentId},{x},this.state.pageConf, { offset: 0 })
+            let params = pass ? Object.assign({},newParams, {basedataId:parentId},{parentId:-1},{x},this.state.pageConf) : Object.assign({},newParams, {basedataId:parentId},{parentId:-1},{x},this.state.pageConf, { offset: 0 })
             if(basedataTypeId == 'productType'){
-                GetTable(params).then(res => {
+                GetTablebasic(params).then(res => {
                     this.setTableData(res)
                 })
             }else{
@@ -306,7 +306,11 @@ class assetsAllocation extends Component {
     }
     // 树选中后
     onTreeSelect = async (selectedKeys, info) => {
-        // console.log(selectedKeys,info)
+        //获取当前节点的父节点，判断其code
+        let data = info.selectedNodes[0].props.dataRef
+        let parentNodes = getParent(this.state.tree.treeData,data['id']);
+        let searchListIDCode = parentNodes[parentNodes.length-1] ? parentNodes[parentNodes.length-1].code : null;
+        if(!parentNodes.length) return message.warning('该节点不可选！');
         if (!info.selected) {
             let table = Object.assign({}, this.state.table, { rolesData: [] })
             let pagination = Object.assign({}, this.state.pagination, {
@@ -324,11 +328,8 @@ class assetsAllocation extends Component {
             }})
             return
         }
-        let data = info.selectedNodes[0].props.dataRef
+        
         let pane = this.getClums(data['basedataTypeCode'],panes)
-        //获取当前节点的父节点，判断其code
-        let parentNodes = getParent(this.state.tree.treeData,data['id']);
-        let searchListIDCode = parentNodes[parentNodes.length-1] ? parentNodes[parentNodes.length-1].code : null;
         // console.log(searchListIDCode)
         this.setState({
             searchListID: data['id'],

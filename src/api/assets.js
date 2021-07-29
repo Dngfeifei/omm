@@ -66,13 +66,35 @@ export const getDetail = (id) => {
 
 
 
-//获取配置库基础数据树数据
+//获取配置库基础数据等树数据
 export const GetBasicTree = (params = {}) => {
 	return http.fetchGet(`/basedata/tree`,params)//?type=basedata
 }
+//新增时获取配置库基础数据等数据类别
+export const getChildType = (params = {}) => {
+	return http.fetchGet(`/basedata/getChildType`,params)//?type=basedata
+}
+//扩展字段获取
+export const getMeta = (params = {}) => {
+	return http.fetchGet(`/basedataMeta/getMeta`,params)//?type=basedata
+}
+//基础数据、服务目录、风险排查->新增的时候，预先获取子节点编码
+export const generateChildCode = (params = {}) => {
+	return http.fetchGet(`/basedata/generateChildCode`,params)//?type=basedata
+}
+
+//获取下拉数据
+export const getByCode = (params = {}) => {
+	return http.fetchGet(`/basedata/getByCode`,params)//?type=basedata
+}
+
 //获取配置库基础数据表格数据
 export const GetTable = (params = {}) => {
-	return http.fetchGet(`/basedata/list`, params)
+	return http.fetchGet(`/basedata/queryBasedataList`, params)
+}
+//获取配置库基础数据表格数据-配置管理 硬件服务 软件服务使用
+export const GetTablebasic = (params = {}) => {
+	return http.fetchGet(`/biConfiguration/list`, params)
 }
 //配置库基础数据新增
 export const AddTable = (params = {}) => {
