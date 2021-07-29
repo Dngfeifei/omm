@@ -93,7 +93,7 @@ class basicInfor extends Component {
                 label: '服务类别',
                 key: 'serviceTypeName',
                 init: isSelfCreation,
-                render: (isEdit, formRead, node, disaBled) => <Select disabled={true} placeholder='根据项目号进行带入' style={{ width: '100%' }} placeholder="请选择" allowClear={true} value={isNaN(this.state.basicInfor.serviceType) ? this.state.basicInfor.serviceType : this.state.basicInfor.serviceType + ''} onChange={(value) => this.handleChange('serviceType', value)}>
+                render: (isEdit, formRead, node, disaBled) => <Select disabled={true} placeholder='根据项目号进行带入' style={{ width: '100%' }} allowClear={true} value={isNaN(this.state.basicInfor.serviceType) ? this.state.basicInfor.serviceType : this.state.basicInfor.serviceType + ''} onChange={(value) => this.handleChange('serviceType', value)}>
                     {
                         this.state.ServiceTypeArray.map((items, index) => {
                             return (<Option key={index} value={items.itemCode}>{items.itemValue}</Option>)
@@ -137,7 +137,7 @@ class basicInfor extends Component {
                 label: '销售联系方式',
                 key: 'salesmanPhone',
                 init: isSelfCreation,
-                render: (isEdit, formRead, node, disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.salesmanPhone} onChange={({ target: { value } }) => this.handleChange('salesmanPhone', value)} placeholder='根据项目销售进行带入' />
+                render: (isEdit, formRead, node, disaBled) => <Input disabled={disaBled ? true : false} value={this.state.basicInfor.salesmanPhone} onChange={({ target: { value } }) => this.handleChange('salesmanPhone', value)} onBlur={this.handleBlur} placeholder='根据项目销售进行带入' />
             }, {
                 label: '项目经理类型',
                 key: 'managerType',
@@ -166,7 +166,7 @@ class basicInfor extends Component {
                 special: this.props.node == 2 ? 2 : 3,
                 render: (isEdit, formRead, node, disaBled) => {
                     // let a = this.props.node != 2 ? disaBled ? true : this.state.basicInfor.managerType == '1' ? false : true : false;
-                    return <Input disabled={this.setJurisdiction(isEdit, formRead, node, 2) ? true : (this.state.basicInfor.managerType == '1' && node !=2) ? true : false} value={this.state.basicInfor.managerPhone} onChange={({ target: { value } }) => this.handleChange('managerPhone', value)} placeholder='根据项目经理所选进行带入' />
+                    return <Input disabled={this.setJurisdiction(isEdit, formRead, node, 2) ? true : (this.state.basicInfor.managerType == '1' && node !=2) ? true : false} value={this.state.basicInfor.managerPhone} onChange={({ target: { value } }) => this.handleChange('managerPhone', value)} onBlur={this.handleBlur} placeholder='根据项目经理所选进行带入' />
                 }
 
             }, {
@@ -411,8 +411,14 @@ class basicInfor extends Component {
         }
         return newData
     };
-
-
+    //联系方式输入失去焦点的时候验证电话格式
+    handleBlur = ({target:{value}}) => {
+        console.log(value)
+        let regex = /^1(3|4|5|6|7|8|9)\d{9}$/;
+        if (!regex.test(value)) {
+            message.error('请输入正确的手机号码！');
+        }
+    }
     // 所有【select下拉框、input输入框】onchange事件
     handleChange = (element, value) => {
         var { basicInfor } = this.state;
@@ -424,49 +430,13 @@ class basicInfor extends Component {
             data["managerName"] = "";
             data["managerPhone"] = "";
         }
+        this.setState({
+            basicInfor: data
+        }, () => {
+            // 向父组件传递更新后的对象集合
+            this.props.onChangeInfo(this.state.basicInfor)
 
-        // 判断是否是【手机号验证】
-        if (element == 'salesmanPhone' || element == 'managerPhone') {
-            if (timeout) {
-                clearTimeout(timeout);
-                timeout = null;
-            }
-            timeout = setTimeout(()=>{
-                 // console.log(value,basicInfor)
-                var regex = /^1(3|4|5|6|7|8|9)\d{9}$/;
-                // if (value) {
-                //react使用正则表达式变量的test方法进行校验，若是填写不正确就不将数据返回给父组件；否则 反之
-                if (!regex.test(value)) {
-                    message.error('请输入正确的手机号码！');
-                    // this.setState({
-                    //     basicInfor: data
-                    // })
-                } else {
-                    // message.success('手机号码格式填写正确！');
-                    // this.setState({
-                    //     basicInfor: data
-                    // }, () => {
-                    //     // 向父组件传递更新后的对象集合
-                    //     this.props.onChangeInfo(this.state.basicInfor)
-                    // })
-                }
-            }, 300);
-            this.setState({
-                basicInfor: data
-            }, () => {
-                // 向父组件传递更新后的对象集合
-                this.props.onChangeInfo(this.state.basicInfor)
-            })
-            // }    
-        } else {
-            this.setState({
-                basicInfor: data
-            }, () => {
-                // 向父组件传递更新后的对象集合
-                this.props.onChangeInfo(this.state.basicInfor)
-
-            })
-        }
+        })
 
     }
 

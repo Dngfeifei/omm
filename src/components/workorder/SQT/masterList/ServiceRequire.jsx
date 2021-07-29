@@ -34,7 +34,7 @@ class servies extends Component {
             projectType: '1', //项目类别
             projectNumber: '请选择',//项目号
             projectName: '',//项目名称
-            serviceType: '',//服务类别
+            serviceType: undefined,//服务类别
             custNum: '',//客户编码
             custName: '',//客户名称
             industry: '',//所属行业
