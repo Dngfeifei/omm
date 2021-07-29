@@ -198,7 +198,7 @@ class assetsAllocation extends Component {
                         searchListName:res.data[0]['name'],
                         TreeParantID: res.data[0]['parentId'],
                         basedataTypeId: res.data[0]['basedataTypeId'],
-                        basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id : '',
+                        basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id : '', 
                         basedataTypeIdSonName: basedataTypeId.data ? basedataTypeId.data.basedataTypeName : '数据',
                         basedataTypeName: res.data[0]['basedataTypeName'],
                         incrementFeild:this.getIncrementFeild(incrementFeild.data),
