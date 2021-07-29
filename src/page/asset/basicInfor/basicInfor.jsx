@@ -142,7 +142,9 @@ class assetsAllocation extends Component {
             selectData:{},              //动态扩展字段下拉框数据
             //标签类型 基础数据 "basedata"  服务目录"serviceClass"  配置项"configuration" 部件"part" 风险排查"risk"
             lableType: props.params.pathParam.split('?')[1] ? props.params.pathParam.split('?')[1] :'',
-            incrementFeilds:[]
+            incrementFeilds:[],
+            basedataTypeIdSon:null, //当前选中节点子节点basedataTypeId
+            basedataTypeIdSonName:null //当前选中节点子节点Name
         }
     }
     SortTable = () => {
@@ -196,7 +198,8 @@ class assetsAllocation extends Component {
                         searchListName:res.data[0]['name'],
                         TreeParantID: res.data[0]['parentId'],
                         basedataTypeId: res.data[0]['basedataTypeId'],
-                        basedataTypeIdSon: basedataTypeId.data.id,
+                        basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id : '', 
+                        basedataTypeIdSonName: basedataTypeId.data ? basedataTypeId.data.basedataTypeName : '数据',
                         basedataTypeName: res.data[0]['basedataTypeName'],
                         incrementFeild:this.getIncrementFeild(incrementFeild.data),
                         newRoleGroup:{
@@ -302,6 +305,7 @@ class assetsAllocation extends Component {
             TreeParantID: data['parentId'],
             basedataTypeId: data['basedataTypeId'],
             basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id :'',
+            basedataTypeIdSonName: basedataTypeId.data ? basedataTypeId.data.basedataTypeName : '数据',
             basedataTypeName: data['basedataTypeName'],
             incrementFeild: this.getIncrementFeild(incrementFeild.data),
             tableSelecteds: [],
@@ -408,13 +412,13 @@ class assetsAllocation extends Component {
         this.searchRoleFun(-1);
     }
     openModal = async (roleModalType) => {
-        let {searchListID,searchListName,basedataTypeIdSon,tableSelectedInfo,baseData,lableType} = this.state,roleModalTitle = null;
+        let {searchListID,basedataTypeIdSonName,basedataTypeIdSon,tableSelectedInfo,baseData,lableType} = this.state,roleModalTitle = null;
         if(roleModalType == 0){
             if (searchListID == "" || searchListID == null) {
                 message.warning('请先选中左侧树节点！');
                 return
             }
-            roleModalTitle = `新增-${searchListName}`;
+            roleModalTitle = `新增-${basedataTypeIdSonName}`;
             let code = (lableType == 'basedata' || lableType == 'serviceClass' || lableType == 'risk' || lableType == 'part') && await generateChildCode({basedataId:searchListID,type:lableType});
             baseData = Object.assign({}, baseData, { code:code.data ? code.data : '',basedataTypeId:basedataTypeIdSon});
             this.setState({
@@ -432,7 +436,7 @@ class assetsAllocation extends Component {
                 message.warning("没有选中数据,无法进行修改!")
                 return
             }
-            roleModalTitle = roleModalType == 1 ? `修改-${searchListName}` : `查看-${searchListName}`;
+            roleModalTitle = roleModalType == 1 ? `修改-${basedataTypeIdSonName}` : `查看-${basedataTypeIdSonName}`;
             this.setState({
                 roleWindow: {
                     roleModal: true,
