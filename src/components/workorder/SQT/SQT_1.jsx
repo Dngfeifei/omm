@@ -246,7 +246,7 @@ class Sqt extends Component {
 
     // 定义方法,
     getChildrenData = (dat) => {
-        console.log(dat)
+        // console.log(dat)
         if((this.props.config.sign == 1 && !this.state.swich) || !this.props.config.sign){
             const {paramsObj} = this.state;
             this.setState({
@@ -280,10 +280,15 @@ class Sqt extends Component {
               }
         }
         //主表提交接口
-         if (!this.props.config.formControl || (this.props.config.formControl.masterList.nodes && [2,3].indexOf(this.props.config.formControl.masterList.nodes)) || (this.props.config.formControl.masterList.isEdit)) {
-            if (!this.vildteMasterList()) {
-                // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
+         if (!this.props.config.formControl || (this.props.config.formControl.masterList.nodes && [2,3].indexOf(this.props.config.formControl.masterList.nodes) > -1) || (this.props.config.formControl.masterList.isEdit)) {
+            if(this.props.config.formControl && (this.props.config.formControl.masterList.nodes == 2 && (!paramsObj['managerName'] || !paramsObj['managerPhone']))){
+                message.error('项目经理信息为必填项，请检查！');
                 return false;
+            }else{
+                if (!this.vildteMasterList()) {
+                    // message.error('主表信息填写不完整，请检查！(基本区域和服务承诺为必填项)')
+                    return false;
+                }
             }
             // console.log(JSON.stringify(paramsObj))
             // return
@@ -304,13 +309,13 @@ class Sqt extends Component {
     //验证主表信息是否填写完整
     vildteMasterList = () => {
         //主表基本填写信息验证
-        let slaNum = 0,{paramsObj,masterVildter} = this.state;
+        let slaNum = 0,slaReg = /^(\d+)([.][0-9]{0,2})?$/,{paramsObj,masterVildter} = this.state,areaNum = 0;
         for(var i of masterVildter){
-            console.log(i.special)
+            // console.log(i.special)
             if(i.special == '1' || (i.attribute == 'notCollectReason' && paramsObj['isCollectConfig'] == 1) || (i.attribute == 'leagueBuildName' && paramsObj['isLeagueBuild'] == 0) || (i.attribute == 'finalCustName' && paramsObj['isSubcontract'] == 0) || (i.attribute == 'managerName' && paramsObj['managerType'] == 1) || ((i.attribute == 'renewalName' || i.attribute == 'renewalNumber') && paramsObj['isRenewal'] == 0 )){
                 continue;
             }
-            if(!(paramsObj[i.attribute]+'')){
+            if(paramsObj[i.attribute] === undefined || !(paramsObj[i.attribute] + '')){
                 console.log(i.attribute,paramsObj[i.attribute])
                 message.error(i.errorMeassge);
                 return false;
@@ -321,9 +326,27 @@ class Sqt extends Component {
             if((j.engineerArriveTime +'') && (j.respondTime +'') && (j.solveTime +'') && (j.spareArriveTime +'')){
                 slaNum++;
             }
+            // console.log(!slaReg.test(j.engineerArriveTime),!slaReg.test(j.respondTime),!slaReg.test(j.solveTime),slaReg.test(j.spareArriveTime))
+            if(!slaReg.test(Number(j.engineerArriveTime)) || !slaReg.test(Number(j.respondTime))|| !slaReg.test(Number(j.solveTime))|| !slaReg.test(Number(j.spareArriveTime))){
+                message.error('SLA等级时间填写必须为数字且最多保留两位小数！');
+                return false;
+            }
         }
         if(slaNum < 1){
             message.error('请保证主表服务承诺SLA等级有一条数据填写完整再进行提交！');
+            return false;
+        }
+        // console.log(paramsObj['areaList'])
+        //主表服务区域数据验证
+        for(var h of paramsObj['areaList']){
+            if(h.isMainDutyArea == 1) areaNum++;
+            if(!h.area || (h.isMainDutyArea !== undefined && !h.isMainDutyArea.toString()) || !h.address){
+                message.warning('请先确保服务区域数据填写完整！')
+                return false;
+            }
+        }
+        if(areaNum != 1){
+            message.error('服务区域数据必须且只能选择一项为主责区域！');
             return false;
         }
         return true;
@@ -355,7 +378,7 @@ class Sqt extends Component {
         const microRiskSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('microRiskSummary') > -1) ? true : false;
         const reservationService = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('reservationService') > -1) ? true : false;
         const reservationServiceSummary = (this.props.config.formControl &&  this.props.config.formControl.action.indexOf('reservationServiceSummary') > -1) ? true : false;
-        console.log(this.props.config);
+        // console.log(this.props.config);
         return (
             <div className="SqtContent">
                 <Tabs defaultActiveKey="0" tabPosition={'top'} style={{ overflowY:'auto' }}>
