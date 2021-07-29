@@ -82,8 +82,8 @@ export const rules = {
             render: _this => <Input placeholder="请输入" />
         },
         {
-            label: 'code',
-            key: '编码',
+            label: '编码',
+            key: 'code',
             render: _this => <Input placeholder="请输入"/>
            
         }
@@ -95,8 +95,8 @@ export const rules = {
             render: _this => <Input placeholder="请输入" value={_this.state.searchName} onChange={({target:{value}}) => _this.handleChange('searchName',value)}/>
         },
         {
-            label: 'code',
-            key: '编码',
+            label: '编码',
+            key: 'code',
             render: _this => <Input placeholder="请输入" value={_this.state.searchCode} onChange={({target:{value}}) => _this.handleChange('searchCode',value) } />
            
         }
@@ -140,10 +140,10 @@ export const assetsListData = [
                 label:'所属',
                 span:12,
                 rules:[
-                    {
-                      required: true,
-                      message: '该选项不能为空！',
-                    },
+                    // {
+                    //   required: true,
+                    //   message: '该选项不能为空！',
+                    // },
                   ],
                 renderForm: (_this,disabled) =>{
                     return <Input disabled={disabled} disabled placeholder="请输入" />;
@@ -182,104 +182,6 @@ export const assetsListData = [
             }
         ]
     },
-    // {
-    //     type:[13],
-    //     data:[
-    //         {
-    //             key:'basedataTypeId',
-    //             label:'数据类别',
-    //             span:12,
-    //             rules:[
-    //                 {
-    //                   required: true,
-    //                   message: '该选项不能为空！',
-    //                 },
-    //               ],
-    //             render: _this =>{
-    //                 return <Select  placeholder="请选择" allowClear={true}>
-    //                             {
-    //                                 _this.state.basedataTypeList.map((items, index) => {
-    //                                     return (<Option key={items.id} value={items.id}>{items.basedataTypeName}</Option>)
-    //                                 })
-    //                             }
-    //                         </Select>;
-    //             }
-    //         },
-    //         {
-    //             key:'code',
-    //             label:'编码',
-    //             span:12,
-    //             rules:[
-    //                 {
-    //                   required: true,
-    //                   message: '该选项不能为空！',
-    //                 },
-    //               ],
-    //             render: _this =>{
-    //                 return <Input placeholder="请输入" />;
-    //             }
-    //         },
-    //         {
-    //             key:'name',
-    //             label:'名称',
-    //             span:12,
-    //             rules:[
-    //                 {
-    //                   required: true,
-    //                   message: '该选项不能为空！',
-    //                 },
-    //               ],
-    //             render: _this =>{
-    //                 return <Input placeholder="请输入" />;;
-    //             }
-    //         },
-    //         {
-    //             key:'parentName',
-    //             label:'所属',
-    //             span:12,
-    //             rules:[
-    //                 {
-    //                   required: true,
-    //                   message: '该选项不能为空！',
-    //                 },
-    //               ],
-    //             render: _this =>{
-    //                 return <Input disabled placeholder="请输入" />;
-    //             }
-    //         },
-    //         {
-    //             key:'status',
-    //             label:'状态',
-    //             span:12,
-    //             rules:[
-    //                 {
-    //                   required: true,
-    //                   message: '该选项不能为空！',
-    //                 },
-    //               ],
-    //             render: _this =>{
-    //                 return <Select  placeholder="请选择" allowClear={true}>
-    //                             <Option key="1" value="1">启动</Option>
-    //                             <Option key="0" value="0">废弃</Option>
-    //                         </Select>;
-    //             }
-    //         },
-    //         {
-    //             key:'intValue1',
-    //             label:'产品等级',
-    //             span:12,
-    //             rules:[
-    //                 {
-    //                   required: true,
-    //                   message: '该选项不能为空！',
-    //                 },
-    //               ],
-    //             render: _this =>{
-    //                 return <Input disabled placeholder="请输入" />;
-    //             }
-    //         }
-    //     ]
-    // }
 ]
 //表格参数
 export const columns = [
@@ -296,14 +198,6 @@ export const columns = [
                 dataIndex: 'name',
                 align: 'center',
             },{
-                title: '分类',
-                dataIndex: 'basedataTypeName',
-                ellipsis: {
-                    showTitle: false,
-                },
-                width:200,
-                align: 'center',
-            },{
                 title: '所属',
                 dataIndex: 'parentName',
                 align: 'center',
@@ -314,6 +208,14 @@ export const columns = [
                 render:(val)=>{
                     return val == 1 ? '启用' : '废弃';
                 }
+            },{
+                title: '说明',
+                dataIndex: 'description',
+                ellipsis: {
+                    showTitle: false,
+                },
+                width:200,
+                align: 'center',
             },{
                 title: '创建人',
                 dataIndex: 'creatorName',

@@ -36,7 +36,7 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required,d
     }else if(type == 'input5'){
         return <Input disabled={required} disabled placeholder="系统类别带入" />
     }else if(type == 'input3'){
-        return <Input disabled={required} placeholder="请选择" suffix={<Icon type="appstore" className="dateIcon" onClick={() => _this.openProject(dataIndex)} />} />
+        return <Input disabled={required} placeholder="请输入" suffix={<Icon type="appstore" className="dateIcon" onClick={() => _this.openProject(dataIndex)} />} />
     }else if(type == 'select'){
         return <Select style={{ width: '100%' }} placeholder="请选择" allowClear={true} disabled={required} onChange={(value,option) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue,option)}>
                     {

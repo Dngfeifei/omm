@@ -41,7 +41,6 @@ const FormPreview = ({ params }) => {
   const [visible, setVisible] = useState(false);
   const [modalType, setModalType] = useState('');
   const [recordId, setRecordId] = useState(undefined);
-  const [pending, setPending] = useState(false);
 
   const rowSelection = {
     onChange: (selectedRowKeys, selectedRows) => {
@@ -56,8 +55,7 @@ const FormPreview = ({ params }) => {
         setFormInfo(res.form);
         const source = res.form.source;
         if (source) {
-          let { list } = JSON.parse(source);
-          list = list.filter(t => !(['grid', 'report', 'tabs', 'divider'].includes(t.type)))
+          const { list } = JSON.parse(source);
           const cusColums = list.map((item) => {
             return {
               title: item.name,
@@ -98,10 +96,6 @@ const FormPreview = ({ params }) => {
       setVisible(false);
       return;
     }
-    if (pending) {
-      return;
-    }
-    setPending(true)
     const values = modelRef.current.getFieldsValue();
     if (modalType === 'edit') values.id = recordId;
     const params = {
@@ -114,8 +108,7 @@ const FormPreview = ({ params }) => {
         handleSearch();
         setVisible(false);
       }
-      setPending(false)
-    }).catch(() => setPending(false));
+    });
   };
 
   const formatModel = (record) => {

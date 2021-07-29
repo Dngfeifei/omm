@@ -137,7 +137,7 @@ class SA extends Component {
         super(props)
         this.state = {
             // 下拉框基础数据（技术方向,产品线,品牌，产品类别）
-            baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [],productLineLevel:[], researchStatus: [], researchLevel: [] },
+            baseData: { skillType: [], productLine: [], brand: [], productCategoryData: [], productLineLevel: [], researchStatus: [], researchLevel: [] },
             dataSource: {
                 isMeetContract: "",//满足合同 1满足  0不满足
                 isMeetSla: "",//满足SLA      1满足  0不满足
@@ -262,8 +262,8 @@ class SA extends Component {
     }
     // 组件传递数据初始化 基础下拉框数据请求获取之后调用此方法
     initData = () => {
-        let {  power } = this.props
-        let { isEdit,dataSource } = this.state
+        let { power } = this.props
+        let { isEdit, dataSource } = this.state
         // 页面模块只读逻辑
         if (power.formRead == 1) {
             // 若为1 根据权限配置判断是否只读
@@ -282,6 +282,7 @@ class SA extends Component {
         this.setState({
             dataSource, isEdit
         }, () => {
+            this.updateToparent()
         })
     }
     // 列表数据追加属性productLineData、levels
@@ -327,21 +328,22 @@ class SA extends Component {
                 arrItem.productLineData = productLineData
                 arrItem.levels = levels
             })
-        } else {
-            // 列表数据为0条时  默认增加一条空数据
-            let newRow = {
-                productCategory: "",//产品类别
-                productType: "",//技术方向
-                brand: "",//品牌
-                productLine: "",//产品线编码
-                productLineName: "",//产品线名称
-                deviceLevel: "",//产品等级（高端、中低端）
-                productModel: "",//产品型号
-                productLineData: [],
-                levels: []
-            }
-            arr.push(newRow)
         }
+        // else {
+        //     // 列表数据为0条时  默认增加一条空数据
+        //     let newRow = {
+        //         productCategory: "",//产品类别
+        //         productType: "",//技术方向
+        //         brand: "",//品牌
+        //         productLine: "",//产品线编码
+        //         productLineName: "",//产品线名称
+        //         deviceLevel: "",//产品等级（高端、中低端）
+        //         productModel: "",//产品型号
+        //         productLineData: [],
+        //         levels: []
+        //     }
+        //     arr.push(newRow)
+        // }
         return arr
 
     }
@@ -450,7 +452,7 @@ class SA extends Component {
                 el.researchEndTime = ""
             }
         })
-        return submitData
+        return  submitData 
     }
     // 选择工程师
     getUserInfo = (index) => {
@@ -852,15 +854,15 @@ class SA extends Component {
                                         </div>
                                         {/* 研发人员 */}
                                         <div className="column">
-                                            <div className="val"   style={{minHeight:"auto"}}>
-                                                <div onClick={_ => { isEdit && el.researchStatus != 2 ? this.getUserInfo(i) : "" }} style={{display:"flex"}}><Input style={{ flex:"1",margin:"0 6px"}} disabled placeholder="" value={el.researchStatus == 2 ? "" : el.researchPerson} addonAfter={isEdit && el.researchStatus != 2 ? <UserOutlined /> : ""} /></div>
+                                            <div className="val" style={{ minHeight: "auto" }}>
+                                                <div onClick={_ => { isEdit && el.researchStatus != 2 ? this.getUserInfo(i) : "" }} style={{ display: "flex" }}><Input style={{ flex: "1", margin: "0 6px" }} disabled placeholder="" value={el.researchStatus == 2 ? "" : el.researchPerson} addonAfter={isEdit && el.researchStatus != 2 ? <UserOutlined /> : ""} /></div>
                                             </div>
                                         </div>
                                         {/* 研发时间 */}
                                         <div className="column2">
                                             {/* <div className="val" ><Input disabled={!isEdit ? true : false} value={el.productModel} /></div> */}
                                             <div className="val">
-                                                <RangePicker disabled={!isEdit || el.researchStatus == 2 ? true : false} style={{  textAlign: "left"}} value={el.researchStartTime && el.researchEndTime && el.researchStatus != 2 ? [moment(el.researchStartTime, 'YYYY-MM-DD'), moment(el.researchEndTime, 'YYYY-MM-DD')] : ""} onChange={(date, dateStr) => { this.onGetDate(dateStr, i) }} />
+                                                <RangePicker disabled={!isEdit || el.researchStatus == 2 ? true : false} style={{ textAlign: "left" }} value={el.researchStartTime && el.researchEndTime && el.researchStatus != 2 ? [moment(el.researchStartTime, 'YYYY-MM-DD'), moment(el.researchEndTime, 'YYYY-MM-DD')] : ""} onChange={(date, dateStr) => { this.onGetDate(dateStr, i) }} />
                                             </div>
                                         </div>
                                     </div>
