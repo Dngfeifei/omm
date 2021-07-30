@@ -90,7 +90,6 @@ class FormList extends Common {
         <Button key='2' type="link" onClick={() => this.handleDelete(r.id)}>删除</Button>,
         <Button key='3' type="link" onClick={() => this.add(r)}>预览</Button>,
         <Button key='4' type="link" onClick={() => this.handleRelease(r.id)}>发布</Button>,
-        <Button key='5' type="link" onClick={() => this.versionManage(r)}>版本管理</Button>,
       ]
     }],
     loading: false,
