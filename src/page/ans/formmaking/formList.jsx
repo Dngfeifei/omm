@@ -35,6 +35,16 @@ class FormList extends Common {
     }
     this.props.add(pane)
   }
+  versionManage = (item) =>{
+    console.log('item.onlyTable : '+item.onlyTable)
+    let pane = {
+      title: "版本管理",
+      key: item.name,
+      url: `ans/formmaking/version/versionList.jsx`,
+      params: {onlyTable : item.onlyTable}
+    }
+    this.props.add(pane)
+  }
 
   state = Object.assign({}, this.state, {
     isFormMetaOpen: false,

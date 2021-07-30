@@ -34,7 +34,7 @@ class servies extends Component {
             projectType: '1', //项目类别
             projectNumber: '请选择',//项目号
             projectName: '',//项目名称
-            serviceType: '',//服务类别
+            serviceType: undefined,//服务类别
             custNum: '',//客户编码
             custName: '',//客户名称
             industry: '',//所属行业
@@ -115,7 +115,7 @@ class servies extends Component {
     // }
     //@author  gl
     componentWillReceiveProps (nextprops) {
-        console.log(nextprops.power.sign == 1 && !nextprops.swich && this.state.swich)
+        // console.log(nextprops.power.sign == 1 && !nextprops.swich && this.state.swich)
        if(nextprops.power.sign == 1 && !nextprops.swich && this.state.swich){
             this.initData(nextprops)
             this.setState({swich:false})
@@ -138,6 +138,7 @@ initData = (nextprops) => {
         // 进行【基本信息、服务区域、服务承诺】页面组件的赋值
         let basicInfor = this.setInfo(nextprops.paramsObj, this.state.basicInfor);
         let areaList = nextprops.paramsObj.areaList;
+        let accList = nextprops.paramsObj.accList;
         let performancePledge = this.setInfo(nextprops.paramsObj, this.state.performancePledge);
         
        
@@ -173,6 +174,7 @@ initData = (nextprops) => {
         this.setState({
             basicInfor,
             areaList,
+            accList,
             performancePledge: data,
             formRead: power.formRead,
             isEdit:!power.formControl.masterList.isEdit,
@@ -227,7 +229,7 @@ setIsFirstInspection = (info,performancePledge)=>{
         }, () => {
             //向父组件【SQT页面】传递数据
             let {basicInfor,areaList,performancePledge,accList}=this.state
-            console.log(performancePledge)
+            // console.log(performancePledge)
             let result=Object.assign({},basicInfor,performancePledge,{areaList},{accList})
             this.props.onChangeData(result);
         })

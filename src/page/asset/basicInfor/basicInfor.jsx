@@ -141,7 +141,10 @@ class assetsAllocation extends Component {
             incrementFeild:[],        //扩展数据字段
             selectData:{},              //动态扩展字段下拉框数据
             //标签类型 基础数据 "basedata"  服务目录"serviceClass"  配置项"configuration" 部件"part" 风险排查"risk"
-            lableType: props.params.pathParam.split('?')[1] ? props.params.pathParam.split('?')[1] :''
+            lableType: props.params.pathParam.split('?')[1] ? props.params.pathParam.split('?')[1] :'',
+            incrementFeilds:[],
+            basedataTypeIdSon:null, //当前选中节点子节点basedataTypeId
+            basedataTypeIdSonName:null //当前选中节点子节点Name
         }
     }
     SortTable = () => {
@@ -195,7 +198,8 @@ class assetsAllocation extends Component {
                         searchListName:res.data[0]['name'],
                         TreeParantID: res.data[0]['parentId'],
                         basedataTypeId: res.data[0]['basedataTypeId'],
-                        basedataTypeIdSon: basedataTypeId.data.id,
+                        basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id : '', 
+                        basedataTypeIdSonName: basedataTypeId.data ? basedataTypeId.data.basedataTypeName : '数据',
                         basedataTypeName: res.data[0]['basedataTypeName'],
                         incrementFeild:this.getIncrementFeild(incrementFeild.data),
                         newRoleGroup:{
@@ -204,11 +208,35 @@ class assetsAllocation extends Component {
                             newRoleGroupCode:null,
                             newRoleGroupType:null
                         }
+                    },() => {
+                        let {searchListID} = this.state;
+                        this.searchRoleFun(searchListID)
+                        //this.searchRoleFun(res.data[0]['id'])//此处获取表格数据修改为先获取基础数据包再获取表格数据进行展示
                     })
                     // this.getBaseData(res.data[0].id)
-                    this.searchRoleFun(res.data[0]['id'])//此处获取表格数据修改为先获取基础数据包再获取表格数据进行展示
+                    
                 }
             }
+    }
+    //处理扩展字段下拉列表扩展字段显示
+    setEchoField = (res) => {
+        const {incrementFeild} = this.state;
+        incrementFeild.forEach((item,index) => {
+            res.forEach((item1,index1) => {
+                if(item.fieldType == 2 && item1.hasOwnProperty(item.dataIndex)){
+                    res[index1][item.dataIndex] = this.getFieldName(item1[item.dataIndex],item.index)
+                }
+            })
+        })
+        return res;
+    }
+    getFieldName = (id,dataIndex) => {
+        const nowData = this.state.selectData[dataIndex] ? this.state.selectData[dataIndex] :[];
+        for(let i of nowData){
+            if(i.id == id){
+                return i.name;
+            }
+        }
     }
     //获取表格数据
     searchRoleFun = (parentId,pass) => {
@@ -218,29 +246,32 @@ class assetsAllocation extends Component {
             return
         }
         // const fieldNames = this.state.rules['rules1'].map(item => item.key)
-        let name = this.state.searchName ? this.state.searchName : '',code = this.state.searchCode ? this.state.searchCode :'';
+        let name = this.state.searchName ? this.state.searchName : '',code = this.state.searchCode ? this.state.searchCode :'',{lableType} = this.state;
         // 2 发起查询请求 查询后结构给table赋值
-        let params = pass ? Object.assign({}, {name,code},{basedataId:parentId},this.state.pageConf) : Object.assign({}, {name,code}, {basedataId:parentId},this.state.pageConf, { offset: 0 })
-        GetTable(params).then(res => {
-            if (res.success == 1) {
-                let data = Object.assign({}, this.state.table, {
-                    rolesData:res.data.records ? res.data.records : []
-                })
-                let pagination = Object.assign({}, this.state.pagination, {
-                    total: res.data.total,
-                    pageSize: res.data.size,
-                    current: res.data.current,
-                })
-                let pageConf = Object.assign({}, this.state.pagination, {
-                    limit: res.data.size,
-                    offset: (res.data.current - 1) * 10,
-                })
-                this.setState({ table: data, pagination: pagination, pageConf: pageConf })
-            } else {
-                message.error(res.message)
-            }
-
-        })
+        let params = pass ? Object.assign({}, {name,code,type:lableType},{basedataId:parentId},this.state.pageConf) : Object.assign({}, {name,code,type:lableType}, {basedataId:parentId},this.state.pageConf, { offset: 0 })
+        // setTimeout(()=>{
+            GetTable(params).then(res => {
+                if (res.success == 1) {
+                    let data = Object.assign({}, this.state.table, {
+                        rolesData:res.data.records ? res.data.records : []
+                    })
+                    let pagination = Object.assign({}, this.state.pagination, {
+                        total: res.data.total,
+                        pageSize: res.data.size,
+                        current: res.data.current,
+                    })
+                    let pageConf = Object.assign({}, this.state.pagination, {
+                        limit: res.data.size,
+                        offset: (res.data.current - 1) * 10,
+                    })
+                    this.setState({ table: data, pagination: pagination, pageConf: pageConf })
+                } else {
+                    message.error(res.message)
+                }
+    
+            })
+        // },0)
+        
     }
     // 树选中后
     onTreeSelect = async (selectedKeys, info) => {
@@ -263,16 +294,18 @@ class assetsAllocation extends Component {
             }})
             return
         }
+        console.log(selectedKeys, info,'树结构点击生效')
         let data = info.selectedNodes[0].props.dataRef
-        let basedataTypeId =   await getChildType({basedataId:searchListID,type:lableType});
-        let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data.id})
+        let basedataTypeId =   await getChildType({basedataId:selectedKeys[0],type:lableType});
+        let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data ? basedataTypeId.data.id :''})
         // console.log(this.getIncrementFeild(incrementFeild.data))
         this.setState({
             searchListID: data['id'],
             searchListName:data['name'],
             TreeParantID: data['parentId'],
             basedataTypeId: data['basedataTypeId'],
-            basedataTypeIdSon: basedataTypeId.data.id,
+            basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id :'',
+            basedataTypeIdSonName: basedataTypeId.data ? basedataTypeId.data.basedataTypeName : '数据',
             basedataTypeName: data['basedataTypeName'],
             incrementFeild: this.getIncrementFeild(incrementFeild.data),
             tableSelecteds: [],
@@ -286,6 +319,7 @@ class assetsAllocation extends Component {
                 newRoleGroupType:null
             }
         },()=>{
+
             // 选中后请求列表数据
             let {searchListID} = this.state;
             this.searchRoleFun(searchListID)
@@ -294,44 +328,59 @@ class assetsAllocation extends Component {
     //处理不同组件加载不同组件
     getFormCompent = (item,index) => {
         if(item.fieldType == 2){
-            getByCode({basedataTypeId: item.dictCode }).then(res => {
-                let {selectData} = this.state,obj = {};
+            getByCode({code: item.dictCode }).then(res => {
+                let {selectData,incrementFeilds} = this.state,obj = {};
                 if (res.success == 1) {
                     obj[`select${index}`] = res.data ? res.data :[];
                 } else {
                     obj[`select${index}`] = [];
                 }
+                incrementFeilds.splice(incrementFeilds.indexOf(item.fieldEn), 1);
                 selectData = Object.assign({}, selectData,obj);
-                this.setState({ selectData});
+                this.setState({ selectData,incrementFeilds});
             })
-            return (_this,disabled,index) => (<Select disabled={disabled}  placeholder="请选择" allowClear={true}>
-                                    {_this.state.selectData[`select${index}`] ? _this.state.selectData[`select${index}`].map((items, index) => {
-                                        return (<Option key={index} value={items.id}>{items.name}</Option>)
-                                    }) : [].map((items, index) => {
-                                        return (<Option key={index} value={items.id}>{items.name}</Option>)
-                                    })}
-                                </Select> )
+            return (_this,disabled,index) => {
+                // console.log(_this.state.selectData,index)
+                return (<Select disabled={disabled}  placeholder="请选择" allowClear={true}>
+                            {_this.state.selectData[index] ? _this.state.selectData[index].map((items, index) => {
+                                return (<Option key={index} value={items.id}>{items.name}</Option>)
+                            }) : [].map((items, index) => {
+                                return (<Option key={index} value={items.id}>{items.name}</Option>)
+                            })}
+                        </Select> )
+            }
         }else{
-            return (_this,disabled) => <Input disabled={disabled} disabled placeholder="请输入" />
+            return (_this,disabled) => <Input disabled={disabled} placeholder="请输入" />
         }
     }
     //处理获取到的扩展增量显示数据
     getIncrementFeild = (data) => {
-        let newData = [];
+        let newData = [],newDataFields = [];
         if(data instanceof Array){
             data.forEach((item,index) => {
                 let obj = {};
-                obj['title'] = obj['lable'] = item.fieldCn,
-                obj['key'] = obj['dataIndex'] = item.fieldEn,
-                obj['isRequired'] = item.isRequired ? [{required: true,message: '该选项不能为空！'}] : [],
+                obj['title'] = obj['label'] = item.fieldCn,
+                obj['key'] = obj['dataIndex'] = obj['fieldEn'] = item.fieldEn,
+                obj['rules'] = item.isRequired ? [{required: true,message: '该选项不能为空！'}] : [],
                 obj['renderForm'] = this.getFormCompent(item,index),
                 obj['index'] = `select${index}`,
+                obj['fieldType'] = item.fieldType,
+                obj['span'] = 12,
                 obj['align'] = 'center';
+                if(item.fieldType == 2){
+                    obj['render'] = (value,row,indexData) => {
+                        console.log(value,`select${index}`,this.getFieldName(value,`select${index}`))
+                        return this.getFieldName(value,`select${index}`)
+                    }
+                    newDataFields.push(item.fieldEn);
+                }
                 newData.push(obj);
             })
+            this.setState({incrementFeilds:newDataFields})
         }
         return newData;
     }
+
     // 打开节点
     onExpand = expandedKeys => {
         this.setState({
@@ -359,18 +408,17 @@ class assetsAllocation extends Component {
     }
     // 表格数据查询
     onSearch = () => {
-        let id = this.state.searchListID;
-        this.setState({searchX:undefined})
-        this.searchRoleFun(id);
+        // let id = this.state.searchListID;
+        this.searchRoleFun(-1);
     }
     openModal = async (roleModalType) => {
-        let {searchListID,searchListName,basedataTypeIdSon,tableSelectedInfo,baseData,lableType} = this.state,roleModalTitle = null;
+        let {searchListID,basedataTypeIdSonName,basedataTypeIdSon,tableSelectedInfo,baseData,lableType} = this.state,roleModalTitle = null;
         if(roleModalType == 0){
             if (searchListID == "" || searchListID == null) {
                 message.warning('请先选中左侧树节点！');
                 return
             }
-            roleModalTitle = `新增-${searchListName}`;
+            roleModalTitle = `新增-${basedataTypeIdSonName}`;
             let code = (lableType == 'basedata' || lableType == 'serviceClass' || lableType == 'risk' || lableType == 'part') && await generateChildCode({basedataId:searchListID,type:lableType});
             baseData = Object.assign({}, baseData, { code:code.data ? code.data : '',basedataTypeId:basedataTypeIdSon});
             this.setState({
@@ -388,7 +436,7 @@ class assetsAllocation extends Component {
                 message.warning("没有选中数据,无法进行修改!")
                 return
             }
-            roleModalTitle = roleModalType == 1 ? `修改-${searchListName}` : `查看-${searchListName}`;
+            roleModalTitle = roleModalType == 1 ? `修改-${basedataTypeIdSonName}` : `查看-${basedataTypeIdSonName}`;
             this.setState({
                 roleWindow: {
                     roleModal: true,
@@ -542,19 +590,6 @@ class assetsAllocation extends Component {
         const children = [];
         for (let i = 0; i < assetsList.length; i++) {
             let label = assetsList[i].label,disabled = false;
-            // if(basedataTypeIdSelect == 13){           //特殊处理
-            //     if(assetsList[i].key == 'code'){
-            //         console.log(assetsList[i])
-            //         label = '产品型号'
-            //     }
-            //     if(assetsList[i].key == 'name'){
-            //         label = '产品名称'
-            //     }
-            // }else{
-            //     if(assetsList[i].key == 'intValue1'){
-            //         continue;
-            //     }
-            // }
             //当打开窗口为修改时，数据类别字段禁止编辑
             if(roleWindow.roleModalType == 1 && assetsList[i].key == 'basedataTypeId'){
                 disabled = true
@@ -578,8 +613,7 @@ class assetsAllocation extends Component {
      }
     //重置查询条件
     clearSearchprops = () => {
-        // this.props.form.resetFields(['searchName'])
-        this.setState({searchX:undefined});
+        this.setState({searchName:undefined,searchCode:undefined});
     }
     //设置显示表格内容
     getClums = (data) => {
@@ -592,37 +626,9 @@ class assetsAllocation extends Component {
         })
         return newColumns;
     }
-    swich = false
-
-    //联想查询数据切换
-    handleSearch = value => {
-        if (timeout) {
-            clearTimeout(timeout);
-            timeout = null;
-        }
-        timeout = setTimeout(()=>{
-             console.log(value)
-            if (value) {
-                getBasicSearchData({x:value}).then(res =>{
-                    if (res.success != 1) {
-                        message.error("请求错误")
-                        this.setState({ searchData: [] });
-                        return
-                    }else{
-                        // let data = res.data.unshift(value)
-                        this.setState({searchData:res.data,searchX:value})
-                    }
-                });
-            }else if(value === '' && this.swich){
-                this.setState({searchData:[],searchX:undefined})
-            }else {
-                this.setState({ searchData: [] });
-            }
-        }, 300);
-    };
-    //联想输入输入数据回填
+    //输入数据回填
     handleChange = (type,value) => {
-        let obj = {};
+        const obj = {};
         obj[type] = value;
         this.setState(obj);
     };
@@ -631,7 +637,7 @@ class assetsAllocation extends Component {
         const { columns } = this.state.table;
         const { getFieldDecorator } = this.props.form;
         const column = this.getClums(columns) ? this.getClums(columns).concat(this.state.incrementFeild) : [];
-        h.x = column.length > 8 ?  3400 : 0;
+        h.x = column.length > 9 ?  1400 : 0;
         const assetsLists = this.getClums(assetsList) ? this.getClums(assetsList) : [];
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%'}} >
             <Row gutter={24} className="main_height">
@@ -677,7 +683,7 @@ class assetsAllocation extends Component {
                         </Row>
                     </Form>
                     <div className="tableParson" style={{ flex: 'auto',height: 10 }} ref={(el) => this.tableDom = el}>
-                        <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.table.rolesData} columns={column} style={{ marginTop: '20px',maxHeight:'86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={h} size="small" />
+                        <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={!this.state.incrementFeilds.length?this.state.table.rolesData:[]} columns={column} style={{ marginTop: '20px',maxHeight:'86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={h} size="small" />
                         <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                     </div>
                 </Col>

@@ -55,7 +55,7 @@ class DHeader extends Component {
                     noticeNUm = res.data.msgCount ? res.data.msgCount - 0 : 0;
                     this.setState({noticeNUm});
                 }else{
-                    message.error(res.message);
+                    //message.error(res.message);
                 }
             })
         }
