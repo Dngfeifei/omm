@@ -61,6 +61,7 @@ class Schedule extends Component {
         {
           label: "记录单号",
           key: "orderNum",
+          align: 'center',
           node: 1,
           render: (_) => (
             <Input style={{ width: 200 }} placeholder="请输入单号" />
@@ -69,6 +70,7 @@ class Schedule extends Component {
         {
           label: "项目编号",
           key: "projectNumber",
+          align: 'center',
           node: 1,
           render: (_) => (
             <Input
@@ -80,10 +82,11 @@ class Schedule extends Component {
         {
           label: "项目名称",
           key: "projectName",
+          align: 'center',
           node: 1,
           render: (_) => (
             <Input
-              style={{ width: 200}}
+              style={{ width: 200 }}
               placeholder="请输入项目名称"
             />
           ),
@@ -91,6 +94,7 @@ class Schedule extends Component {
         {
           label: "项目类别",
           key: "projectType",
+          align: 'center',
           node: 1,
           render: (_) => (
             <Select
@@ -115,6 +119,7 @@ class Schedule extends Component {
         {
           label: "项目状态",
           key: "projectStatus",
+          align: 'center',
           node: 1,
           render: (_) => (
             <Select
@@ -135,6 +140,7 @@ class Schedule extends Component {
         {
           label: "服务类别",
           key: "serviceType",
+          align: 'center',
           node: 1,
           render: (_) => (
             <Select
@@ -155,6 +161,7 @@ class Schedule extends Component {
         {
           label: "所属行业",
           key: "industry",
+          align: 'center',
           node: 1,
           render: (_) => (
             <Input style={{ width: 200 }} placeholder="请输入" />
@@ -163,6 +170,7 @@ class Schedule extends Component {
         {
           label: "公司名称",
           key: "compayName",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Select
@@ -183,6 +191,7 @@ class Schedule extends Component {
         {
           label: "客户编码",
           key: "custNum",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Input
@@ -194,6 +203,7 @@ class Schedule extends Component {
         {
           label: "客户名称",
           key: "custName",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Input
@@ -205,6 +215,7 @@ class Schedule extends Component {
         {
           label: "客户级别",
           key: "custLevelName",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Select
@@ -225,6 +236,7 @@ class Schedule extends Component {
         {
           label: "项目销售",
           key: "salesmanName",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Input style={{ width: 200 }} placeholder="请输入" />
@@ -233,6 +245,7 @@ class Schedule extends Component {
         {
           label: "项目开始日期",
           key: "startDate",
+          align: 'center',
           node: 2,
           render: (_) => (
             <DatePicker style={{ width: 200 }} />
@@ -249,6 +262,7 @@ class Schedule extends Component {
         {
           label: "项目经理",
           key: "managerName",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Input style={{ width: 200 }} placeholder="请输入" />
@@ -257,6 +271,7 @@ class Schedule extends Component {
         {
           label: "最终客户名称",
           key: "finalCustName",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Input
@@ -268,6 +283,7 @@ class Schedule extends Component {
         {
           label: "续签项目号",
           key: "renewalNumber",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Input style={{ width: 200, }} placeholder="请输入" />
@@ -276,6 +292,7 @@ class Schedule extends Component {
         {
           label: "续签项目名称",
           key: "renewalName",
+          align: 'center',
           node: 2,
           render: (_) => (
             <Input style={{ width: 200, }} placeholder="请输入" />
@@ -298,19 +315,20 @@ class Schedule extends Component {
       columns: [
         {
           title: "序号",
-          dataIndex: "index",
+          dataIndex: "key",
+          editable: false,
           align: "center",
           width: "80px",
-          // 第一种：每一页都从1开始
           render: (text, record, index) => `${index + 1}`,
         },
         {
           title: "记录单号",
           dataIndex: "orderNum",
+          align: 'center',
           ellipsis: {
             showTitle: false,
           },
-          width: "140px",
+
           render: (text, record) => (
             <Tooltip placement="topLeft" title={text}>
               <span
@@ -319,6 +337,9 @@ class Schedule extends Component {
                   cursor: "pointer",
                   display: "block",
                   textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
                 }}
                 onClick={() => this.previewing(record)}
               >
@@ -330,86 +351,175 @@ class Schedule extends Component {
         {
           title: "项目编号",
           dataIndex: "projectNumber",
-          width: "140px",
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
         {
           title: "项目名称",
           dataIndex: "projectName",
-          width: "140px",
           ellipsis: {
             showTitle: false,
           },
+
+          render: (text) => (
+            <Tooltip placement="topLeft" title={text}>
+              <span
+                style={{
+                  maxWidth: 150,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  display: "block",
+                  textOverflow: 'ellipsis',
+                  cursor: 'pointer'
+                }}
+
+              >
+                {text}
+              </span>
+            </Tooltip>
+          ),
         },
         {
           title: "客户编码",
           dataIndex: "custNum",
-          width: "140px",
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  maxWidth: 150,
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  display: "block",
+                  textOverflow: 'ellipsis',
+                  cursor: 'pointer'
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
         {
           title: "客户名称",
           dataIndex: "custName",
-          width: "140px",
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  width: "140px",
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  cursor: 'pointer'
+                }}
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
         {
           title: "客户级别",
           dataIndex: "custLevelName",
-          width: "140px",
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
         {
           title: "公司名称",
           dataIndex: "compayName",
-          width: "140px",
+
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
         {
           title: "项目类别",
           dataIndex: "projectTypeName",
-          width: "140px",
+
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -420,9 +530,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -433,9 +556,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -446,9 +582,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -459,9 +608,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -472,9 +634,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -485,9 +660,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -498,9 +686,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -511,9 +712,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -524,9 +738,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -537,11 +764,19 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
-            <div>
+            <span style={{
+              cursor: "pointer",
+              display: "block",
+              textAlign: "center",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap"
+            }}>
               {text == "1" ? "是" : ""}
               {text == "0" ? "否" : ""}
-            </div>
+            </span>
           ),
         },
         {
@@ -551,9 +786,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -564,9 +812,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -577,11 +838,19 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
-            <div>
+            <span style={{
+              cursor: "pointer",
+              display: "block",
+              textAlign: "center",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap"
+            }}>
               {text == "1" ? "是" : ""}
               {text == "0" ? "否" : ""}
-            </div>
+            </span>
           ),
         },
         {
@@ -591,9 +860,22 @@ class Schedule extends Component {
           ellipsis: {
             showTitle: false,
           },
+
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
-              {text}
+              <span
+                style={{
+                  cursor: "pointer",
+                  display: "block",
+                  textAlign: "center",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap"
+                }}
+
+              >
+                {text}
+              </span>
             </Tooltip>
           ),
         },
@@ -652,13 +934,16 @@ class Schedule extends Component {
   SortTable = () => {
     setTimeout(() => {
       let h = this.tableDom.clientHeight - 125;
+
+      let x = this.tableDom.clientWidth + 1000;
       this.setState({
         h: {
-          y: h,
-        },
+          y: (h),
+          x: (x)
+        }
       });
-    }, 0);
-  };
+    }, 0)
+  }
 
   // 初始化数据
   init = () => {
@@ -790,12 +1075,19 @@ class Schedule extends Component {
     this.props.form.resetFields();
   };
 
-  // 点击表格中某客户编码进行客户信息页面
+  // 点击表格中详情页面
   previewing = (record) => {
+    // var str = Math.floor(Math.random() * (99999 - 1000)) + 1000;
+    // let pane = {
+    //   title: "服务需求表",
+    //   key: "str",
+    //   url: "ServiceRequire/require.jsx",
+    // };
+    // this.props.add(pane);
     let pane = {
       title: record.custName + "客户档案",
       key: Math.round(Math.random() * 10000).toString(),
-      url: "CustomerInfor/customerInformation.jsx",
+      url: "ServiceRequire/detailrequire.jsx",
       params: {
         id: record.baseId,
       },
@@ -954,10 +1246,7 @@ class Schedule extends Component {
     };
     this.props.add(pane);
   };
-  //点击变更跳转到详情页并有弹出框
-  changeType = () => {
-    alert("1234");
-  };
+
 
   render = (_) => {
     const { getFieldDecorator } = this.props.form;
@@ -972,18 +1261,18 @@ class Schedule extends Component {
     // 节点渲染区域
     return (
       <div
-        className="engineerContent main_height"
-        id="engineerContent"
+        className="main_height"
+
         style={{
           display: "flex",
           flexDirection: "column",
           flexWrap: "nowrap",
-          position: "relative",
+
         }}
       >
         <Form
           layout="inline"
-          style={{ width: "100%", marginTop: "45px" }}
+          style={{ width: '100%', paddingTop: '24px', marginLeft: '15px' }}
           id="logbookForm"
         >
           {this.state.rules.map((val, index) => {
@@ -994,7 +1283,7 @@ class Schedule extends Component {
               <FormItem
                 label={val.label}
                 style={{
-                 padding:"10px 15px"
+                  padding: "10px 15px"
                 }}
                 key={index}
               >
@@ -1016,6 +1305,9 @@ class Schedule extends Component {
             >
               重置
             </Button>
+            {/* //wxy数据导入 数据导出 */}
+            <Button type="primary" style={{ marginLeft: '10px' }} onClick={() => this.dataimport()}>数据导入</Button>
+            <Button type="primary" style={{ marginLeft: '10px' }} onClick={() => this.dataExport()}>数据导出</Button>
             <br />
             {/* //icon图标开关 */}
             {this.state.showMore ? (
@@ -1024,34 +1316,29 @@ class Schedule extends Component {
                 onClick={this.showMoreData}
               />
             ) : (
-              <FullscreenOutlined
-                className="ArrowsAltOutlined"
-                onClick={this.showMoreData}
-              />
-            )}
-           
+                <FullscreenOutlined
+                  className="ArrowsAltOutlined"
+                  onClick={this.showMoreData}
+                />
+              )}
+
           </FormItem>
         </Form>
+        <div className="newchange">
+          {/* 新增 变更按钮 */}
+          <Button onClick={this.newObtn} style={{ "marginBottom": "15px", float: "right" }}>
+            新增
+          </Button>
+
+        </div>
         {/* //第二个块元素 */}
-        
+
         <div
           className="tableParson"
-          style={{ flex: "1 1 auto " }}
+          style={{ flex: 'auto' }}
           ref={(el) => (this.tableDom = el)}
         >
-           <div className="newchange">
-              {/* 新增 变更按钮 */}
-              <Button onClick={this.newObtn} style={{ marginLeft: "10px" }}>
-                新增
-              </Button>
-              <Button
-                onClick={this.changeType}
-                type="primary"
-                style={{ marginLeft: "10px" }}
-              >
-                变更
-              </Button>
-            </div>
+
           <Table
             className="Table"
             bordered
@@ -1063,11 +1350,7 @@ class Schedule extends Component {
             pagination={false}
             size={"small"}
             style={{
-              marginTop: "50px",
-              padding: "0 15px",
-              overflowY: "auto",
-              height: h,
-              overflowX: "hidden",
+              marginTop: '24px', overflowY: "auto", height: h, margin: " 0 auto"
             }}
             loading={this.state.loading} //设置loading属性
           />
@@ -1088,7 +1371,7 @@ class Schedule extends Component {
           onCancel={this.handleCancel}
           onOk={this.handleOk}
           width="25%"
-          id="modalengineer"
+
         >
           <Row>
             <label style={{ display: "block", marginBottom: "16px" }}>

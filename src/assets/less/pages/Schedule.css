@@ -1,43 +1,60 @@
 /*服务计划表管理*/
 
-*{
+* {
     margin: 0;
     padding: 0;
-    list-style: none; 
+    list-style: none;
 }
-html,body{
+
+html,
+body {
     width: 100%;
-    height: 100%;  
+    height: 100%;
 }
+
 /* 控制按钮图片 */
-.schedule_price{
+.schedule_price {
     position: absolute;
-    top:72px;
-    right:0;
-    float: right; 
-    
+    top: 72px;
+    right: 0;
+    float: right;
+
 }
-.ArrowsAltOutlined{
+
+/* //icon */
+.ArrowsAltOutlined {
     font-size: 26px;
     position: relative;
-    top:6px;
-    left:66px;
- 
+    top: 6px;
+    left: 66px;
+
 }
-.newchange{
-    margin-right: 10px;
-   float: right;
+
+/* //新增按钮 */
+.newchange {
+    margin: 24px;
 }
 
 /* 表格 */
-.ant-table-thead tr th{
+.Table .ant-table-thead>tr th,
+.ant-table-small>.ant-table-content>.ant-table-scroll>.ant-table-body>table>.ant-table-tbody>tr>td:nth-child(1) {
     text-align: center;
 }
 
+.Table .ant-table-small>.ant-table-content>.ant-table-scroll>.ant-table-body>table>.ant-table-tbody>tr>td:nth-child(1) .ant-radio-wrapper {
+    margin-right: 0;
+}
 
+#logbookForm .ant-form-item {
+    margin-right: 16px !important;
+}
 
+.AttachmentList td,
+.performanceContent .config .ant-descriptions-row .ant-descriptions-item-content {
+    position: relative !important;
+}
 
+.ant-table-wrapper {
+    width: 1400px !important;
 
-
-
-
+}

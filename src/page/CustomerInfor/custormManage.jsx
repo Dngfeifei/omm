@@ -5,13 +5,16 @@
 
 import React, { Component } from "react";
 import { hashHistory } from 'react-router'
-import { Form, Input, Button, Modal, message, Select, Tooltip, Table, Row, Col, } from 'antd'
+import { Form, Input, Button, Modal, message, Select, Tooltip, Table, Row, Col, Checkbox, Upload } from 'antd'
 const { Option } = Select;
 
 import { connect } from 'react-redux'
-import { ADD_PANE} from '/redux/action'
-
-
+import { ADD_PANE } from '/redux/action'
+//引入数据导出接口 （wxy）
+import { GetbiCustomer, PostbiCustomer } from '/api/excelObtn'
+import moment from "moment";//wxy
+const { confirm } = Modal;//wxy
+let token = localStorage.getItem('token');
 
 // 引入页面CSS
 import '@/assets/less/pages/logBookTable.css'
@@ -19,34 +22,56 @@ import '@/assets/less/pages/logBookTable.css'
 import Pagination from "@/components/pagination/index"
 
 // 引入 API接口
-import { customerLevel , getBiCustomer , biCustomerInfo , biCustomerUpdate} from '/api/customerInfor'
+import { customerLevel, getBiCustomer, biCustomerInfo, biCustomerUpdate } from '/api/customerInfor'
 
 @connect(state => ({
     panes: state.global.panes,
 }), dispath => ({
-    add(pane) { dispath({type: ADD_PANE, data: pane})},
+    add(pane) { dispath({ type: ADD_PANE, data: pane }) },
 }))
 
 
 
-class Customer extends Component{
+class Customer extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            // 导出按钮开关wxy
+            DCOff: false,
+            DCtabledata: [],
+            canNull: "",
+            Echeckbox: [],
+            uploadConf: {//上传配置 导入wxy
+                name: 'file',
+                action: '/biCustomer/export',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                showUploadList: false,
+                onChange(info) {
+                    if (info.file.status !== 'uploading') {
+                    }
+                    if (info.file.status === 'done') {
+                        message.success(`${info.file.name} 文件上传成功`);
+                    } else if (info.file.status === 'error') {
+                        message.error(`${info.file.name} 文件上传失败.`);
+                    }
+                },
+            },
             //设置表格的高度
             h: { y: 240 },
             // 客户级别--数据集合
-            rankArray:[],
+            rankArray: [],
             rules: [{
                 label: '客户编码',
                 key: 'custNum',
                 render: _ => <Input style={{ width: 200 }} placeholder="请输入客户编码" />
-            },{
+            }, {
                 label: '客户名称',
                 key: 'custName',
                 render: _ => <Input style={{ width: 200 }} placeholder="请输入客户名称" />
-            },{
+            }, {
                 label: '客户级别',
                 key: 'custLevel',
                 render: _ => <Select style={{ width: 200 }} placeholder="请选择客户级别" allowClear={true}>
@@ -67,25 +92,25 @@ class Customer extends Component{
                 width: '80px',
                 // 第一种：每一页都从1开始
                 render: (text, record, index) => `${index + 1}`
-            },{
+            }, {
                 title: '客户编码',
                 dataIndex: 'custNum',
                 ellipsis: {
                     showTitle: false,
                 },
                 width: '240px',
-                render: (text, record)=> 
+                render: (text, record) =>
                     <Tooltip placement="topLeft" title={text}>
-                        <span style={{ color: '#1890ff', cursor: 'pointer',display:'block',textAlign:'center' }} onClick={() => this.previewing(record)}>{text}</span>
+                        <span style={{ color: '#1890ff', cursor: 'pointer', display: 'block', textAlign: 'center' }} onClick={() => this.previewing(record)}>{text}</span>
                     </Tooltip>
-            },{
+            }, {
                 title: '客户名称',
                 dataIndex: 'custName',
                 ellipsis: {
                     showTitle: false,
                 },
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
-            },{
+            }, {
                 title: '客户级别',
                 dataIndex: 'custLevel',
                 ellipsis: {
@@ -110,11 +135,11 @@ class Customer extends Component{
                 edit: '修改客户信息'
             },
             visibleStatus: 'add',
-            selectedRowKeys:null,
-            newGroup:{
-                custNum:'',
-                custName:'',
-                custLevel:''
+            selectedRowKeys: null,
+            newGroup: {
+                custNum: '',
+                custName: '',
+                custLevel: ''
             }
         }
     }
@@ -147,17 +172,17 @@ class Customer extends Component{
     // 初始化数据
     init = () => {
         // 获取客户级别--数据
-        customerLevel({dictCode:'customerLevel'}).then(res=>{
+        customerLevel({ dictCode: 'customerLevel' }).then(res => {
             if (res.success == 1) {
                 this.setState({
-                    rankArray:res.data
+                    rankArray: res.data
                 })
-            }else if(res.success == 0){
+            } else if (res.success == 0) {
                 message.error(res.message)
             }
         })
 
-        
+
     }
 
     // 获取客户列表（分页)
@@ -177,7 +202,7 @@ class Customer extends Component{
                 custLevel: values.custLevel // 客户等级
             }
 
-            getBiCustomer(this.state.pageSize,this.state.current, newSearchForm).then(res => {
+            getBiCustomer(this.state.pageSize, this.state.current, newSearchForm).then(res => {
                 if (res.success == 1) {
                     this.setState({
                         loading: false,
@@ -192,24 +217,24 @@ class Customer extends Component{
     }
 
     // 获取客户信息详情
-    getCustInfor=(Id)=>{
-        biCustomerInfo(Id).then(res=>{
+    getCustInfor = (Id) => {
+        biCustomerInfo(Id).then(res => {
             if (res.success == 1) {
                 /**   将客户等级id换成中文   **/
                 let newCustLevel = res.data.custLevel;
                 // 任务类型下拉列表数据
-                let objCenter = this.state.rankArray; 
+                let objCenter = this.state.rankArray;
                 for (var i = 0; i < objCenter.length; i++) {
                     if (newCustLevel.indexOf(objCenter[i].itemValue) >= 0) {
                         newCustLevel = objCenter[i].itemCode;
                     }
                 }
-                let newGroup = Object.assign({}, this.state.newGroup, { custNum: res.data.custNum, custName:res.data.custName, custLevel:newCustLevel})
+                let newGroup = Object.assign({}, this.state.newGroup, { custNum: res.data.custNum, custName: res.data.custName, custLevel: newCustLevel })
 
                 this.setState({
                     newGroup: newGroup
                 })
-            }else if(res.success == 0){
+            } else if (res.success == 0) {
                 message.error(res.message)
             }
         })
@@ -217,7 +242,7 @@ class Customer extends Component{
 
 
 
-    
+
     // 查询条件--事件
     onSearch = (e) => {
         e.preventDefault();
@@ -231,13 +256,13 @@ class Customer extends Component{
     }
 
     // 点击表格中某客户编码进行客户信息页面
-    previewing=(record)=>{
+    previewing = (record) => {
         let pane = {
-            title: record.custName+'客户档案',
+            title: record.custName + '客户档案',
             key: Math.round(Math.random() * 10000).toString(),
             url: 'CustomerInfor/customerInformation.jsx',
-            params:{
-                id:record.id
+            params: {
+                id: record.id
             }
         }
         this.props.add(pane)
@@ -246,19 +271,19 @@ class Customer extends Component{
     }
 
     // 修改事件按钮----弹出对话框
-    handleEdit=()=>{
+    handleEdit = () => {
         if (this.state.selectedRowKeys) {
             var key = this.state.selectedRowKeys[0];
             this.setState({
                 visible: true,
-                visibleStatus:'edit'
+                visibleStatus: 'edit'
             });
             // 调用---查询客户信息详情接口
             this.getCustInfor(key);
-        }else {
+        } else {
             message.warning('请先选择一条客户信息！')
         }
-       
+
     }
 
     //获取新增或修改后的客户级别
@@ -334,7 +359,7 @@ class Customer extends Component{
 
     // 对话框---确认
     handleOk = e => {
-       
+
         var params = this.state.newGroup;
         // 校验数据 不能为空 空：提示名称为空不能保存
         if (params.custName == "" || params.custName == null) {
@@ -354,19 +379,19 @@ class Customer extends Component{
         }
 
         // 判断保存类型是新增还是修改
-        if(this.state.visibleStatus == 'add'){
-           
-           
+        if (this.state.visibleStatus == 'add') {
 
 
-        }else if(this.state.visibleStatus == 'edit'){
+
+
+        } else if (this.state.visibleStatus == 'edit') {
             let _this = this
             let params = {
-                custLevel:_this.state.newGroup.custLevel,
-                id: _this.state.selectedRowKeys[0] 
+                custLevel: _this.state.newGroup.custLevel,
+                id: _this.state.selectedRowKeys[0]
             }
-            
-            biCustomerUpdate(params).then(res=>{
+
+            biCustomerUpdate(params).then(res => {
                 if (res.success == 1) {
                     message.success(res.message)
                     this.setState({
@@ -375,15 +400,12 @@ class Customer extends Component{
                     // 获取客户列表（分页)
                     this.getTableList();
 
-                }else if(res.success == 0){
+                } else if (res.success == 0) {
                     message.error(res.message)
                 }
             })
 
         }
-
-        
-
     };
 
     // 关闭--详情---对话框
@@ -393,15 +415,103 @@ class Customer extends Component{
         });
     };
 
+    //弹出框wxy
+    showModal = () => {
+        this.setState({
+            DCOff: true,
+        });
+    };
+
+    //弹出框wxy
+    handleCancel = (e) => {
+
+        this.setState({
+            DCOff: false,
+        });
+    };
+    //数据导入wxy
+    dataimport = () => {
+        alert(' 数据导入wxy')
+    }
+    //数据导出wxy
+    dataExport = () => {
+        let { DCOff } = this.state
+        GetbiCustomer().then((res) => {
+            console.log(res)
+            if (res.success != 1) {
+                message.error("请求错误");
+                return;
+            } else {
+                let Echeckbox = []
+                let arr = res.data.filter(item => {
+                    console.log(item)
+                    return item.canNull == "NO"
+                })
+                arr.forEach(item => {
+                    Echeckbox.push(item.tableField)
+                })
+                this.setState({
+                    DCtabledata: res.data,
+                    Echeckbox,
+                    DCOff: !DCOff
+                });
+
+            }
+        })
+    }
+    //选中改变wxy
+    onchangeCheckbox = (e) => {
+        this.setState({
+            Echeckbox: e
+        })
+    }
+    //弹出框数据导出,需要传产wxy
+    handleOk = (e) => {
+        let { Echeckbox } = this.state
+
+        // 请求导出表按钮，数据导出
+        let currentDay = moment().format("YYYYMMDD");
+        let fileName = "客户信息管理表" + currentDay + ".xls";
+        const hide = message.loading("报表数据正在检索中,请耐心等待。。。", 0);
+        this.props.form.validateFields((err, fieldsValue) => {
+            if (err) {
+                return;
+            }
+            var values = {
+                ...fieldsValue,
+                selectedField: Echeckbox.join(',')
+            };
+            PostbiCustomer(values).then(res => {
+                console.log(res)
+                if (res.success == 1) {
+                    message.destroy();
+                    var a = document.createElement("a");
+                    document.body.appendChild(a);
+                    a.href = res.data + "?filename=" + fileName;
+                    a.click();
+                    document.body.removeChild(a);
+                } else if (res.success == 0) {
+                    message.destroy();
+                    message.error(res.message);
+                }
+            })
+        })
+
+
+        // 关闭按钮
+        this.setState({
+            DCOff: false,
+        });
+    };
 
     render = _ => {
         const { getFieldDecorator } = this.props.form;
 
-        const { h , selectedRowKeys} = this.state;
+        const { h, selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
-            type:'radio'
+            type: 'radio'
         };
 
         // 节点渲染区域
@@ -418,9 +528,40 @@ class Customer extends Component{
                     </Form.Item>
                     <Form.Item style={{ position: 'absolute', right: '20px' }}>
                         <Button onClick={this.handleEdit}>修改</Button>
+                        {/* //wxy数据导入 数据导出 */}
+                        <Upload  {...this.state.uploadConf}>
+                            <Button type="primary" style={{ marginLeft: '10px' }}>数据导入</Button>
+                        </Upload>
+                        <Button type="primary" style={{ marginLeft: '10px' }} onClick={() => this.dataExport()}>数据导出</Button>
+                        {/* //wxy */}
+                        <Modal
+                            title="导出文件"
+                            visible={this.state.DCOff}
+                            onOk={this.handleOk}
+                            onCancel={this.handleCancel}
+                            key=""
+                            okText="导出"
+                            cancelText="取消"
+                        >
+                            {/* //wxy表格内容 */}
+                            <div>
+                                <Checkbox.Group style={{ width: '100%' }} onChange={this.onchangeCheckbox} defaultValue={this.state.Echeckbox}>
+                                    <Row>
+                                        {
+                                            this.state.DCtabledata.map((item, index) => {
+                                                return <Col span={8} key={index} > <Checkbox value={item.tableField}
+
+                                                    disabled={item.canNull === 'NO' ? true : false}
+                                                >{item.comment}
+                                                </Checkbox></Col>
+                                            })
+                                        }
+                                    </Row>
+                                </Checkbox.Group>
+                            </div>
+                        </Modal>
                     </Form.Item>
                 </Form>
-
                 <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>
                     <Table
                         className="jxlTable"
@@ -442,8 +583,8 @@ class Customer extends Component{
 
                 {/* 新增/编辑---客户信息对话框 */}
                 <Modal title={this.state.titleMap[this.state.visibleStatus]} visible={this.state.visible} onCancel={this.handleCancel} onOk={this.handleOk} width='25%' id="modalengineer">
-                   <Row>
-                        <label style={{display:'block',marginBottom:'16px'}}>
+                    <Row>
+                        <label style={{ display: 'block', marginBottom: '16px' }}>
                             <span className={this.state.visibleStatus == 'add' ? "ant-form-item-required" : ''} style={{ display: "inline-block", textAlign: "right" }}>客户级别：</span>
                             <Select style={{ width: 300 }} placeholder="请选择客户级别" allowClear={true} onChange={this.handleChange} value={this.state.newGroup.custLevel}>
                                 {
@@ -453,15 +594,15 @@ class Customer extends Component{
                                 }
                             </Select>
                         </label>
-                        <label style={{display:'block',marginBottom:'16px'}}>
+                        <label style={{ display: 'block', marginBottom: '16px' }}>
                             <span className={this.state.visibleStatus == 'add' ? "ant-form-item-required" : ''} style={{ display: "inline-block", textAlign: "right" }}>客户编码：</span>
                             <Input placeholder="请选择客户编码" value={this.state.newGroup.custNum} onChange={this.getdictCode} allowClear={true} style={{ width: "300px" }} disabled={this.state.visibleStatus == 'add' ? false : true} />
                         </label>
-                        <label style={{display:'block',marginBottom:'16px'}}>
-                            <span className={this.state.visibleStatus == 'add' ? "ant-form-item-required" : ''} style={{display: "inline-block", textAlign: "right" }}>客户名称：</span>
+                        <label style={{ display: 'block', marginBottom: '16px' }}>
+                            <span className={this.state.visibleStatus == 'add' ? "ant-form-item-required" : ''} style={{ display: "inline-block", textAlign: "right" }}>客户名称：</span>
                             <Input placeholder="请选择客户名称" value={this.state.newGroup.custName} onChange={this.getdictName} allowClear={true} style={{ width: "300px" }} disabled={this.state.visibleStatus == 'add' ? false : true} />
                         </label>
-                   </Row>
+                    </Row>
                 </Modal>
             </div>
         )

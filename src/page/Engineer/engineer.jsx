@@ -3,14 +3,18 @@
  * @auth jxl
  */
 import React, { Component } from 'react'
-import { Form, InputNumber, Input, Button, Modal, message, Select, Tooltip, Table, Row, Col, } from 'antd'
+import { Form, InputNumber, Input, Button, Modal, message, Select, Tooltip, Table, Row, Col, Checkbox, Upload } from 'antd'
 import { connect } from 'react-redux'
-import { ADD_PANE} from '/redux/action'
+import { ADD_PANE } from '/redux/action'
 import Common from '/page/common.jsx'
-
+//引入数据导出接口 （wxy）
+import { GetbiUserexportView, PostbiUserexport } from '/api/excelObtn'
+import moment from "moment";//wxy
 
 const ButtonGroup = Button.Group
 const { Option } = Select;
+const { confirm } = Modal;//wxy
+let token = localStorage.getItem('token'); //wxy
 
 
 // 引入页面CSS
@@ -24,7 +28,7 @@ import { educationalLevel, getBiUser, biUserInfo } from '/api/engineer'
 @connect(state => ({
     panes: state.global.panes,
 }), dispath => ({
-    add(pane) { dispath({type: ADD_PANE, data: pane})},
+    add(pane) { dispath({ type: ADD_PANE, data: pane }) },
 }))
 
 
@@ -35,6 +39,28 @@ class engineer extends Component {
         super(props)
 
         this.state = {
+            // 导出按钮开关wxy
+            DCOff: false,
+            DCtabledata: [],
+            canNull: "",
+            Echeckbox: [],
+            uploadConf: {//上传配置 导入wxy
+                name: 'file',
+                action: '/biUser/import',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                showUploadList: false,
+                onChange(info) {
+                    if (info.file.status !== 'uploading') {
+                    }
+                    if (info.file.status === 'done') {
+                        message.success(`${info.file.name} 文件上传成功`);
+                    } else if (info.file.status === 'error') {
+                        message.error(`${info.file.name} 文件上传失败.`);
+                    }
+                },
+            },
             //设置表格的高度
             h: { y: 240 },
             // 表格数据
@@ -54,9 +80,9 @@ class engineer extends Component {
                 ellipsis: {
                     showTitle: false,
                 },
-                render: (text, record)=> 
+                render: (text, record) =>
                     <Tooltip placement="topLeft" title={text}>
-                        <span style={{ color: '#1890ff', cursor: 'pointer',display:'block' }} onClick={() => this.previewing(record)}>{text}</span>
+                        <span style={{ color: '#1890ff', cursor: 'pointer', display: 'block' }} onClick={() => this.previewing(record)}>{text}</span>
                     </Tooltip>
             }, {
                 title: '所属部门',
@@ -92,7 +118,7 @@ class engineer extends Component {
                 ellipsis: {
                     showTitle: false,
                 },
-                align:'center',
+                align: 'center',
                 render: (text) => <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
             }, {
                 title: '工作省份',
@@ -190,8 +216,8 @@ class engineer extends Component {
             },
             visibleStatus: 'add',
             // 当前点击的工程师ID
-            selectedRowKeys:null,
-            tableId:null,
+            selectedRowKeys: null,
+            tableId: null,
 
         }
     }
@@ -235,8 +261,8 @@ class engineer extends Component {
         biUserInfo(id).then(res => {
             if (res.success == 1) {
                 this.setState({
-                    modalTable:res.data.certList,
-                    modalFormArray:res.data
+                    modalTable: res.data.certList,
+                    modalFormArray: res.data
                 })
             } else if (res.success == 0) {
                 message.error(res.message);
@@ -265,7 +291,7 @@ class engineer extends Component {
                 endBussiYear: this.state.endBussiYear
             }
 
-            getBiUser(this.state.pageSize,this.state.current, newSearchForm).then(res => {
+            getBiUser(this.state.pageSize, this.state.current, newSearchForm).then(res => {
                 if (res.success == 1) {
 
                     this.setState({
@@ -363,18 +389,18 @@ class engineer extends Component {
     // 点击表格--姓名时，弹出二级对话框(只读状态)
     previewing = (record) => {
         let pane = {
-            title: record.name+'工程师档案',
-            key: Math.round(Math.random()*10000).toString(),
+            title: record.name + '工程师档案',
+            key: Math.round(Math.random() * 10000).toString(),
             url: 'Engineer/formSearch.jsx',
-            params:{
-                id:record.id,
-                userId:record.userId
+            params: {
+                id: record.id,
+                userId: record.userId
             }
         }
-        
+
         this.props.add(pane)
 
-        
+
     }
 
 
@@ -448,15 +474,105 @@ class engineer extends Component {
         return children;
     }
 
+    //弹出框wxy
+    showModal = () => {
+        this.setState({
+            DCOff: true,
+        });
+    };
+
+    //弹出框wxy
+    handleCancel = (e) => {
+
+        this.setState({
+            DCOff: false,
+        });
+    };
+    //数据导入wxy
+    dataimport = () => {
+        alert(' 数据导入wxy')
+    }
+
+    //数据导出wxy
+    dataExport = () => {
+        let { DCOff } = this.state
+        GetbiUserexportView().then((res) => {
+            console.log(res)
+            if (res.success != 1) {
+                message.error("请求错误");
+                return;
+            } else {
+                let Echeckbox = []
+                let arr = res.data.filter(item => {
+                    console.log(item)
+                    return item.canNull == "NO"
+                })
+                arr.forEach(item => {
+                    Echeckbox.push(item.tableField)
+                })
+                this.setState({
+                    DCtabledata: res.data,
+                    Echeckbox,
+                    DCOff: !DCOff
+                });
+
+            }
+        })
+    }
+    //选中改变wxy
+    onchangeCheckbox = (e) => {
+        this.setState({
+            Echeckbox: e
+        })
+    }
+    //弹出框数据导出,需要传产wxy
+    handleOk = (e) => {
+        let { Echeckbox } = this.state
+
+        // 请求导出表按钮，数据导出
+        let currentDay = moment().format("YYYYMMDD");
+        let fileName = "工程师信息管理表" + currentDay + ".xls";
+        const hide = message.loading("报表数据正在检索中,请耐心等待。。。", 0);
+        this.props.form.validateFields((err, fieldsValue) => {
+            if (err) {
+                return;
+            }
+            var values = {
+                ...fieldsValue,
+                selectedField: Echeckbox.join(',')
+            };
+            PostbiUserexport(values).then(res => {
+                console.log(res)
+                if (res.success == 1) {
+                    message.destroy();
+                    var a = document.createElement("a");
+                    document.body.appendChild(a);
+                    a.href = res.data + "?filename=" + fileName;
+                    a.click();
+                    document.body.removeChild(a);
+                } else if (res.success == 0) {
+                    message.destroy();
+                    message.error(res.message);
+                }
+            })
+        })
+
+
+        // 关闭按钮
+        this.setState({
+            DCOff: false,
+        });
+    };
+
 
     render = _ => {
 
         const { getFieldDecorator } = this.props.form;
-        const { h , selectedRowKeys} = this.state;
+        const { h, selectedRowKeys } = this.state;
         const rowSelection = {
             selectedRowKeys,
             onChange: this.onSelectChange,
-            type:'radio'
+            type: 'radio'
         };
 
         return (
@@ -470,6 +586,41 @@ class engineer extends Component {
                         <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
                         <Button style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
                     </Form.Item>
+                    {/* //wxy数据导入 数据导出 */}
+                    <Upload  {...this.state.uploadConf}>
+                        <Button type="primary" style={{ marginLeft: '10px' }}>数据导入</Button>
+                    </Upload>
+                    <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.dataExport}>数据导出</Button>
+                    {/* //wxy */}
+                    <Modal
+                        title="导出文件"
+                        visible={this.state.DCOff}
+                        onOk={this.handleOk}
+                        onCancel={this.handleCancel}
+                        key=""
+                        okText="导出"
+                        cancelText="取消"
+                    >
+                        {/* //wxy表格内容 */}
+                        <div>
+                            <Checkbox.Group style={{ width: '100%' }} onChange={this.onchangeCheckbox} defaultValue={this.state.Echeckbox}>
+                                <Row>
+                                    {
+                                        this.state.DCtabledata.map((item, index) => {
+                                            return <Col span={8} key={index} > <Checkbox value={item.tableField}
+
+                                                disabled={item.canNull === 'NO' ? true : false}
+                                            >{item.comment}
+                                            </Checkbox></Col>
+                                        })
+                                    }
+                                </Row>
+                            </Checkbox.Group>
+                        </div>
+                    </Modal>
+
+
+
                 </Form>
 
                 <div className="tableParson" style={{ flex: 'auto' }} ref={(el) => this.tableDom = el}>

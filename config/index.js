@@ -111,6 +111,11 @@ module.exports = {
       '/form/': target,     // 流程设计
       '/sysMessage': target, //系统消息接口
       '/basedataMeta': target, //配置库基础数据获取子节点编码
+	  '/biProject/export': target, //导出按钮
+      '/biCustomer/exportView': target, //工程信息按钮
+      '/biProject': target,//项目信息管理导入
+      '/biUser/import': target
+	  
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

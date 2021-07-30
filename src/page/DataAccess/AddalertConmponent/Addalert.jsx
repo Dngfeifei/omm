@@ -69,6 +69,7 @@ class MyModal extends Component {
       },
       username: "",
       userid: "",
+      num: 0
     };
   }
   componentWillMount = (_) => {
@@ -144,7 +145,7 @@ class MyModal extends Component {
     // 1模型ID
     let { searchListID } = this.props;
     // 2岗位id
-    let { positionId, authorValue, plainValue, fieldDate, AllOff } = this.state;
+    let { positionId, authorValue, plainValue, fieldDate, AllOff, num } = this.state;
     console.log(searchListID, authorValue, plainValue, fieldDate, "--------");
     let fieldMetaid = [];
     plainValue.forEach((item, index) => {
@@ -174,7 +175,7 @@ class MyModal extends Component {
         businessKey: searchListID,
         position: positionDate,
         function: authorValue ? authorValue : this.props.updataModal.function,
-        feildAuthorizeList: fieldDate.length ? fieldDate : fieldDate2,
+        feildAuthorizeList: num ? fieldDate : fieldDate2,
       };
       console.log(obj, '=========');
       Getupdate(obj).then((res) => {
@@ -329,7 +330,7 @@ class MyModal extends Component {
 
   //权限事件
   authorHandle = (checkedValues) => {
-    debugger
+
     let listValue = [];
     this.state.Seconddata.forEach((item) => {
       if (checkedValues.includes(item.value)) {
@@ -347,7 +348,7 @@ class MyModal extends Component {
   };
   //4：点击复选框
   onCheckobtn = (checkedValues) => {
-    let { plainValue, fieldDate } = this.state;
+    let { plainValue, fieldDate, num } = this.state;
     let newfieldDate = [];
     let listValue = this.state.listOptions.filter((item) => {
       if (checkedValues.includes(item.fieldMeta)) {
@@ -356,7 +357,6 @@ class MyModal extends Component {
     });
     console.log(plainValue, "plainValue");
     if (this.props.updataModal) {
-      debugger
       plainValue.forEach(item => {
         listValue.forEach((items, index) => {
           if (item.fieldMeta === items.fieldMeta) {
@@ -364,6 +364,7 @@ class MyModal extends Component {
           }
         })
       })
+      console.log(listValue, "listValue");
       listValue.forEach(item => {
         let obj = {
           fieldMeta: item.fieldMeta,
@@ -376,12 +377,13 @@ class MyModal extends Component {
       this.setState(
         {
           plainValue: listValue,
-          fieldDate: newfieldDate
+          fieldDate: newfieldDate,
+          num: ++num
         }
       );
     } else {
 
-      console.log(listValue, "listValue");
+
       this.setState(
         {
           plainValue: listValue,
