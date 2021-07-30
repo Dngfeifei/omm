@@ -46,24 +46,24 @@ export const DoBackAction = (params = {}) =>
 
 // 执行同意动作
 export const DoAuditAction = (params = {}) =>
-  http.fetchFormData(REMOTE_URL + ` /flowable/task/audit`, params)
+  http.fetchFormData(REMOTE_URL + `/flowable/task/audit`, params)
 
 // 执行终止动作
 export const DoStopAction = (params = {}) =>
-	http.fetchPost(REMOTE_URL + `	/flowable/process/stop`, params)
+	http.fetchPost(REMOTE_URL + `/flowable/process/stop`, params)
 
 // 执行转办动作
 export const DoTransferAction = (params = {}) =>
-	http.fetchPost(REMOTE_URL + `	/flowable/task/transfer`, params)
+	http.fetchPost(REMOTE_URL + `/flowable/task/transfer`, params)
 
 // 执行委派动作
 export const DoDelegateAction = (params = {}) =>
-	http.fetchPost(REMOTE_URL + `	/flowable/task/delegate`, params)
+	http.fetchPost(REMOTE_URL + `/flowable/task/delegate`, params)
 
 
 // 执行激活&挂起动作
 export const SuspensionStateAction = (params = {}) =>
-	http.fetchPost(REMOTE_URL + `	/flowable/task/suspensionStateAction`, params)
+	http.fetchPost(REMOTE_URL + `/flowable/task/suspensionStateAction`, params)
 
 
 
