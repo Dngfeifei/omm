@@ -302,8 +302,13 @@ class Personal extends Component {
             })
     }
     //新增组
-    addTreeNode = () => {
-        let select = this.state.treeSelectInfo;
+    addTreeNode = (current) => {
+        let select;
+        if (current == 1) {
+            select = this.state.treeSelectInfo;
+        } else {
+            select = this.state.treeSelectInfo2;
+        }
         //1 判断组tree是否有选中 如无选中提示无选中数据无法修改
         if (select == null) {
             message.destroy()
@@ -325,8 +330,13 @@ class Personal extends Component {
         })
     }
     //编辑组
-    editTreeNode = () => {
-        let select = this.state.treeSelectInfo;
+    editTreeNode = (current) => {
+        let select;
+        if (current == 1) {
+            select = this.state.treeSelectInfo;
+        } else {
+            select = this.state.treeSelectInfo2;
+        }
         //1 判断组tree是否有选中 如无选中提示无选中数据无法修改
         if (select == null) {
             message.destroy()
@@ -350,9 +360,14 @@ class Personal extends Component {
         })
     }
     //删除组
-    delTreeNode = async _ => {
+    delTreeNode = (current)=> {
         //1 判断组tree是否有选中 如无选中提示无选中数据无法删除
-        let select = this.state.treeSelectInfo;
+        let select;
+        if (current == 1) {
+            select = this.state.treeSelectInfo;
+        } else {
+            select = this.state.treeSelectInfo2;
+        }
         if (select == null) {
             message.destroy()
             message.warning('没有选中数据,无法进行删除!');
@@ -796,11 +811,11 @@ class Personal extends Component {
             <Row gutter={24} className="main_height">
                 <Col span={5} className="gutter-row" style={{ backgroundColor: 'white', paddingTop: '16px', height: '99.7%', borderRight: '5px solid #f0f2f5' }}>
                     <TreeParant style={{ display: this.state.tabKey == 2 ? "none" : "" }} treeData={this.state.treeData} selectedKeys={[this.state.treeSelectInfo ? this.state.treeSelectInfo.id : null]}
-                        addTree={this.addTreeNode} editTree={this.editTreeNode} deletetTree={this.delTreeNode}
+                        addTree={_ => this.addTreeNode(1)} editTree={_ => this.editTreeNode(1)} deletetTree={_ => this.delTreeNode(1)}
                         onSelect={this.onTreeSelect} search={false} //点击树节点触发事件
                     ></TreeParant>
                     <TreeParant style={{ display: this.state.tabKey == 1 ? "none" : "" }} treeData={this.state.treeData} selectedKeys={[this.state.treeSelectInfo2 ? this.state.treeSelectInfo2.id : null]}
-                        addTree={this.addTreeNode} editTree={this.editTreeNode} deletetTree={this.delTreeNode}
+                        addTree={_ => this.addTreeNode(2)} editTree={_ => this.editTreeNode(2)} deletetTree={_ => this.delTreeNode(2)}
                         onSelect={this.onTreeSelect2} search={false} //点击树节点触发事件
                     ></TreeParant>
                 </Col>
