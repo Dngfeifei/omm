@@ -4,11 +4,11 @@ import FormDesignContenxt from '@/page/ans/formmaking/lib/formDesignContext';
 import http from '/api/index'
 
 export default function useFieldBaseProps(
-    control,
-    formConfig,
-    isDirectValue = false,
-    inTable=false,
-    onChange) {
+  control,
+  formConfig,
+  isDirectValue = false,
+  inTable=false,
+  onChange) {
   const { options } = control;
   const { state, updateValue, dispatch } = useContext(formRenderContext);
   const changeFn = inTable ? onChange: updateValue

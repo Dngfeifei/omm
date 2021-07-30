@@ -1,8 +1,9 @@
-import React, { useState, useRef, useEffect } from 'react'
+import React, {useState, useRef, useEffect, useContext} from 'react'
 import { Button, Checkbox, Modal, Icon } from 'antd'
 import { css } from '@emotion/css'
 import FormAttrItem from '@/page/ans/formmaking/components/FormAttrItem.jsx'
 import LinkSettings from './LinkSettings'
+import FormDesignContenxt from "@/page/ans/formmaking/lib/formDesignContext";
 
 const MenuIconSpan = css`
   font-size: 16px;
@@ -45,6 +46,9 @@ const ListAttrSettings = ({ config, updateConfig }) => {
   const formRef = useRef()
   const [actions, setActions] = useState([])
   const [initialValues, setInitialValues] = useState({})
+  const { state } = useContext(FormDesignContenxt);
+  const { selectedControl } = state;
+  const isLayout = ['grid', 'report', 'tabs', 'divider','td', 'col'].includes(selectedControl.type)
 
   const handleShowModal = () => {
     editIndex = undefined
@@ -74,11 +78,11 @@ const ListAttrSettings = ({ config, updateConfig }) => {
 
   return <div>
     <FormAttrItem label="列属性 (字段)">
-      <Checkbox.Group defaultValue={['a', 'b', 'c']} onChange={e => console.log(e)}>
+      {!isLayout && <Checkbox.Group defaultValue={['a', 'b', 'c']} onChange={e => console.log(e)}>
         <Checkbox value="a">显示</Checkbox>
         <Checkbox value="b">排序</Checkbox>
         <Checkbox value="c">检索</Checkbox>
-      </Checkbox.Group>
+      </Checkbox.Group>}
     </FormAttrItem>
 
     <FormAttrItem label="跳转配置 (全局)">
