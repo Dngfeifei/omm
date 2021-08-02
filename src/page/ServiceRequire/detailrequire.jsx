@@ -43,7 +43,8 @@ class RequireSqt extends Component {
         super(props)
         this.state = {
             disabled: false,
-            spin: true
+            spin: true,
+            flowType: ""
         }
     }
     componentDidMount() {
@@ -53,29 +54,40 @@ class RequireSqt extends Component {
     }
 
     render = _ => {
-        console.log(this.props.params.dataType.id)
+        // 流程类型 YY:预约服务，HG:宏观风险，WG:微观风险 多个用逗号隔开，YY，HG，WG
 
+
+        let types = this.props.params.dataType.flowType
+        let arrOne = ['macroRisk', 'macroRiskSummary'], arrTwo = ['microRisk', 'microRiskSummary'], arrThree = ['reservationService', 'reservationServiceSummary']
+        arrOne = types.indexOf('HG') > -1 ? arrOne : []
+        arrTwo = types.indexOf('WG') > -1 ? arrTwo : []
+        arrThree = types.indexOf('YY') > -1 ? arrThree : []
+
+        console.log(types.indexOf('HG'))
+        console.log(types.indexOf('WG'))
+        console.log(types.indexOf('YY'))
         let params = {
             formRead: 2,
-            id: this.props.params.dataType.id, formControl: {
-                action: ['masterList', 'serviceArea', 'macroRisk', 'macroRiskSummary',
-                    'microRisk', 'microRiskSummary', 'reservationService', 'reservationServiceSummary'],
-                masterList: { isEdit: false }, serviceArea: { isEdit: false, contactIsEdit: false, objectIsEdit: false, memberIsEdit: false },
-                microRisk: { isEdit: false }, microRiskSummary: { isEdit: false }, macroRisk: { isEdit: false },
-                macroRiskSummary: { isEdit: false }, reservationService: { isEdit: false },
+            id: this.props.params.dataType.id,
+            formControl: {
+                action: ['masterList', 'serviceArea', ...arrOne, ...arrTwo, ...arrThree],
+                masterList: { isEdit: false },
+                serviceArea: { isEdit: false, contactIsEdit: false, objectIsEdit: false, memberIsEdit: false },
+                microRisk: { isEdit: false },
+                microRiskSummary: { isEdit: false },
+                macroRisk: { isEdit: false },
+                macroRiskSummary: { isEdit: false },
+                reservationService: { isEdit: false },
                 reservationServiceSummary: { isEdit: false }
             }, sign: 1
         }
+
         return (
 
             <div className="service" style={{ height: '100%', padding: '0 15px', overflow: 'hidden' }}>
                 <Spin size="large" spinning={this.state.spin}>
                     <SQT ref="getSwordButton" config={params}></SQT>
-                    展示区
-
                 </Spin>
-
-
             </div>
 
         )

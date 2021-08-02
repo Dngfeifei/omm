@@ -311,6 +311,7 @@ class Schedule extends Component {
       customerLevels: [],
       // 表格数据   2021429
       tabledata: [],
+
       // 表格列数据
       columns: [
         {
@@ -325,10 +326,10 @@ class Schedule extends Component {
           title: "记录单号",
           dataIndex: "orderNum",
           align: 'center',
+          width: "140px",
           ellipsis: {
             showTitle: false,
           },
-
           render: (text, record) => (
             <Tooltip placement="topLeft" title={text}>
               <span
@@ -351,6 +352,7 @@ class Schedule extends Component {
         {
           title: "项目编号",
           dataIndex: "projectNumber",
+          width: "140px",
           ellipsis: {
             showTitle: false,
           },
@@ -376,6 +378,7 @@ class Schedule extends Component {
         {
           title: "项目名称",
           dataIndex: "projectName",
+          width: "140px",
           ellipsis: {
             showTitle: false,
           },
@@ -401,6 +404,7 @@ class Schedule extends Component {
         {
           title: "客户编码",
           dataIndex: "custNum",
+          width: "140px",
           ellipsis: {
             showTitle: false,
           },
@@ -426,6 +430,7 @@ class Schedule extends Component {
         {
           title: "客户名称",
           dataIndex: "custName",
+          width: "140px",
           ellipsis: {
             showTitle: false,
           },
@@ -474,7 +479,7 @@ class Schedule extends Component {
         {
           title: "公司名称",
           dataIndex: "compayName",
-
+          width: "140px",
           ellipsis: {
             showTitle: false,
           },
@@ -500,11 +505,10 @@ class Schedule extends Component {
         {
           title: "项目类别",
           dataIndex: "projectTypeName",
-
+          width: "140px",
           ellipsis: {
             showTitle: false,
           },
-
           render: (text) => (
             <Tooltip placement="topLeft" title={text}>
               <span
@@ -531,8 +535,8 @@ class Schedule extends Component {
             showTitle: false,
           },
 
-          render: (text) => (
-            <Tooltip placement="topLeft" title={text}>
+          render: (text) => {
+            return <Tooltip placement="topLeft" title={text}>
               <span
                 style={{
                   cursor: "pointer",
@@ -547,7 +551,7 @@ class Schedule extends Component {
                 {text}
               </span>
             </Tooltip>
-          ),
+          },
         },
         {
           title: "服务类别",
@@ -880,6 +884,7 @@ class Schedule extends Component {
           ),
         },
       ],
+      flowType: "",
       total: 0, // 分页器组件 总条数
       // 此属性是适用于 表格的分页数据
       pageSize: 10,
@@ -1007,6 +1012,7 @@ class Schedule extends Component {
   };
   // 获取客户列表（分页)
   getTableList = () => {
+
     this.props.form.validateFields((err, fieldsValue) => {
       if (err) {
         return;
@@ -1021,11 +1027,13 @@ class Schedule extends Component {
         : "";
       GetbiSqtBase(this.state.pageSize, this.state.current, newSearchForm).then(
         (res) => {
+          console.log(res)
           if (res.success == 1) {
             this.setState({
               loading: false,
               tabledata: res.data.records,
               total: parseInt(res.data.total),
+
             });
           } else if (res.success == 0) {
             message.error(res.message);
@@ -1077,19 +1085,16 @@ class Schedule extends Component {
 
   // 点击表格中详情页面
   previewing = (record) => {
-    // var str = Math.floor(Math.random() * (99999 - 1000)) + 1000;
-    // let pane = {
-    //   title: "服务需求表",
-    //   key: "str",
-    //   url: "ServiceRequire/require.jsx",
-    // };
-    // this.props.add(pane);
+    let { flowType } = this.state
+    console.log(record.flowType)
+    let str = record.custName.length >= 8 ? record.custName.substring(0, 7) + "客户档案..." : record.custName + "客户档案"
     let pane = {
-      title: record.custName + "客户档案",
-      key: Math.round(Math.random() * 10000).toString(),
+      title: str,
+      key: record.custName,
       url: "ServiceRequire/detailrequire.jsx",
       params: {
         id: record.baseId,
+        flowType: record.flowType,
       },
     };
     this.props.add(pane);
@@ -1249,6 +1254,7 @@ class Schedule extends Component {
 
 
   render = (_) => {
+
     const { getFieldDecorator } = this.props.form;
 
     const { h, selectedRowKeys } = this.state;
@@ -1270,6 +1276,7 @@ class Schedule extends Component {
 
         }}
       >
+
         <Form
           layout="inline"
           style={{ width: '100%', paddingTop: '24px', marginLeft: '15px' }}
@@ -1371,7 +1378,7 @@ class Schedule extends Component {
           onCancel={this.handleCancel}
           onOk={this.handleOk}
           width="25%"
-
+          id="modalengineer"
         >
           <Row>
             <label style={{ display: "block", marginBottom: "16px" }}>
