@@ -214,8 +214,8 @@ class SA extends Component {
                 message.error(res.message)
                 return
             } else {
-                let { skillType, productLine, brand } = res.data
-                let baseData = Object.assign({}, this.state.baseData, { skillType, productLine, brand })
+                let { skillType, productLine, brand, productLineLevel} = res.data
+                let baseData = Object.assign({}, this.state.baseData, { skillType, productLine, brand, productLineLevel })
                 this.setState({
                     baseData
                 }, () => {
