@@ -129,3 +129,8 @@ export const FLowAreaList = (params = {}) =>
 export const FlowUpload = (params = {}) =>
 	http.fetchPost(`${REMOTE_URL}/sys/file/webupload/upload`, params)
 
+
+// 获取动态表单列表
+export const FLowFormMakeList = (params = {}) =>
+	http.fetchGet(REMOTE_URL + `/form/make/listForFlow`, params)
+

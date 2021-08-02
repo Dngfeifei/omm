@@ -133,7 +133,7 @@ export default function ButtonConfig(props) {
         onCancel={() => setSelectModalVisible(false)}
         destroyOnClose
       >
-        <SelectButtonTable selectButton={selectButton} />
+        <SelectButtonTable selectButton={selectButton} buttonList={buttonList}/>
       </Modal>
       <Modal
         title="添加按钮"

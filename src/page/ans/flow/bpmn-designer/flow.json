@@ -766,6 +766,72 @@
       ]
     },
     {
+      "name": "ChildField",
+      "superClass": ["Element"],
+      "properties": [
+        {
+          "name": "id",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "name",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "type",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "required",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "readable",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "writable",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "variable",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "expression",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "datePattern",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "default",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "parentId",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "values",
+          "type": "Value",
+          "isMany": true
+        }
+      ]
+    },
+    {
       "name": "InputParameter",
       "superClass": ["InputOutputParameter"]
     },
@@ -965,6 +1031,16 @@
         {
           "name": "values",
           "type": "Value",
+          "isMany": true
+        },
+        {
+          "name": "children",
+          "type": "String",
+          "isAttr": true
+        },
+        {
+          "name": "extensionElements",
+          "type": "bpmn:ExtensionElements",
           "isMany": true
         }
       ]

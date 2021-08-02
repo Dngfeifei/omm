@@ -83,10 +83,20 @@ class ButtonList extends Common{
                 onClick={this.search} style={{ marginRight: "10px" }}
                 type="primary" icon="search" >查询</Button>
             <Button
-                onClick={this.reset}
+                onClick={this.handleReset}
             >重置</Button>
         </div>
     </div>
+
+    handleReset = () => {
+        this.setState({
+            search: {
+                ...this.state.search,
+                name: '',
+                code:''
+            }
+        }, this.search)
+    }
 
 
     renderBtn = _ => <Row style={{ margin: "10px 0" }}>

@@ -1,11 +1,13 @@
 import React, { Component } from 'react'
-import { Modal, Input, Form, Row, Button, message, Card, Tree, Table } from 'antd'
+import {Modal, Input, Form, Row, Button, message, Card, Tree, Table, Select, Tabs} from 'antd'
+const { TextArea } = Input;
 import { GetOrgTree, GetPeople, RelationPeople, UnRelationPeople } from '/api/post'
 import { checkRY } from '/api/ommJG'
 
 import Pagination from '/components/pagination'
+import FormAttrItem from "@/page/ans/formmaking/lib/controls/layout-controls/Grid/components/GridSetting";
 
-class UserSelectForm extends Component {
+class AddSignTaskForm extends Component {
   
   async componentWillMount() {
     // 请求全量机构树数据
@@ -15,7 +17,6 @@ class UserSelectForm extends Component {
     // 判断参数变化
     // 1 参数visible为ture  窗口显示
     if (nextprops.config != this.props.config && nextprops.config.visible) {
-      // 获取岗位ID
     
       // 获取已关联数据
       this.searchUser()
@@ -64,10 +65,12 @@ class UserSelectForm extends Component {
     searchUserName: "",
     // 机构下人员
     unRelationTable: [],
-    //未关联表格选中项
-    unrelRabSelecteds: null,
-    //关联表格选中项
-    relRabSelecteds: []
+    //表格选中项
+    tableSelecteds: [],
+    tableSelectedInfo: [],
+    //加签方式
+    signType:null,
+    comment:""
   }
   // 请求全量机构树数据
   searchAllOrgData = _ => {
@@ -99,25 +102,14 @@ class UserSelectForm extends Component {
       searchUserName: e.target.value
     })
   }
-  // 全量表格选中后
-  onUnRelTabSelect = selectedRowKeys => {
+  // 表格选中后
+  onTableSelect = (selectedRowKeys, info) => {
     //获取table选中项
     this.setState({
-      unrelRabSelecteds: selectedRowKeys[0]
+      tableSelecteds: selectedRowKeys,
+      tableSelectedInfo: info
     })
   };
-  //点击行选中选框
-  onRow = (record) => {
-    return {
-      onClick: () => {
-        // let selectedKeys = [record.id], selectedItems = [record];
-        this.setState({
-          unrelRabSelecteds: record.id,
-        })
-      }
-    }
-  }
-  
   // 通过用户名请求机构用户数据
   searchUserByName = _ => {
     let params = { realName: this.state.searchUserName, orgId: this.state.currentOrgID, offset: 0 }
@@ -138,7 +130,7 @@ class UserSelectForm extends Component {
           limit: res.data.size,
           offset: (res.data.current - 1) * res.data.size
         }
-        this.setState({ unRelationTable: res.data.records, pagination: pagination, pageConf: pageConf, unrelRabSelecteds: "" })
+        this.setState({ unRelationTable: res.data.records, pagination: pagination, pageConf: pageConf, tableSelecteds:[],tableSelectedInfo:[] })
       } else {
         message.error("请求失败,请重试！")
       }
@@ -163,18 +155,45 @@ class UserSelectForm extends Component {
 
   doConfirm = () => {
 
-    let userId = this.state.unrelRabSelecteds;
-    if (userId == "" || userId == null) {
+    let userIds = this.state.tableSelecteds;
+    
+    if (userIds.length === 0 ) {
       message.warning('请选中表格中的某一记录！')
       return
     }
+
+    let type = this.state.signType;
+    if(type === null){
+      message.warning('请选择加签类型！')
+      return
+    }
     
-    this.props.transferAction(userId)
+    
+    let params = {
+      userIds:userIds,
+      signType:this.state.signType,
+      comment:this.state.comment
+    }
+    
+    this.props.addSignAction(params)
   }
 
   doCancel = e => {
-    this.props.transferAction()
+    this.props.addSignAction()
   }
+
+
+  //监控文本框的change事件
+  messageChange = (e)=>{
+    const newVal = e.target.value
+    this.setState({comment:newVal})
+  }
+
+  onUpdateSelect = (value)=>{
+    this.setState({signType:value})
+  }
+
+  
   
   render = _ => {
     return <div>
@@ -185,6 +204,42 @@ class UserSelectForm extends Component {
              onOk={this.doConfirm}
              onCancel={this.doCancel}
       >
+
+        <Row style={{ marginBottom: "10px" }}>
+          
+          <label style={{justifyContent: "center", marginRight: "5px"}}>加签类型:</label>
+          
+          <Select
+            style={{ width: '30%' }}
+            placeholder="请选择加签类型"
+            onChange={(value) => this.onUpdateSelect(value)}
+          >
+            <Select.Option value="true">前加签</Select.Option>
+            <Select.Option value="false">后加签</Select.Option>
+          </Select>
+        </Row>
+
+
+        <Row style={{ marginBottom: "10px" }}>
+
+          <label style={{
+            textAlign: "justify",
+            display: "inline-block",
+            verticalAlign: "top",
+            marginRight: "5px"
+          }}>备注&nbsp;&nbsp;:</label>
+
+          <TextArea
+            id="message"
+            onChange={(e) => this.messageChange(e)}
+            value={this.state.comment}
+            style={{width: 800}}
+            allowClear
+            rows={3}
+            placeholder="请输入备注"/>
+
+        </Row>
+        
         <div style={{ display: 'flex' }}>
           <Card style={{ flex: 1, marginRight: "20px", height: "300px", overflow: "auto" }}>
             <Tree
@@ -206,7 +261,7 @@ class UserSelectForm extends Component {
                 onClick={this.searchUserByName}
                 type="primary" icon="search">查询</Button>
             </Row>
-            <Table style={{ height: "180px" }} size="small" scroll={{ y: 140 }} bordered rowSelection={{ onChange: this.onUnRelTabSelect, type: "radio", selectedRowKeys: [this.state.unrelRabSelecteds] }} onRow={this.onRow} columns={this.state.allTableColumns} dataSource={this.state.unRelationTable} pagination={false} rowKey="id" />
+            <Table style={{ height: "180px" }} size="small" scroll={{ y: 140 }} bordered rowSelection={{ onChange: this.onTableSelect, type: "checkbox", selectedRowKeys: this.state.tableSelecteds }}  columns={this.state.allTableColumns} dataSource={this.state.unRelationTable} pagination={false} rowKey="id" />
             <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} />
           </Card>
         </div>
@@ -217,6 +272,6 @@ class UserSelectForm extends Component {
   }
 }
 
-const UserSelectDialog = Form.create()(UserSelectForm)
-export default UserSelectDialog
+const AddSignTaskDialog = Form.create()(AddSignTaskForm)
+export default AddSignTaskDialog
 

@@ -40,7 +40,7 @@ export default function FormTable(props) {
         width: 138,
       },
       {
-        title: "可读",
+        title: "不可读",
         dataIndex: "readable",
         key: "readable",
         render: (value, record, index) => (
@@ -53,7 +53,7 @@ export default function FormTable(props) {
         ),
       },
       {
-        title: "可写",
+        title: "不可写",
         dataIndex: "writable",
         key: "writable",
         render: (value, record, index) => (
@@ -72,10 +72,12 @@ export default function FormTable(props) {
   return (
     <div className="form-table">
     <Table
+      rowKey={"id"}
       dataSource={data.map((item) => ({ ...item, key: item.id }))}
       columns={columns}
       pagination={false}
       expandedRowRender={expandedRowRender}
+      defaultExpandAllRows={true}
       bordered
     />
     </div>

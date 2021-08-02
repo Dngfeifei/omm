@@ -8,18 +8,27 @@ import { pagination } from "../../utils";
  */
 export default function SelectButtonTable(props) {
   const [dataSource, setDataSource] = useState([]);
+  const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [total, setTotal] = useState(0);
-  const { selectButton } = props;
+  const { selectButton, buttonList } = props;
 
   useEffect(() => {
     updateDataSource({ pageSize: 10, pageNo: 0 });
   }, []);
 
+  useEffect(() => {
+    const obj = {};
+    for (const item of buttonList) {
+      obj[item.id] = true;
+    }
+    setSelectedRowKeys(Object.keys(obj));
+  }, buttonList);
+
   // 更新列表数据源
   function updateDataSource(param) {
     getButtonList({ ...param, listenerType: 1 }).then((data) => {
       const { list, count } = data;
-      setDataSource(list.map((item, index) => ({ ...item, key: index })));
+      setDataSource(list.map((item, index) => ({ ...item, key: item.id })));
       setTotal(count);
     });
   }
@@ -27,13 +36,20 @@ export default function SelectButtonTable(props) {
   // 监听选择行
   const onSelectChange = (selectedRowKeys) => {
     const list = [];
-    for (const index of selectedRowKeys) {
-      list.push(dataSource[index]);
+    for (const id of selectedRowKeys) {
+      for (const item of dataSource) {
+        if (item.id === id) {
+          list.push(item);
+          break;
+        }
+      }
     }
+    setSelectedRowKeys(selectedRowKeys);
     selectButton(list);
   };
 
   const rowSelection = {
+    selectedRowKeys,
     onChange: onSelectChange,
   };
 

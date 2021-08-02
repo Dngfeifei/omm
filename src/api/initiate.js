@@ -66,5 +66,27 @@ export const SuspensionStateAction = (params = {}) =>
 	http.fetchPost(REMOTE_URL + `/flowable/task/suspensionStateAction`, params)
 
 
+// 读取动态表单相关内容
+export const GetFormRenderContent = (params = {}) =>
+	http.fetchGet(REMOTE_URL + `/form/make/queryById`, params)
+
+// 读取动态权限表单-结合设计器版本
+export const GetFormWithAuthority = (params = {}) =>
+	http.fetchGet(REMOTE_URL + `/flowable/task/queryFormWithAuthority`, params)
+
+
+// 保存数据表单
+export const SaveGenerateForm = (params = {}) =>
+	http.fetchPost(REMOTE_URL + `/form/generate/save`, params)
+
+
+// 执行转办动作
+export const DoAddSignAction = (params = {}) =>
+	http.fetchPost(REMOTE_URL + `	/flowable/task/addSignTask`, params)
+
+
+// 读取流程节点表单配置
+export const GetTaskDef = (params = {}) =>
+	http.fetchGet(REMOTE_URL + `/flowable/task/getTaskDef`, params)
 
 	
