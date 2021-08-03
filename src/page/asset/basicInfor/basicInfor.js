@@ -3,6 +3,10 @@ import { Row, Col,  Input, Select,  DatePicker,Upload,Form,Icon } from 'antd'
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea } = Input;
+let ComponentNode;
+export const setComNode = (_this) => {
+        ComponentNode = _this;
+}
 export const assetsList = (props) => {
     let childrens = [];
     if(props.dataSource.length){
@@ -197,6 +201,7 @@ export const columns = [
                 title: '名称',
                 dataIndex: 'name',
                 align: 'center',
+                render:(text,row,index) => <a onClick={ (e) => ComponentNode.getChildrenTable(row,e)}>{text}</a>
             },{
                 title: '所属',
                 dataIndex: 'parentName',

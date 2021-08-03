@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, DatePicker,Upload,Icon } from 'antd'
+import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, DatePicker,Breadcrumb } from 'antd'
 // 引入 Tree树形组件
 import TreeParant from "@/components/tree/index.jsx"
 
-
+import {getNodes,getIndex} from '@/assets/js/publicMethod.js'//获取公共方法
 import { GetBasicTree,AddTable,EditTable, DelTable,GetTable, getChildType,getMeta,getByCode,generateChildCode,getAllBaseDataTypes,getBasicSearchData,getBaseData } from '/api/assets.js'
 import { GetDictInfo } from '/api/dictionary'
 import Pagination from '/components/pagination'//分页组件
-import {rules,assetsListData,columns,panes,conditionalData,baseData} from './basicInfor.js'//获取页面渲染配置项
+import {rules,assetsListData,columns,setComNode,baseData} from './basicInfor.js'//获取页面渲染配置项
 import '@/assets/less/pages/assets.less'
 //引入状态管理
 import { connect } from 'react-redux'
@@ -144,11 +144,14 @@ class assetsAllocation extends Component {
             lableType: props.params.pathParam.split('?')[1] ? props.params.pathParam.split('?')[1] :'',
             incrementFeilds:[],
             basedataTypeIdSon:null, //当前选中节点子节点basedataTypeId
-            basedataTypeIdSonName:null //当前选中节点子节点Name
+            basedataTypeIdSonName:null, //当前选中节点子节点Name
+            breadcrumbList:[]       //面包屑显示数据存储
         }
+        if(setComNode) setComNode(this) //赋值当前组件实例在bsicinfor.js中使用
     }
     SortTable = () => {
         setTimeout(() => {
+            if(!this.tableDom) return;
             let h = this.tableDom.clientHeight - 100 < 0 ? 120 : this.tableDom.clientHeight - 120 ;
             console.log(h)
             this.setState({
@@ -177,7 +180,7 @@ class assetsAllocation extends Component {
     //基础树结构数据查询
     searchTree = async (pass) => {
         //请求树结构数据 右侧表格渲染第一列角色数据
-        const {searchListID,lableType} = this.state;
+        const {searchListID,lableType,breadcrumbList} = this.state;
         let res = await GetBasicTree({type: lableType});
             if (res.success != 1) {
                 message.error("请求错误")
@@ -192,7 +195,8 @@ class assetsAllocation extends Component {
                 // console.log(incrementFeild.data)
                 if (pass && res.data) {
                     let basedataTypeId =   await getChildType({basedataId:res.data[0]['id'],type:lableType});
-                    let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data.id})
+                    let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data.id});
+                    !breadcrumbList.length && breadcrumbList.push(res.data[0]);
                     this.setState({
                         searchListID: res.data[0]['id'],
                         searchListName:res.data[0]['name'],
@@ -202,6 +206,7 @@ class assetsAllocation extends Component {
                         basedataTypeIdSonName: basedataTypeId.data ? basedataTypeId.data.basedataTypeName : '数据',
                         basedataTypeName: res.data[0]['basedataTypeName'],
                         incrementFeild:this.getIncrementFeild(incrementFeild.data),
+                        breadcrumbList,//添加面包屑数据
                         newRoleGroup:{
                             treeSelect:res.data[0]['parentId'],
                             newRoleGroupVal:null,
@@ -294,8 +299,11 @@ class assetsAllocation extends Component {
             }})
             return
         }
-        console.log(selectedKeys, info,'树结构点击生效')
+        //  console.log(selectedKeys, info,'树结构点击生效')
         let data = info.selectedNodes[0].props.dataRef
+        //特殊处理当节点选中之后去查看当前面包屑显示路径
+        let breadcrumbList = getNodes(this.state.tree.treeData,data['id']).reverse();
+        //特殊处理当节点选中之后去查看当前面包屑显示路径
         let basedataTypeId =   await getChildType({basedataId:selectedKeys[0],type:lableType});
         let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data ? basedataTypeId.data.id :''})
         // console.log(this.getIncrementFeild(incrementFeild.data))
@@ -312,6 +320,7 @@ class assetsAllocation extends Component {
             tableSelectedInfo: [],
             searchName:undefined,
             searchCode:undefined,
+            breadcrumbList,
             newRoleGroup:{
                 treeSelect:data['parentId'],
                 newRoleGroupVal:null,
@@ -632,11 +641,84 @@ class assetsAllocation extends Component {
         obj[type] = value;
         this.setState(obj);
     };
+    //点击表格名称刷新表格数据
+    getChildrenTable = async (recode,e) => {
+        e.stopPropagation()
+        // console.log(recode)
+        const {lableType,breadcrumbList} = this.state;
+        let data = recode;
+        let basedataTypeId =  await getChildType({basedataId:data['id'],type:lableType});
+        let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data ? basedataTypeId.data.id :''})
+        //表格名称点击添加面包屑路径数据，此处只进行push
+        breadcrumbList.push(recode)
+        this.setState({
+            searchListID: data['id'],
+            searchListName:data['name'],
+            TreeParantID: data['parentId'],
+            basedataTypeId: data['basedataTypeId'],
+            basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id :'',
+            basedataTypeIdSonName: basedataTypeId.data ? basedataTypeId.data.basedataTypeName : '数据',
+            basedataTypeName: data['basedataTypeName'],
+            incrementFeild: this.getIncrementFeild(incrementFeild.data),
+            tableSelecteds: [],
+            tableSelectedInfo: [],
+            searchName:undefined,
+            searchCode:undefined,
+            breadcrumbList,
+            newRoleGroup:{
+                treeSelect:data['parentId'],
+                newRoleGroupVal:null,
+                newRoleGroupCode:null,
+                newRoleGroupType:null
+            }
+        },()=>{
+
+            // 选中后请求列表数据
+            let {searchListID} = this.state;
+            this.searchRoleFun(searchListID)
+        })
+    }
+    //面包屑点击事件
+    breadcrumbClick = async (recode) => {
+        // console.log(recode)
+        const {lableType,breadcrumbList} = this.state;
+        let data = recode;
+        let basedataTypeId =  await getChildType({basedataId:data['id'],type:lableType});
+        let incrementFeild = await getMeta({basedataTypeId:basedataTypeId.data ? basedataTypeId.data.id :''})
+        
+        this.setState({
+            searchListID: data['id'],
+            searchListName:data['name'],
+            TreeParantID: data['parentId'],
+            basedataTypeId: data['basedataTypeId'],
+            basedataTypeIdSon: basedataTypeId.data ? basedataTypeId.data.id :'',
+            basedataTypeIdSonName: basedataTypeId.data ? basedataTypeId.data.basedataTypeName : '数据',
+            basedataTypeName: data['basedataTypeName'],
+            incrementFeild: this.getIncrementFeild(incrementFeild.data),
+            tableSelecteds: [],
+            tableSelectedInfo: [],
+            searchName:undefined,
+            searchCode:undefined,
+            breadcrumbList: breadcrumbList.slice(0,getIndex(breadcrumbList,recode.id)+1),//面包屑点击处理当前应该显示路径，此处使用数组截取方法slice
+            newRoleGroup:{
+                treeSelect:data['parentId'],
+                newRoleGroupVal:null,
+                newRoleGroupCode:null,
+                newRoleGroupType:null
+            }
+        },()=>{
+            // 选中后请求列表数据
+            let {searchListID} = this.state;
+            this.searchRoleFun(searchListID)
+        })
+    }
     render = _ => {
-        const { h,assetsList } = this.state;
+        const { h,assetsList,lableType } = this.state;
         const { columns } = this.state.table;
         const { getFieldDecorator } = this.props.form;
-        const column = this.getClums(columns) ? this.getClums(columns).concat(this.state.incrementFeild) : [];
+        const column = [...this.getClums(columns)]
+        column && lableType == 'part' ? column.splice(3, 0,...this.state.incrementFeild) : column.splice(4, 0,...this.state.incrementFeild);
+        // console.log(this.getClums(columns).splice(3, 0,...this.state.incrementFeild))
         h.x = column.length > 9 ?  1400 : 0;
         const assetsLists = this.getClums(assetsList) ? this.getClums(assetsList) : [];
         return <div style={{ border: '0px solid red', background: ' #fff', height: '100%'}} >
@@ -649,41 +731,42 @@ class assetsAllocation extends Component {
                 </Col>
                 <Col span={19} className="gutter-row main_height" style={{ padding: '16px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
                     <Form id="assetsForm" layout='inline' style={{ width: '100%' }}>
-                        <Row>
-                        {this.state.rules['rules1'].map((val, index) =>
-                            // <FormItem
-                            //     label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                            //     {getFieldDecorator(val.key, val.option)(val.render(this))}
-                            // </FormItem>
-                            <FormItem
-                            label={val.label} style={{ marginBottom: '8px' }} key={index}>
-                            {val.render(this)}
-                        </FormItem>)}
-                            <FormItem style={{flex:'auto',textAlign:'right'}}>
-                                <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
-                                <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
-                            </FormItem>
+                        <Row style={{marginBottom: 10,paddingLeft: 17}}>
+                            <Breadcrumb separator=">">
+                                <Breadcrumb.Separator><span style={{fontWeight:600,color:'rgba(0, 0, 0, 0.85)',marginRight:10}}>当前所在位置：</span></Breadcrumb.Separator>
+                                {
+                                    this.state.breadcrumbList.map((item,index) => {
+                                        return <Breadcrumb.Item key={index} onClick={() => this.breadcrumbClick(item)} href="#">{item.name}</Breadcrumb.Item>
+                                    })
+                                }
+                            </Breadcrumb>
                         </Row>
                         <Row>
-                            <Col span={12} style={{ textAlign: 'left'}}>
-                                {/* <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
-                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>
-                                <Upload>
-                                    <Button>
-                                    <Icon type="upload" /> Click to Upload
-                                    </Button>
-                                </Upload> */}
+                            <Col span={16}>
+                                <Row>
+                                    {this.state.rules['rules1'].map((val, index) =>
+                                         <FormItem
+                                            label={val.label} key={index}>
+                                                    {val.render(this)}
+                                        </FormItem>)}
+                                        <FormItem style={{flex:'auto',textAlign:'right'}}>
+                                            <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
+                                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
+                                        </FormItem>
+                                </Row>
                             </Col>
-                            <Col span={12} style={{ textAlign: 'right' }}>
-                                <Button type="primary" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(2)}>查看</Button>
-                                <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
-                                <Button type="info" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(1)}>修改</Button>
-                                <Button type="primary" onClick={(e) => this.openModal(0)}>新增</Button>
+                            <Col span={8} style={{ textAlign: 'right' }}>
+                                <FormItem style={{flex:'auto',textAlign:'right'}}>
+                                    <Button type="primary" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(2)}>查看</Button>
+                                    <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
+                                    <Button type="info" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(1)}>修改</Button>
+                                    <Button type="primary" onClick={(e) => this.openModal(0)}>新增</Button>
+                                </FormItem>
                             </Col>
                         </Row>
                     </Form>
                     <div className="tableParson" style={{ flex: 'auto',height: 10 }} ref={(el) => this.tableDom = el}>
-                        <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={!this.state.incrementFeilds.length?this.state.table.rolesData:[]} columns={column} style={{ marginTop: '20px',maxHeight:'86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={h} size="small" />
+                        <Table bordered onRow={this.onRow} rowSelection={{ onChange: this.onTableSelect, selectedRowKeys: this.state.tableSelecteds, type: "radio" }} dataSource={this.state.table.rolesData} columns={column} style={{ marginTop: '20px',maxHeight:'86%' }} rowKey={(record, index) => `key${index}`} pagination={false} scroll={h} size="small" />
                         <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                     </div>
                 </Col>
