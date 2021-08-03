@@ -119,4 +119,28 @@ export const getParent = (data,id) => {
         }
     } 
 }
-
+//遍历树节点，找出目标节点的父节点（包含当前节点）
+export const getNodes = (data,id) => {
+    // let obj = {};
+    for(let i of data){
+        if(i.id == id){
+            return [i];
+        }
+        if(i.children && i.children.length){
+            let node = getNodes(i.children,id)
+            if(node) return node.concat(i)
+        }
+    } 
+}
+/*
+遍历数组，找出目标节点的索引
+@params  data，传入数据,id为比较属性
+*/
+export const getIndex = (data,id) => {
+    let newArr = [],obj = {},key = id;
+    for( let [ i, item ] of new Map( data.map( ( item, index ) => [ index, item ] ) ) ) {
+        if(item.id == id){
+            return i;
+        }
+    }
+}

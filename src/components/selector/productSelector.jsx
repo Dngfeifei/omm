@@ -115,6 +115,14 @@
                     render: (text, record)=> 
                         <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
                 },{
+                    title: '部件号',
+                    dataIndex: 'strValue2',
+                    ellipsis: {
+                        showTitle: false,
+                    },
+                    render: (text, record)=> 
+                        <Tooltip placement="topLeft" title={text}>{text}</Tooltip>
+                },{
                     title: '部件类别',
                     dataIndex: 'name',
                     ellipsis: {

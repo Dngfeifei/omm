@@ -229,7 +229,7 @@ class assetsAllocation extends Component {
                     if (pass && res.data) {
                         let pane = this.getClums(res.data[0]['children'][0]['basedataTypeCode'],panes);
                         //获取当前节点的父节点，判断其code
-                        let parentNodes = getParent(res.data,res.data[0]['children'][0]['id']);
+                        let parentNodes = getParent(res.data,res.data[0]['children'][0]['id']).reverse();
                         let searchListIDCode = parentNodes[parentNodes.length-1] ? parentNodes[parentNodes.length-1].code : null;
                         
                         this.setState({
@@ -308,7 +308,7 @@ class assetsAllocation extends Component {
     onTreeSelect = async (selectedKeys, info) => {
         //获取当前节点的父节点，判断其code
         let data = info.selectedNodes[0].props.dataRef
-        let parentNodes = getParent(this.state.tree.treeData,data['id']);
+        let parentNodes = getParent(this.state.tree.treeData,data['id']).reverse();
         let searchListIDCode = parentNodes[parentNodes.length-1] ? parentNodes[parentNodes.length-1].code : null;
         if(!parentNodes.length) return message.warning('该节点不可选！');
         if (!info.selected) {
@@ -679,19 +679,8 @@ class assetsAllocation extends Component {
                 <Col span={19} className="gutter-row main_height" style={{ padding: '16px 10px 0', backgroundColor: 'white', display: 'flex', flexDirection: 'column', flexWrap: 'nowrap' }}>
                     <Form id="assetsForm" layout='inline' style={{ width: '100%' }}>
                         {/* <Row type="flex" style={{flexWrap:'nowrap'}}> */}
-                        <Row>
-                        {panes.rules.map((val, index) =>
-                            index <= 1 ? <Col span={8}  key={index}><FormItem
-                                label={val.label} style={{ marginBottom: '8px' }}>
-                                {getFieldDecorator(val.key, val.option?val.option:{})(val.render(this))}
-                            </FormItem></Col>:null)}
-                            {/* <div style={{flex:'auto',textAlign:'right'}}> */}
-                                <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
-                                <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
-                                <span style={{ marginLeft: '10px',color:'#1890ff',fontSize:12}} onClick={this.setStretch}>{this.state.stretch ? '收起' : '展开'}</span>
-                            {/* </div> */}
-                        </Row>
-                        {
+                        
+                        {/* {
                             this.state.stretch ? <Row>
                             {panes.rules.map((val, index) =>
                                 index > 1 ? <Col span={8}  key={index}><FormItem
@@ -699,30 +688,29 @@ class assetsAllocation extends Component {
                                     {getFieldDecorator(val.key, val.option?val.option:{})(val.render(this))}
                                 </FormItem></Col>:null)}
                             </Row> : null
-                        }
+                        } */}
                         <Row>
-                            <Col span={4} style={{ textAlign: 'left'}}>
-                                {/* <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>模板下载</Button>
-                                <Button type="primary" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>导出</Button>*/}
-                                
+                            <Col span={16}>
+                                <Row>
+                                    {panes.rules.map((val, index) =>
+                                        index <= 1 ?<FormItem
+                                            label={val.label} key={index}>
+                                            {getFieldDecorator(val.key, val.option?val.option:{})(val.render(this))}
+                                        </FormItem>:null)}
+                                        <FormItem style={{flex:'auto',textAlign:'right'}}>
+                                            <Button type="primary" style={{ marginLeft: '25px' }} onClick={this.onSearch}>查询</Button>
+                                            <Button type="primary" style={{ marginLeft: '10px' }} onClick={this.clearSearchprops}>重置</Button>
+                                            {/* <span style={{ marginLeft: '10px',color:'#1890ff',fontSize:12}} onClick={this.setStretch}>{this.state.stretch ? '收起' : '展开'}</span> */}
+                                        </FormItem>
+                                </Row>
                             </Col>
-                            {this.state.basedataTypeId !== 'productType' ? <Col span={20} style={{ textAlign: 'right' }}>
-                            
-                                <Upload {...this.state.uploadConf} beforeUpload={this.beforeUpload} onChange={this.ClienttChange} showUploadList={false}>
-                                    <Button
-                                        style={{ marginRight: '10px' }}
-                                        type="primary"
-                                        icon="upload"
-                                        loading={this.state.uploadLoading}
-                                        // onClick={this.enterIconLoading}
-                                    >
-                                        导入老OMM数据
-                                    </Button>
-                                </Upload> 
-                                <Button type="primary" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(2)}>查看</Button>
-                                <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
-                                <Button type="info" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(1)}>修改</Button>
-                                <Button type="primary" onClick={(e) => this.openModal(0)}>新增</Button> 
+                            {this.state.basedataTypeId !== 'productType' ? <Col span={8} style={{ textAlign: 'right' }}>
+                                <FormItem style={{flex:'auto',textAlign:'right'}}>
+                                    <Button type="primary" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(2)}>查看</Button>
+                                    <Button type="info" style={{ marginRight: '10px' }} onClick={this.delRoleItem}>删除</Button>
+                                    <Button type="info" style={{ marginRight: '10px' }} onClick={(e) => this.openModal(1)}>修改</Button>
+                                    <Button type="primary" onClick={(e) => this.openModal(0)}>新增</Button>
+                                </FormItem>
                             </Col>: null}
                         </Row>
                     </Form>
