@@ -39,8 +39,8 @@ export default function AuthorityConfig(props) {
     const list = str.split(",");
     const arr = [];
     if (list[0].length) {
-      for (const id of list) {
-        await getUserInfoById({ id }).then((data) => {
+      for (const loginName of list) {
+        await getUserInfoById({ loginName }).then((data) => {
           arr.push(data);
         });
       }
@@ -68,7 +68,7 @@ export default function AuthorityConfig(props) {
     setUser(selectUser);
     modeling.updateProperties(bpmnElement, {
       "flowable:candidateStarterUsers": selectUser
-        .map((item) => item.id)
+        .map((item) => item.loginName)
         .join(","),
     });
   }

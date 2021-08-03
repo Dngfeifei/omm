@@ -19,8 +19,8 @@ export const queryByIdMakeForm = (params) => http.fetchGet(REMOTE_URL + `/form/m
 
 export const listGenerateForm = (params) => http.fetchPost(REMOTE_URL + `/form/generate/list`, params)
 
-// 获得项目列表
-export const getProjitemList = (params) => http.fetchGet(REMOTE_URL + `/form/formOms/selectorProjitem`, params)
+
+export const getProjitemList = (params) => http.fetchGet(REMOTE_URL + `/form/formOms/selector`, params)
 
 export const getTableColumnList = (params) =>
   http.fetchGet(REMOTE_URL + `/form/make/getTableColumnList`, params);
@@ -33,3 +33,26 @@ export const deleteGenerateFormApi = (params) =>
 
 export const createMenu = (params, isJson) =>
   http.fetchPost(REMOTE_URL + `/form/make/createMenu`, params, isJson);
+
+
+/**
+ * 获取版本集合
+ * @param params
+ * @returns {*}
+ */
+export const getVersionList = (params) =>
+  http.fetchPost(REMOTE_URL + `/form/version/list`, params);
+/**
+ * 通过id获取主版本
+ * @param params
+ * @returns {*}
+ */
+export const setVersionMain = (params) =>
+    http.fetchPost(REMOTE_URL+`/form/version/setMain`,params);
+/**
+ * 通过id删除版本
+ * @param params
+ * @returns {*}
+ */
+export const deleteVersionById = (params) =>
+    http.fetchPost(REMOTE_URL+`/form/version/deleteById`,params);

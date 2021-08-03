@@ -68,6 +68,7 @@ export default function Header(props) {
     reader.onload = function () {
       let xmlStr = this.result;
       createNewDiagram(xmlStr);
+      window.hasChangeName = false
     };
   }
 
@@ -118,7 +119,10 @@ export default function Header(props) {
       type: "primary",
       icon: "plus-circle",
       title: "创建新的流程图",
-      onClick: () => modeler.importXML(initXml),
+      onClick: () => {
+        window.hasChangeName = false
+        modeler.importXML(initXml)
+      },
     },
     {
       type: "primary",

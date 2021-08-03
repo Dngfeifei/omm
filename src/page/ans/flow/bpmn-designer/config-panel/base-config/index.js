@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Input } from "antd";
+import { Input,message } from "antd";
 
 /**
  *基本设置
@@ -26,11 +26,12 @@ export default function BaseConfig(props) {
       if(bpmnElement.businessObject.$type.slice(5) === 'Process'){
         // 初始化id和name
         const initId = id ? id : "Process_" + new Date().getTime();
-        const initName = name ? name : "流程_" + new Date().getTime();
+        let initName = name || window.hasChangeName ? name : "流程_" + new Date().getTime();
+        
+        
         if (!id) {
           modeling.updateProperties(bpmnElement, {
             id: initId,
-            di: { id: initId },
           });
         }
         if (!name) {
@@ -61,13 +62,16 @@ export default function BaseConfig(props) {
     attrObj[key] = value;
     switch (key) {
       case "id":
-        modeling.updateProperties(bpmnElement, {
-          id: value,
-          di: { id: value },
-        });
+        if(value) {
+          modeling.updateProperties(bpmnElement, {
+            id: value,
+          });
+        }
         break;
       case "name":
         modeling.updateProperties(bpmnElement, attrObj);
+        window.hasChangeName = true
+        console.log('baseInfoChange', window.hasChangeName)
         break;
       case "documentation":
         const element = elementRegistry.get(baseInfo.id);

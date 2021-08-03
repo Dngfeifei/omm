@@ -7,20 +7,21 @@ import '@/assets/less/pages/workorder.less'
 import {css} from "@emotion/css";
 import { connect } from 'react-redux'
 import { REMOVE_PANE,SET_WORKLIST,SET_PANE,SET_WORKSTATUS} from '/redux/action'
-import flowableModdleDescriptor from "@/page/ans/flow/bpmn-designer/flow";
-import CustomModeler from "../ans/flow/bpmn-designer/custom-modeler";
-import "../ans/flow/bpmn-designer/bpmn-designer.less";
-import { hashHistory } from 'react-router'
 
 import loadable from '@loadable/component'
 
 
-import { SuspensionStateAction,HandleStartTask,GetFlowChart,DoStopAction,GetHistoricTaskList,QueryByDefIdAndTaskId,DoBackAction,DoAuditAction,GetBackNodes,DoTransferAction,DoDelegateAction } from '/api/initiate'
+import { DoAddSignAction,SaveGenerateForm,GetFormWithAuthority,SuspensionStateAction,HandleStartTask,GetFlowChart,DoStopAction,GetHistoricTaskList,QueryByDefIdAndTaskId,DoBackAction,DoAuditAction,GetBackNodes,DoTransferAction,DoDelegateAction } from '/api/initiate'
 import FlowTimeLine from "@/page/WorkOrder/FlowTimeLine";
 import FlowStep from "@/page/WorkOrder/FlowStep";
 import TaskBackNodes from "@/page/WorkOrder/TaskBackNodes";
+import FlowChart from "@/page/WorkOrder/FlowChart";
 import UserSelectDialog from "@/page/WorkOrder/UserSelectDialog";
+import AddSignTaskDialog from "@/page/WorkOrder/AddSignTaskDialog";
+import FormRender from '@/page/ans/formmaking/lib/FormRender';
+import FormDesignContenxt, {initState} from '@/page/ans/formmaking/lib/formDesignContext';
 import {Assign} from "@/api/tools";
+
 
 
 
@@ -42,6 +43,8 @@ const resetCss = css`
 
 class DynamicSplicingPage extends Component {
 
+  modelRef = React.createRef();
+
   state = {
     Imulation: null,
     historicTaskList:null,
@@ -50,22 +53,40 @@ class DynamicSplicingPage extends Component {
     taskBackNodesConf: {visible: false, taskId: {}},
     transferUserConf: {visible: false},
     delegateUserConf: {visible: false},
+    addSignTaskConf: {visible: false},
     auditForm: {
       message: '',
       type: '',
       status: '',
       userIds: null,
       assignee: null
-    }
+    },
+    formModel:null
   }
 
-  componentWillMount () {
-    // console.info("this.props.params:::::::::::::::"+JSON.stringify(this.props.params))
+  async componentWillMount () {
+    console.info("this.props.params:::::::::::::::"+JSON.stringify(this.props.params))
 
     let record = this.props.params.dataType.record;
+    if(record.formType === '2') {
 
-    const loadSimulation = loadable((props) => import(`./`+record.derivedFrom))
-    this.setState({ Imulation:loadSimulation });
+      const loadSimulation = loadable((props) => import(`./` + record.formUrl))
+      this.setState({Imulation: loadSimulation});
+
+    }else{
+
+      //获取动态表单内容和布局
+      await GetFormWithAuthority({
+        formUrl: record.formUrl,
+        procDefKey: record.procDefId.split(":")[0],
+        taskDefKey: record.taskDefKey
+      }).then(data => {
+        if (data.success) {
+          this.setState({formModel: JSON.parse(data.form), loadButton: true});
+        }
+      })
+
+    }
 
     if (record.status === 'start' && record.routerNum === '6') {
 
@@ -95,79 +116,6 @@ class DynamicSplicingPage extends Component {
     })
   }
 
-  loadImg = () =>{
-
-    GetFlowChart({processDefId: this.props.params.dataType.record.procDefId}).then(data => {
-
-      this.bpmnModeler = new CustomModeler({
-        container: "#canvas",
-        additionalModules: [],
-        moddleExtensions: {
-          flowable: flowableModdleDescriptor, //添加flowable前缀
-        },
-      });
-
-      const elementRegistry = this.bpmnModeler.get('elementRegistry');
-      const modeling = this.bpmnModeler.get('modeling');
-
-      var _this = this;
-      this.bpmnModeler.importXML(data.bpmnXml, function(err) {
-        if (err) {
-          console.error(err)
-        }
-
-        _this.bpmnModeler.get('canvas').zoom('fit-viewport')
-
-        if (data.activityIds) {
-          var last = data.activityIds.pop();
-
-          var elementToColor = _this.elementRegistry.get(last);
-
-          if (!last.startsWith('EndEvent')) {
-            _this.modeling.setColor([elementToColor], {
-              'stroke': 'red',
-              'stroke-width': '0.8px',
-              'fill': 'white',
-              'fill-opacity': '0.95'
-            });
-          } else {
-            _this.modeling.setColor([elementToColor], {
-              'stroke': 'rgb(64, 158, 255)',
-              'stroke-width': '0.8px',
-              'fill': 'white',
-              'fill-opacity': '0.95'
-            });
-          }
-
-          data.activityIds.forEach(function (activity) {
-            var elementToColor = _this.elementRegistry.get(activity);
-
-            _this.modeling.setColor([elementToColor], {
-              'stroke': 'rgb(64, 158, 255)',
-              'stroke-width': '0.8px',
-              'fill': 'white',
-              'fill-opacity': '0.95'
-            });
-          });
-
-          if (data.flows) {
-            data.flows.forEach(function (activity) {
-              var elementToColor = _this.elementRegistry.get(activity);
-
-              _this.modeling.setColor([elementToColor], {
-                'stroke': 'rgb(64, 158, 255)',
-                'stroke-width': '0.9px',
-                'fill': 'white',
-                'fill-opacity': '0.95'
-              });
-            });
-          }
-        }
-      })
-    })
-  }
-
-
 
   submit = async (currentBtn, buttons) => {
     let vars = {} // 存储流程变量
@@ -185,6 +133,7 @@ class DynamicSplicingPage extends Component {
 
     vars.title = this.props.params.dataType.record.processTitle // 标题
     vars.assignee = "" // 指定的下一步骤处理人
+
 
     await this.setState({
       auditForm: {
@@ -248,7 +197,7 @@ class DynamicSplicingPage extends Component {
 
   commit = (vars) =>{
 
-    if(this.props.params.dataType.record.derivedFrom.startsWith("Simulation")){ // 外置表单
+    if(this.props.params.dataType.record.formUrl === "2"){ // 外置表单
 
       this.Imulation.saveForm((businessTable, businessId) =>{
 
@@ -275,13 +224,6 @@ class DynamicSplicingPage extends Component {
 
       })
     } else { // 动态表单
-      this.$refs.form.submitTaskFormData(vars, this.procInsId, this.taskId, this.auditForm.assignee, this.auditForm, (data) => {
-        if (data.success) {
-          this.$events.$emit('closeTab', this.$route.fullPath)
-          this.$router.push('/flowable/task/TodoList')
-          this.cc(data)
-        }
-      })
     }
   }
 
@@ -347,7 +289,11 @@ class DynamicSplicingPage extends Component {
 
   // 加签
   addMultiInstance = () => {
-
+    let conf = {}
+    conf["addSignTaskConf"] = {
+      visible: true
+    }
+    this.setState(conf)
   }
   // 减签
   delMultiInstance = () => {
@@ -379,6 +325,30 @@ class DynamicSplicingPage extends Component {
     this.setState(config)
   }
 
+
+  addSignTask = (params) => {
+
+    if(params !== undefined) {
+
+      DoAddSignAction({ taskId:this.props.params.dataType.record.taskId, 
+                        userIds:params.userIds,
+                        comment:params.comment, 
+                        flag:params.signType
+                      }).then(data => {
+        message.success(data.msg)
+
+        this.goInitialPage()
+      })
+      
+    }
+
+    let config = {}
+    config.addSignTaskConf = { visible: false }
+    this.setState(config)
+  }
+
+
+
   // 委托
   delegate = () => {
 
@@ -406,18 +376,18 @@ class DynamicSplicingPage extends Component {
   }
 
 
-  
+
   // 激活 or 挂起
   activationPending = () =>  {
     let {suspensionState} = this.props.params.dataType.record;
     let suspensionString  = "";
-    
+
     if(suspensionState){
       suspensionString = "激活"
     }else {
       suspensionString = "挂起"
     }
-    
+
     var _this = this
     confirm({
       title: '提示',
@@ -427,11 +397,11 @@ class DynamicSplicingPage extends Component {
       cancelText: '取消',
       onOk() {
         SuspensionStateAction({
-                              defId: _this.props.params.dataType.record.procDefId,
-                              instId: _this.props.params.dataType.record.procInstId,
-                              taskId: _this.props.params.dataType.record.taskId,
-                              operate:suspensionState,
-                              }).then(data => {
+          defId: _this.props.params.dataType.record.procDefId,
+          instId: _this.props.params.dataType.record.procInstId,
+          taskId: _this.props.params.dataType.record.taskId,
+          operate:suspensionState,
+        }).then(data => {
           message.success(data.msg)
 
           _this.goInitialPage()
@@ -439,7 +409,7 @@ class DynamicSplicingPage extends Component {
       }
     })
   }
-  
+
   // 终止
   stop = () =>  {
     var _this = this
@@ -467,7 +437,7 @@ class DynamicSplicingPage extends Component {
   //启动流程
   startProces = () => {
 
-    if(this.props.params.dataType.record.derivedFrom.startsWith("Simulation")){ // 外置表单
+    if(this.props.params.dataType.record.formType === '2'){ // 外置表单
 
       //处理外置表单数据，外置表单需要有saveForm方法
       this.Imulation.saveForm((businessTable, businessId) =>{
@@ -477,7 +447,6 @@ class DynamicSplicingPage extends Component {
           businessTable: businessTable,
           businessId: businessId,
           title: this.props.params.dataType.record.processTitle,
-          assignee: ""
         }
 
         HandleStartTask(params).then(data => {
@@ -490,6 +459,30 @@ class DynamicSplicingPage extends Component {
       })
     }else{  //动态表单
 
+      const formParameter = this.modelRef.current.getFieldsValue();
+      console.info("formVal",JSON.stringify(formParameter, null, 2));
+      let formInner = JSON.stringify(formParameter, null, 2);
+
+      //保存表单数据   
+      SaveGenerateForm({formId:this.props.params.dataType.record.formUrl, data:formInner}).then(data => {
+        if (data.success) {
+
+          let params = {
+            procDefKey: this.props.params.dataType.record.procDefId,
+            title: this.props.params.dataType.record.processTitle,
+            formParameter:formInner
+          }
+
+          HandleStartTask(params).then(data => {
+            if (data.success) {
+              message.success(data.msg)
+
+              this.goInitialPage()
+            }
+          })
+          
+        }
+      })
     }
   }
 
@@ -513,9 +506,9 @@ class DynamicSplicingPage extends Component {
 
   render = _ => {
 
-    let {Imulation,loadButton,buttons} = this.state;
+    let {Imulation,loadButton,buttons,formModel} = this.state;
     let { record } = this.props.params.dataType;
-    
+
     let buttonList = [];
     if (Object.keys(buttons).length >0 && loadButton) {
 
@@ -547,24 +540,28 @@ class DynamicSplicingPage extends Component {
             <TabPane tab="表单信息" key="form" style={{marginTop:"10px"}}>
 
               {/*加载外部表单  */}
-              <Imulation onRef={c=>this.Imulation=c}/>
+              {Imulation !== null && <Imulation onRef={c => this.Imulation = c}/>}
 
-              {/*加载动态表单*/}
+              {/*1417769248956145666*/}
+              {formModel !== null && <FormRender
+                ref={this.modelRef}
+                formModel={formModel}
+                formConfig={initState().formConfig}
+              />
+              }
 
             </TabPane>
 
+            
             {record.procInstId && <TabPane tab="流程信息" key="process">
               <FlowTimeLine datas={this.state.historicTaskList}/>
             </TabPane>}
 
 
-            <TabPane tab="流程图" key="chat" onTabClick={this.loadImg()} forceRender={true}>
-              <Card style={{marginTop:"10px",height:"700px",width: "100%"}}>
-
-                <div className="containers">
-                  <div id="canvas" className="canvas" ></div>
-                </div>
-              </Card>
+            <TabPane tab="流程图" key="chat">
+             
+              <FlowChart data={record.procDefId}/>
+              
             </TabPane>
 
             {record.procInstId && <TabPane tab="流转信息" key="forth">
@@ -621,7 +618,7 @@ class DynamicSplicingPage extends Component {
         <TaskBackNodes config={this.state.taskBackNodesConf} backAction={this.back}/>
         <UserSelectDialog config={this.state.transferUserConf} transferAction={this.selectUsersToTransferTask}/>
         <UserSelectDialog config={this.state.delegateUserConf} transferAction={this.selectUsersToDelateTask}/>
-
+        <AddSignTaskDialog config={this.state.addSignTaskConf} addSignAction={this.addSignTask}/>
       </div>
     );
   }

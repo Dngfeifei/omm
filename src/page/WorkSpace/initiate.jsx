@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import {Button, Input, DatePicker, Modal, Tooltip, message, Row, Col, Form} from 'antd';
 const { confirm } = Modal;
-import { BiProcessList } from '/api/initiate'
+import { BiProcessList,GetTaskDef } from '/api/initiate'
 import Common from '/page/common.jsx'
 import { connect } from 'react-redux'
 import { ADD_PANE,SET_WORKLIST} from '/redux/action'
@@ -79,7 +79,7 @@ class InitiateList extends Common{
         </Col>
     </Row>
 
-    startUpAction = () => {
+     startUpAction = () => {
 
         if (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length) {
             message.destroy()
@@ -97,17 +97,27 @@ class InitiateList extends Common{
 
         let newRouterNum = { 'routerNum': '6' };
         record = Object.assign({},record,newRouterNum)
-         
-        let pane = {
-            title: record.name,
-            key: record.id,
-            url: 'WorkOrder/dynamicSplicing.jsx',
-            params:{
-                reset:this.props.params.type,//刷新本页面key
-                record
+
+         GetTaskDef({procDefId: record.procDefId, status: 'start'}).then( data => {
+            if (data.success) {
+                let formTip = {formType: data.flow.formType, formUrl: data.flow.formUrl};
+                record = Object.assign({}, record, formTip)
+
+                let pane = {
+                    title: record.name,
+                    key: record.id,
+                    url: 'WorkOrder/dynamicSplicing.jsx',
+                    params:{
+                        reset:this.props.params.type,//刷新本页面key
+                        record
+                    }
+                }
+                this.props.add(pane)
+            }else{
+                message.error("获取表单相关数据错误!")
             }
-        }
-        this.props.add(pane)
+        })
+         
     }
     
     

@@ -22,6 +22,7 @@ import '/assets/less/pages/logBookTable.css'
 import { ADD_PANE,SET_WORKLIST} from '/redux/action'
 //引入接口
 import { getWorkList,getTicketType,getStatus } from '/api/workspace'
+import { GetTaskDef } from '/api/initiate'
 
 @connect(state => ({
     activeKey: state.global.activeKey,
@@ -330,54 +331,90 @@ class workList extends Component {
     }
 //单击行打开工单详情页
     onClickRow = (record) => {
-        
-        if(record.derivedFrom !== ""){
 
-            return {
-                onClick: () => {
-                    let newTitle = { 'processTitle': record.assigneeRealName+" 在"+ moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + " 发起了 "+ record.processDefinitionName };
-                    record = Object.assign({},record,newTitle)
+        // let formTip;
+        // await GetTaskDef({procDefId: record.procDefId, taskDefKey: record.taskDefKey}).then( data => {
+        //     if (data.success) {
+        //       formTip = {formType: data.flow.formType, formUrl: data.flow.formUrl};
+        //     }
+        // })
+
+                if(record.formUrl !== ''){
+
+                    console.info("recordrecordrecordrecordrecordrecordrecord::::",record)
                     
-                    let newRouterNum = { 'routerNum': this.props.params.pathParam.split('?')[1] };
-                    record = Object.assign({},record,newRouterNum)
+                    return {
+                        onClick: () => {
+                            let newTitle = { 'processTitle': record.assigneeRealName+" 在"+ moment(new Date()).format('YYYY-MM-DD HH:mm:ss') + " 发起了 "+ record.processDefinitionName };
+                            record = Object.assign({},record,newTitle)
 
-                    let pane = {
-                        title: record.processDefinitionName,
-                        key: record.procInstId,
-                        url: 'WorkOrder/dynamicSplicing.jsx',
-                        params:{
-                            reset:this.props.params.type,//刷新本页面key
-                            record
-                        }
-                    }
-                    this.props.add(pane)
-                },
-            };
-            
-        }else{
+                            let newRouterNum = { 'routerNum': this.props.params.pathParam.split('?')[1] };
+                            record = Object.assign({},record,newRouterNum)
 
-            return {
-                onClick: () => {
-                    let pane = {
-                        title: record.businessKey,//record.ticketType,
-                        key: record.procInstId,
-                        url: 'WorkOrder/index.jsx',
-                        params:{
-                            reset:this.props.params.type,//刷新本页面key
-                            record
+                            // let formTip = {formType: data.flow.formType, formUrl: data.flow.formUrl};
+                            //record = Object.assign({}, record, formTip)
+
+                            let pane = {
+                                title: record.processDefinitionName,
+                                key: record.procInstId,
+                                url: 'WorkOrder/dynamicSplicing.jsx',
+                                params:{
+                                    reset:this.props.params.type,//刷新本页面key
+                                    record
+                                }
+                            }
+                            
+                           this.props.add(pane)
                         }
-                    }
-                    //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
-                    if(this.props.params.pathParam.split('?')[2] && !record.finished){
-                        setTimeout(_ => {
-                            this.init();
-                        },1000)
-                    }
-                    //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
-                    this.props.add(pane)
-                },
-            };
-        }
+                    };
+                    
+                }else{
+
+                    return {
+                        onClick: () => {
+                            let pane = {
+                                title: record.businessKey,//record.ticketType,
+                                key: record.procInstId,
+                                url: 'WorkOrder/index.jsx',
+                                params:{
+                                    reset:this.props.params.type,//刷新本页面key
+                                    record
+                                }
+                            }
+                            //以下代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
+                            if(this.props.params.pathParam.split('?')[2] && !record.finished){
+                                setTimeout(_ => {
+                                    this.init();
+                                },1000)
+                            }
+                            //以上代码仅在知会工单的时候使用，点击表格跳转新页面之前刷新当前页面
+                            this.props.add(pane)
+                        }
+                    };
+
+                } 
+                
+                
+                
+                // let formTip = {formType: data.flow.formType, formUrl: data.flow.formUrl};
+                // record = Object.assign({}, record, formTip)
+                //
+                // let pane = {
+                //     title: record.processDefinitionName,
+                //     key: record.procInstId,
+                //     url: 'WorkOrder/dynamicSplicing.jsx',
+                //     params:{
+                //         reset:this.props.params.type,//刷新本页面key
+                //         record
+                //     }
+                // }
+                // this.props.add(pane)
+
+            // }else{
+            //     message.error("获取表单相关数据错误!")
+            // }
+        // })
+
     }
 
     render = _ => {

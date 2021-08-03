@@ -8,9 +8,10 @@ import {
   SaveAndPush, FLowQueryByUserId, FLowDepartList, FLowUserList, FLowPostList,
   FLowRoleList, FLowQueryByRoleId, FLowQueryByPostId, FLowQueryByDepartId,
   FLowRestModel, FlowSaveModel, FlowTaskDefExtension, FlowNodeSetting, 
-  FlowDeployModel,FlowNewModel,GetBpmnXml
+  FlowDeployModel,FlowNewModel,GetBpmnXml,FLowFormMakeList
 } from '/api/design'
 import {BiListenerList} from '/api/listener'
+import { GetValueByKey } from '/api/nodeSetting'
 import {BiButtonList} from '/api/button'
 import {BiConditionList} from '/api/condition'
 import { Type_Script_Is, getBusinessObject } from "./utils"
@@ -180,8 +181,36 @@ function saveExtension(modeler) {
       var bo = getBusinessObject(flowElement);
       var formReadOnly = bo.get('flowable:formReadOnly');
       var formType = bo.get('flowable:formType');
+      var formKey = bo.get('flowable:formKey');
 
-      if (!bo.get('flowable:formKey')) {
+      console.info("service.js=================="+formType)
+      
+      let formPropertyList;
+      if(formKey){
+        
+          if (formKey.length !== 32 && formKey.length !== 19) {
+            formPropertyList = bo.get('flowable:formKey');
+          }else {
+            
+            formPropertyList =
+              (bo.extensionElements &&
+                bo.extensionElements.values &&
+                bo.extensionElements.values.filter((ex) => {
+                  if (ex.$type.indexOf("FormProperty") !== -1 || ex.$type.indexOf("ChildField") !== -1) {
+                    return true;
+                  }
+                })) ||
+              [];
+
+            formPropertyList = formPropertyList.map((item) => {
+              item.readable = item.readable === undefined ? "true" : item.readable;
+              item.writable = item.writable === undefined ? "true" : item.writable;
+              return item;
+            });
+          }
+      }
+
+      if (!formKey) {
         errorMsg.push("节点【".concat(flowElement.name || flowElement.id, "】没有配置表单。<br/>"));
       }
 
@@ -198,6 +227,16 @@ function saveExtension(modeler) {
           key: 'formType',
           value: formType
         });
+
+        console.info("formPropertyListformPropertyListformPropertyList::::",formPropertyList)
+        
+        nodeSettingList.push({
+          processDefId: processDefId,
+          taskDefId: _taskDefId,
+          key: 'formProperty',
+          value: formPropertyList
+        });
+        
       }
     }
 
@@ -230,6 +269,7 @@ function saveExtension(modeler) {
     notification['warning']({
       message: '提示',
       description: <div dangerouslySetInnerHTML={{ __html:errorMsg.join('') }} />,
+      duration: 1,
       style: {
         width: 600,
       }
@@ -260,50 +300,12 @@ function getListenerList(param) {
 
 // 获取表单列表
 function getFormList(param) {
-  const data = [
-    {
-      name: "工单申请",
-      version: "3",
-      id: "1",
-      type: 1,
-      fields: [
-        {
-          id: "111",
-          name: "单行文本",
-          readable: true,
-          writable: false,
-        },
-        {
-          id: "1112",
-          name: "单行文本2",
-          readable: true,
-          writable: true,
-        },
-      ],
-    },
-    {
-      name: "工单申请2",
-      version: "3",
-      id: "2",
-      type: 1,
-      fields: [
-        {
-          id: "111",
-          name: "单行文本3",
-          readable: true,
-          writable: false,
-        },
-        {
-          id: "1112",
-          name: "单行文本4",
-          readable: true,
-          writable: true,
-        },
-      ],
-    },
-  ];
   return new Promise((resolve) => {
-    resolve(data);
+    
+    FLowFormMakeList(param).then(res => {
+      resolve(res.page);
+    })
+    
   });
 }
 
@@ -423,6 +425,15 @@ function getConditionExpress() {
   });
 }
 
+  // 获取表单扩展属性
+  function getNodeSetting(param) {
+    return new Promise((resolve) => {
+      GetValueByKey(param).then(res => {
+        resolve(res.value);
+      })
+    })
+  }
+
 export {
   getListenerList,
   getFormList,
@@ -438,5 +449,6 @@ export {
   getPostInfoById,
   getPostList,
   getConditionField,
-  getConditionExpress
+  getConditionExpress,
+  getNodeSetting,
 };
