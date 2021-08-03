@@ -114,48 +114,28 @@ class VersionList extends Common {
             })
     }
     deleteById = (id) =>{
-        console.log(id)
         Modal.confirm({
             title: '确定要删除该版本吗?',
             icon: <ExclamationCircleOutlined />,
             onOk: async () => {
-                return deleteVersionById(id).then(res => {
+                return deleteVersionById({id:id}).then(res => {
                     message.success(res.msg)
                     this.search()
                 })
             },
         });
     }
-
-    handleDelete = (id) => {
-        if (!id && (!this.state.selected.selectedKeys || !this.state.selected.selectedKeys.length)) {
-            message.warn('请选择表单')
-            return
-        }
+    setMain= (id) =>{
         Modal.confirm({
-            title: '确定要删除该选项吗?',
+            title: '确定要将该版本设为主版本吗?',
             icon: <ExclamationCircleOutlined />,
             onOk: async () => {
-                return deletMakeForm({ ids: id ? [id] : this.state.selected.selectedKeys }).then(res => {
+                return setVersionMain({id:id}).then(res => {
                     message.success(res.msg)
                     this.search()
                 })
             },
         });
-    }
-    handleRelease = (id) => {
-        const form = this.state.tabledata.find(item => {
-            return item.id === id
-        })
-        console.log(form);
-        if (!form.source) {
-            message.warn('请先设计表单')
-            return
-        }
-        this.setState({
-            selectedFormId: id,
-            isFormReleaseOpen: true,
-        })
     }
 
     handleCloseModel = () => {
@@ -243,6 +223,7 @@ class VersionList extends Common {
             </React.Fragment>
         )
     }
+
 
 
 }

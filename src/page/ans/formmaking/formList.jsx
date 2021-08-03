@@ -36,7 +36,6 @@ class FormList extends Common {
     this.props.add(pane)
   }
   versionManage = (item) =>{
-    console.log('item.onlyTable : '+item.onlyTable)
     let pane = {
       title: "版本管理",
       key: item.name,
