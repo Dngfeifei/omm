@@ -188,7 +188,7 @@ class Member extends Component {
     }
     // 电话框失去焦点
     onBlurTel = ({ target }) => {
-        let reg = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}$/
+        let reg = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9]|177)\d{8}$/
         let val = target.value;
         let result = reg.test(val)
         if (!result) {
@@ -277,7 +277,7 @@ class Member extends Component {
                     }
                 }
                 if (item == "mobilePhone") {
-                    let reg = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9])\d{8}|177$/
+                    let reg = /^(13[0-9]|14[5|7]|15[0|1|2|3|5|6|7|8|9]|18[0|1|2|3|5|6|7|8|9]|177)\d{8}$/
                     let val = el[item];
                     let state = reg.test(val)
                     if (!state) {
