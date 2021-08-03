@@ -54,35 +54,6 @@ export default function FormConfig(props) {
                 listener.push(ex);
               })) ||
             [];
-
-          mainList = mainList.map((item) => {
-            item.readable = item.readable === undefined ? "true" : item.readable;
-            item.writable = item.writable === undefined ? "true" : item.writable;
-            return item;
-          });
-
-
-          childFieldList = childFieldList.map((item) => {
-            item.readable = item.readable === undefined ? "true" : item.readable;
-            item.writable = item.writable === undefined ? "true" : item.writable;
-
-            return item;
-          });
-
-          mainList = mainList.map((item) => {
-             item.readable = item.readable === "true";
-              item.writable = item.writable === "true";
-              return item;
-          });
-
-          childFieldList = childFieldList.map((item) => {
-            item.readable = item.readable === "true";
-            item.writable = item.writable === "true";
-            return item;
-          });
-          
-          
-          
           
           setEventListener(listener);
 
@@ -106,6 +77,34 @@ export default function FormConfig(props) {
                }
             })
           }
+
+
+          mainList = mainList.map((item) => {
+            item.readable = item.readable === undefined ? "true" : item.readable;
+            item.writable = item.writable === undefined ? "true" : item.writable;
+            return item;
+          });
+
+
+          childFieldList = childFieldList.map((item) => {
+            item.readable = item.readable === undefined ? "true" : item.readable;
+            item.writable = item.writable === undefined ? "true" : item.writable;
+
+            return item;
+          });
+
+          // mainList = mainList.map((item) => {
+          //   item.readable = item.readable === "true";
+          //   item.writable = item.writable === "true";
+          //   return item;
+          // });
+          //
+          // childFieldList = childFieldList.map((item) => {
+          //   item.readable = item.readable === "true";
+          //   item.writable = item.writable === "true";
+          //   return item;
+          // });
+
 
           setFormProperty(mainList);
           setChildField(childFieldList)
@@ -141,14 +140,6 @@ export default function FormConfig(props) {
       if (!err) {
         let form = formList.filter((item) => item.id === values.id)[0];
 
-        form.fields = form.fields.map((item) => {
-          item.readable = item.readable === "true";
-          item.writable = item.writable === "true";
-          return item;
-        });
-        
-        setSelectForm(form);
-
         modeling.updateProperties(bpmnElement, {
           "flowable:formKey": form.id,
           "flowable:formType": form.type,
@@ -159,7 +150,16 @@ export default function FormConfig(props) {
         let property = [];
         let childProperty = [];
         for (const field of form.fields) {
-            setChildField(childProperty)
+          
+          property.push(
+            bpmnInstance.moddle.create("flowable:FormProperty", field)
+          );
+
+          // 重新选择 表单 里面的readable，writable 属性是完整的，所以不用比较 undefined
+          // field.readable = field.readable === "true";
+          // field.writable = field.writable === "true";
+          
+        
             if(field.children !== undefined) {
               
                 field.children.map(field => {
@@ -170,22 +170,18 @@ export default function FormConfig(props) {
                   childProperty.push(
                     bpmnInstance.moddle.create("flowable:ChildField", field)
                   );
+
+                  // field.readable = field.readable === "true";
+                  // field.writable = field.writable === "true";
                 });
             }
-
-          property = property.map((item) => {
-            item.readable = item.readable === "true";
-            item.writable = item.writable === "true";
-            return item;
-          });
-            
-            setFormProperty(property);
-            
-            property.push(
-              bpmnInstance.moddle.create("flowable:FormProperty", field)
-            );
-
         }
+
+        setChildField(childProperty)
+        setFormProperty(property);
+
+        //设置 fromTable 界面展示页面
+        setSelectForm(form);
         
         updateElementExtensions([...property, ...eventListener], bpmnInstance);
 
@@ -196,7 +192,22 @@ export default function FormConfig(props) {
   };
 
   function onChangeProperty(value, key, record, index) {
-    selectForm.fields[index][key] = value;
+    // selectForm.fields[index][key] = value.toString();
+
+    for (const field of selectForm.fields) {
+      if (field.id === record.id) {
+        field[key] = value.toString() ;
+        break;
+      }else if (field.children !== undefined) {
+        for (const child of field.children) {
+          if (child.id === record.id) {
+            child[key] = value.toString();
+            break;
+          }
+        }
+      }
+    }
+    
     setSelectForm(JSON.parse(JSON.stringify(selectForm)));
 
     for (const item of formProperty) {

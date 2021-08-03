@@ -48,7 +48,7 @@ export default function FormTable(props) {
             onChange={(e) =>
               onChangeProperty(e.target.checked, "readable", record, index)
             }
-            checked={value}
+            checked={value === 'true'}
           />
         ),
       },
@@ -61,7 +61,7 @@ export default function FormTable(props) {
             onChange={(e) =>
               onChangeProperty(e.target.checked, "writable", record, index)
             }
-            checked={value}
+            checked={value === 'true'}
           />
         ),
       },
