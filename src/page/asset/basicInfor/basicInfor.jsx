@@ -733,7 +733,7 @@ class assetsAllocation extends Component {
                     <Form id="assetsForm" layout='inline' style={{ width: '100%' }}>
                         <Row style={{marginBottom: 10,paddingLeft: 17}}>
                             <Breadcrumb separator=">">
-                                <Breadcrumb.Separator><span style={{fontWeight:600,color:'rgba(0, 0, 0, 0.85)',marginRight:10}}>当前所在位置：</span></Breadcrumb.Separator>
+                                <Breadcrumb.Separator><span style={{color:'rgba(0, 0, 0, 0.45)',marginRight:10}}>当前所在位置：</span></Breadcrumb.Separator>
                                 {
                                     this.state.breadcrumbList.map((item,index) => {
                                         return <Breadcrumb.Item key={index} onClick={() => this.breadcrumbClick(item)} href="#">{item.name}</Breadcrumb.Item>
@@ -743,9 +743,9 @@ class assetsAllocation extends Component {
                         </Row>
                         <Row>
                             <Col span={16}>
-                                <Row>
+                                <Row style={{display:'flex'}}>
                                     {this.state.rules['rules1'].map((val, index) =>
-                                         <FormItem
+                                         <FormItem style={{display:'flex'}}
                                             label={val.label} key={index}>
                                                     {val.render(this)}
                                         </FormItem>)}

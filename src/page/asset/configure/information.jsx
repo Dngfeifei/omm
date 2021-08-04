@@ -1,12 +1,11 @@
 import React, { Component } from 'react'
 import { Row, Col,  Input, Select,Form,Icon ,Divider} from 'antd'
-import {columnsBasic,columnsDevice,assetsListData} from './assetsList.js'//获取页面渲染配置项
 // 引入---【项目选择器组件】
 import ProjectSelector from '/components/selector/projectSelector.jsx'
 // 引入---【产品选择器组件】
 import ProductSelector from '/components/selector/productSelector.jsx'
 
-import { getInfo, GetAddress,getBaseData,GetAllocationArea,GetAllocationCustomer} from '/api/assets.js'
+import { getInfo, GetAddress,getBaseData,GetAllocationArea,GetAllocationCustomer,getBrand} from '/api/assets.js'
 const { Option } = Select;
 const FormItem = Form.Item
 const { TextArea,Search} = Input;
@@ -51,16 +50,19 @@ class BasicInformation extends Component {
     //编辑的时候初始化下拉框数据
     initSelectData =() => {
         let {selectData} = this.state;
+        // let productSkillType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.baseData.serviceClassId);
+        // let productBrandType = this.getProjectData(this.state.selectData.productType ? this.state.selectData.productType : [],this.state.baseData.skillTypeId);
         this.getAreaData(this.state.baseData.projectId)
         this.getCustomer(this.state.baseData.projectAreaId)
+        this.getBrandData(this.state.baseData.basedataId);
         this.state.baseData.projectAreaId && this.getAddress(this.state.baseData.projectAreaId)
         this.state.baseData.appTypeId && this.getInfo(this.state.baseData.appTypeId)
-        // selectData = Object.assign({}, selectData, { });
+        //selectData = Object.assign({}, selectData, { productSkillType:productSkillType? productSkillType :[],productBrandType:productBrandType? productBrandType :[]});
         return selectData;
     }
     //生成新增/修改/查看弹框内容
     getFields = (assetsList) => {
-        let {baseData,roleWindow,dateKeys} = this.state;
+        let {baseData,roleWindow,dateKeys} = this.state,{assetsListData} = this.props;
         const { getFieldDecorator } = this.props.form,children = [];
         for (let i = 0; i < assetsList.length; i++) {
             if(!assetsList[i].key){
@@ -77,7 +79,7 @@ class BasicInformation extends Component {
                 dateKeys.push(item.key);
             }
              //处理产品联动是否可编辑
-            if(assetsList[i].key == 'productSkillType' || assetsList[i].key == 'productBrandType' || assetsList[i].key == 'productLineType' || assetsList[i].key == 'productLevel' || assetsList[i].key == 'serviceClassId'){
+            if(assetsList[i].key == 'productSkillType'){
     
                 required = true;
             }
@@ -89,9 +91,9 @@ class BasicInformation extends Component {
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? assetsList[i].title : '无效字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
-                    rules: rules,
+                    rules: [],//rules,
                     initialValue: initialValue
-                    })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required,assetsList[i].dataIndex) : <Input />)}
+                    })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required,assetsList[i].dataIndex,assetsList[i].title) : <Input />)}
                 </Form.Item>
                 </Col>
             );
@@ -130,6 +132,24 @@ class BasicInformation extends Component {
                 message.error(res.message)
             }
         })
+        
+    }
+    //获取品牌、产品类别、技术方向数据
+    getBrandData = (skillTypeId) => {
+        //查询品牌数据
+        getBrand({skillTypeId}).then(res => {
+            if (res.success == 1) {
+                let {selectData,baseData} = this.state;
+                selectData = Object.assign({}, selectData, { productBrandType: res.data[0].brands});
+                baseData['serviceClassId'] = res.data[0].serviceClassId,
+                baseData['serviceClassName'] = res.data[0].serviceClassName,
+                baseData['skillTypeId'] = res.data[0].skillTypeId,
+                baseData['skillTypeName'] = res.data[0].skillTypeName;
+                this.setState({selectData,baseData})
+            } else {
+                message.error(res.message)
+            }
+        })
     }
     //处理项目选择器返回数据
     setProjectHandleOk = (info) =>{
@@ -155,7 +175,7 @@ class BasicInformation extends Component {
         this.setState({
             baseData: info ? {...baseData,...nowParams,...info,...resetParams} : {...baseData,...nowParams,...resetParams}
         },()=>{
-            console.log(this.state.baseData)
+            // console.log(this.state.baseData)
             this.getAreaData(this.state.baseData.projectId)
         })
         
@@ -211,12 +231,12 @@ class BasicInformation extends Component {
         GetAddress(projectAreaId).then(res => {
             let {selectData} = this.state;
             if (res.success != 1) {
-                selectData = Object.assign({}, selectData, { addressList: [{id:'-1',name:'无'}]});
+                selectData = Object.assign({}, selectData, { addressList: [{id:'-1',address:'无'}]});
                 this.setState({selectData})
                 // message.error("请求错误")
                 return
             }else{
-                selectData = Object.assign({}, selectData, { addressList: res.data && res.data.length ? [...res.data,{id:'-1',name:'无'}]:[{id:'-1',name:'无'}]});
+                selectData = Object.assign({}, selectData, { addressList: res.data && res.data.length ? [...res.data,{id:'-1',address:'无'}]:[{id:'-1',address:'无'}]});
                 this.setState({selectData})
             }
         })
@@ -253,8 +273,9 @@ class BasicInformation extends Component {
         }
     }
     //服务区域选择改变
-    onAreaChange = (selectChange,id,selectData,dataIndex,itemValue,option)=>{
-        const {baseData} = this.state,item = option.props.appitem;
+    onAreaChange = (selectChange,id,selectData,dataIndex,itemValue,option,label)=>{
+        console.log(selectChange,option)
+        const {baseData} = this.state,item = selectChange == 'basedataId' ? {name:option[0]} : option.props.appitem;
         if(selectChange == 'projectAreaId' ){  //服务区域
             baseData['computerRoomAddress'] = baseData['custUserId'] = baseData['custUserMobile'] = undefined;
             this.props.form.resetFields(['computerRoomAddress','custUserId','custUserMobile']);
@@ -264,10 +285,17 @@ class BasicInformation extends Component {
             this.getInfo(item.intValue1)
         }else if(selectChange == 'custUserId' ){  //客户管理员
             baseData['custUserMobile'] = item.mobile;
+        }else if(selectChange == 'basedataId' && this.props.searchListIDCode == 1){  //配置项
+            this.getBrandData(id);   //软件服务=>获取产品类别，技术方向，品牌数据
         }
+        if(label == '中间件类型' && this.props.setStrValue1) this.props.setStrValue1(id)
         // let getData = this.state.selectData[selectData].filter(item => item.id == id );
         baseData[dataIndex] = itemValue ? item[itemValue] : item['name'];
         this.setState({baseData})
+    }
+    //扩展字段下拉组件选择改变函数
+    onAreaChange2 = (value,label) => {
+        if(label == '中间件类型' && this.props.setStrValue1) this.props.setStrValue1(id)
     }
     //项目选择器打开函数
     openProject = (type) => {
@@ -301,6 +329,7 @@ class BasicInformation extends Component {
         })
     }
     render  () {
+        const columnsDevice = this.props.searchListIDCode == 2 ? this.props.panes.basicData.columnsDevice : this.props.panes.basicData.columnsDevice.concat(this.props.incrementFeild);
         return (
             <div>
                 <div className="commTop">
@@ -310,12 +339,12 @@ class BasicInformation extends Component {
                     </Form>
                 </div>
                 <Divider />
-                {this.props.panes.basicData.columnsDevice.length ? <div className="commTop">
-                    <div className="navTitle">设备信息</div>
+                <div className="commTop">
+                    <div className="navTitle">{this.props.searchListIDCode == 2 ? '设备信息' : '软件信息'}</div>
                     <Form id="assetsBoxFrom2" className="AllocationForm" layout='inline'>
-                        <Row gutter={[16,15]}>{ this.getFields(this.props.panes.basicData.columnsDevice)}</Row>
+                        <Row gutter={[16,15]}>{ this.getFields(columnsDevice)}</Row>
                     </Form>
-                </div> : null}
+                </div>
                 
                 {/* 项目选择器 */}
                 {
