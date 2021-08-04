@@ -91,7 +91,7 @@ class BasicInformation extends Component {
                 <Col span={item ? item.span : 6} key={i}>
                 <Form.Item label={item ? assetsList[i].title : '无效字段'}>
                     {getFieldDecorator(item ? item.key : `unknown${i}`, {
-                    rules: [],//rules,
+                    rules: rules,
                     initialValue: initialValue
                     })( item ? item.render(this,item.type,assetsList[i].selectData,assetsList[i].itemCode,assetsList[i].itemValue,assetsList[i].selectChange,required,assetsList[i].dataIndex,assetsList[i].title) : <Input />)}
                 </Form.Item>
@@ -295,7 +295,7 @@ class BasicInformation extends Component {
     }
     //扩展字段下拉组件选择改变函数
     onAreaChange2 = (value,label) => {
-        if(label == '中间件类型' && this.props.setStrValue1) this.props.setStrValue1(id)
+        if(label == '中间件类型' && this.props.setStrValue1) this.props.setStrValue1(value)
     }
     //项目选择器打开函数
     openProject = (type) => {

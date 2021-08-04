@@ -129,7 +129,7 @@ class RiskInvestigation extends React.Component {
                     // rowSelection={rowSelectionArea}  
                     dataSource={this.state.data}
                     columns={this.props.panes.riskColumns}
-                    scroll={{y:550}}
+                    scroll={{y:400}}
                     pagination={false}
                     size={'small'}
                     style={{marginTop:16}}
