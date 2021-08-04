@@ -115,8 +115,8 @@ module.exports = {
       '/biCustomer/exportView': target, //工程信息按钮
       '/biProject': target,//项目信息管理导入
       '/biUser/import': target,//请求导入接口
-      '/biSqtAppointment':target // 服务计划表---预约服务附表数据查询接口
-	  
+      '/biSqtAppointment':target, // 服务计划表---预约服务附表数据查询接口
+      '/biConfigMeta': target, //配置库配置管理扩展字段
     },
     // CSS Sourcemaps off by default because relative paths are "buggy"
     // with this option, according to the CSS-Loader README

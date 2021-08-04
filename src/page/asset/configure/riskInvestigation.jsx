@@ -31,6 +31,11 @@ class RiskInvestigation extends React.Component {
         // console.log('风险排查加载')
         this.init()
     }
+    componentWillReceiveProps(nextprops) {
+        if(this.props.strValue1 !== nextprops.strValue1){
+            this.getInitData(nextprops);
+        }
+    }
     //处理数据扁平化
     sortData = (data) => {
         if(data instanceof Array){
@@ -54,15 +59,15 @@ class RiskInvestigation extends React.Component {
         }
         return data1;
     }
-    // 初始化
-    init = () => {
-        const {roleWindow,searchListID} = this.props;
-        getRiskList({skillTypeId:searchListID}).then(res => {
+    getInitData = (props) => {
+        const {roleWindow,searchListID,strValue1} = props;
+        getRiskList({skillTypeId:searchListID,strValue1}).then(res => {
             if (res.success == 1) {
                 let {data} = this.state;
                 if(!roleWindow.roleModalType){
                      //处理数据
                     data = this.sortData(res.data);
+                    console.log(data)
                 }else{
                     //处理数据
                      data = this.sortData2(res.data,data);
@@ -73,6 +78,11 @@ class RiskInvestigation extends React.Component {
                 message.error(res.message)
             }
         })
+    }
+    // 初始化
+    init = () => {
+        //初始化表格数据
+        this.getInitData(this.props);
         //系统类别
         getBaseData({basedataTypeCode:'crSource'}).then(res => {
             if (res.success == 1) {

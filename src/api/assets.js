@@ -5,15 +5,19 @@ export const GetAllocationTree = (params = {}) => {
 	return http.fetchGet(`/basedata/tree`,params);
 	//return http.fetchGet(`/static/mock/assetsBaseInfor.json`)type=configuration
 }
-// //获取资产配置管理页面的下拉数据
-// export const getBaseData = (params = {}) => {
-// 	return http.fetchGet(`/static/mock/assetsData.json`)
-// }
+//扩展字段获取
+export const getConfigMeta = (params = {}) => {
+	// return http.fetchGet(`/basedataMeta/getMeta`,params)
+	return http.fetchGet(`/biConfigMeta/getMeta`,params)
+}
+//扩展字段获取
+export const getBrand = (params = {}) => {
+	return http.fetchGet(`/basedata/getBrand`,params)
+}
 //获取资产配置管理-所有下拉框数据
 export const getBaseData = (params = {}) => {
 	return http.fetchGet(`/basedata/getByBasedataType`,params)
 }
-
 //获取资产配置管理-风险等级数据
 export const getInfo = (params = {}) => {
 	return http.fetchGet(`/basedata/getInfo`,params)
