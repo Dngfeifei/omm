@@ -70,7 +70,6 @@ function render(_this,type,selectData,itemCode,itemValue,selectChange,required,d
                 treeData={_this.props.tree.treeData}
                 placeholder="请选择"
                 onChange={(value,option) => _this.onAreaChange(selectChange,value,selectData,dataIndex,itemValue,option,label)}
-                treeDefaultExpandAll
                 // onChange={this.onChange}
             />
     }
@@ -976,7 +975,6 @@ const rules = [{
                             treeData={_this.state.tree.treeData}
                             placeholder="请选择"
                             onSelect={_this.onTreeSelect}
-                            treeDefaultExpandAll
                             // onChange={this.onChange}
                         />
     },{
