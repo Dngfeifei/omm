@@ -75,7 +75,7 @@ class RiskInvestigation extends React.Component {
                 
                 this.setState({data})
             } else {
-                message.error(res.message)
+                // message.error(res.message)
             }
         })
     }

@@ -99,6 +99,24 @@ export const assetsListData = {
         render: render,
         type:'input2',
     },
+    //操作系统版本号
+    'operateSystemVersion':{
+        key:'operateSystemVersion',
+        label:'项目号',
+        span:6,
+        rules:[],
+        render: render,
+        type:'input1',
+    },
+    //操作系统
+    'operateSystemId':{
+        key:'operateSystemId',
+        label:'服务区域',
+        span:6,
+        rules:[],
+        render: render,
+        type:'select1',
+    },
     'basedataId':{
         key:'basedataId',
         label:'配置项名称',
@@ -349,11 +367,31 @@ export const assetsListData = {
               message: '请输入正确的联系方式！',
             },
           ],
-        render: () =>{
-            return <Input placeholder="请输入联系方式" />;
-        },
         render:render,
         type:'input1'
+    },
+    //登记人
+    'registerUserName':{
+        key:'registerUserName',
+        label:'登记人',
+        span:6,
+        rules:[],
+        render:render,
+        type:'input1'
+    },
+    //登记时间
+    'registerTime':{
+        label: '登记时间',
+        key: 'registerTime',
+        span:6,
+        rules:[
+            {
+              required: true,
+              message: '该选项不能为空！',
+            },
+          ],
+        render: render,
+        type:'date',
     },
     //产品类别
     'serviceClassName':{
@@ -462,6 +500,21 @@ export const assetsListData = {
     'productModelName':{
         key:'productModelName',
         setValue:'productModelName',
+        label:'产品型号',
+        span:6,
+        rules:[
+            {
+              required: true,
+              message: '该选项不能为空！',
+            },
+          ],
+        
+        render:render,
+        type:'input3',
+    },
+    //收集人
+    'collectUserName':{
+        key:'collectUserName',
         label:'产品型号',
         span:6,
         rules:[
@@ -880,6 +933,13 @@ const columnsBasic = [{
             dataIndex: 'compayName',
             ellipsis:true,
             align: 'center',
+        },
+        {
+            title: '客户编号',
+            dataIndex: 'custNum',
+            width:100,
+            selectData:'customerData',
+            align: 'center'
         },{
             title: '客户名称',
             dataIndex: 'custName',
@@ -887,16 +947,16 @@ const columnsBasic = [{
             key:"custName",
             align: 'center',
         },{
+            title: '项目编号',
+            dataIndex: 'projectNumber',
+            key:"projectNumber",
+            align: 'center',
+        },{
             title: '项目名称',
             dataIndex: 'projectName',
             ellipsis: true,
             width:200,
             key:"projectName",
-            align: 'center',
-        },{
-            title: '项目编号',
-            dataIndex: 'projectNumber',
-            key:"projectNumber",
             align: 'center',
         },{
             title: '项目经理',
@@ -922,7 +982,7 @@ const columnsBasic = [{
             align: 'center',
         },
         {
-            title: '服务区域',
+            title: '所在省市',
             dataIndex: 'projectArea',
             key:"projectAreaId",
             selectData:'areaData',
@@ -950,21 +1010,8 @@ const columnsBasic = [{
             dataIndex: 'custUserMobile',
             key:"custUserMobile",
             align: 'center',
-        },{
-            title: '配置项',
-            dataIndex: 'basedataName',
-            selectChange: 'basedataId',
-            ellipsis:true,
-            key:"basedataId",
-            align: 'center',
-        },
-        {
-            title: '客户编号',
-            dataIndex: 'custNum',
-            width:100,
-            selectData:'customerData',
-            align: 'center'
-        }]
+        }
+        ]
 const rules = [{
         label: '配置项',
         key: 'basedataId',
@@ -1196,16 +1243,86 @@ export const panes = [
             columnsBasic:[...columnsBasic],
             columnsDevice:[
                 {
-                    title: '产品型号',
-                    dataIndex: 'productModelName',
-                    key:"productModelName",
+                    title: '配置项',
+                    dataIndex: 'basedataName',
+                    selectChange: 'basedataId',
+                    ellipsis:true,
+                    key:"basedataId",
                     align: 'center',
                 },
                 {
-                    title: '序列号',
+                    title: '产品型号/软件名称',
+                    dataIndex: 'productModelName',
+                    key:"productModelName",
+                    key2:"productModelName2",
+                    align: 'center',
+                },
+                {
+                    title: '序列号/软件版本号',
                     dataIndex: 'serialNumber',
                     key:"serialNumber",
                     align: 'center',
+                },
+                {
+                    title: '操作系统',
+                    dataIndex: 'operateSystemName',
+                    key:"operateSystemId",
+                    selectChange: 'operateSystemType',
+                    selectData:'systemCategory',
+                    align: 'center',
+                },
+                {
+                    title: '操作系统版本',
+                    dataIndex: 'operateSystemVersion',
+                    key:"operateSystemVersion",
+                    align: 'center',
+                },
+                {
+                    title: '应用类别',
+                    dataIndex: 'appTypeName',
+                    key:"appTypeId",
+                    selectChange: 'appTypeId',
+                    selectData:'systemCategory',
+                    align: 'center',
+                },
+                {
+                    title: '应用名称',
+                    dataIndex: 'appName',
+                    key: 'appName',
+                    align: 'center',
+                },
+                {
+                    title: '应用重要性',
+                    dataIndex: 'appLevel',
+                    key:"appLevel",
+                    selectData:'appLevelList',
+                    align: 'center',
+                },
+                {
+                    title: '风险等级',
+                    dataIndex: 'riskLevelName',
+                    ellipsis:true,
+                    key:"riskLevelName",
+                    align: 'center',
+                },
+                {
+                    title: '保障开始日期',
+                    dataIndex: 'maintenanceStart',
+                    key:"maintenanceStart",
+                    align: 'center',
+                },
+                {
+                    title: '保障结束日期',
+                    dataIndex: 'maintenanceEnd',
+                    key:"maintenanceEnd",
+                    align: 'center',
+                },
+                {
+                    title: '是否维护',
+                    dataIndex: 'isMroName',
+                    key:'isMroId',
+                    selectData:'maintained',
+                    align: 'center'
                 },
                 {
                     title: '产品类别',
@@ -1214,7 +1331,7 @@ export const panes = [
                     align: 'center',
                 },
                 {
-                    title: '技术方向',
+                    title: '运维对象',
                     dataIndex: 'skillTypeName',
                     key:"skillTypeName",
                     align: 'center',
@@ -1234,58 +1351,29 @@ export const panes = [
                     align: 'center',
                 },
                 {
-                    title: '产品等级',
+                    title: '产品线级别',
                     dataIndex: 'productLevel',
                     selectData:'productLevel',
                     key:"productLevel",
                     align: 'center',
                 },
                 {
-                    title: '系统类别',
-                    dataIndex: 'appTypeName',
-                    key:"appTypeId",
-                    selectChange: 'appTypeId',
-                    selectData:'systemCategory',
+                    title: '收集人',
+                    dataIndex: 'collectUserName',
+                    key: 'collectUserName',
                     align: 'center',
                 },
                 {
-                    title: '系统名称',
-                    dataIndex: 'appName',
-                    key: 'appName',
+                    title: '登记人',
+                    dataIndex: 'registerUserName',
+                    key: 'registerUserName',
                     align: 'center',
                 },
                 {
-                    title: '系统重要程度',
-                    dataIndex: 'appLevel',
-                    key:"appLevel",
-                    selectData:'appLevelList',
+                    title: '登记时间',
+                    dataIndex: 'registerTime',
+                    key:"registerTime",
                     align: 'center',
-                },
-                {
-                    title: '保障开始日期',
-                    dataIndex: 'maintenanceStart',
-                    key:"maintenanceStart",
-                    align: 'center',
-                },
-                {
-                    title: '保障结束日期',
-                    dataIndex: 'maintenanceEnd',
-                    key:"maintenanceEnd",
-                    align: 'center',
-                },
-                {
-                    title: '风险等级',
-                    dataIndex: 'riskLevelName',
-                    ellipsis:true,
-                    key:"riskLevelName",
-                    align: 'center',
-                },
-                {
-                    title: '是否维护',
-                    dataIndex: 'isMroName',
-                    key:'isMroId',
-                    selectData:'maintained',
-                    align: 'center'
                 }
             ]
         },

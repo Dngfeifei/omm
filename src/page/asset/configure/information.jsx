@@ -4,6 +4,8 @@ import { Row, Col,  Input, Select,Form,Icon ,Divider} from 'antd'
 import ProjectSelector from '/components/selector/projectSelector.jsx'
 // 引入---【产品选择器组件】
 import ProductSelector from '/components/selector/productSelector.jsx'
+// 引入工程师选择器组件
+import Selector from '/components/selector/engineerSelector.jsx'
 
 import { getInfo, GetAddress,getBaseData,GetAllocationArea,GetAllocationCustomer,getBrand} from '/api/assets.js'
 const { Option } = Select;
@@ -20,6 +22,7 @@ class BasicInformation extends Component {
             roleWindow:props.roleWindow,
             visibleModule:false,
             visibleProductModel:false,
+            visibleSelector:false,
             selectData:{
                 areaData:[{id:1,name:'ahe'}],//区域下拉列表输入数据
                 customerData:[{id:'-1',name:'无'}],//客户下拉列表输入数据
@@ -34,6 +37,7 @@ class BasicInformation extends Component {
                 productLineType:[], //产品线
                 productBrandType:[], //品牌
                 productSkillType:[], //技术方向
+                operateSystemType:[], // 操作系统
             },
             dateKeys:[]
         }
@@ -195,6 +199,18 @@ class BasicInformation extends Component {
             // this.getAreaData(this.state.baseData.projectId)
         })
     }
+    //人员选择器回传参数-手机人
+    onSelectorOK = (key, info) => {
+        const {baseData} = this.state;
+        baseData['collectUserName'] = info[0].realName,
+        baseData['collectUserId'] = key[0];
+        this.setState({
+            baseData
+        },()=>{
+            console.log(this.state.baseData)
+            // this.getAreaData(this.state.baseData.projectId)
+        })
+    }
     //获取服务区域下拉列表数据
     getAreaData = (projectId) =>{
         GetAllocationArea(projectId).then(res => {
@@ -294,9 +310,9 @@ class BasicInformation extends Component {
         this.setState({baseData})
     }
     //扩展字段下拉组件选择改变函数
-    onAreaChange2 = (value,label) => {
-        if(label == '中间件类型' && this.props.setStrValue1) this.props.setStrValue1(value)
-    }
+    // onAreaChange2 = (value,label) => {
+    //     if(label == '中间件类型' && this.props.setStrValue1) this.props.setStrValue1(value)
+    // }
     //项目选择器打开函数
     openProject = (type) => {
         const {roleWindow} = this.props;
@@ -304,6 +320,8 @@ class BasicInformation extends Component {
         const obj = {};
         if(type == 'projectNumber'){
             obj['visibleModule'] = true;
+        }else if(type == 'collectUserName'){
+            obj['visibleSelector'] = true;
         }else{
             obj['visibleProductModel'] = true;
         }
@@ -313,6 +331,7 @@ class BasicInformation extends Component {
     close = () => {
         this.setState({
             visibleModule:false,
+            visibleSelector:false,
             visibleProductModel:false
         },()=>{
             this.props.form.resetFields();
@@ -329,7 +348,7 @@ class BasicInformation extends Component {
         })
     }
     render  () {
-        const columnsDevice = this.props.searchListIDCode == 2 ? this.props.panes.basicData.columnsDevice : this.props.panes.basicData.columnsDevice.concat(this.props.incrementFeild);
+        // const columnsDevice = this.props.searchListIDCode == 2 ? this.props.panes.basicData.columnsDevice : this.props.panes.basicData.columnsDevice.concat(this.props.incrementFeild);
         return (
             <div>
                 <div className="commTop">
@@ -340,9 +359,9 @@ class BasicInformation extends Component {
                 </div>
                 <Divider />
                 <div className="commTop">
-                    <div className="navTitle">{this.props.searchListIDCode == 2 ? '设备信息' : '软件信息'}</div>
+                    <div className="navTitle">配置信息</div>
                     <Form id="assetsBoxFrom2" className="AllocationForm" layout='inline'>
-                        <Row gutter={[16,15]}>{ this.getFields(columnsDevice)}</Row>
+                        <Row gutter={[16,15]}>{ this.getFields(this.props.panes.basicData.columnsDevice)}</Row>
                     </Form>
                 </div>
                 
@@ -354,6 +373,10 @@ class BasicInformation extends Component {
                 {/* 产品选择器 */}
                 {
                     this.state.visibleProductModel ? <ProductSelector title={'产品选择器'} skillTypeId={this.props.searchListID} onCancel={this.close} onOk={this.producthandleOk}></ProductSelector> : null
+                }
+                {/* 人员选择器---组件 */}
+                {
+                    this.state.visibleSelector ? <Selector title={'人员选择器'} onOk={this.onSelectorOK} onCancel={this.close} /> : null
                 }
             </div>  
         )
