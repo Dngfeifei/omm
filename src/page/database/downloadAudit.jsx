@@ -6,7 +6,8 @@
 
 import React, { Component } from 'react'
 
-import { Form, message, Button, Row, Col, Input, Table, Icon, Spin, Progress } from 'antd'
+import { Form, message, Button, Row, Col, Input, Table, Icon, Spin, Progress, Modal } from 'antd'
+const { TextArea } = Input
 
 import { GetCOSFile } from '/api/cloudUpload.js'
 import { GetFileLibrary, FileDownloadExamine } from '/api/mediaLibrary.js'
@@ -54,9 +55,18 @@ class DownloadAudit extends Component {
         //右侧table表格配置
         columns: [
             {
+                title: '类型',
+                dataIndex: 'type',
+                width: 8,
+                align: 'center',
+                render: (t) => {
+                    return t == 1 ? "文件" : "目录"
+                }
+            },
+            {
                 title: '文件名',
                 dataIndex: 'fileName',
-                width: 40,
+                width: 32,
                 align: 'center',
                 render: (t, r) => {
                     return <div>
@@ -67,6 +77,34 @@ class DownloadAudit extends Component {
                             <span style={{ color: "#bfb8b8", marginLeft: "10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
                         </div>
                     </div>
+                }
+            },
+            {
+                title: '品牌',
+                dataIndex: 'brand',
+                width: 13,
+                align: 'center',
+                render: (t) => {
+                    return <div style={{ textAlign: "left" }}>{t}</div>
+                }
+            },
+            {
+                title: '产品线',
+                dataIndex: 'productLine',
+                width: 15,
+                align: 'center',
+                render: (t) => {
+                    return <div style={{ textAlign: "left" }}>{t}</div>
+                }
+            },
+            {
+
+                title: '标签',
+                dataIndex: 'fileLabel',
+                width: 12,
+                align: 'center',
+                render: (t) => {
+                    return fileLabelData[t]
                 }
             },
             {
@@ -136,7 +174,7 @@ class DownloadAudit extends Component {
                         return <div>
                             {downObj[r.applyId] ? <Progress type="circle" percent={downObj[r.applyId].percent} width={40} /> : <a onClick={_ => this.downloadFile(r)} style={{ margin: "0 3px" }}>下载</a>}
                             <a onClick={_ => this.examineItem(r.applyId, 1)} style={{ margin: "0 3px" }}>同意</a>
-                            <a onClick={_ => this.examineItem(r.applyId, 2)} style={{ margin: "0 3px" }}>驳回</a>
+                            <a onClick={_ => this.showReason(r.applyId)} style={{ margin: "0 3px" }}>驳回</a>
                         </div>
                     } else if (status == "1" || status == "2") {
                         return downObj[r.applyId] ? <Progress type="circle" percent={downObj[r.applyId].percent} width={40} /> : <a onClick={_ => this.downloadFile(r)} style={{ margin: "0 3px" }}>下载</a>
@@ -153,7 +191,11 @@ class DownloadAudit extends Component {
         downObj: {},
         // 当前要展示的详情数据
         details: {},
-        detailsModalvisible: false
+        detailsModalvisible: false,
+        // 驳回弹窗相关数据
+        reasonModal: false,//驳回弹窗显示与否
+        reason: "",//驳回原因
+        rowId: ""//驳回时行id
     }
     // 获取标签字典数据
     getDictInfo = async () => {
@@ -221,20 +263,32 @@ class DownloadAudit extends Component {
         })
     }
     // 下载审核
-    examineItem = (key, status) => {
+    examineItem = (key, status, reason="") => {
         FileDownloadExamine({
             applyId: key,
-            status
+            status,
+            reason:reason
         }).then(res => {
             if (res.success != 1) {
                 message.error(res.message)
                 return
             } else {
                 this.getTableData()
+                this.closeReason()
             }
         })
     }
-
+    // 驳回申请
+    saveItem2 = () => {
+        let { rowId, reason } = this.state
+        if (reason == "") {
+            message.destroy()
+            message.warning("请填写驳回原因后再执行驳回操作！")
+            return
+        }
+        // 驳回申请
+        this.examineItem(rowId, 2, reason)
+    }
 
     // 文件下载
     downloadFile = (row) => {
@@ -271,6 +325,28 @@ class DownloadAudit extends Component {
             detailsModalvisible: false
         })
     }
+    // 获取驳回原因
+    getReason = ({ target }) => {
+        this.setState({
+            reason: target.value
+        })
+    }
+    // 显示驳回弹窗
+    showReason = (id) => {
+        this.setState({
+            reasonModal: true,
+            reason: "",
+            rowId: id
+        })
+    }
+    // 关闭驳回弹窗
+    closeReason = () => {
+        this.setState({
+            reasonModal: false,
+            reason: "",
+            rowId: ""
+        })
+    }
     render = _ => {
         const { h } = this.state;
         return <div style={{ height: "100%", padding: '20px 10px', }}>
@@ -290,6 +366,23 @@ class DownloadAudit extends Component {
             </div>
             {/* 详情 */}
             {this.state.detailsModalvisible ? <Details onCancel={this.closeDetails} data={this.state.details} info={[{ name: "上传用户", value: this.state.details.uploadUserName }, { name: "下载用户", value: this.state.details.downUserName }]}></Details> : ""}
+            {/* 驳回弹窗 */}
+            <Modal
+                title="驳回 "
+                visible={this.state.reasonModal}
+                onCancel={this.closeReason}
+                onOk={this.saveItem2}
+                footer={[
+                    <Button key="submit" type="primary" onClick={this.saveItem2}>
+                        确定
+                    </Button>
+                ]}
+            >
+                <div style={{ display: "flex" }}>
+                    <span className="ant-form-item-required" style={{ marginRight: "10px" }}>驳回原因</span>
+                    <TextArea value={this.state.reason} onChange={this.getReason} style={{ width: '80%' }} />
+                </div>
+            </Modal>
         </div>
     }
 

@@ -20,8 +20,8 @@ const assignment = (data) => {
     data.forEach((list, i) => {
         list.key = list.id;
         list.value = list.id;
-        if (list.hasOwnProperty("categorieName")) {
-            list.title = list.categorieName;
+        if (list.hasOwnProperty("name")) {
+            list.title = list.name;
         }
         if (list.hasOwnProperty("children")) {
             if (list.children.length > 0) {
@@ -77,48 +77,92 @@ class All extends Component {
         treeData: [],
         // 角色树选中项
         treeSelectInfo: null,
+        treeSelectId: "",
         //右侧table表格配置
         columns: [
+            {
+                title: '类型',
+                dataIndex: 'type',
+                width: 10,
+                align: 'center',
+                render: (t) => {
+                    return t == 1 ? "文件" : "目录"
+                }
+            },
             {
                 title: '文件名',
                 dataIndex: 'fileName',
                 align: 'center',
-                width:50,
+                width: 44,
                 render: (t, r) => {
-                    let style1 = r.isLike ? { margin: "0 3px 0 0", cursor: "pointer", color: "#7777f7" } : { margin: "0 3px 0 0", cursor: "pointer" }
-                    let style2 = r.isCollect ? { margin: "0 3px 0 5px", cursor: "pointer", color: "#f56464" } : { margin: "0 3px 0 5px", cursor: "pointer" }
-                    return <div>
-                        <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
-                        <div style={{ color: "#bfb8b8" }}>
-                            <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={style1} />{r.likeNum ? r.likeNum : 0}
-                            <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={style2} />{r.collectNum ? r.collectNum : 0}
-                            <span style={{ color: "#bfb8b8",marginLeft:"10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
+                    if (r.type == 1) {
+                        // 文件
+                        let style1 = r.isLike ? { margin: "0 3px 0 0", cursor: "pointer", color: "#7777f7" } : { margin: "0 3px 0 0", cursor: "pointer" }
+                        let style2 = r.isCollect ? { margin: "0 3px 0 5px", cursor: "pointer", color: "#f56464" } : { margin: "0 3px 0 5px", cursor: "pointer" }
+                        return <div>
+                            <div><a onClick={_ => { this.showDetails(r) }}>{t}</a></div>
+                            <div style={{ color: "#bfb8b8" }}>
+                                <Icon type="like" onClick={_ => this.addFileLike(r.id)} theme={r.isLike ? "filled" : "outlined"} style={style1} />{r.likeNum ? r.likeNum : 0}
+                                <Icon type="heart" onClick={_ => this.addFileCollect(r.id)} theme={r.isCollect ? "filled" : "outlined"} style={style2} />{r.collectNum ? r.collectNum : 0}
+                                <span style={{ color: "#bfb8b8", marginLeft: "10px" }}>{r.downloadNum ? r.downloadNum : 0}次下载</span>
+                            </div>
                         </div>
-                    </div>
+                    } else if (r.type == 2) {
+                        // 目录
+                        return <div onClick={_ => this.getTableData2(r.categoriesId)}><a>{t}</a></div>
+
+                    }
+                }
+            },
+            {
+                title: '品牌',
+                dataIndex: 'brand',
+                width: 14,
+                align: 'center',
+                render: (t) => {
+                    return <div style={{ textAlign: "left" }}>{t}</div>
+                }
+            },
+            {
+                title: '产品线',
+                dataIndex: 'productLine',
+                width: 16,
+                align: 'center',
+                render: (t) => {
+                    return <div style={{ textAlign: "left" }}>{t}</div>
+                }
+            },
+            {
+                title: '标签',
+                dataIndex: 'fileLabel',
+                width: 13,
+                align: 'center',
+                render: (t) => {
+                    return fileLabelData[t]
                 }
             },
             {
                 title: '版本',
-                width:20,
+                width: 15,
                 dataIndex: 'fileVersion',
                 align: 'center',
-              
+
             },
             {
                 title: '文件大小',
-                width:12,
+                width: 12,
                 dataIndex: 'fileSize',
                 align: 'center',
             },
             {
                 title: '资料级别',
-                width:12,
+                width: 12,
                 dataIndex: 'levelName',
                 align: 'center',
             },
             {
                 title: '操作',
-                width:12,
+                width: 12,
                 dataIndex: 'isDownload',
                 align: 'center',
                 render: (t, r) => {
@@ -188,15 +232,18 @@ class All extends Component {
         let data = info.selectedNodes[0].props.dataRef
         this.setState({
             treeSelectInfo: data,
+            treeSelectId: data.id,
+            tableSelecteds: [],
+            tableSelectedInfo: [],
         }, () => {
-            this.getTableData()
+            this.getTableData(0)
         })
     };
 
 
     // 获取全部文件列表数据
     getTableData = (obj = 1) => {
-        let id = this.state.treeSelectInfo ? this.state.treeSelectInfo.id : ""
+        let id = this.state.treeSelectId ? this.state.treeSelectId : ""
         let key = this.state.searchKey
         let order = this.state.sortValue == "file_name" ? {} : { order: "desc" }
         // 选中后请求文件数据
@@ -208,6 +255,32 @@ class All extends Component {
             ...order
         })
         GetFileLibrary(this.state.pagination.pageSize, obj ? (this.state.pagination.current - 1) * this.state.pagination.pageSize : 0, params).then(res => {
+            if (res.success == 1) {
+                let pagination = Object.assign({}, this.state.pagination, {
+                    pageSize: res.data.size,
+                    current: res.data.current,
+                    total: res.data.total,
+                })
+                this.setState({ tableData: res.data.records, pagination: pagination })
+            } else {
+                message.error(res.message)
+            }
+        })
+    }
+    // 点击列表内目录获取列表数据
+    getTableData2 = (id) => {
+        let order = this.state.sortValue == "file_name" ? {} : { order: "desc" }
+        this.setState({
+            categoriesId: id
+        })
+        // 选中后请求文件数据
+        let params = Object.assign({}, {
+            categoriesId: id,
+            queryType: "all",
+            sort: this.state.sortValue,
+            ...order
+        })
+        GetFileLibrary(this.state.pagination.pageSize, 0, params).then(res => {
             if (res.success == 1) {
                 let pagination = Object.assign({}, this.state.pagination, {
                     pageSize: res.data.size,
@@ -372,7 +445,7 @@ class All extends Component {
                                 <Button type="primary" onClick={_ => this.getTableData(0)}>查询</Button>
                             </Col>
                         </Row>
-                        <Row style={{ paddingTop: "20px" }}>
+                        <Row style={{ paddingTop: "20px", textAlign: "right", paddingRight: "2px" }}>
                             <div className="icons-list">
                                 <span style={{ marginLeft: "20px", cursor: "pointer", color: this.state.sortValue == "download_num" ? "red" : "" }} onClick={_ => this.getListBySort("download_num")}><Icon type="fire" theme="filled" />最热</span>
                                 <span style={{ marginLeft: "20px", cursor: "pointer", color: this.state.sortValue == "like_num" ? "red" : "" }} onClick={_ => this.getListBySort("like_num")}><Icon type="like" theme="filled" />点赞</span>
@@ -383,7 +456,7 @@ class All extends Component {
                         </Row>
                     </Form>
                     <div className="tableParson" style={{ flex: 'auto', height: 10 }} ref={(el) => this.tableDom3 = el}>
-                        <Table bordered dataSource={this.state.tableData} columns={this.state.columns} style={{ marginTop: '20px' }} rowKey={"id"} pagination={false} scroll={h3} size="small" />
+                        <Table bordered dataSource={this.state.tableData} columns={this.state.columns} style={{ marginTop: '20px' }} rowKey={(record, index) => `${record.fileName}${index}`} pagination={false} scroll={h3} size="small" />
                         <Pagination current={this.state.pagination.current} pageSize={this.state.pagination.pageSize} total={this.state.pagination.total} onChange={this.pageIndexChange} onShowSizeChange={this.pageSizeChange} size="small" />
                     </div>
 

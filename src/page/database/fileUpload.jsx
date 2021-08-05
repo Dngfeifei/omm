@@ -5,7 +5,7 @@
 
 
 import React, { Component } from 'react'
-import { Modal, Form, Input, Button, Radio, Upload, message, Spin, Progress } from 'antd'
+import { Modal, Form, Input, Button, Radio, Upload, message, Spin, Progress, Checkbox } from 'antd'
 const { TextArea } = Input;
 const { confirm } = Modal;
 import { LoadingOutlined } from '@ant-design/icons';
@@ -13,10 +13,13 @@ const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 import SparkMD5 from 'spark-md5'
 
+// 引入 API接口
+import { GetBaseData } from '/api/selfEvaluation'
 import { GetSignResult, PostFilePublish, GetFilePonints } from '/api/mediaLibrary.js'
 import { UploadCOSFile, DelCOSFile, CancelCOSFile, RestartCOSFile, GetFileList, PauseCOSFile } from '/api/cloudUpload.js'
 
 import { GetDictInfo } from '/api/dictionary'  //数据字典api
+
 
 const layout = {
     labelCol: { span: 4 },
@@ -38,12 +41,31 @@ window.addEventListener('offline', (event) => {
 window.onoffline = (event) => {
     netStatue = false;
 };
+// 去重方法
+function unique(arr) {
+    if (!Array.isArray(arr)) {
+        console.log('type error!')
+        return
+    }
+    var arrry = [];
+    var obj = {};
+    for (var i = 0; i < arr.length; i++) {
+        if (!obj[arr[i].name]) {
+            arrry.push(arr[i])
+            obj[arr[i].name] = 1
+        } else {
+            obj[arr[i].name]++
+        }
+    }
+    return arrry;
+}
 class fileUpload extends Component {
     componentDidMount() {
 
     }
     componentWillMount() {
         this.getDictInfo()
+        this.getBaseData()
     }
     componentWillReceiveProps(newProps) {
         if (newProps.data.type) {
@@ -83,6 +105,15 @@ class fileUpload extends Component {
             // },
             showUploadList: false,
         },
+        productLine: [],//所有产品线数据
+        brand: [],//所有品牌数据
+        brandId: "",//当前复选框选中品牌id,
+        brandName: "",//当前复选框选中品牌名称,
+        brandIndex: "",//当前复选框选中品牌索引,
+        brandResult: [],//已选中的品牌结果数组
+        productLineResult: [],//已选中的产品线结果二维数组
+        brandItemStatus: true,//品牌结果校验状态 默认为true
+        productLineItemStatus: true,//产品结果校验状态 默认为true
     }
     // 获取数据字典-产品类别数据
     getDictInfo = async () => {
@@ -93,6 +124,23 @@ class fileUpload extends Component {
                 this.setState({
                     fileLabelData: res.data
                 })
+            }
+        })
+    }
+    // 请求下拉框基础数据方法
+    getBaseData = () => {
+        // 请求下拉框基础数据
+        GetBaseData().then((res) => {
+            if (res.success != 1) {
+                message.error(res.message)
+                return
+            } else {
+                let { productLine, brand } = res.data
+              
+                let newBrand = brand.filter(item => {
+                    return item.parentId == this.props.data.parentDirCode[1]
+                })
+                this.setState({ productLine, brand: newBrand })
             }
         })
     }
@@ -229,9 +277,27 @@ class fileUpload extends Component {
             if (err) {
                 return
             }
+            let { brandResult, productLineResult, brandItemStatus, productLineItemStatus } = this.state
+            if (!brandResult.length) {
+                brandItemStatus = false
+                this.setState({ brandItemStatus })
+                return
+            }
+            productLineResult[0] ? "" : productLineResult[0] = []
+            let productLine = productLineResult.reduce((acc, curr) => {  curr = curr && curr.length ? curr : []; return acc.concat(curr) })
+            if (brandResult.length == 1 && brandResult[0] == "通用" && !productLine.length) {
+
+            } else {
+                if (!productLine.length) {
+                    productLineItemStatus = false
+                    this.setState({ productLineItemStatus })
+                    return
+                }
+            }
+
             if (!err) {
                 let param = this.props.form.getFieldsValue()
-                let data = Object.assign({}, this.state.params, param, { fileName: this.state.file.name })
+                let data = Object.assign({}, this.state.params, param, { fileName: this.state.file.name, brand: brandResult, productLine })
                 PostFilePublish(data)
                     .then(res => {
                         if (res.success != 1) {
@@ -328,9 +394,88 @@ class fileUpload extends Component {
         }, 1000 * 60 * 5);
         this.setState({ tokenTimer })
     }
+    // brandHover
+    // brandOver = (id) => {
+    //     this.setState({
+    //         brandHoverId: id
+    //     })
+    // }
+    // brandOut = (id) => {
+    //     let { brandHoverId } = this.state
+    //     if (brandHoverId == id) {
+    //         this.setState({
+    //             brandHoverId: ""
+    //         })
+    //     }
+    // }
+
+    //品牌复选框选中
+    onChangeBrand = (id, name, { checked }, i) => {
+        let { productLineResult } = this.state
+        // 如果为false  清空对应产品线数据
+        if (!checked) {
+            productLineResult[i] = []
+            this.setState({
+                brandId: id,
+                brandName: name,
+                brandIndex: i,
+                productLineResult
+            })
+        } else {
+            this.setState({
+                brandId: id,
+                brandName: name,
+                brandIndex: i
+            })
+        }
+
+    }
+    // 品牌文字点击
+    onSelectedBrand = (id, name, i) => {
+        this.setState({
+            brandId: id,
+            brandName: name,
+            brandIndex: i
+        })
+    }
+    // 品牌复选框组选中 获取选中的品牌数据
+    getBrands = (checkedValues) => {
+        this.setState({
+            brandResult: checkedValues
+        })
+    }
+    // 产品线复选框组选中 获取选中的产品线数据
+    getProductLines = (checkedValues) => {
+
+        // 1 若当前checkedValues长度为0 说明当前品牌下不存在已选中的产品线    则已选中的品牌数组删除对应品牌
+        // 2 若当前checkedValues长度不为0  说明当前品牌下存在已选中的产品线  则当前品牌必是已选中项
+        let { brandName, brandResult } = this.state
+        if (checkedValues.length) {
+            if (brandResult.indexOf(brandName) > -1) {
+            } else {
+                brandResult.push(brandName)
+            }
+        } else {
+            brandResult = brandResult.filter(item => {
+                return item != brandName
+            })
+        }
+        let { brandIndex, productLineResult } = this.state
+        productLineResult[brandIndex] = checkedValues
+        this.setState({
+            brandResult,
+            productLineResult
+        })
+    }
     render = _ => {
         const { form } = this.props;
         const { getFieldDecorator } = form;
+        // 获取品牌下对应产品线
+        let newProductLineS = this.state.productLine.filter(item => {
+            return item.parentId == this.state.brandId
+        })
+        // 根据产品线名称去重
+        newProductLineS = unique(newProductLineS)
         return <Modal
             title='介质资料上传'
             visible={this.props.visible}
@@ -342,6 +487,7 @@ class fileUpload extends Component {
             footer={[
                 <Button disabled={this.state.uploadStatus != 3} key="submit" type="primary" onClick={this.publishFile}>发布</Button>
             ]}
+            width={1000}
         > <div>
                 <Form {...layout} name="nest-messages" >
                     <Form.Item label="选择文件">
@@ -358,8 +504,6 @@ class fileUpload extends Component {
                             {this.state.uploadStatus == 5 ? "网络异常!" : ""}
                         </Upload>
                     </Form.Item>
-
-
                     <Form.Item label="文件名称">
                         <div>
                             <div>{this.state.file ? this.state.file.name : ""}</div>
@@ -372,8 +516,6 @@ class fileUpload extends Component {
                             </div> : ""}
                         </div>
                     </Form.Item>
-
-
                     <Form.Item label="版本号">
                         {getFieldDecorator('fileVersion', {
                             rules: [{ required: true, message: '请输入版本号！' }],
@@ -382,7 +524,7 @@ class fileUpload extends Component {
                         )}
                     </Form.Item>
                     <Form.Item label="资料类型">
-                        {this.props.data.parentDir.join("/")}
+                        {this.props.data.parentDir.join(" > ")}
                     </Form.Item>
                     <Form.Item label="标签">
                         {getFieldDecorator('fileLabel', {
@@ -396,6 +538,39 @@ class fileUpload extends Component {
                                 }
                             </Radio.Group>,
                         )}
+                    </Form.Item>
+                    <Form.Item labelCol={{ span: 0 }} wrapperCol={{ span: 24 }} validateStatus="error" help={this.state.brandItemStatus ? "" : "请选择品牌!"}>
+                        <div className="ant-col ant-col-4 ant-form-item-label"><label htmlFor="fileLabel" className="ant-form-item-required" title="品牌">品牌</label></div>
+                        <div className="ant-col ant-col-16 ant-form-item-control-wrapper">
+                            <div className="ant-form-item-control">
+                                <span className="ant-form-item-children">
+                                    <Checkbox.Group value={this.state.brandResult} style={{ width: '100%', lineHeight: "38px" }} onChange={this.getBrands}>
+                                        {
+                                            this.state.brand.map((item, i) => {
+                                                return <span key={item.id} style={{ display: "inline-block", marginRight: "10px" }}>
+                                                    <Checkbox value={item.name} style={{ marginRight: "3px" }} onChange={(checkedValue) => this.onChangeBrand(item.id, item.name, checkedValue.target, i)}></Checkbox>
+                                                    <span style={{ cursor: "pointer" }} onClick={_ => this.onSelectedBrand(item.id, item.name, i)}>{item.name}</span>
+                                                </span>
+                                            })
+                                        }
+                                    </Checkbox.Group>
+                                </span></div></div>
+
+                    </Form.Item>
+                    <Form.Item labelCol={{ span: 0 }} wrapperCol={{ span: 24 }} validateStatus="error" help={this.state.productLineItemStatus ? "" : "请选择产品线!"}>
+                        <div className="ant-col ant-col-4 ant-form-item-label"><label htmlFor="fileLabel" className="ant-form-item-required" title="产品线">产品线</label></div>
+                        <div className="ant-col ant-col-16 ant-form-item-control-wrapper">
+                            <div className="ant-form-item-control">
+                                <span className="ant-form-item-children">
+                                    <Checkbox.Group style={{ width: '100%', lineHeight: "38px" }} value={this.state.productLineResult[this.state.brandIndex]} onChange={this.getProductLines}>
+                                        {
+                                            newProductLineS.map((item) => {
+                                                return <Checkbox key={item.id} value={item.name}>{item.name}</Checkbox>
+                                            })
+                                        }
+
+                                    </Checkbox.Group>
+                                </span></div></div>
                     </Form.Item>
                     <Form.Item label="描述">
                         {getFieldDecorator('description', {
@@ -414,7 +589,6 @@ class fileUpload extends Component {
             </div>
         </Modal>
     }
-
 }
 const fileUploads = Form.create()(fileUpload)
 export default fileUploads

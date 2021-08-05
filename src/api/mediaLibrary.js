@@ -13,7 +13,7 @@ export const GetFilePonints = () => {
 
 // 获取介质类别树
 export const GetFileCategories = () => {
-	return http.fetchGet(`/fileCategories/getTree`)
+	return http.fetchGet(`/basedata/fileDirTree`)
 }
 
 // 新增介质类别
@@ -87,4 +87,3 @@ export const DeleteFile = (params) => {
 export const BatchDeleteFile = (params) => {
 	return http.fetchGet(`/fileLibrary/deleteBacth`, params)
 }
-

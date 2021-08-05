@@ -2,8 +2,6 @@
  *  资料库--我的收藏
  * @auth yyp
 */
-
-
 import React, { Component } from 'react'
 
 import { Form, message, Button, Row, Col, Input, Table, Icon, Spin, Progress } from 'antd'
@@ -36,6 +34,7 @@ class DownloadAudit extends Component {
         window.onresize = () => {
             this.SortTable();
         }
+        this.props.onRef(this);
     }
     componentWillMount() {
         this.getDictInfo()
@@ -54,9 +53,18 @@ class DownloadAudit extends Component {
         //右侧table表格配置
         columns: [
             {
+                title: '类型',
+                dataIndex: 'type',
+                width: 15,
+                align: 'center',
+                render: (t) => {
+                    return t == 1 ? "文件" : "目录"
+                }
+            },
+            {
                 title: '文件名',
                 dataIndex: 'fileName',
-                width: 50,
+                width: 45,
                 align: 'center',
                 render: (t, r) => {
                     let style1 = r.isLike ? { margin: "0 3px 0 0", cursor: "pointer", color: "#7777f7" } : { margin: "0 3px 0 0", cursor: "pointer" }
@@ -73,14 +81,41 @@ class DownloadAudit extends Component {
                 }
             },
             {
+                title: '品牌',
+                dataIndex: 'brand',
+                width: 13,
+                align: 'center',
+                render: (t) => {
+                    return <div style={{ textAlign: "left" }}>{t}</div>
+                }
+            },
+            {
+                title: '产品线',
+                dataIndex: 'productLine',
+                width: 15,
+                align: 'center',
+                render: (t) => {
+                    return <div style={{ textAlign: "left" }}>{t}</div>
+                }
+            },
+            {
+                title: '标签',
+                dataIndex: 'fileLabel',
+                width: 15,
+                align: 'center',
+                render: (t) => {
+                    return fileLabelData[t]
+                }
+            },
+            {
                 title: '版本',
-                width: 30,
+                width: 15,
                 dataIndex: 'fileVersion',
                 align: 'center',
             },
             {
                 title: '文件大小',
-                width: 20,
+                width: 18,
                 dataIndex: 'fileSize',
                 align: 'center',
             },
@@ -109,7 +144,7 @@ class DownloadAudit extends Component {
             // },
             {
                 title: '资料级别',
-                width: 20,
+                width: 18,
                 dataIndex: 'levelName',
                 align: 'center',
             },
@@ -220,7 +255,10 @@ class DownloadAudit extends Component {
         })
     }
 
-
+    // 子模块数据发生变化 通知子页面列表数据更新
+    subpageChange = _ => {
+        this.props.listUpdate()
+    }
     // 点赞
     addFileLike = (key) => {
         let params = {
@@ -231,6 +269,7 @@ class DownloadAudit extends Component {
                 message.error(res.message)
             } else {
                 this.getTableData()
+                this.subpageChange()
             }
         })
     }
@@ -244,6 +283,7 @@ class DownloadAudit extends Component {
                 message.error(res.message)
             } else {
                 this.getTableData()
+                this.subpageChange()
             }
         })
     }
@@ -331,7 +371,9 @@ class DownloadAudit extends Component {
     }
 
 }
-export default DownloadAudit
+const DownloadAudits = Form.create()(DownloadAudit)
+export default DownloadAudits
+
 
 
 
