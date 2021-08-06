@@ -271,7 +271,7 @@ class All extends Component {
     getTableData2 = (id) => {
         let order = this.state.sortValue == "file_name" ? {} : { order: "desc" }
         this.setState({
-            categoriesId: id
+            treeSelectId: id
         })
         // 选中后请求文件数据
         let params = Object.assign({}, {
