@@ -1,3 +1,8 @@
+/***
+ *   基础数据等四个页面组件
+ *   @author gl
+ */
+
 import React, { Component } from 'react'
 import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, DatePicker,Breadcrumb } from 'antd'
 // 引入 Tree树形组件

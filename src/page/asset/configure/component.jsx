@@ -33,7 +33,11 @@ class Component extends React.Component {
         // this.initData(this.props.data)
         this.init()
     }
-
+    componentWillReceiveProps(nextprops) {
+        if(this.props.searchListID !== nextprops.searchListID){
+            this.init()
+        }
+    }
     // 新增table表格一行
     handleAdd = () => {
             const { count, data } = this.state;
