@@ -30,7 +30,7 @@ class Notice extends Component {
                         st['color'] = 'red';
                     }
                     return (<span>
-                                <a onClick={(e) => this.onRead(e,row.id,row.msgContent)} style={st}>点击查看消息详情</a>
+                                <a onClick={(e) => this.onRead(e,row.id,row.msgContent)} style={st}>{text}</a>
                             </span>)
                 }
             },

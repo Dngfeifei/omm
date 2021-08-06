@@ -1,14 +1,18 @@
 
-
+/***
+ *    配置库配置---风险排查组件
+ *   @author gl
+ */
 import React from 'react';
 import { Table, Form, Input, Modal, message, Select, Button, Row, Popconfirm,Tooltip ,Cascader , Radio} from 'antd';
 
 const { confirm } = Modal;
+const { Option } = Select;
 
 import {setComNode} from './assetsList.js'//获取页面渲染配置项
 
 // 引入 API接口
-import {getRiskList,getBaseData} from '/api/assets.js'
+import {getRiskList,getBaseData,getMinInvent} from '/api/assets.js'
 
 
 // 正式服务区域---渲染
@@ -19,6 +23,8 @@ class RiskInvestigation extends React.Component {
         this.state = {
             data: props.baseData.configRisks ? [...props.baseData.configRisks] : [], //数据包
             selectedRowKeys:null,  //选中的table表格的id,
+            seleLabel:[], //选择类型数据
+            selectValue: undefined, //选择类型数据
             selectData:{
                 rcSourceList:[]
             }
@@ -32,8 +38,9 @@ class RiskInvestigation extends React.Component {
         this.init()
     }
     componentWillReceiveProps(nextprops) {
-        if(this.props.strValue1 !== nextprops.strValue1){
+        if(this.props.searchListID !== nextprops.searchListID){
             this.getInitData(nextprops);
+            this.getMinInvent(nextprops.searchListID);
         }
     }
     //处理数据扁平化
@@ -59,9 +66,10 @@ class RiskInvestigation extends React.Component {
         }
         return data1;
     }
-    getInitData = (props) => {
-        const {roleWindow,searchListID,strValue1} = props;
-        getRiskList({skillTypeId:searchListID,strValue1}).then(res => {
+    //获取风险排查列表显示数据
+    getInitData = (props,otherId) => {
+        const {roleWindow,searchListID} = props;
+        getRiskList({skillTypeId:searchListID,otherId:otherId ? otherId :''}).then(res => {
             if (res.success == 1) {
                 let {data} = this.state;
                 if(!roleWindow.roleModalType){
@@ -79,12 +87,24 @@ class RiskInvestigation extends React.Component {
             }
         })
     }
+    //获取中间件等服务类型下拉数据
+    getMinInvent = (id) => {
+        getMinInvent(id).then(res => {
+            if (res.success == 1) {
+                let {seleLabel} = this.state;
+                this.setState({seleLabel: res.data ? res.data : [],selectValue:undefined })
+            } else {
+                // message.error(res.message)
+            }
+        })
+    }
     // 初始化
-    init = () => {
+    init = (xxx) => {
         //初始化表格数据
         this.getInitData(this.props);
+        this.getMinInvent(this.props.searchListID);
         //系统类别
-        getBaseData({basedataTypeCode:'crSource'}).then(res => {
+        getBaseData({basedataTypeCode:'crSource', xxx: xxx ? xxx : ''}).then(res => {
             if (res.success == 1) {
                 let {selectData} = this.state;
                 selectData = Object.assign({}, selectData, { rcSourceList: res.data});
@@ -117,10 +137,24 @@ class RiskInvestigation extends React.Component {
         }
         return data;
     }
+    hanldChange = (value,option) => {
+        // this.setState({selectValue:value});
+        this.getInitData(this.props,value);
+    }
     render() {
-        // this.init()
         return (
             <div>
+                {
+                    this.state.seleLabel.length ? <Row gutter={24} style={{textAlign:'right',visibility:'visible',padding:'0 4px',marginRight:0}}>
+                    <Select placeholder={`请选择${this.props.searchListName}`} style={{ width: 220 }} onChange={this.hanldChange}>
+                        {
+                             this.state.seleLabel.map((items, index) => {
+                                return (<Option key={index} value={items.id}>{items.name}</Option>)
+                            })
+                        }
+                    </Select>
+                </Row> : null
+                }
                 <Table
                     className="jxlTable"
                     onRow={this.onRow}

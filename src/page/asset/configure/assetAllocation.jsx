@@ -1,3 +1,7 @@
+/***
+ *   配置项页面组件
+ *   @author gl
+ */
 import React, { Component } from 'react'
 import { Modal, Tree, message, Button, Row, Col, Form, Input, Select, Table, DatePicker,Upload,Icon,Tabs } from 'antd'
 // 引入 Tree树形组件
@@ -166,12 +170,11 @@ class assetsAllocation extends Component {
             detail:null,
             incrementFeild:[],        //扩展数据字段
             incrementFeilds:[],        //存储扩展字段select组件使用
-            strValue1: undefined       //风险排查面板使用
         }
     }
     //获取各组件所需参数并赋值
     getProps = (type) => {
-        const {roleWindow,baseData,detail,searchListID,searchListIDCode,basedataTypeId,basedataTypeName,panes,incrementFeild,incrementFeilds,selectData,strValue1,tree} = this.state;
+        const {roleWindow,baseData,detail,searchListID,searchListName,searchListIDCode,basedataTypeId,basedataTypeName,panes,incrementFeild,incrementFeilds,selectData,tree} = this.state;
         // console.log(detail,roleWindow.roleModalType == 0 ? baseData : detail ? detail : {})
         return {
             baseData: roleWindow.roleModalType == 0 ? baseData : detail ? detail : {},
@@ -179,15 +182,15 @@ class assetsAllocation extends Component {
             assetsListData,
             basedataTypeId,
             searchListID,
+            searchListName,
             searchListIDCode,
             incrementFeild,
             incrementFeilds,
             panes,
             selectData,
-            strValue1,
             tree,
             basedataTypeName,
-            setStrValue1: this.setStrValue1,
+            treeSelect:this.onTreeSelect,
             setSon: (el) => this[`son${type}`] = el
         }
     }
@@ -260,10 +263,6 @@ class assetsAllocation extends Component {
     //获取表格数据
     searchRoleFun = (parentId,pass) => {
         //1 判断角色组tree是否有选中 如无选中提示无选中 无法查询
-        if (parentId == "" || parentId == null) {
-            message.warning('请在查询条件里先选择配置项!');
-            return
-        }
         this.props.form.validateFields((err, fieldsValue) => {
             // console.log(this.state.baseData);
             if (err) {
@@ -271,19 +270,15 @@ class assetsAllocation extends Component {
             }
             console.log(fieldsValue)
             let newParams = {...fieldsValue}
+            if(!newParams.basedataId) newParams.basedataId = "";
             // return console.log(newParams);
             // 2 发起查询请求 查询后结构给table赋值
             let x = this.state.searchX?this.state.searchX:'',{basedataTypeId} = this.state;
-            let params = pass ? Object.assign({},newParams,{basedataId:parentId},{parentId:-1},{x},this.state.pageConf) : Object.assign({},newParams,{basedataId:parentId},{parentId:-1},{x},this.state.pageConf, { offset: 0 })
-            if(basedataTypeId == 'productType'){
-                GetTablebasic(params).then(res => {
-                    this.setTableData(res)
-                })
-            }else{
-                GetAllocationTable(params,params.limit,params.offset).then(res => {
-                    this.setTableData(res)
-                })
-            }
+            let params = pass ? Object.assign({},newParams,{parentId:-1},this.state.pageConf) : Object.assign({},newParams,this.state.pageConf, { offset: 0 })
+            
+            GetAllocationTable(params,params.limit,params.offset).then(res => {
+                this.setTableData(res)
+            })
             // this.props.form.resetFields(); //重置查询条件输入
         })
         
@@ -325,10 +320,10 @@ class assetsAllocation extends Component {
         // })
         this.setState({
             searchListID: data['id'],
+            searchListName:data['name'],
             searchListIDCode,
             panes:pane,
             // incrementFeild:this.getIncrementFeild(incrementFeild.data),       //赋值扩展字段
-            searchParmas: this.formatParmas(pane)
         },()=>{
             // 选中后请求列表数据
             // let {searchListID} = this.state;
@@ -453,6 +448,7 @@ class assetsAllocation extends Component {
             roleModalTitle = "新增资产配置";
             this.setState({
                 searchListIDCode,
+                searchListID: null,
                 roleWindow: {
                     roleModal: true,
                     roleModalType,
@@ -475,6 +471,8 @@ class assetsAllocation extends Component {
             let searchListIDCode = tableSelectedInfo[0].code;
             let pane = this.getClums(searchListIDCode,panes);
             this.setState({
+                searchListIDCode,
+                searchListID: tableSelectedInfo[0].id,
                 roleWindow: {
                     roleModal: true,
                     roleModalType,
@@ -708,12 +706,6 @@ class assetsAllocation extends Component {
             message.error(`${info.file.name} 导入失败！`);
           }
     }
-    //设置软件服务中间件类型选择是切换风险排查数据参数StrValue1字段
-    setStrValue1 = (value) => {
-        this.setState({
-            strValue1:value
-        })
-    }
     render = _ => {
         const { h,panes } = this.state,columns = panes.basicData.columnsBasic.concat(panes.basicData.columnsDevice,this.state.incrementFeild);
         const {getFieldDecorator} = this.props.form;
@@ -773,7 +765,6 @@ class assetsAllocation extends Component {
                     tableSelecteds: [],
                     tableSelectedInfo: [],
                     detail:null,
-                    strValue1:undefined
                 })}
                 onOk={_ => this.editRoleSave()}
                 width={1200}

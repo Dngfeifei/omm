@@ -63,7 +63,12 @@ export const getRiskList = (params = {}) => {
 }
 //配置管理-查询详情数据接口
 export const getDetail = (id) => {
-	return http.fetchGet(`biConfigurations/detail/${id}`)
+	return http.fetchGet(`/biConfigurations/detail/${id}`)
+	//return http.fetchGet(`/static/mock/searchData.json`, params)
+}
+//查询中间件、虚拟软件下拉框接口
+export const getMinInvent = (id) => {
+	return http.fetchGet(`/basedata/getMinInvent/${id}`)
 	//return http.fetchGet(`/static/mock/searchData.json`, params)
 }
 

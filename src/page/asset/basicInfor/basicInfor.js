@@ -1,3 +1,8 @@
+/***
+ *   基础数据等四个页面-配置基础显示数据文件
+ *   @author gl
+ */
+
 import React, { Component } from 'react'
 import { Row, Col,  Input, Select,  DatePicker,Upload,Form,Icon } from 'antd'
 const { Option } = Select;
