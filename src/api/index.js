@@ -207,7 +207,7 @@ export default {
 			}
 		})
 	},
-	fetchBlobPost(url, params = {}, json = false, ) {
+	fetchBlobPost(url, params = {}, json = false ) {
 		return handleTimeout(url, 'POST', json ? params : handleParams(params), null, 900000).then(function (response) {
 			if (response.status != 200) {
 				message.error(response.message)
